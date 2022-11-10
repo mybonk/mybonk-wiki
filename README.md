@@ -17,7 +17,7 @@ NB. Hardware stack available
 
 
 
-- **NIXOS**
+- **Nix/NixOS**
 "Reproducible, declarative and reliable systems."
 Nix is a tool that takes a unique approach to package management and system configuration.
 https://nixos.org
