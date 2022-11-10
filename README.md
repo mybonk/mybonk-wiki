@@ -23,7 +23,7 @@ NB. Hardware stack available
 Is refered to as a "softawre stack" the group of software bundled together. This eases deployment and allow people to use a baseline to contribute from.
 MYBONK stack is composed of:
 
-- **GitHub** (on this platform we can live naked) [details](<https://www.wikipedia.org/wiki/HitHub
+- **GitHub** (on this platform we can live naked) [details](<https://www.wikipedia.org/wiki/HitHub)>
 - **Nix/NixOS**
   - "Reproducible, declarative and reliable systems."
   - Nix is a tool that takes a unique approach to package management and system configuration.
