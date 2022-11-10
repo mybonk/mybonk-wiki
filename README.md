@@ -5,11 +5,17 @@
 * non-custodial
 * Simplified and hardened stack
 
-Hardware stack available
+NB. Hardware stack available
 
-## GitHub
-This is where MYBONK [and all his Open Source software friends] is maintained and is built from (via Nix).
-On this platform we can live naked.
+| ----------|------------------------|--------------------|----------------------------|
+| Package   |       | www               | open source                 |
+| ----------|-----------------------|--------------------|-----------------------------|
+| GitHub    |         | www.github.com               | (<https://www.wikipedia.org/wiki/HitHub>)    |
+| NIXOS           | [www](https://nixos.org)               | [open source](https://github.com/NixOS/)                 |
+
+- **GitHub** (on this platform we can live naked) [details](<https://www.wikipedia.org/wiki/HitHub
+
+
 
 ## NIXOS
 "Reproducible, declarative and reliable systems."
