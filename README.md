@@ -16,7 +16,19 @@
 * non-custodial
 * Simplified and hardened software stack
 
-NB. Hardware stack available
+## Installation of the ecosystem (1 administration machine and 2 MYBONK full nodes)
+Build of the administration machine: 
+It can be any laptop you use every day. It is not have to be running nixOS as it is not one of the full nodes in the ecosystem. 
+I use a MacOS (13.0.1) Ventura in the steps below. These steps should be more or less similar if you run another platform.
+... ... ...
+... ... ...
+... ... ...
+... ... ...
+
+Build of the MYBONK full nodes:
+
+
+
 
 ## Software Stack
 
