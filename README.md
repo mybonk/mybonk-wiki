@@ -19,13 +19,20 @@
 ## Installation of the ecosystem (1 administration machine and 2 MYBONK full nodes)
 Build of the administration machine: 
 It can be any laptop you use every day. It is not have to be running nixOS as it is not one of the full nodes in the ecosystem. 
-I use a MacOS (13.0.1) Ventura in the steps below. These steps should be more or less similar if you run another platform.
-... ... ...
+You could use you own day to day laptop but nix installs quite a few things deep in the system so I prefer to use a minimal Debian Linux image on a VirtualBox on my laptop this way it does not "polute" or changes anything on my laptop. Linux Debian is  used in these steps, adjust accordingly if you decide to use something else:
+1. Install VirtualBox (https://www.virtualbox.org/) on your laptop
+2. Download the image you will be using, you can either:
+      Use the default "small image" from Debian (https://www.debian.org/distrib/), using this method you will go through the steps of installing the OS from scratch from the bootlable installation image that you will have to copy on a USB stick using BalenaEtcher and boot your virtual machine in Virtual Box.
+      Use a pre-built VDI (Virtual Box Image) Debian built specifically to run on VirtualBox (e.g. https://www.osboxes.org/debian/): Download and run immediatly within VirtualBox
+3. Now you can install nix package manager on this brand new "administration machine"
+
+
 ... ... ...
 ... ... ...
 ... ... ...
 
 Build of the MYBONK full nodes:
+
 
 
 
