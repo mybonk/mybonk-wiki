@@ -9,6 +9,10 @@
   -   TBD
   - TBD
 
+## Terminology
+MYBONK conole
+
+
 ## Features
 
 * Plug anf forget
@@ -16,15 +20,33 @@
 * non-custodial
 * Simplified and hardened software stack
 
-## Installation of the ecosystem (1 administration machine and 2 MYBONK full nodes)
-Build of the administration machine: 
-It can be any laptop you use every day. It is not have to be running nixOS as it is not one of the full nodes in the ecosystem. 
-You could use you own day to day laptop but nix installs quite a few things deep in the system so I prefer to use a minimal Debian Linux image on a VirtualBox on my laptop this way it does not "polute" or changes anything on my laptop. Linux Debian is  used in these steps, adjust accordingly if you decide to use something else:
-1. Install VirtualBox (https://www.virtualbox.org/) on your laptop
-2. Download the image you will be using, you can either:
-      Use the default "small image" from Debian (https://www.debian.org/distrib/), using this method you will go through the steps of installing the OS from scratch from the bootlable installation image that you will have to copy on a USB stick using BalenaEtcher and boot your virtual machine in Virtual Box.
-      Use a pre-built VDI (Virtual Box Image) Debian built specifically to run on VirtualBox (e.g. https://www.osboxes.org/debian/): Download and run immediatly within VirtualBox
-3. Now you can install nix package manager on this brand new "administration machine"
+## Build of a small ecosystem (1 orchestration machine and 1 MYBONK console)
+
+Note: Anything you download on the internet it at risk of being malicious software. Know your sources. Always run GPG verification to check conformity (typically next to the download link of an image or package there is a sting of hexadecimal characetrs, it's not decoration).
+
+Build the "orchestration" machine
+This machine is used to manage your fleet of MYBONK consoles.
+It does not have to run nixOS (only nix package manager), you could use your day to day laptop but nix installs quite a few things deep in the system and I like to keep things separate. 
+A basic Linux image in VirtualBox on your laptop is perfect for this: The steps hereafter are based on Linux Debian, adjust accordingly if you decide to do differently:
+1. Download and install VirtualBox (https://www.virtualbox.org/)
+2. Build the OS: There are 2 options:
+      OPTION 1: Use the default "small image" from Debian (https://www.debian.org/distrib/): 
+      With this method you go through the standard steps of installing the Debian OS in VirtualBox just as if you were installing it on a new desktop.
+      Don't forget to take note of the the machine's IP address and your root account password during the installation!
+      OPTION 2: Use a ready-made VDI (Virtual Box Image) of Debian (https://www.osboxes.org/debian/). This is a shortcut of OPTION 1, it does not require you to go through the Debian installation steps and contains some package for additional VirtualBox features pre-installed. Just download and run from within VirtualBox. The default credentials are username: 'osboxes'/ password: 'osboxes.org' and  root account password: 'osboxes.org' (as stated on the website).   Do not use such images in production environment.
+      Make sure you can ssh in from the host system.
+3. Install the nix packages: There are 2 options:
+      OPTION 1: Build Nix from source, follow the instructions at https://nixos.org/nix/manual/#ch-installing-source
+      OPTION 3: Install from nixos.org repository. 
+      This is quicker and more convenient for test environments.
+      
+      sh <(curl -L https://nixos.org/nix/install) --daemon
+      
+      
+
+      
+
+
 
 
 ... ... ...
