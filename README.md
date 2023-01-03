@@ -1,9 +1,13 @@
-
-
-
 # Table of Contents
 
-  <to be done>
+  - [Forewords](#forewords)
+  - [Terminology](#terminology)
+  - [Overview](#overview)
+  - [Advice](#advice)
+  - [1) Build the orchestration machine](#orchestration-machine)
+  - [2) Build the MYBONK full node](#orchestration-machine)
+
+
 
 # Forewords
 Welcome in our rabbit hole. 
@@ -24,7 +28,7 @@ Enjoy the ride, no stress, Check out the [FAQ](FAQ.md) and the [things that real
 
 # Overview
 
-This small ecosystem consists in the build of two elements:
+This small ecosystem consists of only two elements that we are going to build together:
   
 - **One orchestration machine:**
   This machine is used to orchestrate your fleet of MYBONK consoles, it is essentially a Linux with a few additional software installed including the nix package manager.
@@ -32,12 +36,12 @@ This small ecosystem consists in the build of two elements:
   This machine runs the MYBONK stack. It is setup once and its configuration can be updated remotly using the orchestration machine.
   You could generate as many MYBONK consoles as you want as easily, it's the goal, but let's keep this simple here.
   
-# Advices
+# Advice
 - **Don't trust, verify**: Anything you download on the internet is at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a sting of hexadecimal characters, it's no decoration).
 - **nix vs. nixOS**: To start on the right foot it is very important to understand the concept that nix and nixOS two different things: nix is a [package manager](https://en.wikipedia.org/wiki/Package_manager) (something like npm, rpm and others) whereas nixOS is a [full-blow Linux distribution](https://en.wikipedia.org/wiki/NixOS) built on top of the nix package manager.
 - **Read and explore**: The pros write and read documentation, they are not on YouTube. 
 
-# 1) Build the "orchestration" machine
+# 1) Build the orchestration machine
 This machine is used to manage your fleet of MYBONK consoles.
   
 It does not have to run nixOS (only nix package manager), you could use your day to day laptop but nix installs quite a few things deep in the system and I like to keep things separate. 
@@ -76,7 +80,7 @@ A basic Linux image in VirtualBox on your laptop is perfect for this: The steps 
 
 
 
-# 2) Build of the MYBONK full nodes:
+# 2) Build the MYBONK full node
 
 <TBD>
 <TBD>
