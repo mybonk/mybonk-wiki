@@ -39,18 +39,19 @@ It does not have to run nixOS (only nix package manager), you could use your day
 A basic Linux image in VirtualBox on your laptop is perfect for this: The steps hereafter are based on Linux Debian, adjust accordingly if you decide to do differently:
 1. Download and install VirtualBox (https://www.virtualbox.org/)
 2. Build the OS: There are 2 options:
-      OPTION 1: Use the default "small image" from Debian (https://www.debian.org/distrib/): 
+      OPTION 1: Use a default installation image from Debian (https://www.debian.org/distrib/): 
       With this method you go through the standard steps of installing the Debian OS in VirtualBox just as if you were installing it on a new desktop.
-      Don't forget to take note of the the machine's IP address and your root account password during the installation!
-      OPTION 2: Use a ready-made Virtual Box VDI (Virtual Disk Image) of Debian (https://www.osboxes.org/debian/). 
-      This is a shortcut of OPTION 1. You usualy can choose between a "Desktop" and a "Server" image, choose "Server" (it is smaller as does not include all the software we don't need such as Gnome, KDE, productivity tools .etc...). This option does not require you to go through the Debian installation steps and contains some package for additional VirtualBox features pre-installed. 
-      Just download (also check SHA-256 needless to say), uncompress and follow these instructions: [HERE](https://www.vdiskrecovery.com/blog/how-to-import-open-vdi-file-in-virtualbox/). 
-      The default credentials are username: 'osboxes'/ password: 'osboxes.org' and  root account password: 'osboxes.org' (as stated on the website where you downloaded the image).   Do not use such images in production environment.
-      Make sure you can ssh in from the host system. Logout. All good.
+      Don't forget to take note of the the machine's IP address and login details you choose during the installation!
+      Detailed instructions here: https://techcolleague.com/how-to-install-debian-on-virtualbox/
+      OPTION 2: Use a ready-made Virtual Box VDI (Virtual Disk Image). This option is much quicker and more convenient as Debian is pre-installed. Do not use such images in a production environment. e.g. https://www.linuxvmimages.com/images/debian-11/ the login details are typically on the same page as the download link. It is possible you get 'Loggin incorrect' when trying to ssh in the box. This is a common issue when using a certain language's OS with another language's keyboard (e.x. QWERTY vs AZERTY) there are various easy ways to work around this that are out of the scope of this document.
+      
+      
 3. Install the nix packages: There are 2 options:
       OPTION 1: Build Nix from source, follow the instructions at https://nixos.org/nix/manual/#ch-installing-source
-      OPTION 3: Install from nixos.org repository. 
+      OPTION 2: Install from nixos.org repository. 
       This is quicker and more convenient for test environments.
+      
+      ssh into the machine:
       Install nix:
       ```
       $ sh <(curl -L https://nixos.org/nix/install) --daemon
