@@ -10,15 +10,15 @@
   - TBD
 
 ## Terminology
-MYBONK conole
+- MYBONK user: Merchant, family man, institution, bank. Just want it to work "plug and forget". Only use web-based GUIs. On MAINNET.
+- MYBONK operator: A "MYBONK hacker" that got really hooked and decided to learn more, has some "skin in the game". On MAINNET.
+- MYBONK hacker: Student, Maker, researcher. Just want to tear things apart. Love using only the terminal. On SIGNET.
+
+- MYBONK console: A full-node bitcoin-only hardware platform designed with performance, durability, environment, supply chain resilience and generic parts in mind.
+- MYBONK core: tailor-made full-node software stack for MYBONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MYBONK core is based on nix-bitcoin itself based on nixOS. 
 
 
-## Features
 
-* Plug anf forget
-* Replace one console for another
-* non-custodial
-* Simplified and hardened software stack
 
 ## Build of a small ecosystem (1 orchestration machine and 1 MYBONK console)
 
@@ -39,23 +39,21 @@ A basic Linux image in VirtualBox on your laptop is perfect for this: The steps 
       OPTION 1: Build Nix from source, follow the instructions at https://nixos.org/nix/manual/#ch-installing-source
       OPTION 3: Install from nixos.org repository. 
       This is quicker and more convenient for test environments.
-      
+      ```
       sh <(curl -L https://nixos.org/nix/install) --daemon
-      
-      
-
+      ```
       
 
+      
 
 
 
-... ... ...
-... ... ...
-... ... ...
 
 Build of the MYBONK full nodes:
 
-
+<TBD>
+<TBD>
+<TBD>
 
 
 
@@ -71,19 +69,15 @@ MYBONK stack is composed of:
   - Official: https://nixos.org
   - Code: https://github.com/NixOS/
 - **bitcoind**
-This is Bitcoin
+  - Description: This is bitcoin.
   - Official: https://bitcoin.org/
   - Code: https://github.com/bitcoin/bitcoin
-- **lnd**
+- **c-lightning**
   - Description: This is Lightning Network (LN)
-  - Official:  https://docs.lightning.engineering/lightning-network-tools/lnd
-  - Code: https://github.com/lightningnetwork/lnd
-- **LNBits (Legend)**
-  - Description This allows for great bitcoin/LN advanced features. Provides great API and great plugins approach.
-  - Official: https://lnbits.com
-  - Code: https://github.com/lnbits/lnbits
+  - Official:  [https://docs.lightning.engineering/lightning-network-tools/lnd](https://blockstream.com/lightning/)
+  - Code: https://github.com/elementsproject/lightning#getting-started
 - **nginx**
-  - Description: Reverse-proxy to route the http/Tor requests to the correct internal services
+  - Description: Reverse-proxy to route the requests to internal services
   - Official: Nginx: https://nginx.org/
   - Code: https://github.com/nginx
 - **Tor**
@@ -96,4 +90,7 @@ This is Bitcoin
 - **Fedimint**
   - Official: https://fedimint.org/ 
   - Code: https://github.com/fedimint
-
+- **LNBits**
+  - Description: This allows for great bitcoin/LN advanced features through APIs and plugins architecture.
+  - Official: https://lnbits.com
+  - Code: https://github.com/lnbits/lnbits
