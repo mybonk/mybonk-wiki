@@ -125,6 +125,6 @@ MYBONK stack is composed of:
   - Official: https://lnbits.com
   - Code: https://github.com/lnbits/lnbits
 - **John Perry Barlow: The Declaration of Independence of Cyberspace**
-  - [Text](https://cryptoanarchy.wiki/people/john-perry-barlow)
-  - [Red by the author]: [https://lnbits.com](https://www.youtube.com/watch?v=3WS9DhSIWR0)
+  - [Document](https://cryptoanarchy.wiki/people/john-perry-barlow)
+  - [Red by the author](https://lnbits.com](https://www.youtube.com/watch?v=3WS9DhSIWR0)
 
