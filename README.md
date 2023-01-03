@@ -27,10 +27,8 @@ Enjoy the ride, no stress. [Things I wish I knew when I started](RABBIT-HOLES.md
 This small ecosystem consists in the build of two elements:
   
 - **One orchestration machine:**
-  
   This machine is used to orchestrate your fleet of MYBONK consoles, it is essentially a Linux with a few additional software installed including the nix package manager.
 - **One MYBONK console:**
-  
   This machine runs the MYBONK stack. It is setup once and its configuration can be updated remotly using the orchestration machine.
   You could generate as many MYBONK consoles as you want as easily, it's the goal, but let's keep this simple here.
   
