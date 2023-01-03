@@ -11,12 +11,11 @@ You arrived here for a reason. Read this document from the beginning to the end 
 You can contribute to the documentation if you have a GitHub account (if not why not create one): Just fork the project on your machine or simply correct little typos using GitHub's built-in edit built-in capabilities. 
 
 # Terminology
-- MYBONK user: Merchant, family man, citadel, institution, bank .etc.. Just want it to work "plug and forget". Only use web-based GUIs. On MAINNET.
-- MYBONK operator: A "MYBONK hacker" that got really hooked and decided to learn more, has some "skin in the game". On MAINNET.
-- MYBONK hacker: Student, Maker, researcher. Just want to tear things apart. Love using only the terminal. On SIGNET.
-
-- MYBONK console: A full-node bitcoin-only hardware platform designed with price, performance, durability, environment, supply chain resilience and generic parts in mind.
-- MYBONK core: Tailor-made full-node software stack for MYBONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MYBONK core is based on nix-bitcoin itself based on nixOS. 
+- **MYBONK core**: Tailor-made full-node software stack for MYBONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MYBONK core is based on nix-bitcoin itself based on nixOS. 
+- **MYBONK console**: A [full-node bitcoin-only hardware platform](https://mybonk.co) designed with security, price, performance, durability, low-enery, supply chain resilience and generic parts in mind.
+- **MYBONK user**: Merchant, family man, citadel, institution, bank .etc.. Just want it to work "plug and forget". Only uses web-based GUIs (not the command line). On MAINNET.
+- **MYBONK operator**: A "MYBONK hacker" that got really hooked and decided to learn more, has some "skin in the game". On MAINNET.
+- **MYBONK hacker**: Student, Maker, researcher. Just want to tear things apart. Love using only the terminal. On SIGNET.
 
 # Overview
 
