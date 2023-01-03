@@ -1,8 +1,8 @@
 
-# Things I wish I knew before
-1. Command line stuff
-	..* bash shell
-	..* ls, cd, mkdir, mv, rm, ln, which,  …
+# Things I wish I knew better
+## Command line stuff
+- bash shell
+- ls, cd, mkdir, mv, rm, ln, which,  …
 	..* hostname, whoami, passwd, chmod, chgrp, …
 	..* history 
 	..* alias
