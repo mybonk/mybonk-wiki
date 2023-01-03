@@ -42,7 +42,7 @@ A basic Linux image in VirtualBox on your laptop is perfect for this: The steps 
       - Don't forget to take note of the the machine's IP address and login details you choose during the installation!
       - Detailed instructions here: https://techcolleague.com/how-to-install-debian-on-virtualbox/
   ### OPTION 2: Use a ready-made Virtual Box VDI (Virtual Disk Image). 
-  - The process is much quicker and more convenient than OPTION 1 as we use a pre-installed Debian System. 
+  - More convenient than OPTION 1 as we use a pre-installed Debian System. 
   - Example: https://www.linuxvmimages.com/images/debian-11/ the login details are typically on the same page as the download link. 
   - Do not use such images in a production environment. 
   - It is possible you get 'Loggin incorrect' when trying to ssh in the box. This is a common issue when using a certain language's OS with another language's keyboard (e.x. QWERTY vs AZERTY) there are various easy ways to work around this that are out of the scope of this document. The simplest and effective is to find a way to login with the keyboard you have anyways until you figure out which key is which then once logged-in you can ajust the settings in "Region & Language" > "Input Source" using the mouse in Gnome or KDE.
