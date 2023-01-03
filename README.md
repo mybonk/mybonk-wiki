@@ -32,9 +32,9 @@ Take a deep breath.
 ## Steady, ready, go!
 
 IMPORTANT: 
-a. Anything you download on the internet it at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a sting of hexadecimal characters, it's no decoration).
-b. Don't trust, verify.
-c. It is very important to understand that nix and nixOS two different things: nix is the *package manager* whereas nixOS is a full-blow operating system (based on a stripped version of Debian) that makes use of nix *package manager* to manage itself. Both are demonstrated hereafter.
+..* Anything you download on the internet it at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a sting of hexadecimal characters, it's no decoration).
+..* Don't trust, verify.
+..* It is very important to understand that nix and nixOS two different things: nix is the *package manager* whereas nixOS is a full-blow operating system (based on a stripped version of Debian) that makes use of nix *package manager* to manage itself. Both are demonstrated hereafter.
 
 Example: To check the hash of downloaded_image.iso
       ```
