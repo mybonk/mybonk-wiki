@@ -20,17 +20,20 @@ You can contribute to the documentation if you have a GitHub account (if not why
 
 # Overview
 
-This small ecosystem consists in the build of 2 elements:
+This small ecosystem consists in the build of two elements:
   
-- 1 orchestration machine: 
+- **One orchestration machine:**
+  
   This machine is used to orchestrate your fleet of MYBONK consoles, it is essentially a Linux with a few additional software installed including the nix package manager.
-- 1 MYBONK console: 
+- **One MYBONK console:**
+  
   This machine runs the MYBONK stack. It is setup once and its configuration can be updated remotly using the orchestration machine.
   You could generate as many MYBONK consoles as you want as easily, it's the goal, but let's keep this simple here.
   
 - Advices
 - **Don't trust, verify**: Anything you download on the internet is at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a sting of hexadecimal characters, it's no decoration).
 - **nix vs. nixOS**: To start on the right foot it is very important to understand the concept that nix and nixOS two different things: nix is a [package manager](https://en.wikipedia.org/wiki/Package_manager) (something like npm, rpm and others) whereas nixOS is a [full-blow Linux distribution](https://en.wikipedia.org/wiki/NixOS) built on top of the nix package manager.
+- **Read and explore**: People take time to write documentation for a reason. The pros have their nose in documentation, not in YouTube. It will save you a lot of time.
 
 # Build the "orchestration" machine
 This machine is used to manage your fleet of MYBONK consoles.
