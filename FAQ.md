@@ -6,6 +6,7 @@ Table of Contents
   - [Installation](#Installation)
     - [Can I install MYBONK stack on another hardware than MYBONK console?](#can-i-install-mybonk-stack-on-another-hardware-than-mybonk-console)
     - [How to verify a file or image downloaded from the Internet?](#howto-verify-a-file-or-image-downloaded-from-the-internet)
+    - [Tell us more about the BONK token](#tell-us-more-about-the-bonk-token)
 
 
 ---
@@ -46,3 +47,6 @@ gpg --verify [SIGNATURE-FILE] [THE-FILE-YOU-DOWNLOADED]
 ```
 
 *You can ignore any warning about the key being 'not a trusted signature' or untrusted .. as long you see "good signature" and the correct main & sub fingerprints the download is valid.*
+
+### Tell us more about the BONK token
+We hear there are new tokens named BONK or MYBONK on the "market". It's not us. We don't do trading nor scaming nor ICOs. Leave us alone. mybonk-core is free, open source (MIT).
