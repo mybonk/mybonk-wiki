@@ -1,6 +1,6 @@
 # Things I wish I knew when I started
 
-List of "basic" things to master in, the order:
+Ordered list of "basic" skills that need to be aquired to enjoy the ride.
 
 ## Command line stuff
 - bash shell
