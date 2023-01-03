@@ -7,6 +7,7 @@ Table of Contents
     - [Can I install MYBONK stack on another hardware than MYBONK console?](#can-i-install-mybonk-stack-on-another-hardware-than-mybonk-console)
     - [How to verify a file or image downloaded from the Internet?](#howto-verify-a-file-or-image-downloaded-from-the-internet)
     - [Tell us more about the BONK token](#tell-us-more-about-the-bonk-token)
+    - [Tell us more about Raspiblitz, Nodle, Ubrell and others](#tell-us-more-about-raspiblitz-nodle-brell-and-others)
 
 
 ---
@@ -50,3 +51,9 @@ gpg --verify [SIGNATURE-FILE] [THE-FILE-YOU-DOWNLOADED]
 
 ### Tell us more about the BONK token
 We hear there are new tokens named BONK or MYBONK on the "market". It's not us. We don't do trading nor scaming nor ICOs. Leave us alone. mybonk-core is free, open source (MIT).
+
+### Tell us more about Raspiblitz, Nodle, Ubrell and all the others
+Bitcoin is for everyone, but everyone is at a different phase in his bitcoin adoption, there is no "one size fit all", it's a journey.
+If unsure get advice on what "rabbit hole" would be best for you from other bitcoiners who know you. 
+Have a look at this list if you want to learn something but are not yet ready to take the plunge.
+We all stand on the shoulders of giants and learn from one another. 
