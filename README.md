@@ -13,7 +13,7 @@ We [collaboratively] take great pride and care editing this documentation so it 
   
 You too can contribute to this documentation on GitHub.
   
-Enjoy the ride, no stress.
+Enjoy the ride, no stress. [This I wish I knew when I started](RABBIT-HOLES.md)
 
 # Terminology
 - **MYBONK core**: Tailor-made full-node software stack for MYBONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MYBONK core is based on nix-bitcoin itself based on nixOS. 
