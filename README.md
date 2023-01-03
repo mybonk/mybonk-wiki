@@ -92,10 +92,12 @@ A basic Linux image in VirtualBox on your laptop is perfect for this: The steps 
 Is refered to as a "softawre stack" the group of software bundled together. This eases deployment and allow people to use a baseline to contribute from.
 MYBONK stack is composed of:
 
-- **GitHub** (on this platform we can live naked) [details](<https://www.wikipedia.org/wiki/HitHub)>
+- **GitHub**  [details](<https://www.wikipedia.org/wiki/HitHub)>
+  - Description: Nix is a tool that takes a unique approach to package management and system configuration.
+  - Official: https://github.com
 - **Nix/NixOS**
   - "Reproducible, declarative and reliable systems."
-  - Nix is a tool that takes a unique approach to package management and system configuration.
+  - Description: Nix is a tool that takes a unique approach to package management and system configuration.
   - Official: https://nixos.org
   - Code: https://github.com/NixOS/
 - **bitcoind**
