@@ -35,23 +35,21 @@ IMPORTANT:
 - Don't trust, verify: Anything you download on the internet it at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a sting of hexadecimal characters, it's no decoration).
 - It is very important to understand the concept that nix and nixOS two different things: nix is a [package manager](https://en.wikipedia.org/wiki/Package_manager) (something like npm, rpm and others) whereas nixOS is a [full-blow Linux distribution](https://en.wikipedia.org/wiki/NixOS) built on top of the nix package manager.
 
-Example: To check the hash of downloaded_image.iso
-      ```
-      $ sha256sum downloaded_image.iso
-      f4732241c03516184452f115e102a683a5282030a65b936328245a4d0ca064d2 sha256sum downloaded_image.iso
-      ```
-
-Build the "orchestration" machine
+### Build the "orchestration" machine
 This machine is used to manage your fleet of MYBONK consoles.
 It does not have to run nixOS (only nix package manager), you could use your day to day laptop but nix installs quite a few things deep in the system and I like to keep things separate. 
 A basic Linux image in VirtualBox on your laptop is perfect for this: The steps hereafter are based on Linux Debian, adjust accordingly if you decide to do differently:
 1. Download and install VirtualBox (https://www.virtualbox.org/)
 2. Build the OS: There are 2 options:
-      OPTION 1: Use a default installation image from Debian (https://www.debian.org/distrib/): 
+  
+  
+  - OPTION 1: Use a default installation image from Debian (https://www.debian.org/distrib/): 
       With this method you go through the standard steps of installing the Debian OS in VirtualBox just as if you were installing it on a new desktop.
       Don't forget to take note of the the machine's IP address and login details you choose during the installation!
       Detailed instructions here: https://techcolleague.com/how-to-install-debian-on-virtualbox/
-      OPTION 2: Use a ready-made Virtual Box VDI (Virtual Disk Image). This option is much quicker and more convenient as Debian is pre-installed. Do not use such images in a production environment. e.g. https://www.linuxvmimages.com/images/debian-11/ the login details are typically on the same page as the download link. It is possible you get 'Loggin incorrect' when trying to ssh in the box. This is a common issue when using a certain language's OS with another language's keyboard (e.x. QWERTY vs AZERTY) there are various easy ways to work around this that are out of the scope of this document. the simplest way is to find a way to login with the keyboard you have anyways untill you figure out which key is which then once logged-in you can ajust the settings in "Region & Language" > "Input Source" using the mouse in Gnome or KDE.
+  - OPTION 2: Use a ready-made Virtual Box VDI (Virtual Disk Image). 
+  
+  This option is much quicker and more convenient as Debian is pre-installed. Do not use such images in a production environment. e.g. https://www.linuxvmimages.com/images/debian-11/ the login details are typically on the same page as the download link. It is possible you get 'Loggin incorrect' when trying to ssh in the box. This is a common issue when using a certain language's OS with another language's keyboard (e.x. QWERTY vs AZERTY) there are various easy ways to work around this that are out of the scope of this document. the simplest way is to find a way to login with the keyboard you have anyways untill you figure out which key is which then once logged-in you can ajust the settings in "Region & Language" > "Input Source" using the mouse in Gnome or KDE.
       
       
 3. Install the nix packages: There are 2 options:
@@ -74,11 +72,18 @@ A basic Linux image in VirtualBox on your laptop is perfect for this: The steps 
 
 
 
-Build of the MYBONK full nodes:
+### Build of the MYBONK full nodes:
 
 <TBD>
 <TBD>
 <TBD>
+  
+  Example: To check the hash of downloaded_image.iso
+      ```
+      $ sha256sum downloaded_image.iso
+      f4732241c03516184452f115e102a683a5282030a65b936328245a4d0ca064d2 sha256sum downloaded_image.iso
+      ```
+
 
 
 
