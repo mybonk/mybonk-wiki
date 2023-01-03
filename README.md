@@ -7,8 +7,13 @@
 
 # Forewords
 Welcome in our rabbit hole. 
-You arrived here for a reason. Read this document from the beginning to the end once, then read it again before you get your hands dirty. We took a great attention editing this document with reference links to make it as straightforward and easy to follow as possible
-You can contribute to the documentation if you have a GitHub account (if not why not create one): Just fork the project on your machine or simply correct little typos using GitHub's built-in edit built-in capabilities. 
+You arrived here for a reason. Read this document from the beginning to the end once, then read it again before you get your hands dirty. 
+  
+We [collaboratively] take great pride and care editing this documentation so it remains clear and concise, often it references external links. Explore them when instructed to, this will make the process as straightforward and pleasant as can be.
+  
+You too can contribute to this documentation on GitHub.
+  
+Enjoy the ride, no stress.
 
 # Terminology
 - **MYBONK core**: Tailor-made full-node software stack for MYBONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MYBONK core is based on nix-bitcoin itself based on nixOS. 
