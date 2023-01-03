@@ -13,10 +13,10 @@ We [collaboratively] take great pride and care editing this documentation so it 
   
 You too can contribute to this documentation on GitHub.
   
-Enjoy the ride, no stress. [Things I wish I knew when I started](RABBIT-HOLES.md)
+Enjoy the ride, no stress, [Check out the](FAQ.md) and the [things I wish I knew when I started](RABBIT-HOLES.md)
 
 # Terminology
-- **MYBONK core**: Tailor-made full-node software stack for MYBONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MYBONK core is based on nix-bitcoin itself based on nixOS. 
+- **MYBONK core**: Tailor-made full-node software stack for MYBONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MYBONK core is based on nix-bitcoin itself based on nixOS. [Software stack](MYBONK-STACK.md).
 - **MYBONK console**: A [full-node bitcoin-only hardware platform](https://mybonk.co) designed with security, price, performance, durability, low-enery, supply chain resilience and generic parts in mind.
 - **MYBONK user**: Merchant, family man, citadel, institution, bank .etc.. Just want it to work "plug and forget". Only uses web-based GUIs (not the command line). On MAINNET.
 - **MYBONK operator**: A "MYBONK hacker" that got really hooked and decided to learn more, has some "skin in the game". On MAINNET.
