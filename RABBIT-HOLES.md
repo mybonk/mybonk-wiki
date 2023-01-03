@@ -1,6 +1,7 @@
 # Things I wish I knew when I started
+
 List of "basic" things to master in, the order:
----
+
 ## Command line stuff
 - bash shell
 - ls, cd, mkdir, mv, rm, ln, which,  …
