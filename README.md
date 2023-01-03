@@ -3,24 +3,33 @@
 
 ## Table of Contents
 
-  - TBD
-  - TBD
-  -   TBD
-  -   TBD
-  - TBD
+  <to be done>
+
+## Forewords
+Welcome in our rabbit hole. 
+You arrived here for a reason. Read this document from the beginning to the end once, then read it again before you are ready to getting your hands dirty. We took a great attention editing this document with reference links to make it as straightforward and easy to follow as possible
+You can contribute to the documentation if you have a GitHub account (if not why not create one): Just fork the project on your machine or simply correct little typos using GitHub's built-in edit built-in capabilities. 
 
 ## Terminology
-- MYBONK user: Merchant, family man, institution, bank. Just want it to work "plug and forget". Only use web-based GUIs. On MAINNET.
+- MYBONK user: Merchant, family man, citadel, institution, bank .etc.. Just want it to work "plug and forget". Only use web-based GUIs. On MAINNET.
 - MYBONK operator: A "MYBONK hacker" that got really hooked and decided to learn more, has some "skin in the game". On MAINNET.
 - MYBONK hacker: Student, Maker, researcher. Just want to tear things apart. Love using only the terminal. On SIGNET.
 
-- MYBONK console: A full-node bitcoin-only hardware platform designed with performance, durability, environment, supply chain resilience and generic parts in mind.
-- MYBONK core: tailor-made full-node software stack for MYBONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MYBONK core is based on nix-bitcoin itself based on nixOS. 
+- MYBONK console: A full-node bitcoin-only hardware platform designed with price, performance, durability, environment, supply chain resilience and generic parts in mind.
+- MYBONK core: Tailor-made full-node software stack for MYBONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MYBONK core is based on nix-bitcoin itself based on nixOS. 
 
+## Overview
 
+This small ecosystem consists in the build of 2 elements, a detailed section explains how to set them up, follow these instructions carefully.
+- 1 orchestration machine: 
+  This machine is used to orchestrate your fleet of MYBONK consoles, it is essentially a Linux with a few additional software installed including the nix package manager.
+- 1 MYBONK console: 
+  This machine runs the MYBONK stack. It is setup once and its configuration can be updated remotly using the orchestration machine.
+  You could generate as many MYBONK consoles as you want as easily, it's the goal, but let's keep this simple here.
+  
+Take a deep breath.
 
-
-## Build of a small ecosystem (1 orchestration machine and 1 MYBONK console)
+## Steady, ready, go!
 
 IMPORTANT: 
 a. Anything you download on the internet it at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a sting of hexadecimal characters, it's no decoration).
