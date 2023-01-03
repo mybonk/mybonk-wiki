@@ -1,4 +1,4 @@
-# Things I wish I knew when I started
+# Things that really make a difference
 
 Ordered list of "basic" skills that need to be aquired to enjoy the ride.
 
