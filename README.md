@@ -54,22 +54,24 @@ A basic Linux image in VirtualBox on your laptop is perfect for this: The steps 
   - Example: https://www.linuxvmimages.com/images/debian-11/ the login details are typically on the same page as the download link. 
   - Do not use such images in a production environment. 
   - It is possible you get 'Loggin incorrect' when trying to ssh in the box. This is a common issue when using a certain language's OS with another language's keyboard (e.x. QWERTY vs AZERTY) there are various easy ways to work around this that are out of the scope of this document. The simplest and effective is to find a way to login with the keyboard you have anyways until you figure out which key is which then once logged-in you can ajust the settings in "Region & Language" > "Input Source" using the mouse in Gnome or KDE.
-## 1.3). Install the nix packages: There are 2 options:
+## 1.3) Install the nix packages: There are 2 options:
      #### OPTION 1: Build Nix from source, follow the instructions at https://nixos.org/nix/manual/#ch-installing-source
      #### OPTION 2: Install from nixos.org repository. 
-     ..*This is quicker and more convenient for test environments.
+    - This is quicker and more convenient for test environments.
       
       ssh into the machine:
-      Install nix:
+  
       ```
       $ sh <(curl -L https://nixos.org/nix/install) --daemon
       ```
       
       Note: If you prefer to build the system from source instead of copying binaries from the Nix cache, add the following line to /etc/nix.conf
 
+## 1.4) Prepare the image of nix-bitcoin
+     #### Secrets
+    Secrets are <bla bla bla bla> 
+## 1.5) Tune the configuration of nix-bitcoin
 
-
-      
 
 
 
@@ -89,46 +91,4 @@ A basic Linux image in VirtualBox on your laptop is perfect for this: The steps 
 
 
 
-# Software Stack
-
-Is refered to as a "softawre stack" the group of software bundled together. This eases deployment and allow people to use a baseline to contribute from.
-MYBONK stack is composed of:
-
-- **GitHub**  [details](<https://www.wikipedia.org/wiki/HitHub)>
-  - Description: Nix is a tool that takes a unique approach to package management and system configuration.
-  - Official: https://github.com
-- **Nix/NixOS**
-  - "Reproducible, declarative and reliable systems."
-  - Description: Nix is a tool that takes a unique approach to package management and system configuration.
-  - Official: https://nixos.org
-  - Code: https://github.com/NixOS/
-- **bitcoind**
-  - Description: This is bitcoin.
-  - Official: https://bitcoin.org/
-  - Code: https://github.com/bitcoin/bitcoin
-- **c-lightning**
-  - Description: This is Lightning Network (LN)
-  - Official:  [https://docs.lightning.engineering/lightning-network-tools/lnd](https://blockstream.com/lightning/)
-  - Code: https://github.com/elementsproject/lightning#getting-started
-- **nginx**
-  - Description: Reverse-proxy to route the requests to internal services
-  - Official: Nginx: https://nginx.org/
-  - Code: https://github.com/nginx
-- **Tor**
-  - Official: https://www.torproject.org/
-  - Code: https://www.torproject.org/download/tor/
-- **Hypercore protocol**
-  - Official: https://hypercore-protocol.org/
-  - Code: https://github.com/hypercore-protocol
-  - Learn more: https://www.ctrl.blog/entry/dht-privacy-discovery-hash.html
-- **Fedimint**
-  - Official: https://fedimint.org/ 
-  - Code: https://github.com/fedimint
-- **LNBits**
-  - Description: This allows for great bitcoin/LN advanced features through APIs and plugins architecture.
-  - Official: https://lnbits.com
-  - Code: https://github.com/lnbits/lnbits
-- **John Perry Barlow: The Declaration of Independence of Cyberspace**
-  - Document: [https://cryptoanarchy.wiki/people/john-perry-barlow](https://cryptoanarchy.wiki/people/john-perry-barlow)
-  - Audio, red by the author: [https://www.youtube.com/watch?v=3WS9DhSIWR0](https://www.youtube.com/watch?v=3WS9DhSIWR0)
 
