@@ -7,7 +7,7 @@
 
 # Forewords
 Welcome in our rabbit hole. 
-You arrived here for a reason. Read this document from the beginning to the end once, then read it again before you are ready to getting your hands dirty. We took a great attention editing this document with reference links to make it as straightforward and easy to follow as possible
+You arrived here for a reason. Read this document from the beginning to the end once, then read it again before you get your hands dirty. We took a great attention editing this document with reference links to make it as straightforward and easy to follow as possible
 You can contribute to the documentation if you have a GitHub account (if not why not create one): Just fork the project on your machine or simply correct little typos using GitHub's built-in edit built-in capabilities. 
 
 # Terminology
