@@ -9,7 +9,7 @@
 
 
 
-# Forewords
+# Foreword
 Welcome in our rabbit hole. 
 You arrived here for a reason. Read this document from the beginning to the end once, then read it again before you get your hands dirty. 
   
