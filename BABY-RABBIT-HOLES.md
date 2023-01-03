@@ -42,4 +42,3 @@ Ordered list of "basic" skills that need to be aquired to enjoy the ride.
 - [Introduction to the Mac command line](https://github.com/ChristopherA/intro-mac-command-line) (on GitHub)
 - [Learn Bitcoin from the command line](https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line#readme) (on GitHub)
 - [Mastering the Lightning Network](https://github.com/lnbook/lnbook#readme) (on GitHub)
-- 
