@@ -37,14 +37,14 @@ This small ecosystem consists in the build of two elements:
 - **nix vs. nixOS**: To start on the right foot it is very important to understand the concept that nix and nixOS two different things: nix is a [package manager](https://en.wikipedia.org/wiki/Package_manager) (something like npm, rpm and others) whereas nixOS is a [full-blow Linux distribution](https://en.wikipedia.org/wiki/NixOS) built on top of the nix package manager.
 - **Read and explore**: The pros write and read documentation, they are not on YouTube. 
 
-# Build the "orchestration" machine
+# 1) Build the "orchestration" machine
 This machine is used to manage your fleet of MYBONK consoles.
   
 It does not have to run nixOS (only nix package manager), you could use your day to day laptop but nix installs quite a few things deep in the system and I like to keep things separate. 
   
 A basic Linux image in VirtualBox on your laptop is perfect for this: The steps hereafter are based on Linux Debian, adjust accordingly if you decide to do differently:
-## 1) Download and install VirtualBox (https://www.virtualbox.org/)
-## 2) Build the OS: There are 2 options:
+## 1.1) Download and install VirtualBox (https://www.virtualbox.org/)
+## 1.2) Build the OS: There are 2 options:
   #### OPTION 1: Use a default installation image from Debian (https://www.debian.org/distrib/)
   - With this method you go through the standard steps of installing the Debian OS in VirtualBox just as if you were installing it on a new desktop.
   - Don't forget to take note of the the machine's IP address and login details you choose during the installation!
@@ -54,7 +54,7 @@ A basic Linux image in VirtualBox on your laptop is perfect for this: The steps 
   - Example: https://www.linuxvmimages.com/images/debian-11/ the login details are typically on the same page as the download link. 
   - Do not use such images in a production environment. 
   - It is possible you get 'Loggin incorrect' when trying to ssh in the box. This is a common issue when using a certain language's OS with another language's keyboard (e.x. QWERTY vs AZERTY) there are various easy ways to work around this that are out of the scope of this document. The simplest and effective is to find a way to login with the keyboard you have anyways until you figure out which key is which then once logged-in you can ajust the settings in "Region & Language" > "Input Source" using the mouse in Gnome or KDE.
-## 3). Install the nix packages: There are 2 options:
+## 1.3). Install the nix packages: There are 2 options:
      #### OPTION 1: Build Nix from source, follow the instructions at https://nixos.org/nix/manual/#ch-installing-source
      #### OPTION 2: Install from nixos.org repository. 
      ..*This is quicker and more convenient for test environments.
@@ -74,7 +74,7 @@ A basic Linux image in VirtualBox on your laptop is perfect for this: The steps 
 
 
 
-# Build of the MYBONK full nodes:
+# 2) Build of the MYBONK full nodes:
 
 <TBD>
 <TBD>
