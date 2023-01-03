@@ -1,11 +1,11 @@
 # Table of Contents
 
-  - [Forewords](#forewords)
+  - [Foreword](#foreword)
   - [Terminology](#terminology)
   - [Overview](#overview)
   - [Advice](#advice)
-  - [1) Build the orchestration machine](#orchestration-machine)
-  - [2) Build the MYBONK full node](#orchestration-machine)
+  - [1) Build the orchestration machine](#build-orchestration-machine)
+  - [2) Build the MYBONK full node](#build-mybonk-full-node)
 
 
 
@@ -41,6 +41,12 @@ This small ecosystem consists of only two elements that we are going to build to
 - **nix vs. nixOS**: To start on the right foot it is very important to understand the concept that nix and nixOS two different things: nix is a [package manager](https://en.wikipedia.org/wiki/Package_manager) (something like npm, rpm and others) whereas nixOS is a [full-blow Linux distribution](https://en.wikipedia.org/wiki/NixOS) built on top of the nix package manager.
 - **Read and explore**: The pros write and read documentation, they are not on YouTube. 
 
+
+
+
+
+
+<a name="build-orchestration-machine"></a>
 # 1) Build the orchestration machine
 This machine is used to manage your fleet of MYBONK consoles.
   
@@ -79,7 +85,7 @@ A basic Linux image in VirtualBox on your laptop is perfect for this: The steps 
 
 
 
-
+<a name="build-mybonk-full-node"></a>
 # 2) Build the MYBONK full node
 
 <TBD>
