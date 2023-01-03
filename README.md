@@ -54,12 +54,13 @@ It does not have to run nixOS (only nix package manager), you could use your day
   
 A basic Linux image in VirtualBox on your laptop is perfect for this: The steps hereafter are based on Linux Debian, adjust accordingly if you decide to do differently:
 ## 1.1) Download and install VirtualBox (https://www.virtualbox.org/)
-## 1.2) Build the OS: There are 2 options:
-  #### OPTION 1: Use a default installation image from Debian (https://www.debian.org/distrib/)
+## 1.2) Build the OS
+  There are 2 ways to do this:
+  #### Option 1: Use a default installation image from Debian (https://www.debian.org/distrib/)
   - With this method you go through the standard steps of installing the Debian OS in VirtualBox just as if you were installing it on a new desktop.
   - Don't forget to take note of the the machine's IP address and login details you choose during the installation!
   - Detailed instructions here: https://techcolleague.com/how-to-install-debian-on-virtualbox/
-  #### OPTION 2: Use a ready-made Virtual Box VDI (Virtual Disk Image). 
+  #### Option 2: Use a ready-made Virtual Box VDI (Virtual Disk Image). 
   - More convenient than OPTION 1 as we use a pre-installed Debian System. 
   - Example: https://www.linuxvmimages.com/images/debian-11/ the login details are typically on the same page as the download link. 
   - Do not use such images in a production environment. 
