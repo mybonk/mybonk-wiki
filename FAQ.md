@@ -4,7 +4,7 @@
 Table of Contents
 ---
   - [Installation](#Installation)
-    - [Can I install MYBONK stack on another hardware than console than MYBONK console?](#can-i-install-mybonk-stack-on-another-hardware-than-console-than-mybonk-console)
+    - [Can I install MYBONK stack on another hardware than MYBONK console?](#can-i-install-mybonk-stack-on-another-hardware-than-mybonk-console)
     - [How to verify a file or image downloaded from the Internet?](#howto-verify-a-file-or-image-downloaded-from-the-internet)
 
 
@@ -13,7 +13,7 @@ Table of Contents
 
 
 ## Installation
-### Can I install MYBONK stack on another hardware than console than MYBONK console?
+### Can I install MYBONK stack on another hardware than MYBONK console?
 100%. 
 Although MYBONK console has been designed specifically as a bitcoin-only full node with price, performance, durability, portability energy-efficience, supply chain resilience and generic parts in mind you can run the software stack on whatever hardware you deem suitable for purpose. 
 However we focus our efforts at maintaining the code base with MYBONK console as hardware reference (it would be impossible to support all the possible hardware forms and shapes available on the market at any given time.
