@@ -1,11 +1,12 @@
 # GitHub
 # Command line stuff
-	- ** ls, cd, mkdir, mv, rm, ln, which,  …
-	- ** hostname, whoami, passwd, chmod, chgrp, …
-	- ** history 
-	- ** alias
-	- ** grep
-	- ** sudo
+	..* bash shell
+	..* ls, cd, mkdir, mv, rm, ln, which,  …
+	..* hostname, whoami, passwd, chmod, chgrp, …
+	..* history 
+	..* alias
+	..* grep
+	..* sudo
 # tmux
 		- ** 1/3 tmux for beginners part: https://dev.to/iggredible/tmux-tutorial-for-beginners-5c52 
 		- ** 2/3 tmux for beginners part: https://dev.to/iggredible/useful-tmux-configuration-examples-k3g
