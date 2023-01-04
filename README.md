@@ -17,7 +17,7 @@ We [collaboratively] take great pride and care editing this documentation so it 
   
 You too can contribute to this documentation on GitHub.
   
-Enjoy the ride, no stress, Check out the [FAQ](FAQ.md) and the [things that really make a difference](BABY-RABBIT-HOLES.md) (the "baby rabbit holes").
+Enjoy the ride, no stress, Check out the [FAQ](FAQ.md) and the [things that really make a difference](BABY-RABBIT-HOLES.md) (the "baby rabbit holes" :hole: :rabbit:).
 
 # Terminology
 - **MYBONK core**: Tailor-made full-node software stack for MYBONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MYBONK core is based on nix-bitcoin itself based on nixOS. [Software stack](MYBONK-STACK.md).
