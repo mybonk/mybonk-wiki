@@ -1,11 +1,18 @@
+---
 # Table of Contents
-
+---
   - [Foreword](#foreword)
   - [Terminology](#terminology)
   - [Overview](#overview)
   - [Advice](#advice)
   - [1. Build the orchestration machine](#build-orchestration-machine)
+    -  [1.1 Build the orchestration machine](#build-orchestration-machine)
+    -  [1.2 Build the orchestration machine](#build-orchestration-machine)
+      - [Option 1]
+      - [Option 2]
   - [2. Build the MYBONK full node](#build-mybonk-full-node)
+    -  [2.2 Build the orchestration machine](#build-orchestration-machine) 
+    -  [2.2 Build the orchestration machine](#build-orchestration-machine) 
 
 
 
@@ -44,24 +51,30 @@ This small ecosystem consists of only two elements that we are going to build to
 <a name="build-orchestration-machine"></a>
 ===
 # 1. Build the orchestration machine
-This machine is used to manage your fleet of MYBONK consoles.
+This machine is used to orchestrate your fleet of MYBONK consoles.
   
-It does not have to run nixOS (only nix package manager), you could use your day to day laptop but nix installs quite a few things deep in the system and I like to keep things separate. 
+It does not have to run nixOS (only nix package manager), you could use your day to day laptop but Nix installs quite a few things deep in the system and I like to keep things separate. 
   
-A basic Linux image in VirtualBox on your laptop is perfect for this: The steps hereafter are based on Linux Debian, adjust accordingly if you decide to do differently:
-### 1.1. Download and install VirtualBox (https://www.virtualbox.org/)
+The steps hereafter are based on a Linux Debian installed in a VirtualBox virtual machine running on my Mac laptop.
+### 1.1. Download and install VirtualBox
+Follow the instructions on their website
+
+[https://www.virtualbox.org](https://www.virtualbox.org/)
+
 ### 1.2. Build the OS
+  Now that VirtualBox is installed you need to have an OS running on it (Linux Debian in our case).
+  
   There are 2 ways to do this:
   #### Option 1: Use a default installation image from Debian (https://www.debian.org/distrib/)
-  - With this method you go through the standard steps of installing the Debian OS in VirtualBox just as if you were installing it on a new desktop.
+  - With this method you go through the standard steps of installing the Debian OS in the VirtualBox just as if you were installing it on a new desktop.
   - Don't forget to take note of the the machine's IP address and login details you choose during the installation!
   - Detailed instructions here: https://techcolleague.com/how-to-install-debian-on-virtualbox/
-  #### Option 2: Use a ready-made Virtual Box VDI (Virtual Disk Image). 
+  #### Option 2: Use a ready-made Virtual Box VDI (Virtual Disk Image)
   - More convenient than OPTION 1 as we use a pre-installed Debian System. 
   - Example: https://www.linuxvmimages.com/images/debian-11/ the login details are typically on the same page as the download link. 
   - Do not use such images in a production environment. 
   - It is possible you get 'Loggin incorrect' when trying to ssh in the box. This is a common issue when using a certain language's OS with another language's keyboard (e.x. QWERTY vs AZERTY) there are various easy ways to work around this that are out of the scope of this document. The simplest and effective is to find a way to login with the keyboard you have anyways until you figure out which key is which then once logged-in you can ajust the settings in "Region & Language" > "Input Source" using the mouse in Gnome or KDE.
-### 1.3. Install the nix packages
+### 1.3. Install the Nix packages
   There are 2 ways to do this:
   #### Option 1: Build Nix from the source
   - Follow the instructions at https://nixos.org/nix/manual/#ch-installing-source
