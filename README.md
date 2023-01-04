@@ -42,7 +42,7 @@ This small ecosystem consists of only two elements that we are going to build to
 - **Read and explore**: The pros write and read documentation, they are not on YouTube. 
 
 <a name="build-orchestration-machine"></a>
----
+===
 # 1. Build the orchestration machine
 This machine is used to manage your fleet of MYBONK consoles.
   
