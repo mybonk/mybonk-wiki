@@ -1,11 +1,9 @@
 # FAQ - Frequently Asked Questions
 
-  - [Installation](#Installation)
-    - [Can I install MYBONK stack on another hardware than MYBONK console?](#can-i-install-mybonk-stack-on-another-hardware-than-mybonk-console)
-    - [How to verify a file or image downloaded from the Internet?](#howto-verify-a-file-or-image-downloaded-from-the-internet)
-    - [Tell us more about the BONK token](#tell-us-more-about-the-bonk-token)
-    - [Tell us more about Raspiblitz, Nodle, Ubrell and others](#tell-us-more-about-raspiblitz-nodle-brell-and-others)
-
+  - [Can I install MYBONK stack on another hardware than MYBONK console?](#can-i-install-mybonk-stack-on-another-hardware-than-mybonk-console)
+  - [How to verify a file or image downloaded from the Internet?](#howto-verify-a-file-or-image-downloaded-from-the-internet)
+  - [Tell us more about the BONK token](#tell-us-more-about-the-bonk-token)
+  - [Tell us more about Raspiblitz, Nodle, Ubrell and others](#tell-us-more-about-raspiblitz-nodle-brell-and-others)
 
 ---
 
