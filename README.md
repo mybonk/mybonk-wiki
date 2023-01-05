@@ -46,7 +46,7 @@ This small ecosystem consists of only two elements that we are going to build to
 # Advice
 - **Don't trust, verify**: Anything you download on the internet is at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a sting of hexadecimal characters, it's no decoration).
 - **nix vs. nixOS**: To start on the right foot it is very important to understand the concept that nix and nixOS two different things: nix is a [package manager](https://en.wikipedia.org/wiki/Package_manager) (something like npm, rpm and others) whereas nixOS is a [full-blow Linux distribution](https://en.wikipedia.org/wiki/NixOS) built on top of the nix package manager.
-- **Read and explore**: The pros write and read documentation, they are not on YouTube. 
+- **Read and explore**: The pros write and read documentation, not so much on YouTube. 
 
 <a name="build-orchestration-machine"></a>
 ===
