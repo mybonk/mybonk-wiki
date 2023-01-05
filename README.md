@@ -87,22 +87,25 @@ Follow the instructions on their website
       $ sh < (curl -L https://nixos.org/nix/install) --daemon
       ```
       
-      Note: If you prefer to build the system from source instead of copying binaries from the Nix cache, add the following line to /etc/nix.conf
+  Note: If you prefer to build the system from source instead of copying binaries from the Nix cache, add the following line to /etc/nix.conf
 
 ### 1.4. Prepare the image of nix-bitcoin
-     #### Secrets
-    Secrets are <bla bla bla bla> 
+
+
 ### 1.5. Tune the configuration of nix-bitcoin
-
-
-
-
+  Being tested & documented.
+  
+  
 <a name="build-mybonk-full-node"></a>
-# 2. Build the MYBONK full node
+# 2. Build MYBONK
+  ### 2.1. Overlay the configuration of nix-bitcoin
+  Being tested & documented.
 
+  ### 2.2. Overlay the configuration of nix-bitcoin
+  Being tested & documented.
 
-  ### 2.2. Tune the configuration of nix-bitcoin
-<TBD>
-
-
+  
+  
+  
+Sill a long way to go. ETA 10Jan2023
 
