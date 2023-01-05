@@ -1,8 +1,5 @@
 # FAQ - Frequently Asked Questions
 
----
-Table of Contents
----
   - [Installation](#Installation)
     - [Can I install MYBONK stack on another hardware than MYBONK console?](#can-i-install-mybonk-stack-on-another-hardware-than-mybonk-console)
     - [How to verify a file or image downloaded from the Internet?](#howto-verify-a-file-or-image-downloaded-from-the-internet)
