@@ -13,7 +13,7 @@
         <img src="https://img.shields.io/github/v/release/mybonk/mybonk-core" alt="GitHub tag (latest SemVer)">
     </a>
     <a href="https://github.com/mybonk/mybonk-core/commits/master" target="_blank">
-        <img src="https://img.shields.io/github/commit-activity/y/mybonk" alt="GitHub commit activity">
+        <img src="https://img.shields.io/github/commit-activity/y/mybonk/mybonk-core" alt="GitHub commit activity">
     </a>
     <a href="https://github.com/mybonk/mybonk-core/graphs/contributors" target="_blank">
         <img src="https://img.shields.io/github/contributors-anon/mybonk/mybonk-core" alt="GitHub contributors">
