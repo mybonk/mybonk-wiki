@@ -2,6 +2,8 @@
 
 Ordered list of "basic" skills that need to be aquired to enjoy the ride.
 
+(Also a cool cheat sheet page maintained here [https://github.com/ruanbekker/cheatsheets#readme](https://github.com/ruanbekker/cheatsheets#readme))
+
 ## Command line stuff
 - bash shell
 - ls, cd, mkdir, mv, rm, ln, which,  …
