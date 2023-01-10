@@ -39,6 +39,4 @@ MYBONK stack is composed of:
   - Description: This allows for great bitcoin/LN advanced features through APIs and plugins architecture.
   - Official: https://lnbits.com
   - Code: https://github.com/lnbits/lnbits
-- **John Perry Barlow: The Declaration of Independence of Cyberspace**
-  - Document: [https://cryptoanarchy.wiki/people/john-perry-barlow](https://cryptoanarchy.wiki/people/john-perry-barlow)
-  - Audio, red by the author: [https://www.youtube.com/watch?v=3WS9DhSIWR0](https://www.youtube.com/watch?v=3WS9DhSIWR0)
+
