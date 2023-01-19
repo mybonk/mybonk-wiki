@@ -13,14 +13,22 @@ MYBONK stack is composed of:
   - Description: Nix is a tool that takes a unique approach to package management and system configuration.
   - Official: https://nixos.org
   - Code: https://github.com/NixOS/
-- **bitcoind**
-  - Description: This is bitcoin.
-  - Official: https://bitcoin.org/
-  - Code: https://github.com/bitcoin/bitcoin
-- **c-lightning**
-  - Description: This is Lightning Network (LN)
-  - Official:  [https://docs.lightning.engineering/lightning-network-tools/lnd](https://blockstream.com/lightning/)
-  - Code: https://github.com/elementsproject/lightning#getting-started
+- **nix-bitcoin**
+  - Description: nix-bitcoin is a collection of Nix packages and NixOS modules for easily installing
+      <strong>full-featured Bitcoin nodes</strong> with an emphasis on <strong>security</strong>.
+
+
+
+    - **bitcoind**
+      - Description: This is bitcoin.
+      - Official: https://bitcoin.org/
+      - Code: https://github.com/bitcoin/bitcoin
+    - **c-lightning**
+      - Description: This is Lightning Network (LN)
+      - Official:  [https://docs.lightning.engineering/lightning-network-tools/lnd](https://blockstream.com/lightning/)
+      - Code: https://github.com/elementsproject/lightning#getting-started
+
+
 - **nginx**
   - Description: Reverse-proxy to route the requests to internal services
   - Official: Nginx: https://nginx.org/
@@ -39,6 +47,4 @@ MYBONK stack is composed of:
   - Description: This allows for great bitcoin/LN advanced features through APIs and plugins architecture.
   - Official: https://lnbits.com
   - Code: https://github.com/lnbits/lnbits
-- **John Perry Barlow: The Declaration of Independence of Cyberspace**
-  - Document: [https://cryptoanarchy.wiki/people/john-perry-barlow](https://cryptoanarchy.wiki/people/john-perry-barlow)
-  - Audio, red by the author: [https://www.youtube.com/watch?v=3WS9DhSIWR0](https://www.youtube.com/watch?v=3WS9DhSIWR0)
+

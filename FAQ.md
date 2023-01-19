@@ -52,12 +52,12 @@ gpg --verify [SIGNATURE-FILE] [THE-FILE-YOU-DOWNLOADED]
 We hear there are new tokens named BONK or MYBONK on the "market". It's not us. We don't do trading nor scaming nor ICOs. Leave us alone. mybonk-core is free and open source (MIT).
 
 ## Tell us more about Raspiblitz, Nodle, Ubrell, Step9 and all the others
-Bitcoin is for everyone, but everyone is goes at a different pace and is in a different phase in his bitcoin journey, there is no "one size fit all".
+Bitcoin is for everyone, but everyone goes at a different pace and is in a different phase in one's bitcoin adoption journey, there is no "one size fit all".
 If unsure get advice on what "rabbit hole" would be best for you from other bitcoiners who know you and you trust.
 
 
-Not ready to take the plunge? Why start by having a look at the [things that really make a difference](BABY-RABBIT-HOLES.md) so you will be ready for when the time come  :hole: :rabbit2:
+Not ready to take the plunge? Why not start by having a look at the [things that really make a difference](BABY-RABBIT-HOLES.md) so you will be ready for when the time comes  :hole: :rabbit2:
 
 
 We all stand on the shoulders of giants and learn from one another. 
-Enjoy the ride, no stress, Check out the [FAQ](FAQ.md) and
+Enjoy the ride, no stress.
