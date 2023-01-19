@@ -22,18 +22,18 @@
     - [1.1 The hardware](#11-the-hardware)
     - [1.2 Download and install NixOS](#12-download-and-install-nixos)
     - [1.3 Download and install MY₿ONK](#13-download-and-install-myonk)
-      - [Option 1. The way it is done "manually""](#option-1-the-way-it-is-done-manually)
-      - [Option 2. The way it is automated using a MY₿ONK ochestration machine](#option-2-the-way-it-is-automated-using-a-myonk-ochestration-machine)
+      - [**Option 1.** The way it is done "manually""](#option-1-the-way-it-is-done-manually)
+      - [**Option 2.** The way it is automated using a MY₿ONK ochestration machine](#option-2-the-way-it-is-automated-using-a-myonk-ochestration-machine)
 - [](#)
 - [2. Build your orchestration machine](#2-build-your-orchestration-machine)
     - [2.1. Download and install VirtualBox](#21-download-and-install-virtualbox)
     - [2.2. Build the OS](#22-build-the-os)
-      - [Option 1. Using the installation image from Debian](#option-1-using-the-installation-image-from-debian)
-      - [Option 2. Using a ready-made Virtual Box VDI (Virtual Disk Image)](#option-2-using-a-ready-made-virtual-box-vdi-virtual-disk-image)
+      - [**Option 1.** Using the installation image from Debian](#option-1-using-the-installation-image-from-debian)
+      - [**Option 2.** Using a ready-made Virtual Box VDI (Virtual Disk Image)](#option-2-using-a-ready-made-virtual-box-vdi-virtual-disk-image)
     - [2.3. ssh and auto login](#23-ssh-and-auto-login)
     - [2.4. Install Nix](#24-install-nix)
-      - [Option 1. Using the ready-made binary distribution from nix cache](#option-1-using-the-ready-made-binary-distribution-from-nix-cache)
-      - [Option 2. Building Nix from the source](#option-2-building-nix-from-the-source)
+      - [**Option 1.** Using the ready-made binary distribution from nix cache](#option-1-using-the-ready-made-binary-distribution-from-nix-cache)
+      - [**Option 2.** Building Nix from the source](#option-2-building-nix-from-the-source)
     - [2.4. Build MY₿ONK stack](#24-build-myonk-stack)
     - [2.5. Deploy MY₿ONK stack to the MY₿ONK consoles](#25-deploy-myonk-stack-to-the-myonk-consoles)
     - [2.6. Backup and restore](#26-backup-and-restore)
@@ -82,6 +82,9 @@ This small ecosystem consists of only two elements that we are going to build to
 - **Don't trust, verify**: Anything you download on the internet is at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a sting of hexadecimal characters).
 - **Nix vs. NixOS**: It is very important to understand the concept that nix and nixOS are two different things: Nix is a [package manager](https://en.wikipedia.org/wiki/Package_manager) (something like npm, rpm and others) whereas NixOS is a [full-blow Linux distribution](https://en.wikipedia.org/wiki/NixOS) built on top of the nix package manager. For an overview see [how Nix and NixOS work](https://nixos.org/guides/how-nix-works.html). For a general introduction to the Nix and NixOS ecosystem, see [nix.dev](https://nix.dev/).
 - **Read and explore**: The pros write and read documentation, they are not so much on YouTube.
+
+---
+---
 
 <a name="build-MY₿ONK-full-node"></a>
 # 0. ssh and auto login
@@ -192,35 +195,45 @@ Now you could do the same with the same certificate to enable ssh auto login for
 
 
 ---
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-*The following was not used, need to add a couple of words about it*
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+What you could do now is create and setup an ssh config file to create shortcuts for servers I access frequently. Another time saver mechanism used over and over explained [here](https://www.cyberciti.biz/faq/create-ssh-config-file-on-linux-unix/).
+
+
 ```
 nano ~/.ssh/config
 ```
+Copy/pas the following:
 
-Locate the FIXME ```Hostname``` and set it to your MY₿ONK console IP address.
-
-Locate the FIXME ```IdentityFile``` and set it to your id_rsa generated earlier.
 ```
 Host mybonk-node
-    # FIXME
     Hostname IP_ADDRESS_OR_HOST_NAME
-    User root
+    User user
     PubkeyAuthentication yes
-    # FIXME
     IdentityFile ~/.ssh/id_rsa
     AddKeysToAgent yes
 ```
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Each parameter is self-explainatory. You need to replace ```IP_ADDRESS_OR_HOST_NAME``` by the IP address of the target machine, ```ùser``` is the remote user; you may need to check ```IdentityFile``` points to your id_rsa generated earlier.
+
+
+Now you can ssh into the machine with an easy to remember sythax and all the info needed to make this connection happen will be automatically picked from the ssh config file.
+
+```
+$ ssh mybonk-node
+
+```
+
+You can create an many ```Host``` entries as you like in the ssh config file.
+
+---
+---
 <a name="build-mybonk-full-node"></a>
 # 1. Build your MY₿ONK bitcoin full node
   
   There are many ways to do this, the one detailed here focuses on people with little (but still *some*) technical knowledge.
   
   These steps can be automated but the goal for now is to *understand* how it works.
-  
   
 ### 1.1 The hardware
 
@@ -478,7 +491,7 @@ In the next section we are going to see how we can configure one (or multiple) M
 
 
 ### 1.3 Download and install MY₿ONK 
-#### Option 1. The way it is done "manually""
+#### **Option 1.** The way it is done "manually""
 
 Exactly the same way we installed, configured and enabled the service openssh modifying only the nixos configuration file ```configuration.nix``` in the previous section, we can enable all sorts of services and parameters. 
 
@@ -538,10 +551,10 @@ Now edit the main configuration file, ```configuration.nix``` to use ```node.nix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-#### Option 2. The way it is automated using a MY₿ONK ochestration machine
-  
+#### **Option 2.** The way it is automated using a MY₿ONK ochestration machine
+  Ref. section [Build your orchestration machine](#build-orchestration).
 
-
+---
 <a name="build-orchestration"></a>
 ===
 # 2. Build your orchestration machine
@@ -557,12 +570,12 @@ Follow the instructions on their website https://www.virtualbox.org
   Now that VirtualBox is installed you can have an OS run on it (Linux Debian in our case).
   
   There are 2 ways to do this:
-  #### Option 1. Using the installation image from Debian
+  #### **Option 1.** Using the installation image from Debian
   - From https://www.debian.org/distrib/  
   - With this method you go through the standard steps of installing the Debian OS just as if you were installing it on a new desktop but doing it in a VirtualBox 
   - Don't forget to take note of the the machine's IP address and login details you choose during the installation!
   - Detailed instructions: https://techcolleague.com/how-to-install-debian-on-virtualbox/
-  #### Option 2. Using a ready-made Virtual Box VDI (Virtual Disk Image)
+  #### **Option 2.** Using a ready-made Virtual Box VDI (Virtual Disk Image)
   - From https://www.linuxvmimages.com/images/debian-11/ 
   - Quicker and more convenient than Option 1 as this is a pre-installed Debian System. 
   - The login details are typically on the download page (in our case ``debian``/```debian``` and can become ```root``` by using ```$ sudo su -``` ). 
@@ -609,7 +622,7 @@ The value of ```PermitRootLogin``` can remain ```prohibit-password```.
 ### 2.4. Install Nix
   
   
-  #### Option 1. Using the ready-made binary distribution from nix cache
+  #### **Option 1.** Using the ready-made binary distribution from nix cache
   - Quicker and more convenient than Option 2 as it has been pre-built for you.
 
     ssh into the orchestration machine and run:
@@ -647,7 +660,7 @@ $ man nix
 ```
   
 
-  #### Option 2. Building Nix from the source
+  #### **Option 2.** Building Nix from the source
   - Regarded as the "sovereign" way to do it but takes more time.
   - Follow the instructions on nix page https://nixos.org/nix/manual/#ch-installing-source
   
