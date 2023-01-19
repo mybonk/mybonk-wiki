@@ -6,7 +6,7 @@
 </p>
 <br/>
 
-!!! this is work in progress, will get this fixed with commit of first release.
+!!! this is work in progress, will get this fixed live
 
 
 ---
@@ -36,6 +36,9 @@
       - [Option 2. Building Nix from the source](#option-2-building-nix-from-the-source)
     - [2.4. Build MY₿ONK stack](#24-build-myonk-stack)
     - [2.5. Deploy MY₿ONK stack to the MY₿ONK consoles](#25-deploy-myonk-stack-to-the-myonk-consoles)
+    - [2.6. Backup and restore](#26-backup-and-restore)
+    - [2.7. Join a Federation](#27-join-a-federation)
+
 
 # Foreword
 
@@ -857,3 +860,7 @@ echo "armv7l-linux" > krops/system
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+
+### 2.6. Backup and restore
+
+### 2.7. Join a Federation
