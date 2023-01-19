@@ -13,14 +13,22 @@ MYBONK stack is composed of:
   - Description: Nix is a tool that takes a unique approach to package management and system configuration.
   - Official: https://nixos.org
   - Code: https://github.com/NixOS/
-- **bitcoind**
-  - Description: This is bitcoin.
-  - Official: https://bitcoin.org/
-  - Code: https://github.com/bitcoin/bitcoin
-- **c-lightning**
-  - Description: This is Lightning Network (LN)
-  - Official:  [https://docs.lightning.engineering/lightning-network-tools/lnd](https://blockstream.com/lightning/)
-  - Code: https://github.com/elementsproject/lightning#getting-started
+- **nix-bitcoin**
+  - Description: nix-bitcoin is a collection of Nix packages and NixOS modules for easily installing
+      <strong>full-featured Bitcoin nodes</strong> with an emphasis on <strong>security</strong>.
+
+
+
+    - **bitcoind**
+      - Description: This is bitcoin.
+      - Official: https://bitcoin.org/
+      - Code: https://github.com/bitcoin/bitcoin
+    - **c-lightning**
+      - Description: This is Lightning Network (LN)
+      - Official:  [https://docs.lightning.engineering/lightning-network-tools/lnd](https://blockstream.com/lightning/)
+      - Code: https://github.com/elementsproject/lightning#getting-started
+
+
 - **nginx**
   - Description: Reverse-proxy to route the requests to internal services
   - Official: Nginx: https://nginx.org/
