@@ -28,3 +28,5 @@
 
 
 
+👉 Instructions still being ✍️ [HERE](/INSTALLATION.md) 🫵 have a look.
+
