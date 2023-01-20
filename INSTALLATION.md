@@ -260,7 +260,7 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
 
   Let your MY₿ONK console boot from the USB stick:
 
-  ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_010.jpg)
+  ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_010.png)
 
   After the welcome screen the first thing you are asked to configure is the Location, this is used to make sure the system is configured with the correct language and that the corresponding numbers and date formats are used, just choose the right one for you.
 
@@ -295,9 +295,13 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
 
 
   Let's configure ```/dev/sda```:
+  
+  
   ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_070.png)
 
   Let's configure ```/dev/sdb```:
+  
+  
   ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_080.png)
 
 
@@ -864,11 +868,10 @@ There are is probably a dozen of options available to deploy a nixOS configurati
 
 We are going to use krops as it is already used and suggested by nix-bitcoin. 
 
-Read [this very well written article](https://tech.ingolf-wagner.de/nixos/krops/) to get an idea of how krops before you get started.
+Read [this very well written article](https://tech.ingolf-wagner.de/nixos/krops/) to get an idea of how krops works before you get started.
 
 
-Let's go. 
-First, krops needs to ssh MY₿ONK console, specifically automatic login using public key on OpenSSH. We have done this earlier let's move on;
+First, krops needs to ssh MY₿ONK console, specifically automatic login using public key on OpenSSH. We have done this earlier let's move on ...
 
 Make sure you are in the deployment directory (```mybonk```), edit ```krops/deploy.nix```` which is the main deployment configuration file:
 
@@ -892,6 +895,8 @@ TBD
 
 The following command enables evaluating your node config on a machine that has a different system platform than your node.
 Examples: Deploying from macOS or deploying from a x86 desktop PC to a Raspberry Pi.
+
+"è'!§fhhhhhhhhhhrfpç!uueeeeeeeuuuuuuuuureeeeer!!!èèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèd
 ```
 echo "x86_64-linux" > krops/system
 echo "aarch64-linux" > krops/system
