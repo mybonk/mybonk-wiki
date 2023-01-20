@@ -295,9 +295,13 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
 
 
   Let's configure ```/dev/sda```:
+  
+  
   ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_070.png)
 
   Let's configure ```/dev/sdb```:
+  
+  
   ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_080.png)
 
 
