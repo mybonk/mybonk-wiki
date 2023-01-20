@@ -6,7 +6,7 @@
 </p>
 <br/>
 
-!!! this is work in progress, will get this fixed live
+!!!!! this is work in progress, will be actualized during next hackaton !!!!!!
 
 
 ---
@@ -18,14 +18,14 @@
 - [Overview](#overview)
 - [Advice](#advice)
 - [0. ssh and auto login](#0-ssh-and-auto-login)
-- [1. Build your MY₿ONK bitcoin full node](#1-build-your-myonk-bitcoin-full-node)
+- [1. Build your MYBONK bitcoin full node](#1-build-your-mybonk-bitcoin-full-node)
     - [1.1 The hardware](#11-the-hardware)
     - [1.2 Download and install NixOS](#12-download-and-install-nixos)
-    - [1.3 Download and install MY₿ONK](#13-download-and-install-myonk)
-      - [**Option 1.** The way it is done "manually""](#option-1-the-way-it-is-done-manually)
-      - [**Option 2.** The way it is automated using a MY₿ONK ochestration machine](#option-2-the-way-it-is-automated-using-a-myonk-ochestration-machine)
-- [](#)
-- [2. Build your orchestration machine](#2-build-your-orchestration-machine)
+    - [1.3 Download and install MYBONK](#13-download-and-install-mybonk)
+      - [**Option 1.** The way it is done "manually""](#13-option-1)
+      - [**Option 2.** The way it is automated using a MYBONK ochestration machine](#13-option-2)
+  
+- [2. Build your MYBONK orchestration machine](#2-build-your-mybonk-ochestration-machine)
     - [2.1. Download and install VirtualBox](#21-download-and-install-virtualbox)
     - [2.2. Build the OS](#22-build-the-os)
       - [**Option 1.** Using the installation image from Debian](#option-1-using-the-installation-image-from-debian)
@@ -34,10 +34,11 @@
     - [2.4. Install Nix](#24-install-nix)
       - [**Option 1.** Using the ready-made binary distribution from nix cache](#option-1-using-the-ready-made-binary-distribution-from-nix-cache)
       - [**Option 2.** Building Nix from the source](#option-2-building-nix-from-the-source)
-    - [2.4. Build MY₿ONK stack](#24-build-myonk-stack)
-    - [2.5. Deploy MY₿ONK stack to the MY₿ONK consoles](#25-deploy-myonk-stack-to-the-myonk-consoles)
-    - [2.6. Backup and restore](#26-backup-and-restore)
-    - [2.7. Join a Federation](#27-join-a-federation)
+    - [2.4. Build MYBONK stack](#24-build-mybonk-stack)
+    - [2.5. Deploy MYBONK stack to the MYBONK consoles](#25-deploy-mybonk-stack-to-the-mybonk-consoles)
+- [3. Basic operations](#3-basic-operations)
+    - [3.1. Backup and restore](#31-backup-and-restore)
+    - [3.2. Join a Federation](#32-join-a-federation)
 
 
 # Foreword
@@ -80,13 +81,15 @@ This small ecosystem consists of only two elements that we are going to build to
   
 # Advice
 - **Don't trust, verify**: Anything you download on the internet is at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a sting of hexadecimal characters).
-- **Nix vs. NixOS**: It is very important to understand the concept that nix and nixOS are two different things: Nix is a [package manager](https://en.wikipedia.org/wiki/Package_manager) (something like npm, rpm and others) whereas NixOS is a [full-blow Linux distribution](https://en.wikipedia.org/wiki/NixOS) built on top of the nix package manager. For an overview see [how Nix and NixOS work](https://nixos.org/guides/how-nix-works.html). For a general introduction to the Nix and NixOS ecosystem, see [nix.dev](https://nix.dev/).
+- **Nix vs. NixOS**: It is very important to understand the concept that nix and nixOS are two different things: 
+  - Nix is a [package manager](https://en.wikipedia.org/wiki/Package_manager) (something like npm, rpm and others)
+  - NixOS is a [full-blow Linux distribution](https://en.wikipedia.org/wiki/NixOS) built on top of the nix package manager. For an overview see [how Nix and NixOS work](https://nixos.org/guides/how-nix-works.html). 
+  - For a general introduction to the Nix and NixOS ecosystem, see [nix.dev](https://nix.dev/).
 - **Read and explore**: The pros write and read documentation, they are not so much on YouTube.
 
 ---
 ---
 
-<a name="build-MY₿ONK-full-node"></a>
 # 0. ssh and auto login
 
 This is so important that we felt it diserved its own section.
@@ -228,8 +231,8 @@ You can create an many ```Host``` entries as you like in the ssh config file.
 
 ---
 ---
-<a name="build-mybonk-full-node"></a>
-# 1. Build your MY₿ONK bitcoin full node
+
+# 1. Build your MYBONK bitcoin full node
   
   There are many ways to do this, the one detailed here focuses on people with little (but still *some*) technical knowledge.
   
@@ -255,6 +258,9 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
   Flash the iso image on a USB stick using [balenaEtcher](https://www.balena.io/etcher/).
   
   Plug your MY₿ONK console to the power source and to your network using an RJ45 cable.
+
+  ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_005.png)
+
 
   Plug a keyboard and a screen on your MY₿ONK console (they are used only during this first guided installation procedure, after this all interactions with the MY₿ONK console will be done "headless" via the MY₿ONK orchestration machine as explained in section [Control your MY₿ONK fleet from orchestration machine](#)).
 
@@ -462,7 +468,7 @@ Alternatively you can get it from the command line using the command ```ifconfig
   ````
 $ echo "192.168.0.64 mybonk_console" | sudo tee -a /etc/hosts
   ````
-  OK now you're ready, ssh into your MY₿ONK console. From your laptop:
+  OK now you're ready, ssh into your MY₿ONK console from your laptop:
 
 ````
 $ ssh mybonk@mybonk_console
@@ -493,8 +499,8 @@ You have learned:
  
 In the next section we are going to see how we can configure one (or multiple) MY₿ONK console(s) remotly using a MY₿ONK orchestration machine.
 
-
-### 1.3 Download and install MY₿ONK 
+13-download-and-install-myonk
+### 1.3 Download and install MYBONK 
 #### **Option 1.** The way it is done "manually""
 
 Exactly the same way we installed, configured and enabled the service openssh modifying only the nixos configuration file ```configuration.nix``` in the previous section, we can enable all sorts of services and parameters. 
@@ -555,21 +561,20 @@ Now edit the main configuration file, ```configuration.nix``` to use ```node.nix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+<a name="13-option-2"></a>
 #### **Option 2.** The way it is automated using a MY₿ONK ochestration machine
   Ref. section [Build your orchestration machine](#build-orchestration).
 
 ---
-<a name="build-orchestration"></a>
-===
-# 2. Build your orchestration machine
+
+# 2. Build your MYBONK ochestration machine
 This machine is used to orchestrate your fleet of MY₿ONK consoles. It does not have to run nixOS (only nix package manager), 
 You could use your day to day laptop, note that some pitfalls or required extra steps had been reported to install Nix on macOS (read-only filesystem / single-user/multi-user). 
 We suggest you make it easy on yourself and keep things separte by using a Virtual Machine. 
 
-<a name="build-orchestration-virtualbox"></a>
 ### 2.1. Download and install VirtualBox
 Follow the instructions on their website https://www.virtualbox.org
-<a name="build-orchestration-os"></a>
+
 ### 2.2. Build the OS
   Now that VirtualBox is installed you can have an OS run on it (Linux Debian in our case).
   
@@ -605,7 +610,6 @@ Install the additional packages (Debian 11 Bullseye) [curl](https://manpages.org
 $ sudo apt install curl git
 ```
 
-<a name="build-orchestration-ssh-and-auto-login"></a>
 ### 2.3. ssh and auto login
 First of all you need the IP address of the machine you want to connect to, the MY₿ONK orchestration machine's. As it runs in a Virtual Box you need to make sure the network setting of its virtual machine is set to "*bridge adapter*" for it to be assigned an IP. If unsure have a look at [ssh into a VirtualBox](https://www.golinuxcloud.com/ssh-into-virtualbox-vm/#Method-1_SSH_into_VirtualBox_using_Bridged_Network_Adapter).
 
@@ -622,7 +626,6 @@ It is generaly advised to avoid using user ```root``` especially to remote-acces
 The value of ```PermitRootLogin``` can remain ```prohibit-password```.
 
 
-<a name="build-orchestration-nix"></a>
 ### 2.4. Install Nix
   
   
@@ -669,7 +672,7 @@ $ man nix
   - Follow the instructions on nix page https://nixos.org/nix/manual/#ch-installing-source
   
 
-### 2.4. Build MY₿ONK stack
+### 2.4. Build MYBONK stack
 Now that the orchestration machine is up and running we can use it to build MY₿ONK stack and deploy it seemlesly to the fleet of MY₿ONK consoles in a secure, controlled and effortless way.
 
 MY₿ONK stack is derived from nix-bitcoin.
@@ -759,12 +762,14 @@ Host mybonk-console-root
     User root
     PubkeyAuthentication yes
     IdentityFile ~/.ssh/id_rsa
+    AddKeysToAgent yes
 
 Host mybonk-console-mybonk
     Hostname 192.168.0.64
     User mybonk
     PubkeyAuthentication yes
     IdentityFile ~/.ssh/id_rsa
+    AddKeysToAgent yes
 
 ```
 
@@ -855,7 +860,7 @@ Letconfiguration.nix```: You recognize this file from a previous session.
 
 
 
-### 2.5. Deploy MY₿ONK stack to the MY₿ONK consoles
+### 2.5. Deploy MYBONK stack to the MYBONK consoles
   
 There are is probably a dozen of options available to deploy a nixOS configuration, each with its pros and cons.
 [NixOps](https://github.com/NixOS/nixops/blob/master/README.md), the official DevOps tool of NixOS is nice, but it has some flaws. 
@@ -907,6 +912,11 @@ echo "armv7l-linux" > krops/system
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
-### 2.6. Backup and restore
+# 3. Basic operations
+  
+### 3.1. Backup and restore
 
-### 2.7. Join a Federation
+### 3.2. Join a Federation
+
+
+
