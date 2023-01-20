@@ -23,9 +23,9 @@
     - [1.2 Download and install NixOS](#12-download-and-install-nixos)
     - [1.3 Download and install MYBONK](#13-download-and-install-mybonk)
       - [**Option 1.** The way it is done "manually""](#13-option-1)
-      - [**Option 2.** The way it is automated using a MYBONK ochestration machine](#13-option-2)
+      - [**Option 2.** The way it is automated using a MYBONK orchestration machine](#13-option-2)
   
-- [2. Build your MYBONK orchestration machine](#2-build-your-mybonk-ochestration-machine)
+- [2. Build your MYBONK orchestration machine](#2-build-your-mybonk-orchestration-machine)
     - [2.1. Download and install VirtualBox](#21-download-and-install-virtualbox)
     - [2.2. Build the OS](#22-build-the-os)
       - [**Option 1.** Using the installation image from Debian](#option-1-using-the-installation-image-from-debian)
@@ -262,7 +262,7 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
   ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_005.png)
 
 
-  Plug a keyboard and a screen on your MY₿ONK console (they are used only during this first guided installation procedure, after this all interactions with the MY₿ONK console will be done "headless" via the MY₿ONK orchestration machine as explained in section [Control your MY₿ONK fleet from orchestration machine](#)).
+  Plug a keyboard and a screen on your MY₿ONK console (they are used only during this first guided installation procedure, after this all interactions with the MY₿ONK console will be done "headless" via the MY₿ONK orchestration machine as explained in section [Control your MY₿ONK fleet from orchestration machine](#3-basic-operations)).
 
   Let your MY₿ONK console boot from the USB stick:
 
@@ -562,12 +562,12 @@ Now edit the main configuration file, ```configuration.nix``` to use ```node.nix
 
 
 <a name="13-option-2"></a>
-#### **Option 2.** The way it is automated using a MY₿ONK ochestration machine
+#### **Option 2.** The way it is automated using a MY₿ONK ochrestration machine
   Ref. section [Build your orchestration machine](#build-orchestration).
 
 ---
 
-# 2. Build your MYBONK ochestration machine
+# 2. Build your MYBONK orchestration machine
 This machine is used to orchestrate your fleet of MY₿ONK consoles. It does not have to run nixOS (only nix package manager), 
 You could use your day to day laptop, note that some pitfalls or required extra steps had been reported to install Nix on macOS (read-only filesystem / single-user/multi-user). 
 We suggest you make it easy on yourself and keep things separte by using a Virtual Machine. 
