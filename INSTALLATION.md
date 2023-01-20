@@ -89,19 +89,19 @@ This small ecosystem consists of only two elements that we are going to build to
 <a name="build-MY₿ONK-full-node"></a>
 # 0. ssh and auto login
 
-  This is so important that we felt it diserved its own section.
+This is so important that we felt it diserved its own section.
 
-  All we do with the machines is over ssh. If you're the kind of person entering his password manually every time this is not going to fly.
+All we do with the machines is over ssh. If you're the kind of person entering his password manually every time this is not going to fly.
 
-  Spare yourself the pain and avoid getting locked out of the system by mistake. Take the time to not only understand what ssh is but also how it works, particularily how to use ssh auto login (auto login *using public and private keys pair* to be specific). It is not only a good idea to save time, it is also significantly more secure than simple password-based login. It is also a pre-requisite for the deployment of MY₿ONK.
+Spare yourself the pain and avoid getting locked out of the system by mistake. Take the time to not only understand what ssh is but also how it works, particularily how to use ssh auto login (auto login *using public and private keys pair* to be specific). It is not only a good idea to save time, it is also significantly more secure than simple password-based login. It is also a pre-requisite for the deployment of MY₿ONK.
 
-  Let's start by showing you how to ssh as user ``user`` from local (your laptop) into whatever remote machine with ip '```REMOTE_MACHINE_IP```' (assuming user ``user`` exists on the target machine and you know the password).
-  
-  
-  ```
-  $ ssh user@REMOTE_MACHINE_IP
-  Last login: Tue Aug 17 04:44:11 2021 from 10.0.2.2
-  $
+Let's start by showing you how to ssh as user ``user`` from local (your laptop) into whatever remote machine with ip '```REMOTE_MACHINE_IP```' (assuming user ``user`` exists on the target machine and you know the password).
+
+
+```
+$ ssh user@REMOTE_MACHINE_IP
+Last login: Tue Aug 17 04:44:11 2021 from 10.0.2.2
+$
 ```
 
 Log out now. 
@@ -175,7 +175,6 @@ user@192.168.0.83's password:
 
 ```
 Enter the password for the user ```user``` 
-
 ```
 Number of key(s) added: 1
 
@@ -197,16 +196,18 @@ Now you could do the same with the same certificate to enable ssh auto login for
 ---
 
 
-What you could do now is create and setup an ssh config file to create shortcuts for servers I access frequently. Another time saver mechanism used over and over explained [here](https://www.cyberciti.biz/faq/create-ssh-config-file-on-linux-unix/).
+Another time saver mechanism is configuring hosts you connect to often in the ssh client's configuration file as explained in details [here](https://goteleport.com/blog/ssh-config/).
+
+In short:
 
 
 ```
 nano ~/.ssh/config
 ```
-Copy/pas the following:
+Copy/past the following:
 
 ```
-Host mybonk-node
+Host mybonk-node-001
     Hostname IP_ADDRESS_OR_HOST_NAME
     User user
     PubkeyAuthentication yes
@@ -214,14 +215,13 @@ Host mybonk-node
     AddKeysToAgent yes
 ```
 
-Each parameter is self-explainatory. You need to replace ```IP_ADDRESS_OR_HOST_NAME``` by the IP address of the target machine, ```ùser``` is the remote user; you may need to check ```IdentityFile``` points to your id_rsa generated earlier.
+The parameters are self-explainatory. You need to replace ```IP_ADDRESS_OR_HOST_NAME``` by the target machine IP or full name, ```ùser``` is the remote user; you may need to check ```IdentityFile``` points to your id_rsa generated earlier, remember this file contains your ```private key```.
 
 
-Now you can ssh into the machine with an easy to remember sythax and all the info needed to make this connection happen will be automatically picked from the ssh config file.
+Now you can ssh into the machine with an easy to remember sythax and all the info needed to make this connection happen will be automatically picked from the corresponding ```Host``` section in the ssh config file.
 
 ```
-$ ssh mybonk-node
-
+$ ssh mybonk-node-001
 ```
 
 You can create an many ```Host``` entries as you like in the ssh config file.
@@ -677,13 +677,7 @@ ssh debian@mybonk_orchestration
 $
 ```
 
-We know mybonk_console address (```192.168.0.64```) from earlier. To avoid having to remember it let's map it in to the hostname ```mybonk_console```:
-
-  ````
-$ echo "192.168.0.64 mybonk_console" | sudo tee -a /etc/hosts
-  ````
-
-This MY₿ONK orchestration machine needs root passwordless key pair ssh access to the target MY₿ONK console, let's do it:
+This MY₿ONK orchestration machine needs root passwordless key pair ssh access to the target MY₿ONK console, let's generate our key pair:
 
 ```
 ssh-keygen -t rsa -b 4096
@@ -712,9 +706,9 @@ The key's randomart image is:
 ```
 Let's enable ssh auto login for our user ```root``` on the remote MY₿ONK console (192.168.0.64) using ```ssh-copy-id```.
 ```
-debian@debian11:~$ ssh-copy-id root@mybonk_console
+debian@debian11:~$ ssh-copy-id root@192.168.0.64
 /usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/debian/.ssh/id_rsa.pub"
-The authenticity of host 'mybonk_console (192.168.0.64)' can't be established.
+The authenticity of host '192.168.0.64 (192.168.0.64)' can't be established.
 ED25519 key fingerprint is SHA256:gyeJzKezZGneNmfKyO5lugfPM3czJMmVjkOKjxsDKI4.
 Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
 /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
@@ -734,21 +728,55 @@ and check to make sure that only the key(s) you wanted were added.
 Do as instructed, try to ssh and see that you are no longer requested to provide the password.
 
 ```
-ssh root@mybonk_console
+$ ssh root@192.168.0.64
 Last login: Tue Jan 17 10:42:43 2023 from 192.168.0.7
 # 
 ```
 
-Finaly do exactly the same for the user ```mybonk``` (password '```mybonk```').
+Exit
 
+````
+$ exit
+````
+
+Do exactly the same for the user ```mybonk``` (password '```mybonk```').
+
+Let's add shortcuts in ssh config file for these: 
+
+```
+$ nano ~/.ssh/config
+````
+
+and add the following lines at the end of the file:
+
+```
+Host mybonk-console-root
+    Hostname 192.168.0.64
+    User root
+    PubkeyAuthentication yes
+    IdentityFile ~/.ssh/id_rsa
+
+Host mybonk-console-mybonk
+    Hostname 192.168.0.64
+    User mybonk
+    PubkeyAuthentication yes
+    IdentityFile ~/.ssh/id_rsa
+
+```
 
 Now, log-in as ```mybonk```.
-clone nix-bitcoin in the home directory.
+
 ```
-cd
+$ ssh mybonk-console-mybonk
+```
+
+Close nin-bitcoin in your home directory:
+
+```
 git clone https://github.com/fort-nix/nix-bitcoin
 ```
-This creates a directory ```nix-bitcoin```, have a look at its content
+
+This creates a directory ```nix-bitcoin```, have a look inside:
 
 ```
 cd nix-bitcoin
