@@ -920,6 +920,8 @@ echo "armv7l-linux" > krops/system
 ### 3.2. MYBONK Federation
 
 ### 3.3. Fedimint Federation
+Fedimint is progressing toward MVP, dev/test env can be built from [their instructions](https://github.com/fedimint/fedimint/blob/master/docs/dev-running.md). 
+
 
 
 
