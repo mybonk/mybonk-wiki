@@ -916,7 +916,11 @@ echo "armv7l-linux" > krops/system
   
 ### 3.1. Backup and restore
 
-### 3.2. Join a Federation
+### 3.2. MYBONK Federation
+
+### 3.3. Fedimint Federation
+
+
 
 
 
