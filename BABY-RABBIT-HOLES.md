@@ -15,6 +15,8 @@ Ordered list of "basic" skills that need to be aquired to enjoy the ride
 - grep
 - sudo
 
+
+
 ## curl
 
 ## gpg, sha-256 …
@@ -44,7 +46,15 @@ Ordered list of "basic" skills that need to be aquired to enjoy the ride
 ## http vs. https
 ## OS-layer firewall
 ## partitions filesystem (/, /mnt, /var, /etc, /tmp)
+
+
 ## UEFI vs. Legacy Boot
+
+## Other tools
+- [websocketd](https://github.com/joewalnes/websocketd): Small command-line tool that will wrap an existing command-line interface program, and allow it to be accessed via a WebSocket. WebSocket-capable applications can now be built very easily. As long as you can write an executable program that reads STDIN and writes to STDOUT, you can build a WebSocket server. No networking libraries necessary.
+- [tmuxinator](https://github.com/tmuxinator/tmuxinator): Tool that allows you to easily manage tmux sessions by using yaml files to describe the layout of a tmux session, and open up that session with a single command.
+![](docs/img/various/tmuxinator_screeshot.png)
+
 ## Books
 - [Introduction to the Mac command line](https://github.com/ChristopherA/intro-mac-command-line) (on GitHub)
 - [Learn Bitcoin from the command line](https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line#readme) (on GitHub)
