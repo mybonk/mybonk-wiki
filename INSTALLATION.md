@@ -83,7 +83,7 @@ This small ecosystem consists of only two elements that we are going to build to
 - **Don't trust, verify**: Anything you download on the internet is at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a sting of hexadecimal characters).
 - **Nix vs. NixOS**: It is very important to understand the concept that nix and nixOS are two different things: 
   - Nix is a [package manager](https://en.wikipedia.org/wiki/Package_manager) (something like npm, rpm and others)
-  - NixOS is a [full-blow Linux distribution](https://en.wikipedia.org/wiki/NixOS) built on top of the nix package manager. For an overview see [how Nix and NixOS work](https://nixos.org/guides/how-nix-works.html). 
+  - NixOS is a [full-blow Linux distribution](https://en.wikipedia.org/wiki/NixOS) built on top of the nix package manager. For an overview see [how Nix and NixOS work](https://nixos.org/guides/how-nix-works.html).
   - For a general introduction to the Nix and NixOS ecosystem, see [nix.dev](https://nix.dev/).
 - **Read and explore**: The pros write and read documentation, they are not so much on YouTube.
 
@@ -98,7 +98,9 @@ All we do with the machines is over ssh. If you're the kind of person entering h
 
 Spare yourself the pain and avoid getting locked out of the system by mistake. Take the time to not only understand what ssh is but also how it works, particularily how to use ssh auto login (auto login *using public and private keys pair* to be specific). It is not only a good idea to save time, it is also significantly more secure than simple password-based login. It is also a pre-requisite for the deployment of MY₿ONK.
 
-Let's start by showing you how to ssh as user ``user`` from local (your laptop) into whatever remote machine with ip '```REMOTE_MACHINE_IP```' (assuming user ``user`` exists on the target machine and you know the password).
+One opens an encrypted connection with a server using a ssh client. So you have the *ssh client* on the one hand and the *ssh server* on the other hand. ssh clients come in different form and shape, some with nice GUI, but all we do here is on the command line, using the basic ssh client typically bundled with any Linux distribution.
+
+Let's start by showing you how to ssh as user ``user`` from local (your laptop) into whatever remote machine with ip '```REMOTE_MACHINE_IP```' (assuming that user ``user`` exists on the target machine, that you know his password and that the ssh server is running on the target machine).
 
 
 ```
@@ -116,9 +118,7 @@ Connection to REMOTE_MACHINE_IP closed.
 $
 ```
 
-Let's setup auto login instead.
-
-To do this you need what is called a "key pair". Any user can generate a key pair. Generate yours using ```ssh-keygen```. Just hit enter to all the questions, including passphrase.
+Let's setup auto login instead, this will allow you to use the ssh command the same way but loging-in without being prompted for the password. To do this you need what is called a "key pair". Any user can generate a key pair. Generate yours using ```ssh-keygen```. Just hit enter to all the questions, including passphrase.
 ```
 $ ssh-keygen -t rsa -b 4096
 
@@ -152,10 +152,10 @@ The key's randomart image is:
 As indicated in the output of the command the key pair has been generated in ```/Users/JayDeLux/.ssh/id_rsa``` 
 
 ```
-ls /Users/JayDeLux/.ssh/id_rsa
+$ ls /Users/JayDeLux/.ssh/id_rsa
 id_rsa  id_rsa.pub
 
-file /home/debian/.ssh/id_rsa
+$ file /home/debian/.ssh/id_rsa
 /Users/JayDeLux/.ssh/id_rsa: OpenSSH private key
 
 file /home/debian/.ssh/id_rsa.pub
@@ -675,7 +675,7 @@ $ man nix
 ### 2.4. Build MYBONK stack
 Now that the orchestration machine is up and running we can use it to build MY₿ONK stack and deploy it seemlesly to the fleet of MY₿ONK consoles in a secure, controlled and effortless way.
 
-MY₿ONK stack is derived from nix-bitcoin.
+MY₿ONK stack is derived from [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin/). Have a look at their GitHub, especially their [examples](https://github.com/fort-nix/nix-bitcoin/blob/master/examples/README.md) section.
 
 Login to MY₿ONK orchestration machine:
 

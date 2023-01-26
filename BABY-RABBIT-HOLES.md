@@ -14,6 +14,7 @@ Ordered list of "basic" skills that need to be aquired to enjoy the ride
 - alias
 - grep
 - sudo
+- file
 
 
 
@@ -36,7 +37,7 @@ Ordered list of "basic" skills that need to be aquired to enjoy the ride
 ## processes
 - systemd
 - top
-- journalctl
+- [journalctl](https://www.digitalocean.com/community/tutorials/how-to-use-journalctl-to-view-and-manipulate-systemd-logs)
 - systemctrl
 
 ## certificate 
@@ -50,10 +51,12 @@ Ordered list of "basic" skills that need to be aquired to enjoy the ride
 
 ## UEFI vs. Legacy Boot
 
-## Other tools
+## Other tools / resources
 - [websocketd](https://github.com/joewalnes/websocketd): Small command-line tool that will wrap an existing command-line interface program, and allow it to be accessed via a WebSocket. WebSocket-capable applications can now be built very easily. As long as you can write an executable program that reads STDIN and writes to STDOUT, you can build a WebSocket server. No networking libraries necessary.
+- [wscat](https://github.com/websockets/wscat/blob/master/README.md): WebSocket cat.
 - [tmuxinator](https://github.com/tmuxinator/tmuxinator): Tool that allows you to easily manage tmux sessions by using yaml files to describe the layout of a tmux session, and open up that session with a single command.
 ![](docs/img/various/tmuxinator_screeshot.png)
+- [Cashu](https://cashu.space/): Cashu is a free and open-source Chaumian ecash system built for Bitcoin. Cashu offers near-perfect privacy for users of custodial Bitcoin applications. Nobody needs to knows who you are, how much funds you have, and whom you transact with.
 
 ## Books
 - [Introduction to the Mac command line](https://github.com/ChristopherA/intro-mac-command-line) (on GitHub)
