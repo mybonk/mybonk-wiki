@@ -3,7 +3,7 @@
 ************ THIS IS AN EXAMPLE OF LAYOUT, TO BE UPDATED ***************
 
 Is refered to as a "softawre stack" the group of software bundled together. This eases deployment and allow people to use a baseline to contribute from.
-MYBONK stack is composed of:
+MY₿ONK stack is composed of:
 
 - **GitHub**  [details](<https://www.wikipedia.org/wiki/HitHub)>
   - Description: Nix is a tool that takes a unique approach to package management and system configuration.
