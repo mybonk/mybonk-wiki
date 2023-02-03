@@ -23,9 +23,9 @@
     - [1.2 Download and install NixOS](#12-download-and-install-nixos)
     - [1.3 Download and install MYBONK](#13-download-and-install-mybonk)
       - [**Option 1.** The way it is done "manually""](#13-option-1)
-      - [**Option 2.** The way it is automated using a MYBONK ochestration machine](#13-option-2)
+      - [**Option 2.** The way it is automated using a MYBONK orchestration machine](#13-option-2)
   
-- [2. Build your MYBONK orchestration machine](#2-build-your-mybonk-ochestration-machine)
+- [2. Build your MYBONK orchestration machine](#2-build-your-mybonk-orchestration-machine)
     - [2.1. Download and install VirtualBox](#21-download-and-install-virtualbox)
     - [2.2. Build the OS](#22-build-the-os)
       - [**Option 1.** Using the installation image from Debian](#option-1-using-the-installation-image-from-debian)
@@ -84,7 +84,7 @@ This small ecosystem consists of only two elements that we are going to build to
 - **Don't trust, verify**: Anything you download on the internet is at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a sting of hexadecimal characters).
 - **Nix vs. NixOS**: It is very important to understand the concept that nix and nixOS are two different things: 
   - Nix is a [package manager](https://en.wikipedia.org/wiki/Package_manager) (something like npm, rpm and others)
-  - NixOS is a [full-blow Linux distribution](https://en.wikipedia.org/wiki/NixOS) built on top of the nix package manager. For an overview see [how Nix and NixOS work](https://nixos.org/guides/how-nix-works.html). 
+  - NixOS is a [full-blow Linux distribution](https://en.wikipedia.org/wiki/NixOS) built on top of the nix package manager. For an overview see [how Nix and NixOS work](https://nixos.org/guides/how-nix-works.html).
   - For a general introduction to the Nix and NixOS ecosystem, see [nix.dev](https://nix.dev/).
 - **Read and explore**: The pros write and read documentation, they are not so much on YouTube.
 
@@ -95,11 +95,15 @@ This small ecosystem consists of only two elements that we are going to build to
 
 This is so important that we felt it diserved its own section.
 
+![](docs/img/various/ssh_failed_attempts.gif)
+
 All we do with the machines is over ssh. If you're the kind of person entering his password manually every time this is not going to fly.
 
 Spare yourself the pain and avoid getting locked out of the system by mistake. Take the time to not only understand what ssh is but also how it works, particularily how to use ssh auto login (auto login *using public and private keys pair* to be specific). It is not only a good idea to save time, it is also significantly more secure than simple password-based login. It is also a pre-requisite for the deployment of MY₿ONK.
 
-Let's start by showing you how to ssh as user ``user`` from local (your laptop) into whatever remote machine with ip '```REMOTE_MACHINE_IP```' (assuming user ``user`` exists on the target machine and you know the password).
+One opens an encrypted connection with a server using a ssh client. So you have the *ssh client* on the one hand and the *ssh server* on the other hand. ssh clients come in different form and shape, some with nice GUI, but all we do here is on the command line, using the basic ssh client typically bundled with any Linux distribution.
+
+Let's start by showing you how to ssh as user ``user`` from local (your laptop) into whatever remote machine with ip '```REMOTE_MACHINE_IP```' (assuming that user ``user`` exists on the target machine, that you know his password and that the ssh server is running on the target machine).
 
 
 ```
@@ -117,9 +121,7 @@ Connection to REMOTE_MACHINE_IP closed.
 $
 ```
 
-Let's setup auto login instead.
-
-To do this you need what is called a "key pair". Any user can generate a key pair. Generate yours using ```ssh-keygen```. Just hit enter to all the questions, including passphrase.
+Let's setup auto login instead, this will allow you to use the ssh command the same way but loging-in without being prompted for the password. To do this you need what is called a "key pair". Any user can generate a key pair. Generate yours using ```ssh-keygen```. Just hit enter to all the questions, including passphrase.
 ```
 $ ssh-keygen -t rsa -b 4096
 
@@ -153,10 +155,10 @@ The key's randomart image is:
 As indicated in the output of the command the key pair has been generated in ```/Users/JayDeLux/.ssh/id_rsa``` 
 
 ```
-ls /Users/JayDeLux/.ssh/id_rsa
+$ ls /Users/JayDeLux/.ssh/id_rsa
 id_rsa  id_rsa.pub
 
-file /home/debian/.ssh/id_rsa
+$ file /home/debian/.ssh/id_rsa
 /Users/JayDeLux/.ssh/id_rsa: OpenSSH private key
 
 file /home/debian/.ssh/id_rsa.pub
@@ -263,7 +265,7 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
   ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_005.png)
 
 
-  Plug a keyboard and a screen on your MY₿ONK console (they are used only during this first guided installation procedure, after this all interactions with the MY₿ONK console will be done "headless" via the MY₿ONK orchestration machine as explained in section [Control your MY₿ONK fleet from orchestration machine](#)).
+  Plug a keyboard and a screen on your MY₿ONK console (they are used only during this first guided installation procedure, after this all interactions with the MY₿ONK console will be done "headless" via the MY₿ONK orchestration machine as explained in section [Control your MY₿ONK fleet from orchestration machine](#3-basic-operations)).
 
   Let your MY₿ONK console boot from the USB stick:
 
@@ -563,12 +565,12 @@ Now edit the main configuration file, ```configuration.nix``` to use ```node.nix
 
 
 <a name="13-option-2"></a>
-#### **Option 2.** The way it is automated using a MY₿ONK ochestration machine
+#### **Option 2.** The way it is automated using a MY₿ONK ochrestration machine
   Ref. section [Build your orchestration machine](#build-orchestration).
 
 ---
 
-# 2. Build your MYBONK ochestration machine
+# 2. Build your MYBONK orchestration machine
 This machine is used to orchestrate your fleet of MY₿ONK consoles. It does not have to run nixOS (only nix package manager), 
 You could use your day to day laptop, note that some pitfalls or required extra steps had been reported to install Nix on macOS (read-only filesystem / single-user/multi-user). 
 We suggest you make it easy on yourself and keep things separte by using a Virtual Machine. 
@@ -676,7 +678,7 @@ $ man nix
 ### 2.4. Build MYBONK stack
 Now that the orchestration machine is up and running we can use it to build MY₿ONK stack and deploy it seemlesly to the fleet of MY₿ONK consoles in a secure, controlled and effortless way.
 
-MY₿ONK stack is derived from nix-bitcoin.
+MY₿ONK stack is derived from [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin/). Have a look at their GitHub, especially their [examples](https://github.com/fort-nix/nix-bitcoin/blob/master/examples/README.md) section.
 
 Login to MY₿ONK orchestration machine:
 
