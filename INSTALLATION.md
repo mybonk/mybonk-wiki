@@ -94,6 +94,8 @@ This small ecosystem consists of only two elements that we are going to build to
 
 This is so important that we felt it diserved its own section.
 
+![](docs/img/various/ssh_failed_attempts.gif)
+
 All we do with the machines is over ssh. If you're the kind of person entering his password manually every time this is not going to fly.
 
 Spare yourself the pain and avoid getting locked out of the system by mistake. Take the time to not only understand what ssh is but also how it works, particularily how to use ssh auto login (auto login *using public and private keys pair* to be specific). It is not only a good idea to save time, it is also significantly more secure than simple password-based login. It is also a pre-requisite for the deployment of MY₿ONK.
