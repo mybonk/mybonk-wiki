@@ -48,7 +48,7 @@ What is commonly refered to as "*bitcoin full node distribution*" or simply "*fu
 
 Most full node distributions are great to experiment and learn and break things. 
 
-Like most bitcoin full node distributions MY₿ONK can run on a variety of hardware or virtual machines and run various additional software, which we encourage. However we focus on bitcoin-only stripped stack refered to as the "[MY₿ONK stack](/MYBONK_STACK.md)" or simply MY₿ONK, it would be impossible to keep up with all the various more or less usable hardware one can find on the market and the variety of more or less reliable software one can find on the internet. 
+Like most bitcoin full node distributions MY₿ONK can run on a variety of hardware or virtual machines and run various additional software, which we encourage. However we focus on bitcoin-only stripped stack refered to as the "[MY₿ONK stack](/docs/MYBONK_stack.md)" or simply MY₿ONK, it would be impossible to keep up with all the various more or less usable hardware one can find on the market and the variety of more or less reliable software one can find on the internet. 
 
 
 Read this document from the beginning to the end once, then read it again before you decide to get your hands dirty. 
@@ -62,11 +62,11 @@ We [collaboratively] take great pride and care maintaining this document so it r
 It is assumed that you know a little bit of everything but not enough so we show you the way step by step based on the typical MY₿ONK setup.
 You too can contribute to impriving this document on GitHub.
   
-Enjoy the ride, no stress, check out our [FAQ](FAQ.md) and out [baby rabbit holes](BABY-RABBIT-HOLES.md)  :hole: :rabbit2:
+Enjoy the ride, no stress, check out our [FAQ](/docs/faq.md) and out [baby rabbit holes](/docs/baby-rabbit-holes.md)  :hole: :rabbit2:
 
 # Terminology
 - '````#````' stands for '````$ sudo````'
-- **MY₿ONK core**: Or simply 'MY₿ONK' is a tailor-made full-node [software stack](/MYBONK_STACK.md) for MY₿ONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MY₿ONK core is based on nix-bitcoin itself based on nixOS.
+- **MY₿ONK core**: Or simply 'MY₿ONK' is a tailor-made full-node [software stack](/docs/MYBONK_stack.md) for MY₿ONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MY₿ONK core is based on nix-bitcoin itself based on nixOS.
 - **MY₿ONK console**: A full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-enery, supply chain resilience and generic parts in mind.
 - **MY₿ONK user**: The end user, you, the family man, the boucher, the baker, the hair dresser, the mecanics... Just want the thing to work, "plug and forget". Uses GUIs and has an aversion to the command line. On MAINNET.
 - **MY₿ONK operator**: A "MY₿ONK user" that got really serious about it and decided to learn more, move to the next level. Has some "skin in the game" on MAINNET and is happy to experiment on SIGNET. Many operators take part in nodes Federation or create their own Federation.
@@ -78,7 +78,7 @@ This small ecosystem consists of only two elements that we are going to build to
 - **One orchestration machine:**
   This machine is used to orchestrate your fleet of MY₿ONK consoles, it is essentially a Linux with a few additional software installed including the Nix package manager.
 - **One MY₿ONK console:**
-  This machine runs the [MY₿ONK stack](/MYBONK_STACK.md) on NixOS. It is setup once and its configuration can be updated remotly using MY₿ONK orchestration machine.
+  This machine runs the [MY₿ONK stack](/docs/MYBONK_stack.md) on NixOS. It is setup once and its configuration can be updated remotly using MY₿ONK orchestration machine.
   
 # Advice
 - **Don't trust, verify**: Anything you download on the internet is at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a sting of hexadecimal characters).
@@ -679,7 +679,7 @@ Leave the setting ```PermitRootLogin``` as ```prohibit-password```.
 ### 2.4. Build MYBONK stack
 Now that the orchestration machine is up and running we can use it to build MY₿ONK stack and deploy it seemlesly to the fleet of MY₿ONK consoles in a secure, controlled and effortless way.
 
-[MY₿ONK stack](/MYBONK_STACK.md) is derived from [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin/). Have a look at their GitHub, especially their [examples](https://github.com/fort-nix/nix-bitcoin/blob/master/examples/README.md) section.
+[MY₿ONK stack](/docs/MYBONK_stack.md) is derived from [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin/). Have a look at their GitHub, especially their [examples](https://github.com/fort-nix/nix-bitcoin/blob/master/examples/README.md) section.
 
 Login to your MY₿ONK orchestration machine:
 

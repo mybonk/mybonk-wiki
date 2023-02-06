@@ -28,5 +28,6 @@
 
 
 
-👉 Instructions still being ✍️ [HERE](/INSTALLATION.md) 🫵 have a look.
+
+👉 Instructions maintained ✍️ [HERE](/docs/INSTALLATION.md) 🫵 have a look.
 

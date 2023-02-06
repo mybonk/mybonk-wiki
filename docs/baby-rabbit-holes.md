@@ -8,6 +8,22 @@ For every 5 minutes you spend reading, spend 15 minutes tinkering around with wh
 
 (Also a cool cheat sheet page maintained here [https://github.com/ruanbekker/cheatsheets#readme](https://github.com/ruanbekker/cheatsheets#readme))
 
+
+## GitHub / Git
+
+Fork MYBONK-core and clone your forked repository it on your laptop (instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo)).
+- Commands reference [here](https://git-scm.com/docs/git)
+- Commonly used:
+
+  ```
+  git clone https://github.com/mybonk/mybonk-core.git
+  git status
+  git add
+  git commit -m "commit message"
+  git mv filename dir/filename
+  git pull
+  git push
+  ```
 ## Command line stuff
 - bash shell
 - ls, cd, mkdir, mv, rm, ln, which,  …
@@ -74,6 +90,8 @@ Tmux shortcuts
 ## UEFI vs. Legacy Boot
 
 ## Other tools / resources
+- [jq](https://stedolan.github.io/jq/): Lightweight and flexible command-line JSON processor.
+  - ``````
 - [websocketd](https://github.com/joewalnes/websocketd): Small command-line tool that will wrap an existing command-line interface program, and allow it to be accessed via a WebSocket. WebSocket-capable applications can now be built very easily. As long as you can write an executable program that reads STDIN and writes to STDOUT, you can build a WebSocket server. No networking libraries necessary.
 - [wscat](https://github.com/websockets/wscat/blob/master/README.md): WebSocket cat.
 - [powertop](https://github.com/fenrus75/powertop/blob/master/README.md): Tool to access various powersaving modes in userspace, kernel and hardware. Monitors processes and shows which utilizes the most CPU allowing to identify those with particular high power demands.
