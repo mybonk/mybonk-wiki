@@ -62,10 +62,11 @@ We [collaboratively] take great pride and care maintaining this document so it r
 It is assumed that you know a little bit of everything but not enough so we show you the way step by step based on the typical MY₿ONK setup.
 You too can contribute to impriving this document on GitHub.
   
-Enjoy the ride, no stress, Check out our [FAQ](FAQ.md) and the [things that really make a difference](BABY-RABBIT-HOLES.md)  :hole: :rabbit2:
+Enjoy the ride, no stress, check out our [FAQ](FAQ.md) and out [baby rabbit holes](BABY-RABBIT-HOLES.md)  :hole: :rabbit2:
 
 # Terminology
-- **MY₿ONK core**: Or simply 'MY₿ONK' is a tailor-made full-node software stack for MY₿ONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MY₿ONK core is based on nix-bitcoin itself based on nixOS. [Software stack](MYBONK-STACK.md).
+- '````#````' stands for '````$ sudo````'
+- **MY₿ONK core**: Or simply 'MY₿ONK' is a tailor-made full-node [software stack](MYBONK-STACK.md) for MY₿ONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MY₿ONK core is based on nix-bitcoin itself based on nixOS.
 - **MY₿ONK console**: A full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-enery, supply chain resilience and generic parts in mind.
 - **MY₿ONK user**: The end user, you, the family man, the boucher, the baker, the hair dresser, the mecanics... Just want the thing to work, "plug and forget". Uses GUIs and has an aversion to the command line. On MAINNET.
 - **MY₿ONK operator**: A "MY₿ONK user" that got really serious about it and decided to learn more, move to the next level. Has some "skin in the game" on MAINNET and is happy to experiment on SIGNET. Many operators take part in nodes Federation or create their own Federation.
@@ -77,7 +78,7 @@ This small ecosystem consists of only two elements that we are going to build to
 - **One orchestration machine:**
   This machine is used to orchestrate your fleet of MY₿ONK consoles, it is essentially a Linux with a few additional software installed including the Nix package manager.
 - **One MY₿ONK console:**
-  This machine runs the MY₿ONK stack on NixOS. It is setup once and its configuration can be updated remotly using MY₿ONK orchestration machine.
+  This machine runs the [MY₿ONK stack](MYBONK-STACK.md) on NixOS. It is setup once and its configuration can be updated remotly using MY₿ONK orchestration machine.
   
 # Advice
 - **Don't trust, verify**: Anything you download on the internet is at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a sting of hexadecimal characters).
@@ -238,11 +239,11 @@ You can create an many ```Host``` entries as you like in the ssh config file.
   
   There are many ways to do this, the one detailed here focuses on people with little (but still *some*) technical knowledge.
   
-  These steps can be automated but the goal for now is to *understand* how it works.
+  These steps can be automated but the goal now is for you to *understand* hot it works.
   
 ### 1.1 The hardware
 
-There are many many platforms, physical (HW) or virtual (Virtual Machines, Cloud) to choose from, which is what NixOS was made for in the first place and this is great. A collection of hardware specific platform profiles to optimize settings for different hardware is even being maintained at [NixOS Hardware repository](https://github.com/NixOS/nixos-hardware/blob/master/README.md)
+There are many many platforms, physical (HW) or virtual (Virtual Machines, Cloud) to choose from, which is what NixOS was made for in the first place and this is great. A collection of hardware specific platform profiles to optimize settings for different hardware is even being maintained at [NixOS Hardware repository](https://github.com/NixOS/nixos-hardware/blob/master/README.md).
 
 
 The following steps focus on MY₿ONK console hardware platform only because it would be impossible to maintain and support all the possible combinations for a specific application domain: Each hardware has its own specs, some have additional features (BIOS capabilities, onboard encrypton, various kinds of storages and partition systems .etc...) or limitations (too little RAM or unreliable parts, weak power source, "moving parts", cooling issues, higher power consumption .etc...) making it unadvisable to install onto, or too difficult for an average person to setup and maintain; Even little things like bootable or not from USB stick can turn what should be a beautiful journey into hours of frustration tring to just make the thing boot until the next pitfall.
@@ -570,9 +571,12 @@ Now edit the main configuration file, ```configuration.nix``` to use ```node.nix
 ---
 
 # 2. Build your MYBONK orchestration machine
-This machine is used to orchestrate your fleet of MY₿ONK consoles. It does not have to run nixOS (only nix package manager), 
+This machine is used to orchestrate your fleet of MY₿ONK consoles. It does not have to run nixOS (only nix package manager).
+
 You could use your day to day laptop, note that some pitfalls or required extra steps had been reported to install Nix on macOS (read-only filesystem / single-user/multi-user). 
-We suggest you make it easy on yourself and keep things separte by using a Virtual Machine. 
+We suggest you make it easy on yourself and keep things separte by using a Virtual Machine.
+
+This is what we are doing in this section: Build your MY₿ONK orchestration machine on a VirtualBox.
 
 ### 2.1. Download and install VirtualBox
 Follow the instructions on their website https://www.virtualbox.org
@@ -625,7 +629,7 @@ Other possible values are ```without-password``` and ```yes```. ```prohibit-pass
 
 It is generaly advised to avoid using user ```root``` especially to remote-access. You can use ```sudo -i``` from another user instead when needed. 
 
-The value of ```PermitRootLogin``` can remain ```prohibit-password```.
+Leave the setting ```PermitRootLogin``` as ```prohibit-password```.
 
 
 ### 2.4. Install Nix
@@ -639,34 +643,32 @@ The value of ```PermitRootLogin``` can remain ```prohibit-password```.
     $ sh <(curl -L https://nixos.org/nix/install)   
     ```
 
-    You can see outputs related to Nix binary being downloaded and installed. 
+  You can see outputs related to Nix binary being downloaded and installed. 
 
-```      
-Installation finished!  To ensure that the necessary environment
-variables are set, either log in again, or type
+  ```      
+  Installation finished!  To ensure that the necessary environment variables are set, either log in again, or type
 
   . ~/.nix-profile/etc/profile.d/nix.sh
 
-in your shell.
-```
-And as instructed run the following command (or logout or login again):
+  in your shell.
+  ```
+  And as instructed run the following command (or logout or login again):
 
-```
-. ~/.nix-profile/etc/profile.d/nix.sh
-
-```
+  ```
+  . ~/.nix-profile/etc/profile.d/nix.sh
+  ```
       
-Check the installation went OK
+  Check the installation went OK
 
-```
-$ nix --version
-nix (Nix) 2.12.0
-```
+  ```
+  $ nix --version
+  nix (Nix) 2.12.0
+  ```
 
-Have a first look at the manual
-```
-$ man nix
-```
+  Have a first look at the manual
+  ```
+  $ man nix
+  ```
   
 
   #### **Option 2.** Building Nix from the source
@@ -677,86 +679,19 @@ $ man nix
 ### 2.4. Build MYBONK stack
 Now that the orchestration machine is up and running we can use it to build MY₿ONK stack and deploy it seemlesly to the fleet of MY₿ONK consoles in a secure, controlled and effortless way.
 
-MY₿ONK stack is derived from [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin/). Have a look at their GitHub, especially their [examples](https://github.com/fort-nix/nix-bitcoin/blob/master/examples/README.md) section.
+[MY₿ONK stack](MYBONK-STACK.md) is derived from [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin/). Have a look at their GitHub, especially their [examples](https://github.com/fort-nix/nix-bitcoin/blob/master/examples/README.md) section.
 
-Login to MY₿ONK orchestration machine:
+Login to your MY₿ONK orchestration machine:
 
 ```
 ssh debian@mybonk_orchestration
 $
 ```
 
-This MY₿ONK orchestration machine needs root passwordless key pair ssh access to the target MY₿ONK console, let's generate our key pair:
+This MY₿ONK orchestration machine needs root passwordless key pair ssh access to the target MY₿ONK console. Generate our key pair and eneable ssh auto login for user ```mybonk``` (password '```mybonk```') on the relote MY₿ONK console (192.168.0.64) as explained in section '[0. ssh and auto-login](#0-ssh-and-auto-login)'.
 
-```
-ssh-keygen -t rsa -b 4096
+And add a shortcut for it at the end of your ssh config file (```~/.ssh/config```): 
 
-Generating public/private rsa key pair.
-Enter file in which to save the key (/Users/JayDeLux/.ssh/id_rsa): 
-Enter passphrase (empty for no passphrase): 
-Enter same passphrase again: 
-Your identification has been saved in /Users/JayDeLux/.ssh/id_rsa
-Your public key has been saved in /Users/JayDeLux/.ssh/id_rsa.pub
-The key fingerprint is:
-SHA256:RRa2T2DT8Zvc2kkKsF6A3BxvAOsyMktDEEnbQMvnwvA Jay@Jay-MacBook-Pro.local
-The key's randomart image is:
-+---[RSA 4096]----+
-|  o=..    Oo..   |
-|  ..* o  = +..   |
-| . = + o  o . .  |
-|  = = + += o . *.|
-|   E = =So  . =.o|
-|  o =   =     .  |
-|   =   . o   .   |
-|  . o .   . .    |
-|   .   .   .     |
-+----[SHA256]-----+
-
-```
-Let's enable ssh auto login for our user ```root``` on the remote MY₿ONK console (192.168.0.64) using ```ssh-copy-id```.
-```
-debian@debian11:~$ ssh-copy-id root@192.168.0.64
-/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/debian/.ssh/id_rsa.pub"
-The authenticity of host '192.168.0.64 (192.168.0.64)' can't be established.
-ED25519 key fingerprint is SHA256:gyeJzKezZGneNmfKyO5lugfPM3czJMmVjkOKjxsDKI4.
-Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
-/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
-/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
-Password: 
-```
-Enter the password for user ```root``` ('```mybonk```')
-
-```
-Number of key(s) added: 1
-
-Now try logging into the machine, with:   "ssh 'root@192.168.0.64'"
-and check to make sure that only the key(s) you wanted were added.
-
-```
-
-Do as instructed, try to ssh and see that you are no longer requested to provide the password.
-
-```
-$ ssh root@192.168.0.64
-Last login: Tue Jan 17 10:42:43 2023 from 192.168.0.7
-# 
-```
-
-Exit
-
-````
-$ exit
-````
-
-Do exactly the same for the user ```mybonk``` (password '```mybonk```').
-
-Let's add shortcuts in ssh config file for these: 
-
-```
-$ nano ~/.ssh/config
-````
-
-and add the following lines at the end of the file:
 
 ```
 Host mybonk-console-root
@@ -781,7 +716,7 @@ Now, log-in as ```mybonk```.
 $ ssh mybonk-console-mybonk
 ```
 
-Close nin-bitcoin in your home directory:
+Clone nix-bitcoin in your home directory:
 
 ```
 git clone https://github.com/fort-nix/nix-bitcoin
@@ -814,17 +749,17 @@ drwxr-xr-x 16 debian debian 4096 Jan 11 17:58 pkgs
 drwxr-xr-x  5 debian debian 4096 Jan 11 17:58 test
 ```
 
-It contains the vanilla configuration on top of which we are going to overlay MY₿ONK specificities and features. Don't worry too much trying to figure out what each of these files and directories do, we are not going to modify anything in it, just reuse (copy/past) some of its content.
+It contains the basic configuration on top of which we are going to overlay MY₿ONK specificities and features. Don't worry too much trying to figure out what each of these files and directories do, we are not going to modify anything in itthese, only reuse (copy/past) some of its content.
 
 
-Get into the ```example``` directory and run the command ```nix-shell```. nix-shell interprets ```shell.nix``` and pulls all the dependancies it refers to. Note that it takes some time to execute:
+Get into the ```example``` directory and run the command ```nix-shell```. [nix-shell](https://nixos.org/manual/nix/stable/command-ref/nix-shell.html) interprets ```shell.nix``` and pulls all the dependancies it refers to, it will that a few minutes to execute:
 ```
 cd examples
 nix-shell
 ```
 The output of the command tells us that 117 paths will be fetched (126.56 MiB download, 756.95 MiB unpacked) 
 
-Go back to home directory and create a new directory ```mybonk```
+Go back to your home directory and create a new directory ```mybonk```
 
 ```
 cd
@@ -848,39 +783,33 @@ drwxr-xr-x  2 debian debian  4096 Jan 11 17:58 krops
 -rw-r--r--  1 debian debian   260 Jan 11 17:58 shell.nix
 ````
 
-- ```configuration.nix```: You recognize this file from a previous session.
+- ```configuration.nix```: Explained in a previous session.
 - ```krops```: Directory used for deployment (described in section [#2.5 Deploy MY₿ONK stack to the MY₿ONK consoles](#25-deploy-mybonk-stack-to-the-mybonk-consoles))
 - ```nix-bitcoin-release.nix```: TODO
 - ```shell.nix```: TODO
 
 
-https://nixos.org/manual/nix/stable/command-ref/nix-shell.html
+  @@@@@@@@@@@@@@@@@@@@@@@@@@
+    TODO: Need to finish this section it's the best part :)
 
-
-
-Letconfiguration.nix```: You recognize this file from a previous session.
-
-
+  @@@@@@@@@@@@@@@@@@@@@@@@@@
 
 ### 2.5. Deploy MYBONK stack to the MYBONK consoles
   
-There are is probably a dozen of options available to deploy a nixOS configuration, each with its pros and cons.
-[NixOps](https://github.com/NixOS/nixops/blob/master/README.md), the official DevOps tool of NixOS is nice, but it has some flaws. 
-
-[krops](https://github.com/krebs/krops/blob/master/README.md) is one of these alternatives trying to solve some of these flaws with some very simple concepts; Some of its features are:
+There are dozens of options available to deploy a nixOS configuration: NixOps, krops, morph, NixUS, deploy-rs, Bento .etc.. , each with their pros and cons.
+[NixOps](https://github.com/NixOS/nixops/blob/master/README.md), the official DevOps tool of NixOS is nice but it has some flaws. [krops](https://github.com/krebs/krops/blob/master/README.md) solves some of these flaws with very simple concepts, some of its features are:
 - store your secrets in password store
 - build your systems remotely
 - minimal overhead (it's basically just nixos-rebuild switch!)
 - run from custom nixpkgs branch/checkout/fork
 
-We are going to use krops as it is already used and suggested by nix-bitcoin. 
+We are going to use krops too as it is already used by nix-bitcoin. 
 
 Read [this very well written article](https://tech.ingolf-wagner.de/nixos/krops/) to get an idea of how krops works before you get started.
 
+First, krops needs to ssh MY₿ONK console using automatic login with keys pair. We have done this earlier let's move on ...
 
-First, krops needs to ssh MY₿ONK console, specifically automatic login using public key on OpenSSH. We have done this earlier let's move on ...
-
-Make sure you are in the deployment directory (```mybonk```), edit ```krops/deploy.nix```` which is the main deployment configuration file:
+On your orchestration machine make sure you are in the (```mybonk```) deployment directory, edit ```krops/deploy.nix```` which is the main deployment configuration file:
 
 Locate the FIXME and set the target to the name of the ssh config entry created earlier, i.e. mybonk-node.
 
@@ -889,29 +818,14 @@ Locate the FIXME and set the target to the name of the ssh config entry created 
 ```
 
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@
+TODO: Need to finish this section
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
 
 
-
-
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-TBD
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-The following command enables evaluating your node config on a machine that has a different system platform than your node.
-Examples: Deploying from macOS or deploying from a x86 desktop PC to a Raspberry Pi.
-
-"è'!§fhhhhhhhhhhrfpç!uueeeeeeeuuuuuuuuureeeeer!!!èèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèd
-```
-echo "x86_64-linux" > krops/system
-echo "aarch64-linux" > krops/system
-echo "i686-linux" > krops/system
-echo "armv7l-linux" > krops/system
-```
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
 # 3. Basic operations
