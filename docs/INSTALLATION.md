@@ -1,23 +1,21 @@
 <p align="center">
 <img
     width="320"
-    src="docs/img/mybonk_label.png"
+    src="img/mybonk_label.png"
     alt="MY₿ONK logo">
 </p>
 <br/>
 
-!!!!! this is work in progress, will be actualized during next hackaton !!!!!!
+👉 The MY₿ONK instructions are maintained ✍️ hereafter. It is very much work in progress.
 
 
 ---
 # Table of Contents
-
-- [Table of Contents](#table-of-contents)
-- [Foreword](#foreword)
-- [Terminology](#terminology)
-- [Overview](#overview)
-- [Advice](#advice)
-- [0. ssh and auto login](#0-ssh-and-auto-login)
+- [0. Before you start](#before-you-start)
+  - [Terminology](#terminology)
+  - [Overview](#overview)
+  - [Advice](#advice)
+  - [ssh and auto login](ssh-and-auto-login)
 - [1. Build your MYBONK bitcoin full node](#1-build-your-mybonk-bitcoin-full-node)
     - [1.1 The hardware](#11-the-hardware)
     - [1.2 Download and install NixOS](#12-download-and-install-nixos)
@@ -41,15 +39,7 @@
     - [3.2. Join a Federation](#32-join-a-federation)
 
 
-# Foreword
-
-What is commonly refered to as "*bitcoin full node distribution*" or simply "*full node*" is a set of software put together in such a way that it makes the experience of installing it and operating it as smooth and secure as possible.
-
-
-Most full node distributions are great to experiment and learn and break things. 
-
-Like most bitcoin full node distributions MY₿ONK can run on a variety of hardware or virtual machines and run various additional software, which we encourage. However we focus on bitcoin-only stripped stack refered to as the "[MY₿ONK stack](/docs/MYBONK_stack.md)" or simply MY₿ONK, it would be impossible to keep up with all the various more or less usable hardware one can find on the market and the variety of more or less reliable software one can find on the internet. 
-
+# Before you start
 
 Read this document from the beginning to the end once, then read it again before you decide to get your hands dirty. 
 
@@ -64,7 +54,7 @@ You too can contribute to impriving this document on GitHub.
   
 Enjoy the ride, no stress, check out our [FAQ](/docs/faq.md) and out [baby rabbit holes](/docs/baby-rabbit-holes.md)  :hole: :rabbit2:
 
-# Terminology
+### Terminology
 - '````#````' stands for '````$ sudo````'
 - **MY₿ONK core**: Or simply 'MY₿ONK' is a tailor-made full-node [software stack](/docs/MYBONK_stack.md) for MY₿ONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MY₿ONK core is based on nix-bitcoin itself based on nixOS.
 - **MY₿ONK console**: A full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-enery, supply chain resilience and generic parts in mind.
@@ -72,7 +62,7 @@ Enjoy the ride, no stress, check out our [FAQ](/docs/faq.md) and out [baby rabbi
 - **MY₿ONK operator**: A "MY₿ONK user" that got really serious about it and decided to learn more, move to the next level. Has some "skin in the game" on MAINNET and is happy to experiment on SIGNET. Many operators take part in nodes Federation or create their own Federation.
 - **MY₿ONK hacker**: A "MY₿ONK operator" so deep in the rabbit hole, bitcoin, privacy and sovereignty that he became a MY₿ONK hacker. That's an advanced user, student, Maker, researcher, security expert .etc... Just want to tear things apart. Love to use command line. On SIGNET.
 
-# Overview
+### Overview
 This small ecosystem consists of only two elements that we are going to build together:
   
 - **One orchestration machine:**
@@ -80,7 +70,7 @@ This small ecosystem consists of only two elements that we are going to build to
 - **One MY₿ONK console:**
   This machine runs the [MY₿ONK stack](/docs/MYBONK_stack.md) on NixOS. It is setup once and its configuration can be updated remotly using MY₿ONK orchestration machine.
   
-# Advice
+### Advice
 - **Don't trust, verify**: Anything you download on the internet is at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a sting of hexadecimal characters).
 - **Nix vs. NixOS**: It is very important to understand the concept that nix and nixOS are two different things: 
   - Nix is a [package manager](https://en.wikipedia.org/wiki/Package_manager) (something like npm, rpm and others)
@@ -88,14 +78,11 @@ This small ecosystem consists of only two elements that we are going to build to
   - For a general introduction to the Nix and NixOS ecosystem, see [nix.dev](https://nix.dev/).
 - **Read and explore**: The pros write and read documentation, they are not so much on YouTube.
 
----
----
-
-# 0. ssh and auto login
+### ssh and auto login
 
 This is so important that we felt it diserved its own section.
 
-![](docs/img/various/ssh_failed_attempts.gif)
+![](img/various/ssh_failed_attempts.gif)
 
 All we do with the machines is over ssh. If you're the kind of person entering his password manually every time this is not going to fly.
 
@@ -269,26 +256,26 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
 
   Let your MY₿ONK console boot from the USB stick:
 
-  ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_010.png)
+  ![](img/NixOS_install_screenshots/NixOS_install_screenshot_010.png)
 
   After the welcome screen the first thing you are asked to configure is the Location, this is used to make sure the system is configured with the correct language and that the corresponding numbers and date formats are used, just choose the right one for you.
 
-  ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_020.png)
+  ![](img/NixOS_install_screenshots/NixOS_install_screenshot_020.png)
 
   The next screen is keyboard layout selection, which is invariably a point people struggle with depending on what country they are from (azerty, questy ...) and also the variants that exist. **Take your time** trying a few (don't forget the try characters that are not alphabetical letters such as '@', '*', '_', '-', '/', ';', ':' .etc... ) until you find the best match. In my case it's "French" variant "French (Macintoch)". Not choosing the correct layout will result in keys inversions which will lead to you not being able to log in your system because the password you think you tap is not actually entring the same characters.
 
-  ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_030.png)
+  ![](img/NixOS_install_screenshots/NixOS_install_screenshot_030.png)
   
   Next you are going to create the users for the system. For now we create a user ```mybonk``` with password ```mybonk``` and we use the same password for the administrator account. 
 
-  ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_040.png)
+  ![](img/NixOS_install_screenshots/NixOS_install_screenshot_040.png)
 
   Next you are going to be asked what Desktop you want to have. We don't want a Desktop, select "No desktop" 
 
-  ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_050.png)
+  ![](img/NixOS_install_screenshots/NixOS_install_screenshot_050.png)
 
   Next confirm "Unfree software" (read the reason behind this mentionned on the screen)
-![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_060.png)
+![](img/NixOS_install_screenshots/NixOS_install_screenshot_060.png)
 
 
   Next we are going to configure the storage devices and partitions. MY₿ONK console has 2 built-in storage devices:
@@ -296,38 +283,38 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
   - ```/dev/sdb``` SATA 1TB SSD used for *states*: This is where the system settings, the bitcoin blockchain and installed software settings as well as user data is stored. The data on this drive *persisted* 
 
 
-![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_062.png)
+![](img/NixOS_install_screenshots/NixOS_install_screenshot_062.png)
 
   As this is a fresh new install these drives should not contain any partitions. If there are any on either of the disks delete them by selecting "New Partition Table" (Creating a new partition table will delete all data on the disk).
   Make sure you select "Master Boot Record (MBR)" instead of GUID Partition Table (GPT) when creating new partition tables
-  ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_065.png)
+  ![](img/NixOS_install_screenshots/NixOS_install_screenshot_065.png)
 
 
   Let's configure ```/dev/sda```:
   
   
-  ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_070.png)
+  ![](img/NixOS_install_screenshots/NixOS_install_screenshot_070.png)
 
   Let's configure ```/dev/sdb```:
   
   
-  ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_080.png)
+  ![](img/NixOS_install_screenshots/NixOS_install_screenshot_080.png)
 
 
   Now select "Next" to confirm the partitions that are going created (and possibly prior deleted).
 
-  ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_090.png)
+  ![](img/NixOS_install_screenshots/NixOS_install_screenshot_090.png)
 
 
   The intallation takes less than one minute click on "Toggle Logs" at the bottom right of the splash screen it to see and understand how the OS is being pulled and installed.
 
-  ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_100.png)
+  ![](img/NixOS_install_screenshots/NixOS_install_screenshot_100.png)
 
   "All Done". Do **NOT** Unplug the USB stick just yet.
 
   Select "Restart now" and click on "Done"
 
-  ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_110.png)
+  ![](img/NixOS_install_screenshots/NixOS_install_screenshot_110.png)
 
   When MY₿ONK console is rebooting remove the USB stick it will then boot on the MBR of /dev/sda. Your system is now running by itself let's continue its configuration.
 
