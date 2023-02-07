@@ -2,7 +2,7 @@
 
 Is refered to as a "MY₿ONK stack" the group of software bundled together to ease deployment and allow people to use a solde baseline to trust, build on, benefit from and contribute to.
 
-MY₿ONK stack is composed of:
+The MY₿ONK stack we are working on is composed of:
 
 - **GitHub**  [details](https://www.wikipedia.org/wiki/HitHub)
   - Official: https://github.com
@@ -35,10 +35,7 @@ MY₿ONK stack is composed of:
   - Official: https://www.wireguard.com/repositories
   - Description: VPN technology built to the core; Client app widely available, allows to connect to your local network remotly using a simple QR code to authenticate.
   - Code: 
-- **Hypercore protocol**
-  - Official: https://hypercore-protocol.org/
-  - Learn more: https://www.ctrl.blog/entry/dht-privacy-discovery-hash.html
-  - Code: https://github.com/hypercore-protocol
+
 - **Fedimint**
   - Official: https://fedimint.org/ 
   - Description: 
@@ -48,3 +45,18 @@ MY₿ONK stack is composed of:
   - Description: This allows for great bitcoin/LN advanced features through APIs and plugins architecture.
   - Code: https://github.com/lnbits/lnbits
 
+- **XMPP**
+  - Official: https://xmpp.org/
+  - Learn more: 
+  - Code: 
+
+- **Prosŏdy**
+  - Official: https://prosody.im/
+  - Learn more: 
+  - Code: 
+
+- **Hypercore protocol**
+  - Official: https://hypercore-protocol.org/
+  - Learn more: https://www.ctrl.blog/entry/dht-privacy-discovery-hash.html
+  - Code: https://github.com/hypercore-protocol
+  
