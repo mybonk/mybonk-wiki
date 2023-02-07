@@ -90,8 +90,7 @@ Tmux shortcuts
 ## UEFI vs. Legacy Boot
 
 ## Other tools / resources
-- [jq](https://stedolan.github.io/jq/): Lightweight and flexible command-line JSON processor.
-  - ``````
+- [jq](https://stedolan.github.io/jq/): Lightweight and flexible command-line JSON processor. [reference](https://stedolan.github.io/jq/tutorial/)
 - [websocketd](https://github.com/joewalnes/websocketd): Small command-line tool that will wrap an existing command-line interface program, and allow it to be accessed via a WebSocket. WebSocket-capable applications can now be built very easily. As long as you can write an executable program that reads STDIN and writes to STDOUT, you can build a WebSocket server. No networking libraries necessary.
 - [wscat](https://github.com/websockets/wscat/blob/master/README.md): WebSocket cat.
 - [powertop](https://github.com/fenrus75/powertop/blob/master/README.md): Tool to access various powersaving modes in userspace, kernel and hardware. Monitors processes and shows which utilizes the most CPU allowing to identify those with particular high power demands.
