@@ -21,12 +21,35 @@
     <a href="https://github.com/mybonk/mybonk-core/releases" target="_blank">
         <img src="https://img.shields.io/github/downloads/mybonk/mybonk-core/total" alt="GitHub downloads">
     </a>
+    <br/>
+    👆 Not functional yet, will be enabled soon.
 </p>
 <br/>
 
-👆 this is work in progress, will get fixed as we go.
 
 
 
-👉 Instructions still being ✍️ [HERE](/INSTALLATION.md) 🫵 have a look.
+----
+👉 MY₿ONK instructions maintained ✍️ [HERE](/docs/INSTALLATION.md) (```/docs/INSTALLATION.md```).
+
+----
+<p align="center">
+🫵 have a look, clone, fork 💪
+</p>
+
+----
+
+Not ready to take the plunge? 
+----
+
+ Why not start by having a look at the [baby rabbit holes](/docs/baby-rabbit-holes.md) 🕳 🐇 so you will be ready when the time will come.
+
+
+Don't forget to start ⭐️ this project to stumble upon it again soon.
+
+
+
+
+[![Stargazers over time](https://starchart.cc/mybonk/mybonk-core.svg)](https://starchart.cc/mybonk/mybonk-core)
+
 

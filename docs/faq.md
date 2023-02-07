@@ -56,7 +56,7 @@ Bitcoin is for everyone, but everyone goes at a different pace and is in a diffe
 If unsure get advice on what "rabbit hole" would be best for you from other bitcoiners who know you and you trust.
 
 
-Not ready to take the plunge? Why not start by having a look at the [things that really make a difference](BABY-RABBIT-HOLES.md) so you will be ready for when the time comes  :hole: :rabbit2:
+Not ready to take the plunge? Why not start by having a look at the [baby rabbit holes](/docs/baby-rabbit-holes.md) so you will be ready for when the time comes  :hole: :rabbit2:
 
 
 We all stand on the shoulders of giants and learn from one another. 
