@@ -45,6 +45,7 @@ MYBONK stack is composed of:
   - Official: https://fedimint.org/ 
   - Description: 
   - Code: https://github.com/fedimint
+  - dev-running: https://github.com/fedimint/fedimint/blob/master/docs/dev-running.md
 - **LNBits**
   - Official: https://lnbits.com
   - Description: This allows for great bitcoin/LN advanced features through APIs and plugins architecture.

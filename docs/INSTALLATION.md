@@ -38,7 +38,8 @@
     - [2.5. Deploy MYBONK stack to the MYBONK consoles](#25-deploy-mybonk-stack-to-the-mybonk-consoles)
 - [3. Basic operations](#3-basic-operations)
     - [3.1. Backup and restore](#31-backup-and-restore)
-    - [3.2. Join a Federation](#32-join-a-federation)
+    - [3.2. MYBONK Federation](#32-mybonk-federation)
+    - [3.3. Fedimint Federation](#32-fedimint-federation)
 
 
 # Foreword
@@ -832,7 +833,13 @@ TODO: Need to finish this section
   
 ### 3.1. Backup and restore
 
-### 3.2. Join a Federation
+### 3.2. MYBONK Federation
+
+### 3.3. Fedimint Federation
+Fedimint is progressing toward MVP, dev/test env can be built from [their instructions](https://github.com/fedimint/fedimint/blob/master/docs/dev-running.md). 
+
+
+
 
 
 
