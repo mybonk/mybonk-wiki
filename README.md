@@ -46,13 +46,6 @@ Not ready to take the plunge?
  Why not start by having a look at the [baby rabbit holes](/docs/baby-rabbit-holes.md) 🕳 🐇 so you will be ready when the time will come.
 
 
-Don't forget to start ⭐️ this project to stumble upon it again soon.
-
-
-
-
-[![Stargazers over time](https://starchart.cc/mybonk/mybonk-core.svg)](https://starchart.cc/mybonk/mybonk-core)
-
 
 ----
 What is MY₿ONK 
@@ -63,4 +56,19 @@ What is commonly refered to as "*bitcoin full node distribution*" or simply "*fu
 
 Most full node distributions are great to experiment and learn and break things. 
 
-Like most bitcoin full node distributions MY₿ONK can run on a variety of hardware or virtual machines and run various additional software, which we encourage. However we focus on bitcoin-only stripped stack refered to as the "[MY₿ONK stack](/docs/MYBONK_stack.md)" or simply MY₿ONK, it would be impossible to keep up with all the various more or less usable hardware one can find on the market and the variety of more or less reliable software one can find on the internet. 
+Like most bitcoin full node distributions MY₿ONK can run on a variety of hardware or virtual machines and run various additional software, which we encourage. 
+
+![](docs/img/various/potatoe_node.png)
+
+However we focus on bitcoin-only stripped stack refered to as the "[MY₿ONK stack](/docs/MYBONK_stack.md)" or simply MY₿ONK, it would be impossible to keep up with all the various more or less usable hardware one can find on the market and the variety of more or less reliable software one can find on the internet. 
+
+
+
+----
+Don't forget to start ⭐️ this project to stumble upon it again soon.
+
+
+
+
+[![Stargazers over time](https://starchart.cc/mybonk/mybonk-core.svg)](https://starchart.cc/mybonk/mybonk-core)
+
