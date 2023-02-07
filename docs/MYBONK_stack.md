@@ -1,10 +1,8 @@
-# Software Stack
+# MY₿ONK stack
 
-************ THIS IS AN EXAMPLE OF LAYOUT, TO BE UPDATED ***************
+Is refered to as a "MY₿ONK stack" the group of software bundled together to ease deployment and allow people to use a solde baseline to trust, build on, benefit from and contribute to.
 
-Is refered to as a "softawre stack" the group of software bundled together. This eases deployment and allow people to use a solde baseline to trust, build on and contribute to.
-
-MYBONK stack is composed of:
+MY₿ONK stack is composed of:
 
 - **GitHub**  [details](https://www.wikipedia.org/wiki/HitHub)
   - Official: https://github.com
