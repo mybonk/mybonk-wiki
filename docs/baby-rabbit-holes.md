@@ -1,4 +1,4 @@
-# Things that really make a difference
+# Baby rabbit holes
 
 Ordered list of "basic" skills that need to be aquired to enjoy the ride.
 
