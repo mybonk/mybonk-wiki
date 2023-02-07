@@ -4,15 +4,18 @@ Ordered list of "basic" skills that need to be aquired to enjoy the ride.
 
 Go through this slowly. It is tempting to speed-read through a book, call it done, and move on to the next book. To get the most out of this, take your time understanding each section. 
 
-For every 5 minutes you spend reading, spend 15 minutes tinkering around with what you just read. Break things.
+For every 5 minutes you spend reading you should spend 15 minutes tinkering around with what you just read. Break things. 
 
-(Also a cool cheat sheet page maintained here [https://github.com/ruanbekker/cheatsheets#readme](https://github.com/ruanbekker/cheatsheets#readme))
+The sections "Commonly used" are examples you can easily copy/past.
+
+A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#readme](https://github.com/ruanbekker/cheatsheets#readme)
 
 
 ## GitHub / Git
 
-Fork MYBONK-core and clone your forked repository it on your laptop (instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo)).
-- Commands reference [here](https://git-scm.com/docs/git)
+- Fork MY₿ONK-core and clone your forked repository it on your laptop (instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo)).
+- Commands reference [here](https://git-scm.com/docs/git).
+- [Swith GitHub account in terminal](https://dev.to/0xbf/switch-github-account-in-terminal-92g).
 - Commonly used:
 
   ```
