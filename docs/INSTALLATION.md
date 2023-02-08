@@ -23,9 +23,9 @@ Just clone the repository and join our [Telegram group](https://t.me/+_uAJ02x5g_
     - [1.2 Download and install NixOS](#12-download-and-install-nixos)
     - [1.3 Download and install MYBONK](#13-download-and-install-mybonk)
       - [**Option 1.** The way it is done "manually""](#13-option-1)
-      - [**Option 2.** The way it is automated using a MYBONK orchestrator machine](#13-option-2)
+      - [**Option 2.** The way it is automated using a MYBONK orchestrator](#13-option-2)
   
-- [2. Build your MYBONK orchestrator machine](#2-build-your-mybonk-orchestrator-machine)
+- [2. Build your MYBONK orchestrator](#2-build-your-mybonk-orchestrator-machine)
     - [2.1. Download and install VirtualBox](#21-download-and-install-virtualbox)
     - [2.2. Build the OS in VirtualBox](#22-build-the-os)
       - [**Option 1.** Using the installation image from Debian](#option-1-using-the-installation-image-from-debian)
@@ -64,10 +64,10 @@ This small ecosystem consists of only two elements that we are going to build to
 
 
   
-- **One MY₿ONK orchestrator machine:**
+- **One MY₿ONK orchestrator:**
   This machine is used to orchestrate your fleet of MY₿ONK consoles, it is essentially a Linux with a few additional software installed including the Nix package manager.
 - **One MY₿ONK console:**
-  This machine runs the [MY₿ONK stack](/docs/MYBONK_stack.md) on NixOS. It is setup once and its configuration can be updated remotly using MY₿ONK orchestrator machine.
+  This machine runs the [MY₿ONK stack](/docs/MYBONK_stack.md) on NixOS. It is setup once and its configuration can be updated remotly using MY₿ONK orchestrator.
   
 ### Terminology
 - '````#````' stands for '````$ sudo````'
@@ -259,7 +259,7 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
   ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_005.png)
 
 
-  Plug a keyboard and a screen on your MY₿ONK console (they are used only during this first guided installation procedure, after this all interactions with the MY₿ONK console will be done "headless" via the MY₿ONK orchestrator machine as explained in section [Control your MY₿ONK fleet from MY₿ONK orchestrator machine](#3-basic-operations)).
+  Plug a keyboard and a screen on your MY₿ONK console (they are used only during this first guided installation procedure, after this all interactions with the MY₿ONK console will be done "headless" via the MY₿ONK orchestrator as explained in section [Control your MY₿ONK fleet from MY₿ONK orchestrator](#3-basic-operations)).
 
   Let your MY₿ONK console boot from the USB stick:
 
@@ -494,7 +494,7 @@ You have learned:
 - How to use ssh with and without password (using key pair).
 - How to test these configuration changes (e.g. ```nixos-rebuild test```, ```systemctl status sshd```, ```journalctl -f -n 30 -u sshd``` ) before making them percistant across reboots (```nixos-rebuild switch```).
  
-In the next section we are going to see how we can configure one (or multiple) MY₿ONK console(s) remotly using a MY₿ONK orchestrator machine.
+In the next section we are going to see how we can configure one (or multiple) MY₿ONK console(s) remotly using a MY₿ONK orchestrator.
 
 13-download-and-install-myonk
 ### 1.3 Download and install MYBONK 
@@ -560,7 +560,7 @@ Now edit the main configuration file, ```configuration.nix``` to use ```node.nix
 
 <a name="13-option-2"></a>
 #### **Option 2.** The way it is automated using a MY₿ONK orchrestrator
-  Ref. section [Build your MY₿ONK orchestrator machine](#build-orchestrator).
+  Ref. section [Build your MY₿ONK orchestrator](#build-orchestrator).
 
 ---
 
@@ -675,7 +675,7 @@ Now that the MY₿ONK orchestrator is up and running we can use it to build MY�
 
 [MY₿ONK stack](/docs/MYBONK_stack.md) is derived from [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin/). Have a look at their GitHub, especially their [examples](https://github.com/fort-nix/nix-bitcoin/blob/master/examples/README.md) section.
 
-Login to your MY₿ONK orchestrator machine:
+Login to your MY₿ONK orchestrator:
 
 ```
 ssh debian@mybonk_orchestrator
