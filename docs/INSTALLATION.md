@@ -8,6 +8,8 @@
 
 👉 The MY₿ONK instructions are maintained ✍️ hereafter. It is very much work in progress.
 
+Just clone the repository and join our [Telegram group](https://t.me/+_uAJ02x5g_VhYjQ0)!
+
 
 ---
 # Table of Contents
