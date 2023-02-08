@@ -12,8 +12,8 @@
 ---
 # Table of Contents
 - [0. Before you start](#before-you-start)
-  - [Terminology](#terminology)
   - [Overview](#overview)
+  - [Terminology](#terminology)
   - [Advice](#advice)
   - [ssh and auto login](ssh-and-auto-login)
 - [1. Build your MYBONK bitcoin full node](#1-build-your-mybonk-bitcoin-full-node)
@@ -21,9 +21,9 @@
     - [1.2 Download and install NixOS](#12-download-and-install-nixos)
     - [1.3 Download and install MYBONK](#13-download-and-install-mybonk)
       - [**Option 1.** The way it is done "manually""](#13-option-1)
-      - [**Option 2.** The way it is automated using a MYBONK orchestration machine](#13-option-2)
+      - [**Option 2.** The way it is automated using a MYBONK orchestrator machine](#13-option-2)
   
-- [2. Build your MYBONK orchestration machine](#2-build-your-mybonk-orchestration-machine)
+- [2. Build your MYBONK orchestrator machine](#2-build-your-mybonk-orchestrator-machine)
     - [2.1. Download and install VirtualBox](#21-download-and-install-virtualbox)
     - [2.2. Build the OS in VirtualBox](#22-build-the-os)
       - [**Option 1.** Using the installation image from Debian](#option-1-using-the-installation-image-from-debian)
@@ -41,6 +41,8 @@
 
 # Before you start
 
+![](img/various/console_vs_orchestrator.png)
+
 Read this document from the beginning to the end once, then read it again before you decide to get your hands dirty. 
 
 You might have a feeling of "déjà vu" as it is essentially a scrambled from various sources including [nixOS](https://nixos.org) and [nixOS manual](https://nixos.org/manual/nixos/stable/index.html), [nixOS Wiki](https://nixos.wiki/wiki/Main_Page), [nix-bitcoin](https://nixbitcoin.org/), [Virtual Box](https://www.virtualbox.org/), [raspibolt](https://raspibolt.org/) and [Raspiblitz](https://github.com/rootzoll/raspiblitz#readme) (although the approach of MY₿ONK is radically different). 
@@ -54,6 +56,17 @@ You too can contribute to impriving this document on GitHub.
   
 Enjoy the ride, no stress, check out our [FAQ](/docs/faq.md) and out [baby rabbit holes](/docs/baby-rabbit-holes.md)  :hole: :rabbit2:
 
+
+### Overview
+This small ecosystem consists of only two elements that we are going to build together:
+
+
+  
+- **One MY₿ONK orchestrator machine:**
+  This machine is used to orchestrate your fleet of MY₿ONK consoles, it is essentially a Linux with a few additional software installed including the Nix package manager.
+- **One MY₿ONK console:**
+  This machine runs the [MY₿ONK stack](/docs/MYBONK_stack.md) on NixOS. It is setup once and its configuration can be updated remotly using MY₿ONK orchestrator machine.
+  
 ### Terminology
 - '````#````' stands for '````$ sudo````'
 - **MY₿ONK core**: Or simply 'MY₿ONK' is a tailor-made full-node [software stack](/docs/MYBONK_stack.md) for MY₿ONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MY₿ONK core is based on nix-bitcoin itself based on nixOS.
@@ -62,14 +75,6 @@ Enjoy the ride, no stress, check out our [FAQ](/docs/faq.md) and out [baby rabbi
 - **MY₿ONK operator**: A "MY₿ONK user" that got really serious about it and decided to learn more, move to the next level. Has some "skin in the game" on MAINNET and is happy to experiment on SIGNET. Many operators take part in nodes Federation or create their own Federation.
 - **MY₿ONK hacker**: A "MY₿ONK operator" so deep in the rabbit hole, bitcoin, privacy and sovereignty that he became a MY₿ONK hacker. That's an advanced user, student, Maker, researcher, security expert .etc... Just want to tear things apart. Love to use command line. On SIGNET.
 
-### Overview
-This small ecosystem consists of only two elements that we are going to build together:
-  
-- **One orchestration machine:**
-  This machine is used to orchestrate your fleet of MY₿ONK consoles, it is essentially a Linux with a few additional software installed including the Nix package manager.
-- **One MY₿ONK console:**
-  This machine runs the [MY₿ONK stack](/docs/MYBONK_stack.md) on NixOS. It is setup once and its configuration can be updated remotly using MY₿ONK orchestration machine.
-  
 ### Advice
 - **Don't trust, verify**: Anything you download on the internet is at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a sting of hexadecimal characters).
 - **Nix vs. NixOS**: It is very important to understand the concept that nix and nixOS are two different things: 
@@ -252,7 +257,7 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
   ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_005.png)
 
 
-  Plug a keyboard and a screen on your MY₿ONK console (they are used only during this first guided installation procedure, after this all interactions with the MY₿ONK console will be done "headless" via the MY₿ONK orchestration machine as explained in section [Control your MY₿ONK fleet from orchestration machine](#3-basic-operations)).
+  Plug a keyboard and a screen on your MY₿ONK console (they are used only during this first guided installation procedure, after this all interactions with the MY₿ONK console will be done "headless" via the MY₿ONK orchestrator machine as explained in section [Control your MY₿ONK fleet from MY₿ONK orchestrator machine](#3-basic-operations)).
 
   Let your MY₿ONK console boot from the USB stick:
 
@@ -487,7 +492,7 @@ You have learned:
 - How to use ssh with and without password (using key pair).
 - How to test these configuration changes (e.g. ```nixos-rebuild test```, ```systemctl status sshd```, ```journalctl -f -n 30 -u sshd``` ) before making them percistant across reboots (```nixos-rebuild switch```).
  
-In the next section we are going to see how we can configure one (or multiple) MY₿ONK console(s) remotly using a MY₿ONK orchestration machine.
+In the next section we are going to see how we can configure one (or multiple) MY₿ONK console(s) remotly using a MY₿ONK orchestrator machine.
 
 13-download-and-install-myonk
 ### 1.3 Download and install MYBONK 
@@ -552,18 +557,18 @@ Now edit the main configuration file, ```configuration.nix``` to use ```node.nix
 
 
 <a name="13-option-2"></a>
-#### **Option 2.** The way it is automated using a MY₿ONK ochrestration machine
-  Ref. section [Build your orchestration machine](#build-orchestration).
+#### **Option 2.** The way it is automated using a MY₿ONK orchrestrator
+  Ref. section [Build your MY₿ONK orchestrator machine](#build-orchestrator).
 
 ---
 
-# 2. Build your MYBONK orchestration machine
+# 2. Build your MYBONK orchestrator
 This machine is used to orchestrate your fleet of MY₿ONK consoles. It does not have to run nixOS (only nix package manager).
 
 You could use your day to day laptop, note that some pitfalls or required extra steps had been reported to install Nix on macOS (read-only filesystem / single-user/multi-user). 
 We suggest you make it easy on yourself and keep things separte by using a Virtual Machine.
 
-This is what we are doing in this section: Build your MY₿ONK orchestration machine on a VirtualBox.
+This is what we are doing in this section: Build your MY₿ONK orchestrator on a VirtualBox.
 
 ### 2.1. Download and install VirtualBox
 Follow the instructions on their website https://www.virtualbox.org
@@ -604,7 +609,7 @@ $ sudo apt install curl git
 ```
 
 ### 2.3. ssh and auto login
-First of all you need the IP address of the machine you want to connect to, the MY₿ONK orchestration machine's. As it runs in a Virtual Box you need to make sure the network setting of its virtual machine is set to "*bridge adapter*" for it to be assigned an IP. If unsure have a look at [ssh into a VirtualBox](https://www.golinuxcloud.com/ssh-into-virtualbox-vm/#Method-1_SSH_into_VirtualBox_using_Bridged_Network_Adapter).
+First of all you need the IP address of the machine you want to connect to, the MY₿ONK orchestrator's. As it runs in a Virtual Box you need to make sure the network setting of its virtual machine is set to "*bridge adapter*" for it to be assigned an IP. If unsure have a look at [ssh into a VirtualBox](https://www.golinuxcloud.com/ssh-into-virtualbox-vm/#Method-1_SSH_into_VirtualBox_using_Bridged_Network_Adapter).
 
 Also note that in Debian ssh restrictions apply to ```root``` user: 
 
@@ -625,7 +630,7 @@ Leave the setting ```PermitRootLogin``` as ```prohibit-password```.
   #### **Option 1.** Using the ready-made binary distribution from nix cache
   - Quicker and more convenient than Option 2 as it has been pre-built for you.
 
-    ssh into the orchestration machine and run:
+    ssh into the orchestrator and run:
     ``` 
     $ sh <(curl -L https://nixos.org/nix/install)   
     ```
@@ -664,18 +669,18 @@ Leave the setting ```PermitRootLogin``` as ```prohibit-password```.
   
 
 ### 2.4. Build MYBONK stack
-Now that the orchestration machine is up and running we can use it to build MY₿ONK stack and deploy it seemlesly to the fleet of MY₿ONK consoles in a secure, controlled and effortless way.
+Now that the MY₿ONK orchestrator is up and running we can use it to build MY₿ONK stack and deploy it seemlesly to the fleet of MY₿ONK consoles in a secure, controlled and effortless way.
 
 [MY₿ONK stack](/docs/MYBONK_stack.md) is derived from [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin/). Have a look at their GitHub, especially their [examples](https://github.com/fort-nix/nix-bitcoin/blob/master/examples/README.md) section.
 
-Login to your MY₿ONK orchestration machine:
+Login to your MY₿ONK orchestrator machine:
 
 ```
-ssh debian@mybonk_orchestration
+ssh debian@mybonk_orchestrator
 $
 ```
 
-This MY₿ONK orchestration machine needs root passwordless key pair ssh access to the target MY₿ONK console. Generate our key pair and eneable ssh auto login for user ```mybonk``` (password '```mybonk```') on the relote MY₿ONK console (192.168.0.64) as explained in section '[0. ssh and auto-login](#0-ssh-and-auto-login)'.
+This MY₿ONK orchestrator machine needs root passwordless key pair ssh access to the target MY₿ONK console. Generate our key pair and eneable ssh auto login for user ```mybonk``` (password '```mybonk```') on the relote MY₿ONK console (192.168.0.64) as explained in section '[0. ssh and auto-login](#0-ssh-and-auto-login)'.
 
 And add a shortcut for it at the end of your ssh config file (```~/.ssh/config```): 
 
@@ -796,7 +801,7 @@ Read [this very well written article](https://tech.ingolf-wagner.de/nixos/krops/
 
 First, krops needs to ssh MY₿ONK console using automatic login with keys pair. We have done this earlier let's move on ...
 
-On your orchestration machine make sure you are in the (```mybonk```) deployment directory, edit ```krops/deploy.nix```` which is the main deployment configuration file:
+On your orchestrator machine make sure you are in the (```mybonk```) deployment directory, edit ```krops/deploy.nix```` which is the main deployment configuration file:
 
 Locate the FIXME and set the target to the name of the ssh config entry created earlier, i.e. mybonk-node.
 
