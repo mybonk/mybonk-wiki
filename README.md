@@ -58,7 +58,6 @@ Most full node distributions are great to experiment and learn and break things.
 
 Like most bitcoin full node distributions MY₿ONK can run on a variety of hardware or virtual machines and run various additional software, which we encourage. 
 
-![](docs/img/various/potatoe_node.png)
 
 However we focus on bitcoin-only stripped stack refered to as the "[MY₿ONK stack](/docs/MYBONK_stack.md)" or simply MY₿ONK, it would be impossible to keep up with all the various more or less usable hardware one can find on the market and the variety of more or less reliable software one can find on the internet. 
 
