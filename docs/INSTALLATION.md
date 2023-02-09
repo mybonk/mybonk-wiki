@@ -17,7 +17,7 @@ Just clone the repository and join our [Telegram group](https://t.me/+_uAJ02x5g_
   - [Overview](#overview)
   - [Terminology](#terminology)
   - [Advice](#advice)
-  - [ssh and auto login](ssh-and-auto-login)
+  - [ssh and auto login](#ssh-and-auto-login)
 - [1. Build your MYBONK bitcoin full node](#1-build-your-mybonk-bitcoin-full-node)
     - [1.1 The hardware](#11-the-hardware)
     - [1.2 Download and install NixOS](#12-download-and-install-nixos)
