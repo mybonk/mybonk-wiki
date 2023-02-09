@@ -22,7 +22,7 @@ Just clone the repository and join our [Telegram group](https://t.me/+_uAJ02x5g_
     - [1.1 The hardware](#11-the-hardware)
     - [1.2 Download and install NixOS](#12-download-and-install-nixos)
     - [1.3 Download and install MYBONK](#13-download-and-install-mybonk)
-      - [**Option 1.** The way it is done "manually""](#13-option-1)
+      - [**Option 1.** The way it is done "manually"](#13-option-1)
       - [**Option 2.** The way it is automated using a MYBONK orchestrator](#13-option-2)
   
 - [2. Build your MYBONK orchestrator](#2-build-your-mybonk-orchestrator-machine)
@@ -498,7 +498,9 @@ In the next section we are going to see how we can configure one (or multiple) M
 
 13-download-and-install-myonk
 ### 1.3 Download and install MYBONK 
-#### **Option 1.** The way it is done "manually""
+
+<a name="13-option-1"></a>
+#### **Option 1.** The way it is done "manually"
 
 Exactly the same way we installed, configured and enabled the service openssh modifying only the nixos configuration file ```configuration.nix``` in the previous section, we can enable all sorts of services and parameters. 
 
