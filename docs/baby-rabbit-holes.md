@@ -110,6 +110,11 @@ Tmux shortcuts
 ## Podcasts
 - nixbitcoin-dev with Stefan Livera: A security focused bitcoin node https://stephanlivera.com/episode/195/
 
+
+## Other resources 
+- [DarthCoin's bitcoin guides](https://darthcoin.substack.com)
+
+
 ## Books
 - [Introduction to the Mac command line](https://github.com/ChristopherA/intro-mac-command-line) (on GitHub)
 - [Learn Bitcoin from the command line](https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line#readme) (on GitHub)
