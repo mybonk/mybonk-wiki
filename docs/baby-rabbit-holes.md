@@ -22,10 +22,13 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
   git clone https://github.com/mybonk/mybonk-core.git
   git status
   git add
-  git commit -m "commit message"
+  git commit -m "Initial commit"
   git mv filename dir/filename
-  git pull
+  git add --all
   git push
+  git push -u origin main
+  git pull
+
   ```
 ## Command line stuff
 - bash shell
