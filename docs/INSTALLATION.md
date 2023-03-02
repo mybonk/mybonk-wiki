@@ -139,12 +139,12 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
 
   Make sure the following settings are set:
   
--  ``boot mode select`` set to ``[Legacy]``
--  ``boot Option #1`` set to ``USB Device: [USB]``
+-  ``Boot mode select`` set to ``[Legacy]``
+-  ``Boot Option #1`` set to ``USB Device: [USB]``
 
   ![](img/NixOS_install_screenshots/NixOS_install_screenshot_003.png)
 
-  Let your MY₿ONK console boot from the USB stick:
+  Let your MY₿ONK console boot from the USB stick.
 
   ![](img/NixOS_install_screenshots/NixOS_install_screenshot_010.png)
 
@@ -152,7 +152,7 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
 
   ![](img/NixOS_install_screenshots/NixOS_install_screenshot_020.png)
 
-  The next screen is keyboard layout selection, which is invariably a point people struggle with depending on what country they are from (azerty, questy ...) and also the variants that exist. **Take your time** trying a few (don't forget the try characters that are not alphabetical letters such as '@', '*', '_', '-', '/', ';', ':' .etc... ) until you find the best match. In my case it's "French" variant "French (Macintoch)". Not choosing the correct layout will result in keys inversions which will lead to you not being able to log in your system because the password you think you tap is not actually entring the same characters.
+  The next screen is the keyboard layout selection, which is invariably a point people struggle with depending on what country they are from (azerty, querty ...) and also the variants that exist. **Take your time** trying a few (don't forget to try the special characters '@', '*', '_', '-', '/', ';', ':' .etc... ) until you find the best match. In my case it's "French" variant "French (Macintoch)". Not choosing the correct layout will result in keys inversions which will lead to you not being able to log in your system because the password you think you tap in does not actually enter the correct characters.
 
   ![](img/NixOS_install_screenshots/NixOS_install_screenshot_030.png)
   
