@@ -6,9 +6,7 @@
 </p>
 <br/>
 
-👉 The MY₿ONK instructions are maintained ✍️ hereafter. It is very much work in progress.
-
-Just clone the repository and join our [Telegram group](https://t.me/+_uAJ02x5g_VhYjQ0)!
+👉 The MY₿ONK installation instructions are maintained ✍️ hereafter. It is very much work in progress. Jump in, just clone the repository and join our [Telegram group](https://t.me/+_uAJ02x5g_VhYjQ0)!
 
 
 ---
@@ -51,19 +49,18 @@ You might have a feeling of "déjà vu" as it is essentially a scrambled from va
 
 If you have any experience with the command line or already run any other full node you have a significant advantage, you could complete this setup in 2 hours maybe, otherwize allocate 1 day.
   
-We [collaboratively] take great pride and care maintaining this document so it remains clear and concise, often it references external links. Explore them when instructed to, this will make the journey smoother even pleasant.
+We [collaboratively] take great pride and care maintaining this document so it remains up to date and concise, often it refers to external links. Explore these external links when instructed to, this will make the journey smoother.
   
 It is assumed that you know a little bit of everything but not enough so we show you the way step by step based on the typical MY₿ONK setup.
 You too can contribute to impriving this document on GitHub.
   
-Enjoy the ride, no stress, check out our [FAQ](/docs/faq.md) and out [baby rabbit holes](/docs/baby-rabbit-holes.md)  :hole: :rabbit2:
+Enjoy the ride, no stress, check out our [FAQ](/docs/faq.md) and our [baby rabbit holes](/docs/baby-rabbit-holes.md)  :hole: :rabbit2:
 
 
 ### Overview
-This small ecosystem consists of only two elements that we are going to build together:
+This example small ecosystem consists of only two elements that we are going to build together:
 
-
-  
+ 
 - **One MY₿ONK orchestrator:**
   This machine is used to orchestrate your fleet of MY₿ONK consoles, it is essentially a Linux with a few additional software installed including the Nix package manager.
 - **One MY₿ONK console:**
@@ -73,8 +70,8 @@ This small ecosystem consists of only two elements that we are going to build to
 - '````#````' stands for '````$ sudo````'
 - **MY₿ONK core**: Or simply 'MY₿ONK' is a tailor-made full-node [software stack](/docs/MYBONK_stack.md) for MY₿ONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MY₿ONK core is based on nix-bitcoin itself based on nixOS.
 - **MY₿ONK console**: A full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-enery, supply chain resilience and generic parts in mind.
-- **MY₿ONK user**: The end user, you, the family man, the boucher, the baker, the hair dresser, the mecanics... Just want the thing to work, "plug and forget". Uses GUIs and has an aversion to the command line. On MAINNET.
-- **MY₿ONK operator**: A "MY₿ONK user" that got really serious about it and decided to learn more, move to the next level. Has some "skin in the game" on MAINNET and is happy to experiment on SIGNET. Many operators take part in nodes Federation or create their own Federation.
+- **MY₿ONK user**: The end user, you, the family man, the boucher, the baker, the hair dresser, the mecanics... Just want the thing to work, "plug and forget". Uses very simple user interface and never uses the command line. On MAINNET.
+- **MY₿ONK operator**: A "MY₿ONK user" that got really serious about it and decided to learn more, move to the next level. Has some "skin in the game" on MAINNET and is happy to experiment on SIGNET. Many operators take part in nodes Federations or create their own Federation.
 - **MY₿ONK hacker**: A "MY₿ONK operator" so deep in the rabbit hole, bitcoin, privacy and sovereignty that he became a MY₿ONK hacker. That's an advanced user, student, Maker, researcher, security expert .etc... Just want to tear things apart. Love to use command line. On SIGNET.
 
 ### Advice
@@ -91,7 +88,6 @@ This is so important that we felt it diserved its own section.
 
 ![](img/various/ssh_failed_attempts.gif)
 
-All we do with the machines is over ssh. If you're the kind of person entering his password manually every time this is not going to fly.
 
 Spare yourself the pain, learn good habbits and avoid getting locked out of your system by mistake. Take the time to not only understand what ssh is but also how it works, particularily how to use ssh auto login (auto login *using public and private keys pair* to be specific). It is not only a good idea to save time, it is also significantly more secure than simple password-based login. It is also a pre-requisite for the deployment of MY₿ONK, have a look at the [baby rabbit holes](/docs/baby-rabbit-holes.md#ssh) section about ssh 🕳 🐇
 
@@ -110,7 +106,11 @@ Spare yourself the pain, learn good habbits and avoid getting locked out of your
 There are many many platforms, physical (HW) or virtual (Virtual Machines, Cloud) to choose from, which is what NixOS was made for in the first place and this is great. A collection of hardware specific platform profiles to optimize settings for different hardware is even being maintained at [NixOS Hardware repository](https://github.com/NixOS/nixos-hardware/blob/master/README.md).
 
 
-The following steps focus on MY₿ONK console hardware platform only because it would be impossible to maintain and support all the possible combinations for a specific application domain: Each hardware has its own specs, some have additional features (BIOS capabilities, onboard encrypton, various kinds of storages and partition systems .etc...) or limitations (too little RAM or unreliable parts, weak power source, "moving parts", cooling issues, higher power consumption .etc...) making it unadvisable to install onto, or too difficult for an average person to setup and maintain; Even little things like bootable or not from USB stick can turn what should be a beautiful journey into hours of frustration tring to just make the thing boot until the next pitfall.
+The following steps focus on MY₿ONK console hardware platform only because it would be impossible to maintain and support all the possible combinations for a specific application domain: Each hardware has its own specs, some have additional features (BIOS capabilities, onboard encrypton, various kinds of storages and partition systems .etc...) or limitations (too little RAM or unreliable parts, weak power source, "moving parts", cooling issues, higher power consumption .etc...) making it unadvisable to install onto, or too difficult for an average user to setup and maintain; Even little things like bootable or not from USB stick can turn what should be a beautiful journey into hours of frustration tring to just make the thing boot until the next pitfall.
+
+MY₿ONK console is a full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-enery, supply chain resilience and generic parts in mind. You too can get a MY₿ONK console, just join our [Telegram group](https://t.me/+_uAJ02x5g_VhYjQ0).
+
+
 
 MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or other distributions.
 
@@ -124,18 +124,31 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
 
   Flash the iso image on a USB stick using [balenaEtcher](https://www.balena.io/etcher/).
   
-  Plug your MY₿ONK console to the power source and to your network using an RJ45 cable.
+  Plug your MY₿ONK console to the power source and to your network switch using an RJ45 cable.
 
-  ![](docs/img/NixOS_install_screenshots/NixOS_install_screenshot_005.png)
+  Plug the keyboard and the screen, they are used only during this first guided installation procedure, after this all interactions with the MY₿ONK console will be done "headless" via the MY₿ONK orchestrator as explained in section [Control your MY₿ONK fleet from MY₿ONK orchestrator](#3-basic-operations).
+
+  
+
+  Stick on USB stick in your MY₿ONK console
+
+  Turn on MY₿ONK console, keep pressing ESC on the keyboard during boot to access the BIOS settings.
+  
+  ![](img/NixOS_install_screenshots/NixOS_install_screenshot_005.png)
 
 
-  Plug a keyboard and a screen on your MY₿ONK console (they are used only during this first guided installation procedure, after this all interactions with the MY₿ONK console will be done "headless" via the MY₿ONK orchestrator as explained in section [Control your MY₿ONK fleet from MY₿ONK orchestrator](#3-basic-operations)).
+  Make sure the following settings are set:
+  
+-  ``boot mode select`` set to ``[Legacy]``
+-  ``boot Option #1`` set to ``USB Device: [USB]``
+
+  ![](img/NixOS_install_screenshots/NixOS_install_screenshot_003.png)
 
   Let your MY₿ONK console boot from the USB stick:
 
   ![](img/NixOS_install_screenshots/NixOS_install_screenshot_010.png)
 
-  After the welcome screen the first thing you are asked to configure is the Location, this is used to make sure the system is configured with the correct language and that the corresponding numbers and date formats are used, just choose the right one for you.
+  After the welcome screen the first thing you are asked to configure is your Location, this is used to make sure the system is configured with the correct language and that the corresponding numbers and date formats are used, just choose the right one for you.
 
   ![](img/NixOS_install_screenshots/NixOS_install_screenshot_020.png)
 

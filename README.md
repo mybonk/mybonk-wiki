@@ -31,7 +31,7 @@
 
 ----
 
-👉 MY₿ONK instructions maintained ✍️ [HERE](/docs/INSTALLATION.md) (```/docs/INSTALLATION.md```).
+👉 MY₿ONK installation instructions maintained ✍️ [HERE](/docs/INSTALLATION.md) (```/docs/INSTALLATION.md```).
 
 ----
 <p align="center">
