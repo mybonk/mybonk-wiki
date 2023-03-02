@@ -15,12 +15,14 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
 
 - Fork MY₿ONK-core and clone your forked repository it on your laptop (instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo)).
 - Commands reference [here](https://git-scm.com/docs/git).
+- [Swith to another branch in terminal](https://stackoverflow.com/questions/47630950/how-can-i-switch-to-another-branch-in-git).
 - [Swith GitHub account in terminal](https://dev.to/0xbf/switch-github-account-in-terminal-92g).
 - Commonly used:
 
   ```
   git clone https://github.com/mybonk/mybonk-core.git
   git status
+  git switch 
   git add
   git commit -m "Initial commit"
   git mv filename dir/filename
@@ -46,8 +48,8 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
 
 ## gpg, sha-256 …
 ## ssh
-- telnet vs. ssh
-- ssh automatic login using public key (https://www.ibm.com/support/pages/automatic-logins-ssh-using-public-keys) 
+- [Difference between ssh and ~~Telnet~~](https://www.geeksforgeeks.org/difference-ssh-telnet/)
+- [ssh: OpenSSH, how to manage ssh keys, .ssh config, ssh-keygen, ssh-agent, passphrase, ssh-add](https://goteleport.com/blog/how-to-set-up-ssh-keys/) 
 
 ## tmux
 - (... or alternatives like GNU Screen, Terminator, Byobu, etc.)

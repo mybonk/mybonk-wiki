@@ -22,8 +22,8 @@ Just clone the repository and join our [Telegram group](https://t.me/+_uAJ02x5g_
     - [1.1 The hardware](#11-the-hardware)
     - [1.2 Download and install NixOS](#12-download-and-install-nixos)
     - [1.3 Download and install MYBONK](#13-download-and-install-mybonk)
-      - [**Option 1.** The way it is done "manually"](#13-option-1)
-      - [**Option 2.** The way it is automated using a MYBONK orchestrator](#13-option-2)
+      - [**Option 1.** The "manually" way](#13-option-1)
+      - [**Option 2.** The automated way using a MYBONK orchestrator](#13-option-2)
   
 - [2. Build your MYBONK orchestrator](#2-build-your-mybonk-orchestrator-machine)
     - [2.1. Download and install VirtualBox](#21-download-and-install-virtualbox)
@@ -94,141 +94,11 @@ This is so important that we felt it diserved its own section.
 
 All we do with the machines is over ssh. If you're the kind of person entering his password manually every time this is not going to fly.
 
-Spare yourself the pain and avoid getting locked out of the system by mistake. Take the time to not only understand what ssh is but also how it works, particularily how to use ssh auto login (auto login *using public and private keys pair* to be specific). It is not only a good idea to save time, it is also significantly more secure than simple password-based login. It is also a pre-requisite for the deployment of MY₿ONK.
-
-One opens an encrypted connection with a server using a ssh client. So you have the *ssh client* on the one hand and the *ssh server* on the other hand. ssh clients come in different form and shape, some with nice GUI, but all we do here is on the command line, using the basic ssh client typically bundled with any Linux distribution.
-
-Let's start by showing you how to ssh as user ``user`` from local (your laptop) into whatever remote machine with ip '```REMOTE_MACHINE_IP```' (assuming that user ``user`` exists on the target machine, that you know his password and that the ssh server is running on the target machine).
-
-
-```
-$ ssh user@REMOTE_MACHINE_IP
-Last login: Tue Aug 17 04:44:11 2021 from 10.0.2.2
-$
-```
-
-Log out now. 
-
-```
-$ exit
-logout
-Connection to REMOTE_MACHINE_IP closed.
-$
-```
-
-Let's setup auto login instead, this will allow you to use the ssh command the same way but loging-in without being prompted for the password. To do this you need what is called a "key pair". Any user can generate a key pair. Generate yours using ```ssh-keygen```. Just hit enter to all the questions, including passphrase.
-```
-$ ssh-keygen -t rsa -b 4096
-
-Generating public/private rsa key pair.
-Enter file in which to save the key (/Users/JayDeLux/.ssh/id_rsa): 
-Enter passphrase (empty for no passphrase): 
-Enter same passphrase again: 
-Your identification has been saved in /Users/JayDeLux/.ssh/id_rsa
-Your public key has been saved in /Users/JayDeLux/.ssh/id_rsa.pub
-The key fingerprint is:
-SHA256:RRa2T2DT8Zvc2kkKsF6A3BxvAOqynktDEEnbQMvnwvA Jay@Jay-MacBook-Pro.local
-The key's randomart image is:
-+---[RSA 4096]----+
-|  o=..    Oo..   |
-|  ..* o  = +.+   |
-| . = + o  o . .  |
-|  = = + +. o . *.|
-|   E = =So  . =.o|
-|  o =   =     .  |
-|   =   . o   .   |
-|  . o .   . .    |
-|   .   .   .     |
-+----[SHA256]-----+
-
-```
-
-- ```-t``` stands for type. RSA is the default type so this flag is not really necessary.
-
-- ```-b``` stands for bits. By default the key is 3072 bits long. You can use 4096 bits key for stronger security.
-
-As indicated in the output of the command the key pair has been generated in ```/Users/JayDeLux/.ssh/id_rsa``` 
-
-```
-$ ls /Users/JayDeLux/.ssh/id_rsa
-id_rsa  id_rsa.pub
-
-$ file /home/debian/.ssh/id_rsa
-/Users/JayDeLux/.ssh/id_rsa: OpenSSH private key
-
-file /home/debian/.ssh/id_rsa.pub
-/Users/JayDeLux/.ssh/id_rsa.pub: OpenSSH RSA public key
-```
-
-As you can see a *public* key (```id_rsa.pub```) and a *private* key (```id_rsa```) have been generated. These are what allow you to connect in a trusted way with the target machine. 
-
-Now we are going to push our public key (```id_rsa.pub```) onto the target machine. 
-The easiest way to do this is to use the command ```ssh-copy-id``` which is shipped with the openssh-client package, the synthax is similar to ssh:
-
-Let's enable ssh auto login for our user ```user``` using ```ssh-copy-id``` on the target ```REMOTE_MACHINE_IP```
-
-```
-ssh-copy-id user@REMOTE_MACHINE_IP
-
-/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
-/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
-user@192.168.0.83's password: 
-
-```
-Enter the password for the user ```user``` 
-```
-Number of key(s) added: 1
-
-Now try logging into the machine, with:   "ssh 'user@192.168.0.83'"
-and check to make sure that only the key(s) you wanted were added.
-```
-
-Do as instructed, try to ssh and see that you are no longer requested to provide the password.
-
-```
-ssh user@REMOTE_MACHINE_IP
-Last login: Wed Jan 11 14:00:33 2023 from 192.168.0.7
-$ 
-```
-
-Now you could do the same with the same certificate to enable ssh auto login for other remote users, even ```root```. However ```root``` being a very special user with "great powers and great responsibilities" its login over ssh is restricted by configuration in most distributions. You don’t want hackers to launch brute force attack to hack into your server, so it’s a good practice to disable password authentication in ssh.
-
+Spare yourself the pain, learn good habbits and avoid getting locked out of your system by mistake. Take the time to not only understand what ssh is but also how it works, particularily how to use ssh auto login (auto login *using public and private keys pair* to be specific). It is not only a good idea to save time, it is also significantly more secure than simple password-based login. It is also a pre-requisite for the deployment of MY₿ONK, have a look at the [baby rabbit holes](/docs/baby-rabbit-holes.md#ssh) section about ssh 🕳 🐇
 
 ---
 
 
-Another time saver mechanism is configuring hosts you connect to often in the ssh client's configuration file as explained in details [here](https://goteleport.com/blog/ssh-config/).
-
-In short:
-
-
-```
-nano ~/.ssh/config
-```
-Copy/past the following:
-
-```
-Host mybonk-node-001
-    Hostname IP_ADDRESS_OR_HOST_NAME
-    User user
-    PubkeyAuthentication yes
-    IdentityFile ~/.ssh/id_rsa
-    AddKeysToAgent yes
-```
-
-The parameters are self-explainatory. You need to replace ```IP_ADDRESS_OR_HOST_NAME``` by the target machine IP or full name, ```ùser``` is the remote user; you may need to check ```IdentityFile``` points to your id_rsa generated earlier, remember this file contains your ```private key```.
-
-
-Now you can ssh into the machine with an easy to remember sythax and all the info needed to make this connection happen will be automatically picked from the corresponding ```Host``` section in the ssh config file.
-
-```
-$ ssh mybonk-node-001
-```
-
-You can create an many ```Host``` entries as you like in the ssh config file.
-
----
----
 
 # 1. Build your MYBONK bitcoin full node
   
@@ -495,13 +365,13 @@ You have learned:
 - How to use ssh with and without password (using key pair).
 - How to test these configuration changes (e.g. ```nixos-rebuild test```, ```systemctl status sshd```, ```journalctl -f -n 30 -u sshd``` ) before making them percistant across reboots (```nixos-rebuild switch```).
  
-In the next section we are going to see how we can configure one (or multiple) MY₿ONK console(s) remotly using a MY₿ONK orchestrator.
+In a subsequent sections we will see how your MY₿ONK orchestrator can remotly manage one (or multiple) MY₿ONK console(s).
 
-13-download-and-install-myonk
+
 ### 1.3 Download and install MYBONK 
 
 <a name="13-option-1"></a>
-#### **Option 1.** The way it is done "manually"
+#### **Option 1.** The manual "way"
 
 Exactly the same way we installed, configured and enabled the service openssh modifying only the nixos configuration file ```configuration.nix``` in the previous section, we can enable all sorts of services and parameters. 
 
@@ -562,7 +432,7 @@ Now edit the main configuration file, ```configuration.nix``` to use ```node.nix
 
 
 <a name="13-option-2"></a>
-#### **Option 2.** The way it is automated using a MY₿ONK orchrestrator
+#### **Option 2.** The automated way using a MYBONK orchestrator
   Ref. section [Build your MY₿ONK orchestrator](#build-orchestrator).
 
 ---
@@ -570,10 +440,11 @@ Now edit the main configuration file, ```configuration.nix``` to use ```node.nix
 # 2. Build your MYBONK orchestrator
 This machine is used to orchestrate your fleet of MY₿ONK consoles. It does not have to run nixOS (only nix package manager).
 
-You could use your day to day laptop, note that some pitfalls or required extra steps had been reported to install Nix on macOS (read-only filesystem / single-user/multi-user). 
-We suggest you make it easy on yourself and keep things separte by using a Virtual Machine.
+You could use your day to day laptop, but some people reported issues or additional pitfalls e.g. on macOS (read-only filesystem / single-user/multi-user). 
+For everyone to use a similar enviroment we use a virtual machine on VirtualBox.
 
-This is what we are doing in this section: Build your MY₿ONK orchestrator on a VirtualBox.
+MY₿ONK orchestrator is a barebone Debian living in a VirtualBox. 
+
 
 ### 2.1. Download and install VirtualBox
 Follow the instructions on their website https://www.virtualbox.org
