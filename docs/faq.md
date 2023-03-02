@@ -49,7 +49,7 @@ gpg --verify [SIGNATURE-FILE] [THE-FILE-YOU-DOWNLOADED]
 *You can ignore any warning about the key being 'not a trusted signature' or untrusted .. as long you see "good signature" and the correct main & sub fingerprints the download is valid.*
 
 ## Tell us more about the BONK token
-We hear there are new tokens named BONK or MYBONK on the "market". It's not us. We don't do trading nor scaming nor ICOs. Leave us alone. mybonk-core is free and open source (MIT).
+We hear there are new tokens named BONK or MYBONK on the "market". It's not us. We are MY₿ONK. We don't do trading nor scaming nor ICOs. Leave us alone. mybonk-core is free and open source (MIT).
 
 ## Tell us more about Raspiblitz, Nodle, Ubrell, Step9 and all the others
 Bitcoin is for everyone, but everyone goes at a different pace and is in a different phase in one's bitcoin adoption journey, there is no "one size fit all".
