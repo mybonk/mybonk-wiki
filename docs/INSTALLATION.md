@@ -100,7 +100,7 @@ Spare yourself the pain, learn good habbits and avoid getting locked out of your
   
   There are many ways to do this, the one detailed here focuses on people with little (but still *some*) technical knowledge.
   
-  These steps can be automated but the goal now is for you to *understand* hot it works.
+  These steps can be automated but the goal now is for you to *understand* how it works.
   
 ### 1.1 The hardware
 
