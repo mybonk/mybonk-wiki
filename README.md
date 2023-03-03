@@ -27,13 +27,27 @@
 <br/>
 
 
+----
+What is MY₿ONK 
+----
+
+What is commonly refered to as "*bitcoin full node distribution*" or simply "*full node*" is a set of software more or less related to bitcoin put together in such a way that it makes the experience of installing it and operating it as smooth and secure as possible.
+
+
+Most full node distributions are great to experiment and learn. 
+
+However we focus on security-first, stripped and bitcoin-only stack refered to as the "[MY₿ONK stack](/docs/MYBONK_stack.md)", or simply MY₿ONK. 
+
+
+
+Like most bitcoin full node distributions MY₿ONK can run on a variety of hardware or virtual machines, but it would be impossible to keep up with all the various more or less suitable hardware one can find on the market. MY₿ONK community is essentially using MY₿ONK console, feel free to run the code on any other hardware or virtual machine but we cannot provide any support in that case as our objective is precisely to abstract the recurring harware issues observed on other platforms.
 
 
 ----
 
 👉 MY₿ONK installation instructions maintained ✍️ [HERE](/docs/INSTALLATION.md) (```/docs/INSTALLATION.md```).
 
-----
+
 <p align="center">
 🫵 have a look, clone, fork 💪
 </p>
@@ -46,20 +60,6 @@ Not ready to take the plunge?
  Why not start by having a look at the [baby rabbit holes](/docs/baby-rabbit-holes.md) 🕳 🐇 so you will be ready when the time will come.
 
 
-
-----
-What is MY₿ONK 
-----
-
-What is commonly refered to as "*bitcoin full node distribution*" or simply "*full node*" is a set of software put together in such a way that it makes the experience of installing it and operating it as smooth and secure as possible.
-
-
-Most full node distributions are great to experiment and learn and break things. 
-
-Like most bitcoin full node distributions MY₿ONK can run on a variety of hardware or virtual machines and run various additional software, which we encourage. 
-
-
-However we focus on bitcoin-only stripped stack refered to as the "[MY₿ONK stack](/docs/MYBONK_stack.md)" or simply MY₿ONK, it would be impossible to keep up with all the various more or less usable hardware one can find on the market and the variety of more or less reliable software one can find on the internet. 
 
 
 

@@ -33,7 +33,7 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
 - bash shell
 - ls, cd, mkdir, mv, rm, ln, which,  …
 - hostname, whoami, passwd, chmod, chgrp, …
-- history 
+- history (and don't forget the handy 'reverse-i-search' ``Ctrl`` + ``r``)
 - alias
 - grep
 - sudo

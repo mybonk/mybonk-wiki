@@ -110,6 +110,7 @@ The following steps focus on MY₿ONK console hardware platform only because it 
 
 MY₿ONK console is a full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-enery, supply chain resilience and generic parts in mind. You too can get a MY₿ONK console, just join our [Telegram group](https://t.me/+_uAJ02x5g_VhYjQ0).
 
+![](img/various/console_v2_v3.png)
 
 
 MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or other distributions.
@@ -126,13 +127,13 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
   
   Plug your MY₿ONK console to the power source and to your network switch using an RJ45 cable.
 
-  Plug the keyboard and the screen, they are used only during this first guided installation procedure, after this all interactions with the MY₿ONK console will be done "headless" via the MY₿ONK orchestrator as explained in section [Control your MY₿ONK fleet from MY₿ONK orchestrator](#3-basic-operations).
+  Plug the screen, the keyboard and the mouse (use a wired mouse, the wireless ones can show issues), they are used only during this first guided installation procedure, after this all interactions with the MY₿ONK console will be done "headless" via the MY₿ONK orchestrator as explained in section [Control your MY₿ONK fleet from MY₿ONK orchestrator](#3-basic-operations).
 
   
 
   Stick on USB stick in your MY₿ONK console
 
-  Turn on MY₿ONK console, keep pressing ESC on the keyboard during boot to access the BIOS settings.
+  Turn on MY₿ONK console, keep pressing the ``<Delete>`` or ``<ESC>`` key on the keyboard during boot to access the BIOS settings.
   
   ![](img/NixOS_install_screenshots/NixOS_install_screenshot_005.png)
 
@@ -160,23 +161,23 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
 
   ![](img/NixOS_install_screenshots/NixOS_install_screenshot_040.png)
 
-  Next you are going to be asked what Desktop you want to have. We don't want a Desktop, select "No desktop" 
+  Next you are going to be asked what Desktop you want to have. We don't want a Desktop, select "No desktop". 
 
   ![](img/NixOS_install_screenshots/NixOS_install_screenshot_050.png)
 
-  Next confirm "Unfree software" (read the reason behind this mentionned on the screen)
-![](img/NixOS_install_screenshots/NixOS_install_screenshot_060.png)
+  Confirm "Unfree software" (read the reason behind this mentionned on the screen).
+  ![](img/NixOS_install_screenshots/NixOS_install_screenshot_060.png)
 
 
-  Next we are going to configure the storage devices and partitions. MY₿ONK console has 2 built-in storage devices:
+  Now we are going to configure the storage devices and partitions. MY₿ONK console has 2 built-in storage devices:
   - ```/dev/sda``` M1 mSATA 128GB SSD used for *system*: This is where the system boots from, where the operating system (and various caches) lives and where the swap space is allocated. 
-  - ```/dev/sdb``` SATA 1TB SSD used for *states*: This is where the system settings, the bitcoin blockchain and installed software settings as well as user data is stored. The data on this drive *persisted* 
+  - ```/dev/sdb``` SATA 1TB SSD used for *states*: This is where the system settings, the bitcoin blockchain and installed software settings as well as user data is stored. The data on this drive *persisted*.
 
 
-![](img/NixOS_install_screenshots/NixOS_install_screenshot_062.png)
+  ![](img/NixOS_install_screenshots/NixOS_install_screenshot_062.png)
 
-  As this is a fresh new install these drives should not contain any partitions. If there are any on either of the disks delete them by selecting "New Partition Table" (Creating a new partition table will delete all data on the disk).
-  Make sure you select "Master Boot Record (MBR)" instead of GUID Partition Table (GPT) when creating new partition tables
+  As this is a fresh new install these drives should not contain any partitions. If there are any on either of the disks delete them by selecting "```New Partition Table```" (creating a new partition table will delete all data on the disk).
+  Make sure you select "Master Boot Record (MBR)" instead of GUID Partition Table (GPT) when creating the new partition tables.
   ![](img/NixOS_install_screenshots/NixOS_install_screenshot_065.png)
 
 
@@ -208,6 +209,7 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
 
   When MY₿ONK console is rebooting remove the USB stick it will then boot on the MBR of /dev/sda. Your system is now running by itself let's continue its configuration.
 
+  <div id="configuration.nix" ></div>
   On the MY₿ONK console (this is the last time we will be using it, going forward we are doing to connect to the MY₿ONK console "headless" using remote ssh) login as user ```mybonk``` password ```mybonk```
   
   ````
@@ -221,7 +223,7 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
   ````
   $ nano /etc/nixos/configuration.nix
   ````
-  You can see that most of the options you have been walked through during the installation by the wizard have been transalted into entries in this file. All features and services of the system are configurable through similar simple, human-readable options in this file. 
+  You can see that most of the options you have been walked through during the installation by the wizard have been translated into entries in this file. All features and services of the system are configurable through similar simple, human-readable options in this file. 
   
   See [Nix - A One Pager](https://github.com/tazjin/nix-1p) for a short guide to Nix, the language used in ```configuration.nix```. Use [nix repl](https://nixos.wiki/wiki/Nix_command/repl) to interactively explore the Nix language as well as configurations, options and packages in Nixpkgs.
 
@@ -488,12 +490,12 @@ Now you need to install some additional pretty common software packages that wil
 Update the packages index:
 
 ```
-$ sudo apt update command
+$ sudo apt update
 ```
 
 Install the additional packages (Debian 11 Bullseye) [curl](https://manpages.org/curl), [git](https://manpages.org/git), ***[gnupg2](), [dirmngr]()***:
 ```
-$ sudo apt install curl git
+$ sudo apt -y install curl git
 ```
 
 ### 2.3. ssh and auto login
@@ -568,7 +570,7 @@ ssh debian@mybonk_orchestrator
 $
 ```
 
-This MY₿ONK orchestrator machine needs root passwordless key pair ssh access to the target MY₿ONK console. Generate our key pair and eneable ssh auto login for user ```mybonk``` (password '```mybonk```') on the relote MY₿ONK console (192.168.0.64) as explained in section '[0. ssh and auto-login](#0-ssh-and-auto-login)'.
+This MY₿ONK orchestrator machine needs root passwordless key pair ssh access to the target MY₿ONK console. Generate our key pair and eneable ssh auto login for user ```mybonk``` (password '```mybonk```') on the relote MY₿ONK console (192.168.0.64).
 
 And add a shortcut for it at the end of your ssh config file (```~/.ssh/config```): 
 
@@ -629,10 +631,10 @@ drwxr-xr-x 16 debian debian 4096 Jan 11 17:58 pkgs
 drwxr-xr-x  5 debian debian 4096 Jan 11 17:58 test
 ```
 
-It contains the basic configuration on top of which we are going to overlay MY₿ONK specificities and features. Don't worry too much trying to figure out what each of these files and directories do, we are not going to modify anything in itthese, only reuse (copy/past) some of its content.
+It contains the basic configuration on top of which we are going to overlay MY₿ONK specificities and features. Don't worry too much trying to figure out what each of these files and directories do, we are not going to modify anything in there, only reuse (copy/past) some of its content.
 
 
-Get into the ```example``` directory and run the command ```nix-shell```. [nix-shell](https://nixos.org/manual/nix/stable/command-ref/nix-shell.html) interprets ```shell.nix``` and pulls all the dependancies it refers to, it will that a few minutes to execute:
+Get into the ```example``` directory and run the command ```nix-shell```. [nix-shell](https://nixos.org/manual/nix/stable/command-ref/nix-shell.html) interprets ```shell.nix``` and pulls all the dependancies it refers to, it will take a few minutes to execute:
 ```
 cd examples
 nix-shell
@@ -663,7 +665,7 @@ drwxr-xr-x  2 debian debian  4096 Jan 11 17:58 krops
 -rw-r--r--  1 debian debian   260 Jan 11 17:58 shell.nix
 ````
 
-- ```configuration.nix```: Explained in a previous session.
+- ```configuration.nix```: Explained in a <a href="#configuration.nix">previous session</a>.
 - ```krops```: Directory used for deployment (described in section [#2.5 Deploy MY₿ONK stack to the MY₿ONK consoles](#25-deploy-mybonk-stack-to-the-mybonk-consoles))
 - ```nix-bitcoin-release.nix```: TODO
 - ```shell.nix```: TODO
