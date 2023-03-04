@@ -15,7 +15,7 @@
   - [Overview](#overview)
   - [Terminology](#terminology)
   - [Advice](#advice)
-  - [ssh and auto login](ssh-and-auto-login)
+  - [ssh and auto login](#ssh-and-auto-login)
 - [1. Build your MYBONK bitcoin full node](#1-build-your-mybonk-bitcoin-full-node)
     - [1.1 The hardware](#11-the-hardware)
     - [1.2 Download and install NixOS](#12-download-and-install-nixos)
@@ -36,7 +36,8 @@
     - [2.5. Deploy MYBONK stack to the MYBONK consoles](#25-deploy-mybonk-stack-to-the-mybonk-consoles)
 - [3. Basic operations](#3-basic-operations)
     - [3.1. Backup and restore](#31-backup-and-restore)
-    - [3.2. Join a Federation](#32-join-a-federation)
+    - [3.2. MYBONK Federation](#32-mybonk-federation)
+    - [3.3. Fedimint Federation](#32-fedimint-federation)
 
 
 # Before you start
@@ -99,7 +100,7 @@ Spare yourself the pain, learn good habbits and avoid getting locked out of your
   
   There are many ways to do this, the one detailed here focuses on people with little (but still *some*) technical knowledge.
   
-  These steps can be automated but the goal now is for you to *understand* hot it works.
+  These steps can be automated but the goal now is for you to *understand* how it works.
   
 ### 1.1 The hardware
 
@@ -714,7 +715,13 @@ TODO: Need to finish this section
   
 ### 3.1. Backup and restore
 
-### 3.2. Join a Federation
+### 3.2. MYBONK Federation
+
+### 3.3. Fedimint Federation
+Fedimint is progressing toward MVP, dev/test env can be built from [their instructions](https://github.com/fedimint/fedimint/blob/master/docs/dev-running.md). 
+
+
+
 
 
 

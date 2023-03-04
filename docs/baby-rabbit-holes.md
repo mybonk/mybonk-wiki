@@ -1,4 +1,4 @@
-# Things that really make a difference
+# Baby rabbit holes
 
 Ordered list of "basic" skills that need to be aquired to enjoy the ride.
 
@@ -24,12 +24,17 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
   git status
   git switch 
   git add
+
   git add -a
   git add -A
   git commit -m "commit message"
+
   git mv filename dir/filename
-  git pull
+  git add --all
   git push
+  git push -u origin main
+  git pull
+
   ```
 ## Command line stuff
 - bash shell
