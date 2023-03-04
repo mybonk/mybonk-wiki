@@ -24,6 +24,8 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
   git status
   git switch 
   git add
+  git add -a
+  git add -A
   git commit -m "commit message"
   git mv filename dir/filename
   git pull
@@ -33,11 +35,12 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
 - bash shell
 - ls, cd, mkdir, mv, rm, ln, which,  …
 - hostname, whoami, passwd, chmod, chgrp, …
-- history (and don't forget the handy 'reverse-i-search' ``Ctrl`` + ``r``)
+- history (don't forget to explore 'i-search' and 'reverse-i-search' using ``Ctrl`` + ``s`` and ``Ctrl`` + ``r`` respectively. [if 'i-search' using ``Ctrl`` + ``s`` does not work](https://stackoverflow.com/questions/791765/unable-to-forward-search-bash-history-similarly-as-with-ctrl-r).
 - alias
 - grep
 - sudo
 - file
+- vi (cheat-sheet [HERE](https://www.thegeekdiary.com/basic-vi-commands-cheat-sheet/))
 
 
 
@@ -46,7 +49,7 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
 ## gpg, sha-256 …
 ## ssh
 - [Difference between ssh and ~~Telnet~~](https://www.geeksforgeeks.org/difference-ssh-telnet/)
-- [ssh: OpenSSH, how to manage ssh keys, .ssh config, ssh-keygen, ssh-agent, passphrase, ssh-add](https://goteleport.com/blog/how-to-set-up-ssh-keys/) 
+- [ssh: OpenSSH, how to manage ssh keys, .ssh config, ssh-keygen, passphrase, ssh-add](https://goteleport.com/blog/how-to-set-up-ssh-keys/) also read about and setup ssh-agent, it will save you a LOT of time (key management, auto re-connect e.g. when your laptop goes to sleep or reboots ...).
 
 ## tmux
 - (... or alternatives like GNU Screen, Terminator, Byobu, etc.)
