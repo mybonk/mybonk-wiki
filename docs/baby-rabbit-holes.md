@@ -42,11 +42,26 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
 - hostname, whoami, passwd, chmod, chgrp, …
 - history (don't forget to explore 'i-search' and 'reverse-i-search' using ``Ctrl`` + ``s`` and ``Ctrl`` + ``r`` respectively. [if 'i-search' using ``Ctrl`` + ``s`` does not work](https://stackoverflow.com/questions/791765/unable-to-forward-search-bash-history-similarly-as-with-ctrl-r).
 - alias
-- grep
+- grep: Find all files containing specific text
+  - only search through those files which have ```.c``` or ```.h``` extensions:
+
+        grep -rnw '/path/to/somewhere/' -e 'pattern'
+
+  - only search through those files which have ```.c``` or ```.h``` extensions:
+
+        grep --include=\*.{c,h} -rnw '/path/to/somewhere/' -e "pattern"
+
+  - exclude searching all the files ending with ```.o``` extension:
+
+        grep --exclude=\*.o -rnw '/path/to/somewhere/' -e "pattern"
+
+  - for directories it's possible to exclude one or more directories using the ```--exclude-dir``` parameter. For example, this will exclude the dirs ```dir1/ ```, ```dir2/``` and all of them matching ```*.dst```:
+
+        grep --exclude-dir={dir1,dir2,*.dst} -rnw '/path/to/search/' -e "pattern"
+
 - sudo
 - file
 - vi (cheat-sheet [HERE](https://www.thegeekdiary.com/basic-vi-commands-cheat-sheet/))
-
 
 
 ## curl
