@@ -2,7 +2,7 @@
 <img
     width="320"
     src="docs/img/mybonk_label.png"
-    alt="MYBONK logo">
+    alt="MY₿ONK logo">
 </p>
 <br/>
 <p align="center">
@@ -21,54 +21,119 @@
     <a href="https://github.com/mybonk/mybonk-core/releases" target="_blank">
         <img src="https://img.shields.io/github/downloads/mybonk/mybonk-core/total" alt="GitHub downloads">
     </a>
-    <br/>
-    👆 Not functional yet, will be enabled soon.
 </p>
 <br/>
+👆 this is work in progress, will get this fixed with commit of first release.
 
 
-----
-What is MY₿ONK 
-----
+---
+# Table of Contents
 
-What is commonly refered to as "*bitcoin full node distribution*" or simply "*full node*" is a set of software more or less related to bitcoin put together in such a way that it makes the experience of installing it and operating it as smooth and secure as possible.
-
-
-Most full node distributions are great to experiment and learn. 
-
-We want to inject a fresh approach and perspective into the mix with our cumulative experience.
-We focus on security-first, stripped bitcoin-only stack refered to as the "[MY₿ONK stack](/docs/MYBONK_stack.md)", or simply MY₿ONK.
-
-MY₿ONK is alpha software. Use cautiously, with small amounts, preferably on [SIGNET](https://en.bitcoin.it/wiki/Signet) (rather than MAINNET) for now.
-
-Like most bitcoin full node distributions MY₿ONK can run on a variety of hardware or virtual machines, but it would be impossible to keep up with all the various more or less suitable hardware one can find on the market. MY₿ONK community is essentially using MY₿ONK console, feel free to run the code on any other hardware or virtual machine but we cannot provide any support in that case as our objective is precisely to abstract the recurring harware issues observed on other platforms.
-
-
-----
-
-👉 MY₿ONK installation instructions maintained ✍️ [HERE](/docs/INSTALLATION.md) (```/docs/INSTALLATION.md```).
-
-
-<p align="center">
-🫵 have a look, clone, fork 💪
-</p>
-
-----
-
-Not ready to take the plunge? 
-----
-
- Why not start by having a look at the [baby rabbit holes](/docs/baby-rabbit-holes.md) 🕳 🐇 so you will be ready when the time will come.
+  - [Foreword](#foreword)
+  - [Terminology](#terminology)
+  - [Overview](#overview)
+  - [Advice](#advice)
+  - [1. Build the orchestration machine](#build-orchestration-machine)
+    -  [1.1 Build the orchestration machine](#build-orchestration-machine)
+    -  [1.2 Build the orchestration machine](#build-orchestration-machine)
+      - [Option 1]
+      - [Option 2]
+  - [2. Build the MY₿ONK full node](#build-mybonk-full-node)
+    -  [2.2 Build the orchestration machine](#build-orchestration-machine) 
+    -  [2.2 Build the orchestration machine](#build-orchestration-machine) 
 
 
 
+# Foreword
+Welcome in our rabbit hole. 
+You arrived here for a reason. Read this document from the beginning to the end once, then read it again before you get your hands dirty. 
+  
+We [collaboratively] take great pride and care editing this documentation so it remains clear and concise, often it references external links. Explore them when instructed to, this will make the process as straightforward and pleasant as can be.
+  
+You too can contribute to this documentation on GitHub.
+  
+Enjoy the ride, no stress, Check out the [FAQ](FAQ.md) and the [things that really make a difference](BABY-RABBIT-HOLES.md)  :hole: :rabbit2:
+
+# Terminology
+- **MY₿ONK core**: Tailor-made full-node software stack for MY₿ONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MY₿ONK core is based on nix-bitcoin itself based on nixOS. [Software stack](MY₿ONK-STACK.md).
+- **MY₿ONK console**: A [full-node bitcoin-only hardware platform](https://mybonk.co) designed with security, price, performance, durability, low-enery, supply chain resilience and generic parts in mind.
+- **MY₿ONK user**: Merchant, family man, citadel, institution, bank .etc.. Just want it to work "plug and forget". Only uses web-based GUIs (not the command line). On MAINNET.
+- **MY₿ONK operator**: A "MY₿ONK hacker" that got really hooked and decided to learn more, has some "skin in the game". On MAINNET.
+- **MY₿ONK hacker**: Student, Maker, researcher. Just want to tear things apart. Love using only the terminal. On SIGNET.
+
+# Overview
+
+This small ecosystem consists of only two elements that we are going to build together:
+  
+- **One orchestration machine:**
+  This machine is used to orchestrate your fleet of MY₿ONK consoles, it is essentially a Linux with a few additional software installed including the nix package manager.
+- **One MY₿ONK console:**
+  This machine runs the MY₿ONK stack. It is setup once and its configuration can be updated remotly using the orchestration machine.
+  You could generate as many MY₿ONK consoles as you want as easily, it's the goal, but let's keep this simple here.
+  
+# Advice
+- **Don't trust, verify**: Anything you download on the internet is at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a sting of hexadecimal characters, it's no decoration).
+- **nix vs. nixOS**: To start on the right foot it is very important to understand the concept that nix and nixOS two different things: nix is a [package manager](https://en.wikipedia.org/wiki/Package_manager) (something like npm, rpm and others) whereas nixOS is a [full-blow Linux distribution](https://en.wikipedia.org/wiki/NixOS) built on top of the nix package manager.
+- **Read and explore**: The pros write and read documentation, not so much on YouTube. 
+
+<a name="build-orchestration-machine"></a>
+===
+# 1. Build the orchestration machine
+This machine is used to orchestrate your fleet of MY₿ONK consoles.
+  
+It does not have to run nixOS (only nix package manager), you could use your day to day laptop but Nix installs quite a few things deep in the system and I like to keep things separate. 
+  
+The steps hereafter are based on a Linux Debian installed in a VirtualBox virtual machine running on my Mac laptop.
+### 1.1. Download and install VirtualBox
+Follow the instructions on their website
+
+[https://www.virtualbox.org](https://www.virtualbox.org/)
+
+### 1.2. Build the OS
+  Now that VirtualBox is installed you need to have an OS running on it (Linux Debian in our case).
+  
+  There are 2 ways to do this:
+  #### Option 1: Use a default installation image from Debian (https://www.debian.org/distrib/)
+  - With this method you go through the standard steps of installing the Debian OS in the VirtualBox just as if you were installing it on a new desktop.
+  - Don't forget to take note of the the machine's IP address and login details you choose during the installation!
+  - Detailed instructions here: https://techcolleague.com/how-to-install-debian-on-virtualbox/
+  #### Option 2: Use a ready-made Virtual Box VDI (Virtual Disk Image)
+  - More convenient than OPTION 1 as we use a pre-installed Debian System. 
+  - Example: https://www.linuxvmimages.com/images/debian-11/ the login details are typically on the same page as the download link. 
+  - Do not use such images in a production environment. 
+  - It is possible you get 'Loggin incorrect' when trying to ssh in the box. This is a common issue when using a certain language's OS with another language's keyboard (e.x. QWERTY vs AZERTY) there are various easy ways to work around this that are out of the scope of this document. The simplest and effective is to find a way to login with the keyboard you have anyways until you figure out which key is which then once logged-in you can ajust the settings in "Region & Language" > "Input Source" using the mouse in Gnome or KDE.
+### 1.3. Install the Nix packages
+  There are 2 ways to do this:
+  #### Option 1: Build Nix from the source
+  - Follow the instructions at https://nixos.org/nix/manual/#ch-installing-source
+  #### Option 2: Install using the build from Nix cache
+  - This is quicker and more convenient for test environments.
+  
+  ssh into the machine:
+  
+      ```
+      $ sh < (curl -L https://nixos.org/nix/install) --daemon
+      ```
+      
+  Note: If you prefer to build the system from source instead of copying binaries from the Nix cache, add the following line to /etc/nix.conf
+
+### 1.4. Prepare the image of nix-bitcoin
 
 
-----
-Don't forget to start ⭐️ this project to stumble upon it again soon.
+### 1.5. Tune the configuration of nix-bitcoin
+  Being tested & documented.
+  
+  
+<a name="build-mybonk-full-node"></a>
+# 2. Build MY₿ONK
+  ### 2.1. Overlay the configuration of nix-bitcoin
+  Being tested & documented.
 
+  ### 2.2. Overlay the configuration of nix-bitcoin
+  Being tested & documented.
 
-
-
-[![Stargazers over time](https://starchart.cc/mybonk/mybonk-core.svg)](https://starchart.cc/mybonk/mybonk-core)
+  
+  
+  
+Sill a long way to go. ETA 10Jan2023
 

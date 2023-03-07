@@ -36,7 +36,8 @@
     - [2.5. Deploy MYBONK stack to the MYBONK consoles](#25-deploy-mybonk-stack-to-the-mybonk-consoles)
 - [3. Basic operations](#3-basic-operations)
     - [3.1. Backup and restore](#31-backup-and-restore)
-    - [3.2. Join a Federation](#32-join-a-federation)
+    - [3.2. MYBONK Federation](#32-mybonk-federation)
+    - [3.3. Fedimint Federation](#32-fedimint-federation)
 
 
 # Before you start
@@ -70,8 +71,6 @@ This example small ecosystem consists of only two elements that we are going to 
 - '````#````' stands for '````$ sudo````'
 - **MY₿ONK core**: Or simply 'MY₿ONK' is a tailor-made full-node [software stack](/docs/MYBONK_stack.md) for MY₿ONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MY₿ONK core is based on nix-bitcoin itself based on nixOS.
 - **MY₿ONK console**: A full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-enery, supply chain resilience and generic parts in mind.
-- **MY₿ONK orchestrator**:
-  Used to orchestrate your [fleet of] MY₿ONK console[s], it is currently a separate Linux machine with a few additional software installed on including the Nix package manager. The MY₿ONK orchestrator will soon be integrated within the MY₿ONK console but for now it is a separate machine ([ref #30](https://github.com/mybonk/mybonk-core/issues/30#issue-1609334323)).
 - **MY₿ONK user**: The end user, you, the family man, the boucher, the baker, the hair dresser, the mecanics... Just want the thing to work, "plug and forget". Uses very simple user interface and never uses the command line. On MAINNET.
 - **MY₿ONK operator**: A "MY₿ONK user" that got really serious about it and decided to learn more, move to the next level. Has some "skin in the game" on MAINNET and is happy to experiment on SIGNET. Many operators take part in nodes Federations or create their own Federation.
 - **MY₿ONK hacker**: A "MY₿ONK operator" so deep in the rabbit hole, bitcoin, privacy and sovereignty that he became a MY₿ONK hacker. That's an advanced user, student, Maker, researcher, security expert .etc... Just want to tear things apart. Love to use command line. On SIGNET.
@@ -91,7 +90,7 @@ This is so important that we felt it diserved its own section.
 ![](img/various/ssh_failed_attempts.gif)
 
 
-Spare yourself the pain, learn good habbits and avoid getting locked out of your system by mistake. Take the time to not only understand what ssh is but also how it works, particularily how to use ssh auto login (auto login *using public and private keys pair* to be specific). It is not only a good idea to save time, it is also significantly more secure than simple password-based login. It is also a pre-requisite for the deployment of MY₿ONK, have a look at the section dedicated to ssh in the [baby rabbit holes](/docs/baby-rabbit-holes.md#ssh) 🕳 🐇
+Spare yourself the pain, learn good habbits and avoid getting locked out of your system by mistake. Take the time to not only understand what ssh is but also how it works, particularily how to use ssh auto login (auto login *using public and private keys pair* to be specific). It is not only a good idea to save time, it is also significantly more secure than simple password-based login. It is also a pre-requisite for the deployment of MY₿ONK, have a look at the [baby rabbit holes](/docs/baby-rabbit-holes.md#ssh) section about ssh 🕳 🐇
 
 ---
 
@@ -112,7 +111,6 @@ The following steps focus on MY₿ONK console hardware platform only because it 
 
 MY₿ONK console is a full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-enery, supply chain resilience and generic parts in mind. You too can get a MY₿ONK console, just join our [Telegram group](https://t.me/+_uAJ02x5g_VhYjQ0).
 
-![](img/various/console_v2_v3.png)
 
 
 MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or other distributions.
@@ -129,13 +127,13 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
 
   Plug your MY₿ONK console to the power source and to your network switch using an RJ45 cable.
 
-  Plug the screen, the keyboard and the mouse (use a wired mouse, the wireless ones can show issues), they are used only during this first guided installation procedure, after this all interactions with the MY₿ONK console will be done "headless" via the MY₿ONK orchestrator as explained in section [Control your MY₿ONK fleet from MY₿ONK orchestrator](#3-basic-operations).
+  Plug the keyboard and the screen, they are used only during this first guided installation procedure, after this all interactions with the MY₿ONK console will be done "headless" via the MY₿ONK orchestrator as explained in section [Control your MY₿ONK fleet from MY₿ONK orchestrator](#3-basic-operations).
 
 
 
   Stick on USB stick in your MY₿ONK console
 
-  Turn on MY₿ONK console, keep pressing the ``<Delete>`` or ``<ESC>`` key on the keyboard during boot to access the BIOS settings.
+  Turn on MY₿ONK console, keep pressing ESC on the keyboard during boot to access the BIOS settings.
 
   ![](img/NixOS_install_screenshots/NixOS_install_screenshot_005.png)
 
@@ -163,23 +161,23 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
 
   ![](img/NixOS_install_screenshots/NixOS_install_screenshot_040.png)
 
-  Next you are going to be asked what Desktop you want to have. We don't want a Desktop, select "No desktop".
+  Next you are going to be asked what Desktop you want to have. We don't want a Desktop, select "No desktop"
 
   ![](img/NixOS_install_screenshots/NixOS_install_screenshot_050.png)
 
-  Confirm "Unfree software" (read the reason behind this mentionned on the screen).
-  ![](img/NixOS_install_screenshots/NixOS_install_screenshot_060.png)
+  Next confirm "Unfree software" (read the reason behind this mentionned on the screen)
+![](img/NixOS_install_screenshots/NixOS_install_screenshot_060.png)
 
 
-  Now we are going to configure the storage devices and partitions. MY₿ONK console has 2 built-in storage devices:
+  Next we are going to configure the storage devices and partitions. MY₿ONK console has 2 built-in storage devices:
   - ```/dev/sda``` M1 mSATA 128GB SSD used for *system*: This is where the system boots from, where the operating system (and various caches) lives and where the swap space is allocated.
-  - ```/dev/sdb``` SATA 1TB SSD used for *states*: This is where the system settings, the bitcoin blockchain and installed software settings as well as user data is stored. The data on this drive *persisted*.
+  - ```/dev/sdb``` SATA 1TB SSD used for *states*: This is where the system settings, the bitcoin blockchain and installed software settings as well as user data is stored. The data on this drive *persisted*
 
 
-  ![](img/NixOS_install_screenshots/NixOS_install_screenshot_062.png)
+![](img/NixOS_install_screenshots/NixOS_install_screenshot_062.png)
 
-  As this is a fresh new install these drives should not contain any partitions. If there are any on either of the disks delete them by selecting "```New Partition Table```" (creating a new partition table will delete all data on the disk).
-  Make sure you select "Master Boot Record (MBR)" instead of GUID Partition Table (GPT) when creating the new partition tables.
+  As this is a fresh new install these drives should not contain any partitions. If there are any on either of the disks delete them by selecting "New Partition Table" (Creating a new partition table will delete all data on the disk).
+  Make sure you select "Master Boot Record (MBR)" instead of GUID Partition Table (GPT) when creating new partition tables
   ![](img/NixOS_install_screenshots/NixOS_install_screenshot_065.png)
 
 
@@ -211,7 +209,6 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
 
   When MY₿ONK console is rebooting remove the USB stick it will then boot on the MBR of /dev/sda. Your system is now running by itself let's continue its configuration.
 
-  <div id="configuration.nix" ></div>
   On the MY₿ONK console (this is the last time we will be using it, going forward we are doing to connect to the MY₿ONK console "headless" using remote ssh) login as user ```mybonk``` password ```mybonk```
 
   ````
@@ -225,7 +222,7 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
   ````
   $ nano /etc/nixos/configuration.nix
   ````
-  You can see that most of the options you have been walked through during the installation by the wizard have been translated into entries in this file. All features and services of the system are configurable through similar simple, human-readable options in this file.
+  You can see that most of the options you have been walked through during the installation by the wizard have been transalted into entries in this file. All features and services of the system are configurable through similar simple, human-readable options in this file.
 
   See [Nix - A One Pager](https://github.com/tazjin/nix-1p) for a short guide to Nix, the language used in ```configuration.nix```. Use [nix repl](https://nixos.wiki/wiki/Nix_command/repl) to interactively explore the Nix language as well as configurations, options and packages in Nixpkgs.
 
@@ -271,12 +268,12 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
 
   [```nixos-rebuild```](https://nixos.wiki/wiki/Nixos-rebuild) is the NixOS command used to apply changes made to the system configuration and various other tasks related to managing the state of a NixOS system. For a full list of sub-commands and options, see the nixos-rebuild man page.
   ````
-  $ man nixos-rebuild
+  $ ==sudo== nixos-rebuild
   ````
 
   Build the configuration and activate it, but don't add it (just yet) to the bootloader menu. This is done using the ```test``` subcommand
   ````
-  # nixos-rebuild test
+  $ sudo nixos-rebuild test
   building Nix...
   building the system configuration...
   activating the configuration...
@@ -287,9 +284,9 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
   ````
   Check the system logs as the system is reconfiguring:
   ````
-  # sudo journalctl -f -n 60
+  [mybonk@nixos:/etc/nixos]$ sudo journalctl -f -n 60
   ````
-  Entries refering to the system change and sshd being enabled are being displayed.
+  So `ctrl+C` to exit the logs. Entries refering to the system change and sshd being enabled are being displayed.
 
   Confirm it is running:
   ````
@@ -309,7 +306,7 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
 
   The ```switch``` subcommand will not only rebuild the system, it will also activate the new generation immediately and make it the new default option in the bootloader, making your system configuration changes persistant.
   ````
-  # sudo nixos-rebuild switch
+  $ sudo nixos-rebuild switch
   [sudo] password for mybonk:
   building Nix...
   building the system configuration...
@@ -330,15 +327,20 @@ Your system changes are now persistant after reboot.
 
 Now that sshd has been installed and is running let's ssh in. You need your MY₿ONK console's IP address for this. The IP address has most likely been assigned by your internet router built-in DHCP server. Look for a new device and assigned IP address in your internet router pannel.
 
-
-Alternatively you can find the IP address from the command line using ```ip r```, MY₿ONK console wired network interface is ```enp2s0```
+Alternatively you can get it from the command line using the command ```ifconfig```. In this instance, MY₿ONK console wired network interface is ```enp2s0```.
 
   ````
-  $ ip r
-
-  default via 192.168.0.1 dev enp0s3 proto dhcp metric 100
-  169.254.0.0/16 dev enp0s3 scope link metric 1000
-  192.168.0.0/24 dev enp0s3 proto kernel scope link src 192.168.0.64 metric 100
+  $ ifconfig
+  enp2s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.0.64  netmask 255.255.255.0  broadcast 192.168.0.255
+        inet6 2a02:2788:a4:285:1e48:f4dc:5f3a:afaf  prefixlen 64  scopeid 0x0<global>
+        inet6 2a02:2788:a4:285:bb20:a992:d4c4:d6be  prefixlen 64  scopeid 0x0<global>
+        inet6 fe80::6f79:4796:6bbe:c73a  prefixlen 64  scopeid 0x20<link>
+        ether 68:1d:ef:2e:0c:b3  txqueuelen 1000  (Ethernet)
+        RX packets 66069  bytes 7714527 (7.3 MiB)
+        RX errors 0  dropped 3459  overruns 0  frame 0
+        TX packets 25192  bytes 3267524 (3.1 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
   ````
 
   You can see its IP address is ```192.168.0.64```.
@@ -428,6 +430,8 @@ in {
 
 ````
 
+`sudo nano configuration.nix`
+
 Now edit the main configuration file, ```configuration.nix``` to use ```node.nix``` in the ```imports```:
 ````
   imports =
@@ -449,18 +453,12 @@ Now edit the main configuration file, ```configuration.nix``` to use ```node.nix
 ---
 
 # 2. Build your MYBONK orchestrator
+This machine is used to orchestrate your fleet of MY₿ONK consoles. It does not have to run nixOS (only nix package manager).
 
-IMPORTANT: MY₿ONK orchestrator will soon be integrated within the MY₿ONK console making this complete section irrelevant ([ref #30](https://github.com/mybonk/mybonk-core/issues/30#issue-1609334323)).
+You could use your day to day laptop, but some people reported issues or additional pitfalls e.g. on macOS (read-only filesystem / single-user/multi-user).
+For everyone to use a similar enviroment we use a virtual machine on VirtualBox.
 
-
----
-
-
-This machine is used to orchestrate your [fleet of] MY₿ONK console[s].
-
-You could use your day to day laptop, but some people reported issues or additional pitfalls e.g. on macOS (read-only filesystem / single-user/multi-user vs. Nix package manager).
-
-To avoid such or similar issues the following steps describe the installation of MY₿ONK orchestrator (a barebone Debian) on a VirtualBox virtual machine.
+MY₿ONK orchestrator is a barebone Debian living in a VirtualBox.
 
 
 ### 2.1. Download and install VirtualBox
@@ -493,12 +491,12 @@ Now you need to install some additional pretty common software packages that wil
 Update the packages index:
 
 ```
-$ sudo apt update
+$ sudo apt update command
 ```
 
 Install the additional packages (Debian 11 Bullseye) [curl](https://manpages.org/curl), [git](https://manpages.org/git), ***[gnupg2](), [dirmngr]()***:
 ```
-$ sudo apt -y install curl git
+$ sudo apt install curl git
 ```
 
 ### 2.3. ssh and auto login
@@ -562,24 +560,30 @@ Leave the setting ```PermitRootLogin``` as ```prohibit-password```.
 
 
 ### 2.4. Build MYBONK stack
-Now that your MY₿ONK orchestrator is up and running we can use it to build MY₿ONK stack and deploy it seemlesly to the [fleet of] MY₿ONK console(s) in a secure, controlled and effortless way.
+Now that the MY₿ONK orchestrator is up and running we can use it to build MY₿ONK stack and deploy it seemlesly to the fleet of MY₿ONK consoles in a secure, controlled and effortless way.
 
 [MY₿ONK stack](/docs/MYBONK_stack.md) is derived from [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin/). Have a look at their GitHub, especially their [examples](https://github.com/fort-nix/nix-bitcoin/blob/master/examples/README.md) section.
 
-Login to your MY₿ONK orchestrator (make sure that the virtual machine hosting it as described in section '[2. Build your MYBONK orchestrator](#2-build-your-mybonk-orchestrator-machine)' is actually running):
-
+Login to your MY₿ONK orchestrator:
 
 ```
 ssh debian@mybonk_orchestrator
 $
 ```
 
-Setup passwordless ssh access for user ```root``` to connect from from your MY₿ONK orchestrator to the MY₿ONK console (have a look at the section dedicated to ssh in the [baby rabbit holes](/docs/baby-rabbit-holes.md#ssh) if needed).
+This MY₿ONK orchestrator machine needs root passwordless key pair ssh access to the target MY₿ONK console. Generate our key pair and eneable ssh auto login for user ```mybonk``` (password '```mybonk```') on the relote MY₿ONK console (192.168.0.64) as explained in section '[0. ssh and auto-login](#0-ssh-and-auto-login)'.
 
-And add a shortcut for it in your ssh config file (```~/.ssh/config```):
+And add a shortcut for it at the end of your ssh config file (```~/.ssh/config```):
 
 
 ```
+Host mybonk-console-root
+    Hostname 192.168.0.64
+    User root
+    PubkeyAuthentication yes
+    IdentityFile ~/.ssh/id_rsa
+    AddKeysToAgent yes
+
 Host mybonk-console-mybonk
     Hostname 192.168.0.64
     User mybonk
@@ -589,26 +593,19 @@ Host mybonk-console-mybonk
 
 ```
 
-Now, test that you can ssh without password from your MY₿ONK orchestrator to your MY₿ONK console (using the shortcut ```mybonk-console-root``` we just created:
+Now, log-in as ```mybonk```.
 
 ```
 $ ssh mybonk-console-mybonk
-Last login: Fri Mar  3 13:27:34 2023 from 192.168.0.64
-$
-
 ```
 
-All good, now logout from your MY₿ONK console to get back to your MY₿ONK orchestrator terminal.
-
-MY₿ONK core is based on nix-bitcoin on top of which MY₿ONK specificities are overlayed.
-
-Start by cloning nix-bitcoin project repository in your MY₿ONK orchestrator home directory:
+Clone nix-bitcoin in your home directory:
 
 ```
-cd
 git clone https://github.com/fort-nix/nix-bitcoin
 ```
 
+This creates a directory ```nix-bitcoin```, have a look inside:
 
 ```
 cd nix-bitcoin
@@ -635,35 +632,17 @@ drwxr-xr-x 16 debian debian 4096 Jan 11 17:58 pkgs
 drwxr-xr-x  5 debian debian 4096 Jan 11 17:58 test
 ```
 
-The directory ```examples``` contains the basic elements on top of which we are going to overlay MY₿ONK specificities and features. Don't worry too much trying to figure out what each of these files and directories do, we are only going to copy/past those we need, ajust them and explain what we do.
+It contains the basic configuration on top of which we are going to overlay MY₿ONK specificities and features. Don't worry too much trying to figure out what each of these files and directories do, we are not going to modify anything in itthese, only reuse (copy/past) some of its content.
 
 
-Get into the ```example``` directory and run the command ```nix-shell```.
-[nix-shell](https://nixos.org/manual/nix/stable/command-ref/nix-shell.html) interprets ```shell.nix``` which instructs it to pull all the dependancies refering to nix-bitcoin elements.
-
-It will take a few minutes to execute and start showing output on the terminal, be patient.
-
+Get into the ```example``` directory and run the command ```nix-shell```. [nix-shell](https://nixos.org/manual/nix/stable/command-ref/nix-shell.html) interprets ```shell.nix``` and pulls all the dependancies it refers to, it will that a few minutes to execute:
 ```
 cd examples
 nix-shell
 ```
+The output of the command tells us that 117 paths will be fetched (126.56 MiB download, 756.95 MiB unpacked)
 
-Once complete you will be greeted by a nix-bitcoin splash.
-```
-       _           _     _ _            _       
- _ __ (_)_  __    | |__ (_) |_ ___ ___ (_)_ __  
-| '_ \| \ \/ /____| '_ \| | __/ __/ _ \| | '_ \
-| | | | |>  <_____| |_) | | || (_| (_) | | | | |
-|_| |_|_/_/\_\    |_.__/|_|\__\___\___/|_|_| |_|
-
-Enter "h" or "help" for documentation.
-
-[nix-shell:~/nix-bitcoin/examples]$
-```
-
-As instructed enter "h" to see the help page describing the commands nix-bitcoin team made available to facilite the configuration/build/deploy process.
-
-Now go back to your home directory and create a new directory ```mybonk``` in which we will construct MY₿ONK stack then deploy to the MY₿ONK console from.
+Go back to your home directory and create a new directory ```mybonk```
 
 ```
 cd
@@ -675,10 +654,7 @@ Copy the initial files and directory ```nix-bitcoin-release.nix```, ```configura
 
 ````
 cp -r ../nix-bitcoin/examples/{nix-bitcoin-release.nix,configuration.nix,shell.nix,krops,.gitignore} .
-````
 
-Let's look at what we have:
-````
 debian@debian11:~/mybonk$ ls -la
 total 36
 drwxr-xr-x  3 debian debian  4096 Jan 11 17:58 .
@@ -690,15 +666,16 @@ drwxr-xr-x  2 debian debian  4096 Jan 11 17:58 krops
 -rw-r--r--  1 debian debian   260 Jan 11 17:58 shell.nix
 ````
 
-- ```configuration.nix```: Explained in a <a href="#configuration.nix">previous session</a>.
+- ```configuration.nix```: Explained in a previous session.
 - ```krops```: Directory used for deployment (described in section [#2.5 Deploy MY₿ONK stack to the MY₿ONK consoles](#25-deploy-mybonk-stack-to-the-mybonk-consoles))
-- ```shell.nix```: The nix-shell file as seen a bit earlier.
-- ```nix-bitcoin-release.nix```: Hydra jobset declaration
+- ```nix-bitcoin-release.nix```: TODO
+- ```shell.nix```: TODO
 
 
+  @@@@@@@@@@@@@@@@@@@@@@@@@@
+    TODO: Need to finish this section it's the best part :)
 
-
-
+  @@@@@@@@@@@@@@@@@@@@@@@@@@
 
 ### 2.5. Deploy MYBONK stack to the MYBONK consoles
 
@@ -738,4 +715,7 @@ TODO: Need to finish this section
 
 ### 3.1. Backup and restore
 
-### 3.2. Join a Federation
+### 3.2. MYBONK Federation
+
+### 3.3. Fedimint Federation
+Fedimint is progressing toward MVP, dev/test env can be built from [their instructions](https://github.com/fedimint/fedimint/blob/master/docs/dev-running.md).
