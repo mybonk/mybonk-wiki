@@ -268,7 +268,7 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
 
   [```nixos-rebuild```](https://nixos.wiki/wiki/Nixos-rebuild) is the NixOS command used to apply changes made to the system configuration and various other tasks related to managing the state of a NixOS system. For a full list of sub-commands and options, see the nixos-rebuild man page.
   ````
-  $ man nixos-rebuild
+  $ ==sudo== nixos-rebuild
   ````
 
   Build the configuration and activate it, but don't add it (just yet) to the bootloader menu. This is done using the ```test``` subcommand
