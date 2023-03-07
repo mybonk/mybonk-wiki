@@ -36,7 +36,8 @@ What is commonly refered to as "*bitcoin full node distribution*" or simply "*fu
 
 Most full node distributions are great to experiment and learn. 
 
-However we focus on security-first, stripped and bitcoin-only stack refered to as the "[MY₿ONK stack](/docs/MYBONK_stack.md)", or simply MY₿ONK.
+We want to inject a fresh approach and perspective into the mix with our cumulative experience.
+We focus on security-first, stripped bitcoin-only stack refered to as the "[MY₿ONK stack](/docs/MYBONK_stack.md)", or simply MY₿ONK.
 
 MY₿ONK is alpha software. Use cautiously, with small amounts, preferably on [SIGNET](https://en.bitcoin.it/wiki/Signet) (rather than MAINNET) for now.
 
