@@ -1,6 +1,6 @@
 # MY₿ONK stack
 
-Is refered to as a "MY₿ONK stack" the group of software bundled together to ease deployment and allow people to use a solde baseline to trust, build on, benefit from and contribute to.
+Is referred to as a "MY₿ONK stack" the group of software bundled together to ease deployment and allow people to use a solid baseline to trust, build on, benefit from and contribute to.
 
 The MY₿ONK stack we are working on is composed of:
 
@@ -33,7 +33,7 @@ The MY₿ONK stack we are working on is composed of:
   - Code: https://www.torproject.org/download/tor/
 - **Wireguard**
   - Official: https://www.wireguard.com/repositories
-  - Description: VPN technology built to the core; Client app widely available, allows to connect to your local network remotly using a simple QR code to authenticate.
+  - Description: VPN technology built to the core; Client app widely available, allows to connect to your local network remotely using a simple QR code to authenticate.
   - Code: 
 
 - **Fedimint**

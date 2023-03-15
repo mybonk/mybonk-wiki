@@ -31,17 +31,17 @@
 What is MY₿ONK 
 ----
 
-What is commonly refered to as "*bitcoin full node distribution*" or simply "*full node*" is a set of software more or less related to bitcoin put together in such a way that it makes the experience of installing it and operating it as smooth and secure as possible.
+What is commonly referred to as "*bitcoin full node distribution*" or simply "*full node*" is a set of software more or less related to bitcoin put together in such a way that it makes the experience of installing it and operating it as smooth and secure as possible.
 
 
 Most full node distributions are great to experiment and learn. 
 
 We want to inject a fresh approach and perspective into the mix with our cumulative experience.
-We focus on security-first, stripped bitcoin-only stack refered to as the "[MY₿ONK stack](/docs/MYBONK_stack.md)", or simply MY₿ONK.
+We focus on security-first, stripped bitcoin-only stack referred to as the "[MY₿ONK stack](/docs/MYBONK_stack.md)", or simply MY₿ONK.
 
 MY₿ONK is alpha software. Use cautiously, with small amounts, preferably on [SIGNET](https://en.bitcoin.it/wiki/Signet) (rather than MAINNET) for now.
 
-Like most bitcoin full node distributions MY₿ONK can run on a variety of hardware or virtual machines, but it would be impossible to keep up with all the various more or less suitable hardware one can find on the market. MY₿ONK community is essentially using MY₿ONK console, feel free to run the code on any other hardware or virtual machine but we cannot provide any support in that case as our objective is precisely to abstract the recurring harware issues observed on other platforms.
+Like most bitcoin full node distributions MY₿ONK can run on a variety of hardware or virtual machines, but it would be impossible to keep up with all the various more or less suitable hardware one can find on the market. MY₿ONK community is essentially using MY₿ONK console, feel free to run the code on any other hardware or virtual machine but we cannot provide any support in that case as our objective is precisely to abstract the recurring hardware issues observed on other platforms.
 
 
 ----

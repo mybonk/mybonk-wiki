@@ -9,18 +9,18 @@
 
 ## Can I install MYBONK core stack on another hardware than MYBONK console?
 100%. 
-Although MYBONK console has been designed specifically as a bitcoin-only full node with price, performance, durability, portability energy-efficience, supply chain resilience and generic parts in mind you can run the software stack on whatever hardware you deem suitable for purpose. 
+Although MY₿ONK console has been designed specifically as a bitcoin-only full node with price, performance, durability, portability energy-efficiency, supply chain resilience and generic parts in mind you can run the software stack on whatever hardware you deem suitable for purpose. 
 
 
-However we focus our efforts at maintaining the code base with MYBONK console as hardware reference (it would be impossible to support all the hardware forms and shapes available on the market at any given time.
+However we focus our efforts at maintaining the code base with MY₿ONK console as hardware reference (it would be impossible to support all the hardware forms and shapes available on the market at any given time).
 
 
-Running a MYBONK console allows you to be confident your system is identical to the one of the other MYBONK users, you won't be slow-down by some sort of compatibility issues or missing drivers, you just don't have the required skills nor the time, you want it to work from the get go.
+Running a MY₿ONK console allows you to be confident your system is identical to the one of the other MY₿ONK users, you won't be slow-down by some sort of compatibility issues or missing drivers, you just don't have the required skills nor the time, you want it to work from the get go.
 <TODO: Add some more info>
 
 
 ## How to verify a file or image downloaded from the Internet?
-This is important if you are a MYBONK hacker (operators and 'standard' users) don't need this.
+This is important if you are a MY₿ONK hacker (operators and 'standard' users) don't need this.
 There are all sorts of risks and threats associated with files and images downloaded form the Internet. 
 "Don't trust verify". This can be done by verifying files and images in two ways: verify its hash (proves integrity) or verify its signature (proves integrity and authenticity).
 
@@ -32,7 +32,7 @@ $ shasum -a 256 [THE-FILE-YOU-DOWNLOADED]
 
 Verifying a hash hash proves integrity but not authenticity.
 
-To verify authenticity (proove that the legitimate source signed it) you can use 'gpg'. 
+To verify authenticity (prove that the legitimate source signed it) you can use 'gpg'. 
 
 To import the source public key:
 
@@ -49,7 +49,7 @@ gpg --verify [SIGNATURE-FILE] [THE-FILE-YOU-DOWNLOADED]
 *You can ignore any warning about the key being 'not a trusted signature' or untrusted .. as long you see "good signature" and the correct main & sub fingerprints the download is valid.*
 
 ## Tell us more about the BONK token
-We hear there are new tokens named BONK or MYBONK on the "market". It's not us. We are MY₿ONK. We don't do trading nor scaming nor ICOs. Leave us alone. mybonk-core is free and open source (MIT).
+We hear there are new tokens named BONK or MYBONK on the "market". It's not us. We are MY₿ONK. We don't do trading nor scamming nor ICOs. Leave us alone. mybonk-core is free and open source (MIT).
 
 ## Tell us more about Raspiblitz, Nodle, Ubrell, Step9 and all the others
 Bitcoin is for everyone, but everyone goes at a different pace and is in a different phase in one's bitcoin adoption journey, there is no "one size fit all".
