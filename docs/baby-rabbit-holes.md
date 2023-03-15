@@ -1,6 +1,6 @@
 # Baby rabbit holes
 
-Ordered list of "basic" skills that need to be aquired to enjoy the ride.
+Ordered list of "basic" skills that need to be acquired to enjoy the ride.
 
 Go through this slowly. It is tempting to speed-read through a book, call it done, and move on to the next book. To get the most out of this, take your time understanding each section. 
 
@@ -15,8 +15,8 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
 
 - Fork MY₿ONK-core and clone your forked repository it on your laptop (instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo)).
 - Commands reference [here](https://git-scm.com/docs/git).
-- [Swith to another branch in terminal](https://stackoverflow.com/questions/47630950/how-can-i-switch-to-another-branch-in-git).
-- [Swith GitHub account in terminal](https://dev.to/0xbf/switch-github-account-in-terminal-92g).
+- [Switch to another branch in terminal](https://stackoverflow.com/questions/47630950/how-can-i-switch-to-another-branch-in-git).
+- [Switch GitHub account in terminal](https://dev.to/0xbf/switch-github-account-in-terminal-92g).
 - Commonly used:
 
   ```
@@ -40,7 +40,8 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
 - bash shell
 - ls, cd, mkdir, mv, rm, ln, which,  …
 - hostname, whoami, passwd, chmod, chgrp, …
-- history (don't forget to explore 'i-search' and 'reverse-i-search' using ``Ctrl`` + ``s`` and ``Ctrl`` + ``r`` respectively. [if 'i-search' using ``Ctrl`` + ``s`` does not work](https://stackoverflow.com/questions/791765/unable-to-forward-search-bash-history-similarly-as-with-ctrl-r).
+- ip ```ip a```
+- history (don't forget to explore 'i-search' and 'reverse-i-search' using ``Ctrl`` + ``s`` and ``Ctrl`` + ``r`` respectively. [if 'i-search' using ``Ctrl`` + ``s`` does not work](https://stackoverflow.com/questions/791765/unable-to-forward-search-bash-history-similarly-as-with-ctrl-r)).
 - alias
 - grep: Find all files containing specific text
   - only search through those files which have ```.c``` or ```.h``` extensions:
@@ -69,7 +70,8 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
 ## gpg, sha-256 …
 ## ssh
 - [Difference between ssh and ~~Telnet~~](https://www.geeksforgeeks.org/difference-ssh-telnet/)
-- [ssh: OpenSSH, how to manage ssh keys, .ssh config, ssh-keygen, passphrase, ssh-add](https://goteleport.com/blog/how-to-set-up-ssh-keys/) also read about and setup ssh-agent, it will save you a LOT of time (key management, auto re-connect e.g. when your laptop goes to sleep or reboots ...).
+- [ssh: OpenSSH, how to manage ssh keys, .ssh config, ssh-keygen, passphrase, ssh-copy-id, ssh-add](https://goteleport.com/blog/how-to-set-up-ssh-keys/) also read about and setup ssh-agent, it will save you a LOT of time (key management, auto re-connect e.g. when your laptop goes to sleep or reboots ...).
+- findssh: ([on GitHub](https://github.com/scivision/findssh#readme)) Platform-independently find SSH servers (or other services with open ports) on an IPv4 subnet in pure Python WITHOUT NMAP. Scan entire IPv4 subnet in less than 1 second.  
 
 ## tmux
 - (... or alternatives like GNU Screen, Terminator, Byobu, etc.)
@@ -98,8 +100,10 @@ Tmux shortcuts
 ## processes
 - systemd
 - top
-- [journalctl](https://www.digitalocean.com/community/tutorials/how-to-use-journalctl-to-view-and-manipulate-systemd-logs)
 - systemctrl
+- [journalctl](https://www.digitalocean.com/community/tutorials/how-to-use-journalctl-to-view-and-manipulate-systemd-logs)
+- [logger](https://www.serverwatch.com/guides/use-logger-to-write-messages-to-log-files/)
+
 
 ## certificate 
 - authority
@@ -113,6 +117,7 @@ Tmux shortcuts
 - /var
 - /etc
 - /tmp
+- /lib
 
 
 ## UEFI vs. Legacy Boot
@@ -125,7 +130,7 @@ Tmux shortcuts
 - [tmuxinator](https://github.com/tmuxinator/tmuxinator/blob/master/README.md): Tool that allows you to easily manage tmux sessions by using yaml files to describe the layout of a tmux session, and open up that session with a single command.
 ![](docs/img/various/tmuxinator_screeshot.png)
 - VPN
-  - [Wireguard](https://www.wireguard.com/quickstart/) This VPN technology is built into the kernel; Client app widely available, allows to connect to your local network remotly using a simple QR code to authenticate.
+  - [Wireguard](https://www.wireguard.com/quickstart/) This VPN technology is built into the kernel; Client app widely available, allows to connect to your local network remotely using a simple QR code to authenticate.
   - [Zerotier](https://www.zerotier.com/) Another VPN alternative.
   
 - Chaumian ecash system
@@ -146,4 +151,4 @@ Tmux shortcuts
 - **Michael W. Dean: Users Manual for The Human Experience** 
   - pdf book: [https://michaelwdean.com/UMFTHE/Users_Manual_for_The_Human_Experience-eBook.pdf](https://michaelwdean.com/UMFTHE/Users_Manual_for_The_Human_Experience-eBook.pdf)
   - audiobook on YouTube: https://www.youtube.com/watch?v=xpJMFBpGR2s
-  - 
+  
