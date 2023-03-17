@@ -6,7 +6,11 @@
 </p>
 <br/>
 
-👉 The MY₿ONK installation instructions are maintained ✍️ hereafter. It is very much work in progress. Jump in, just clone the repository and join our [Telegram group](https://t.me/+_uAJ02x5g_VhYjQ0)!
+👉 The MY₿ONK installation instructions are maintained ✍️ hereafter. 
+
+It is very much work in progress. 
+
+Jump in, clone and join our [Telegram group](https://t.me/mybonk_build)!
 
 
 ---
@@ -52,6 +56,7 @@ If you have any experience with the command line or already run any other full n
 We [collaboratively] take great pride and care maintaining this document so it remains up to date and concise, often it refers to external links. Explore these external links when instructed to, this will make the journey smoother.
   
 It is assumed that you know a little bit of everything but not enough so we show you the way step by step based on the typical MY₿ONK setup.
+
 You too can contribute to improving this document on GitHub.
   
 Enjoy the ride, no stress, check out our  [baby rabbit holes](/docs/baby-rabbit-holes.md)  :hole: :rabbit2: and the [FAQ](/docs/faq.md) 👷 
@@ -92,10 +97,14 @@ This example small ecosystem consists of only two elements that we are going to 
 
 This is so important that we felt it deserved its own section.
 
+
+Spare yourself the pain, learn good habits and avoid getting locked out of your system by mistake. Take the time to really understand how ssh works, particularly how to use ssh auto login (auto login *using public and private keys pair* to be specific). 
+
+It is not only a good idea to save time, it is also significantly more secure than simple password-based login. 
+
 ![](img/various/ssh_failed_attempts.gif)
 
-
-Spare yourself the pain, learn good habits and avoid getting locked out of your system by mistake. Take the time to not only understand what ssh is but also how it works, particularly how to use ssh auto login (auto login *using public and private keys pair* to be specific). It is not only a good idea to save time, it is also significantly more secure than simple password-based login. It is also a pre-requisite for the deployment of MY₿ONK, have a look at the section dedicated to ssh in the [baby rabbit holes](/docs/baby-rabbit-holes.md#ssh) 🕳 🐇
+It is also a pre-requisite for the deployment of MY₿ONK, have a look at the section dedicated to ssh in the [baby rabbit holes](/docs/baby-rabbit-holes.md#ssh) 🕳 🐇
 
 ---
 
@@ -114,7 +123,7 @@ There are many many platforms, physical (HW) or virtual (Virtual Machines, Cloud
 
 The following steps focus on MY₿ONK console hardware platform only because it would be impossible to maintain and support all the possible combinations for a specific application domain: Each hardware has its own specs, some have additional features (BIOS capabilities, onboard encryption, various kinds of storages and partition systems .etc...) or limitations (too little RAM or unreliable parts, weak power source, "moving parts", cooling issues, higher power consumption .etc...) making it unadvisable to install onto, or too difficult for an average user to setup and maintain; Even little things like bootable or not from USB stick can turn what should be a beautiful journey into hours of frustration tring to just make the thing boot until the next pitfall.
 
-MY₿ONK console is a full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-energy, supply chain resilience and generic parts in mind. You too can get a MY₿ONK console, just join our [Telegram group](https://t.me/+_uAJ02x5g_VhYjQ0).
+MY₿ONK console is a full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-energy, supply chain resilience and generic parts in mind. You too can get a MY₿ONK console, just join our [Telegram group](https://t.me/mybonk_build).
 
 ![](img/various/console_v2_v3.png)
 
@@ -644,7 +653,7 @@ The directory ```examples``` contains the basic elements on top of which we are 
 
 
 Get into the ```example``` directory and run the command ```nix-shell```. 
-[nix-shell](https://nixos.org/manual/nix/stable/command-ref/nix-shell.html) interprets ```shell.nix``` which instructs it to pull all the dependencies referring to nix-bitcoin elements. 
+[nix-shell](https://nixos.org/manual/nix/stable/command-ref/nix-shell.html) (interprets ```shell.nix```), which pulls all the dependencies and gives you access to the exact versions of the specified packages.
 
 It will take a few minutes to execute and start showing output on the terminal, be patient.
 

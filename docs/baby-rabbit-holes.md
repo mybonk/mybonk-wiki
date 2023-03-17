@@ -23,7 +23,7 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
   git clone https://github.com/mybonk/mybonk-core.git
   git status
   git switch 
-  git add
+  git add .
 
   git add -a
   git add -A
@@ -98,7 +98,7 @@ Tmux shortcuts
 - Tor browsers (https://www.torproject.org/download/)
 - torify / torsocks
 ## processes
-- systemd
+- ```systemd```, ```man systemd.service```, ```man systemd.directives```, .etc...
 - top
 - systemctrl
 - [journalctl](https://www.digitalocean.com/community/tutorials/how-to-use-journalctl-to-view-and-manipulate-systemd-logs)
