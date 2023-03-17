@@ -145,10 +145,12 @@ Tmux shortcuts
 - [Learn Bitcoin from the command line](https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line#readme) (on GitHub)
 - [Mastering the Lightning Network](https://github.com/lnbook/lnbook#readme) (on GitHub)
 ## 
-- **John Perry Barlow: The Declaration of Independence of Cyberspace**
+
+- **The Declaration of Independence of Cyberspace (John Perry Barlow)**
   - Document: [https://cryptoanarchy.wiki/people/john-perry-barlow](https://cryptoanarchy.wiki/people/john-perry-barlow)
   - Audio, red by the author: [https://www.youtube.com/watch?v=3WS9DhSIWR0](https://www.youtube.com/watch?v=3WS9DhSIWR0)
-- **Michael W. Dean: Users Manual for The Human Experience** 
+- **Users Manual for The Human Experience (Michael W. Dean)** 
   - pdf book: [https://michaelwdean.com/UMFTHE/Users_Manual_for_The_Human_Experience-eBook.pdf](https://michaelwdean.com/UMFTHE/Users_Manual_for_The_Human_Experience-eBook.pdf)
   - audiobook on YouTube: https://www.youtube.com/watch?v=xpJMFBpGR2s
-  
+- **How Learning Works (Published by Jossey-Bass)
+  - Document: [https://firstliteracy.org/wp-content/uploads/2015/07/How-Learning-Works.pdf](https://firstliteracy.org/wp-content/uploads/2015/07/How-Learning-Works.pdf)
