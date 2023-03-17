@@ -152,5 +152,5 @@ Tmux shortcuts
 - **Users Manual for The Human Experience (Michael W. Dean)** 
   - pdf book: [https://michaelwdean.com/UMFTHE/Users_Manual_for_The_Human_Experience-eBook.pdf](https://michaelwdean.com/UMFTHE/Users_Manual_for_The_Human_Experience-eBook.pdf)
   - audiobook on YouTube: https://www.youtube.com/watch?v=xpJMFBpGR2s
-- **How Learning Works (Published by Jossey-Bass)
+- **How Learning Works (Published by Jossey-Bass)**
   - Document: [https://firstliteracy.org/wp-content/uploads/2015/07/How-Learning-Works.pdf](https://firstliteracy.org/wp-content/uploads/2015/07/How-Learning-Works.pdf)
