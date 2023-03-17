@@ -44,15 +44,15 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
 - history (don't forget to explore 'i-search' and 'reverse-i-search' using ``Ctrl`` + ``s`` and ``Ctrl`` + ``r`` respectively. [if 'i-search' using ``Ctrl`` + ``s`` does not work](https://stackoverflow.com/questions/791765/unable-to-forward-search-bash-history-similarly-as-with-ctrl-r)).
 - alias
 - grep: Find all files containing specific text
-  - only search through those files which have ```.c``` or ```.h``` extensions:
+  - search all the files in a given directory:
 
         grep -rnw '/path/to/somewhere/' -e 'pattern'
 
-  - only search through those files which have ```.c``` or ```.h``` extensions:
+  - only search through those files with ```.c``` or ```.h``` extensions:
 
         grep --include=\*.{c,h} -rnw '/path/to/somewhere/' -e "pattern"
 
-  - exclude searching all the files ending with ```.o``` extension:
+  - exclude searching all the files with ```.o``` extension:
 
         grep --exclude=\*.o -rnw '/path/to/somewhere/' -e "pattern"
 
