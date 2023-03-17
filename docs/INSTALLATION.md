@@ -6,11 +6,11 @@
 </p>
 <br/>
 <p align="center">
-👉 The MY₿ONK installation instructions are maintained ✍️ hereafter. 
+👉 Here are maintained MY₿ONK detailed installation instructions ✍️. 
 </br>
 It is very much work in progress. 
 </br>
-Jump in, clone and join our [Telegram group](https://t.me/mybonk_build)!
+Jump in, clone and join our <a href="https://t.me/mybonk_build" target="_blank">Telegram group</a>!
 </p>
 
 ---

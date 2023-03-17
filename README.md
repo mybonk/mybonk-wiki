@@ -28,7 +28,7 @@
 
 
 ----
-What is MY₿ONK 
+What is MY₿ONK? 
 ----
 
 What is commonly referred to as "*bitcoin full node distribution*" or simply "*full node*" is a set of software more or less related to bitcoin put together in such a way that it makes the experience of installing it and operating it as smooth and secure as possible.
