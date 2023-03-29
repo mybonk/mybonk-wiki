@@ -5,13 +5,13 @@
     alt="MY₿ONK logo">
 </p>
 <br/>
-
-👉 The MY₿ONK installation instructions are maintained ✍️ hereafter. 
-
+<p align="center">
+👉 Here are maintained MY₿ONK detailed installation instructions ✍️. 
+</br>
 It is very much work in progress. 
-
-Jump in, clone and join our [Telegram group](https://t.me/mybonk_build)!
-
+</br>
+Jump in, clone and join our <a href="https://t.me/mybonk_build" target="_blank">Telegram group</a>!
+</p>
 
 ---
 # Table of Contents
@@ -47,7 +47,7 @@ Jump in, clone and join our [Telegram group](https://t.me/mybonk_build)!
 
 ![](img/various/console_vs_orchestrator.png)
 
-Read this document from the beginning to the end once, then read it again before you decide to get your hands dirty. 
+Read this document from the beginning to the end before getting your hands on the keyboard. Also watch this presentation by Valentin Gagarin about [Flattening the Learning Curve for Nix/NixOS](https://www.youtube.com/watch?v=WFRQvkfPoDI&list=WL&index=87) as Nix/NixOS is the cornerstone of MY₿ONK.
 
 You might have a feeling of "déjà vu" as it is essentially a scrambled from various sources including [nixOS](https://nixos.org) and [nixOS manual](https://nixos.org/manual/nixos/stable/index.html), [nixOS Wiki](https://nixos.wiki/wiki/Main_Page), [nix-bitcoin](https://nixbitcoin.org/), [Virtual Box](https://www.virtualbox.org/), [Raspibolt](https://raspibolt.org/) and [Raspiblitz](https://github.com/rootzoll/raspiblitz#readme) (although the approach of MY₿ONK is radically different). 
 
@@ -83,9 +83,13 @@ This example small ecosystem consists of only two elements that we are going to 
 
 ### Advice
 
-- **Nix vs. NixOS**: It is very important to understand the concept that nix and nixOS are two different things: 
-  - [Nix](https://nixos.org/manual/nix/stable/) is a purely functional package management and build system.
-  - [NixOS](https://nixos.wiki/wiki/Overview_of_the_NixOS_Linux_distribution) is a linux distribution based on Nix. 
+- **Nix vs. NixOS**: It is *very* important to understand the concept that nix and nixOS are different things: 
+  - [Nix](https://nixos.org/manual/nix/stable/) is a purely functional package management and build system. Nix is also the expression language designed specifically for the Nix, it is a pure, lazy, functional language. 
+    - Purity means that operations in the language don't have side-effects (for instance, there is no variable assignment).
+    - Laziness means that arguments to functions are evaluated only when they are needed.
+    - Functional means that functions are “normal” values that can be passed around and manipulated in interesting ways. The language is *not* a full-featured, general purpose language. Its main job is to describe packages, compositions of packages, and the variability within packages.
+
+  - [NixOS](https://nixos.wiki/wiki/Overview_of_the_NixOS_Linux_distribution) is a linux distribution based on Nix.
 
   [See how Nix and NixOS work and relate](https://nixos.org/guides/how-nix-works.html). For a general introduction to the Nix and NixOS ecosystem, see [nix.dev](https://nix.dev/).
 
@@ -97,14 +101,14 @@ This example small ecosystem consists of only two elements that we are going to 
 
 This is so important that we felt it deserved its own section.
 
+It is pre-requisite for the deployment of MY₿ONK, have a look at the section dedicated to ssh in the [baby rabbit holes section](/docs/baby-rabbit-holes.md#ssh) 🕳 🐇
 
-Spare yourself the pain, learn good habits and avoid getting locked out of your system by mistake. Take the time to really understand how ssh works, particularly how to use ssh auto login (auto login *using public and private keys pair* to be specific). 
+Spare yourself the pain, learn good habits, save tones time and avoid getting locked out of your system by really understanding how ssh works, particularly ssh auto login (auto login *using public and private keys pair* to be specific, it is also significantly more secure than simple password-based login). 
 
-It is not only a good idea to save time, it is also significantly more secure than simple password-based login. 
+Also learn how to use ```tmux``` and ```tmuxinator``` (also in the [baby rabbit holes section](/docs/baby-rabbit-holes.md)), the learning curve is a bit steep, but this will save you *hours* every week (the ssh session will always be up and running in their respective window panes even after reboot).
 
 ![](img/various/ssh_failed_attempts.gif)
 
-It is also a pre-requisite for the deployment of MY₿ONK, have a look at the section dedicated to ssh in the [baby rabbit holes](/docs/baby-rabbit-holes.md#ssh) 🕳 🐇
 
 ---
 
@@ -652,17 +656,16 @@ drwxr-xr-x  5 debian debian 4096 Jan 11 17:58 test
 The directory ```examples``` contains the basic elements on top of which we are going to overlay MY₿ONK specificities and features. Don't worry too much trying to figure out what each of these files and directories do, we are only going to copy/past those we need, adjust them and explain what we do.
 
 
-Get into the ```example``` directory and run the command ```nix-shell```. 
-[nix-shell](https://nixos.org/manual/nix/stable/command-ref/nix-shell.html) (interprets ```shell.nix```), which pulls all the dependencies and gives you access to the exact versions of the specified packages.
-
-It will take a few minutes to execute and start showing output on the terminal, be patient.
+Get into the ```example``` directory and run the command ```nix-shell```. It is very important you do this as [nix-shell](https://nixos.org/manual/nix/stable/command-ref/nix-shell.html) (interprets ```shell.nix```) pulls all the dependencies and gives you access to the exact versions of the specified packages.
 
 ```
 cd examples
 nix-shell
 ```
 
-Once complete you will be greeted by a nix-bitcoin splash. 
+It will take a few minutes to execute and start showing output on the terminal, be patient.
+
+Once complete you will be greeted by a nix-bitcoin splash and the nix-shell prompt:
 ```
        _           _     _ _            _       
  _ __ (_)_  __    | |__ (_) |_ ___ ___ (_)_ __  
@@ -675,7 +678,7 @@ Enter "h" or "help" for documentation.
 [nix-shell:~/nix-bitcoin/examples]$
 ```
 
-As instructed enter "h" to see the help page describing the commands nix-bitcoin team made available to facilite the configuration/build/deploy process.
+As instructed enter "h" to see the help page describing the commands nix-bitcoin team made available to facilitate the configuration/build/deploy process.
 
 Now go back to your home directory and create a new directory ```mybonk``` in which we will construct MY₿ONK stack then deploy to the MY₿ONK console from.
 
