@@ -63,6 +63,8 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
 - sudo
 - file
 - vi (cheat-sheet [HERE](https://www.thegeekdiary.com/basic-vi-commands-cheat-sheet/))
+- sed ([https://www.gnu.org/software/sed/manual/sed.html](https://www.gnu.org/software/sed/manual/sed.html))
+- awk
 
 
 ## curl
@@ -100,8 +102,40 @@ Tmux shortcuts
 ## processes
 - ```systemd```, ```man systemd.service```, ```man systemd.directives```, .etc...
 - top
-- systemctrl
+- systemctl
+  - ```systemctl status bitcoind```
+  - ```systemctl start bitcoind```
+  - ```systemctl restart bitcoind```
+  - ```systemctl stop bitcoind```
+  
+  - Show the service definition: ```systemctl cat bitcoind```  
+  - Show the service parameters: ```systemctl show bitcoind```
+
+
 - [journalctl](https://www.digitalocean.com/community/tutorials/how-to-use-journalctl-to-view-and-manipulate-systemd-logs)
+  - All the journal entries since the most recent reboot: ```journalctl -b``` 
+  - Display the timestamps in UTC: ```journalctl --utc``` 
+  - List previous boots: ```journalctl --list-boots```
+  - ```journalctl --since "2015-01-10" --until "2015-01-11 03:00"```
+  - ```journalctl --since yesterday```
+  - ```journalctl --since 09:00 --until "1 hour ago"```
+  - ```journalctl -p err -b``` where option '-p' can be any of:
+    - ```0: emerg```
+    - ```1: alert```
+    - ```2: crit```
+    - ```3: err```
+    - ```4: warning```
+    - ```5: notice```
+    - ```6: info```
+    - ```7: debug```
+  - ```journalctl --no-full```
+  - ```journalctl --no-pager```
+  - ```journalctl -b -u bitcoind -o json```
+  - ```journalctl -b -u bitcoind -o json```
+
+  - ```journalctl -u bitcoind.service```
+  - ```journalctl -u bitcoind.service -u clightning.service --since today```
+  
 - [logger](https://www.serverwatch.com/guides/use-logger-to-write-messages-to-log-files/)
 
 
@@ -123,11 +157,21 @@ Tmux shortcuts
 ## UEFI vs. Legacy Boot
 
 ## Other tools / resources
+- [QEMU](https://www.qemu.org/): A generic and open source machine emulator (full-system and user-mode emulation) and virtualizer. It is the emulator the NixOS community uses primarily.
 - [jq](https://stedolan.github.io/jq/): Lightweight and flexible command-line JSON processor. [reference](https://stedolan.github.io/jq/tutorial/)
 - [websocketd](https://github.com/joewalnes/websocketd): Small command-line tool that will wrap an existing command-line interface program, and allow it to be accessed via a WebSocket. WebSocket-capable applications can now be built very easily. As long as you can write an executable program that reads STDIN and writes to STDOUT, you can build a WebSocket server. No networking libraries necessary.
 - [wscat](https://github.com/websockets/wscat/blob/master/README.md): WebSocket cat.
 - [powertop](https://github.com/fenrus75/powertop/blob/master/README.md): Tool to access various powersaving modes in userspace, kernel and hardware. Monitors processes and shows which utilizes the most CPU allowing to identify those with particular high power demands.
+- [geekbench](https://www.geekbench.com/): Simple tool to quickly benchmark a system's performance ([How to run on Linux](http://support.primatelabs.com/kb/geekbench/installing-geekbench-5-on-linux)) 
+- [iperf3](https://github.com/esnet/iperf): Simple tool to quickly benchmark the maximum achievable bandwidth on IP networks.
 - [tmuxinator](https://github.com/tmuxinator/tmuxinator/blob/master/README.md): Tool that allows you to easily manage tmux sessions by using yaml files to describe the layout of a tmux session, and open up that session with a single command.
+  - ```tmuxinator start console_jay -n "console_jay" node="console_jay"```
+  - ```tmux list-sessions``` / ```tmux ls```
+  - ```tmux kill-session -t name_of_session_to_kill```
+  - ```tmux kill-session -a``` : Kills all the sessions apart from the active one.
+  - ```tmux kill-session``` : Kills all the sessions
+  - ```tmux kill-server``` : Kills the tmux server
+  
 ![](docs/img/various/tmuxinator_screeshot.png)
 - VPN
   - [Wireguard](https://www.wireguard.com/quickstart/) This VPN technology is built into the kernel; Client app widely available, allows to connect to your local network remotely using a simple QR code to authenticate.
