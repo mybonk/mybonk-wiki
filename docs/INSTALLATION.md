@@ -568,7 +568,7 @@ And add a shortcut for it in your ssh config file (```~/.ssh/config```):
 
 
 ```
-Host mybonk-console-mybonk
+Host mybonk-console
     Hostname 192.168.0.64
     User mybonk
     PubkeyAuthentication yes
@@ -580,7 +580,7 @@ Host mybonk-console-mybonk
 Now, test that you can ssh without password from your MY₿ONK orchestrator to your MY₿ONK console (using the shortcut ```mybonk-console-root``` we just created:
 
 ```
-$ ssh mybonk-console-mybonk
+$ ssh mybonk-console
 Last login: Fri Mar  3 13:27:34 2023 from 192.168.0.64
 $ 
 
