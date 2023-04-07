@@ -46,6 +46,11 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
 
 
 - Terminal vs. iTerm2 ([features](https://iterm2.com/features.html)).
+  - iTerm2 hotkeys: 
+    - toggle maximize window: `Cmd` + `Alt` + `=`
+    - toggle full screen: `Cmd` + `Enter`.
+    - make font larger: `Cmd` + `+`
+    - make font smaller: `Cmd` + `-`
 - Shell: 
   - The most important command on the command line is ```man``` (it stands for "manual", so [RTFM](https://en.wiktionary.org/wiki/RTFM)!).
   - ```bash``` and its history (sh, csh, tsh, ksh ...).
