@@ -89,7 +89,7 @@ This example small ecosystem consists of only two elements that we are going to 
     - Laziness means that arguments to functions are evaluated only when they are needed.
     - Functional means that functions are “normal” values that can be passed around and manipulated in interesting ways. The language is *not* a full-featured, general purpose language. Its main job is to describe packages, compositions of packages, and the variability within packages.
 
-  - [NixOS](https://nixos.wiki/wiki/Overview_of_the_NixOS_Linux_distribution) is a linux distribution based on Nix.
+  - [NixOS](https://nixos.wiki/wiki/Overview_of_the_NixOS_Linux_distribution) is a linux distribution based on Nix. In NixOS, the entire operating system — the kernel, applications, system packages, configuration files, and so on — is built by the Nix package manager.
 
   [See how Nix and NixOS work and relate](https://nixos.org/guides/how-nix-works.html). For a general introduction to the Nix and NixOS ecosystem, see [nix.dev](https://nix.dev/).
 
@@ -568,7 +568,7 @@ And add a shortcut for it in your ssh config file (```~/.ssh/config```):
 
 
 ```
-Host mybonk-console-mybonk
+Host mybonk-console
     Hostname 192.168.0.64
     User mybonk
     PubkeyAuthentication yes
@@ -580,7 +580,7 @@ Host mybonk-console-mybonk
 Now, test that you can ssh without password from your MY₿ONK orchestrator to your MY₿ONK console (using the shortcut ```mybonk-console-root``` we just created:
 
 ```
-$ ssh mybonk-console-mybonk
+$ ssh mybonk-console
 Last login: Fri Mar  3 13:27:34 2023 from 192.168.0.64
 $ 
 
