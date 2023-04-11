@@ -46,6 +46,11 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
 
 
 - Terminal vs. iTerm2 ([features](https://iterm2.com/features.html)).
+  - iTerm2 hotkeys: 
+    - toggle maximize window: `Cmd` + `Alt` + `=`
+    - toggle full screen: `Cmd` + `Enter`.
+    - make font larger: `Cmd` + `+`
+    - make font smaller: `Cmd` + `-`
 - Shell: 
   - The most important command on the command line is ```man``` (it stands for "manual", so [RTFM](https://en.wiktionary.org/wiki/RTFM)!).
   - ```bash``` and its history (sh, csh, tsh, ksh ...).
@@ -105,6 +110,7 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
 - sed ([https://www.gnu.org/software/sed/manual/sed.html](https://www.gnu.org/software/sed/manual/sed.html)): "stream editor" for editing streams of text too large to edit as a single file, or that might be generated on the fly as part of a larger data processing step: Substitution, replacing one block of text with another.
 - awk ([https://github.com/onetrueawk/awk/blob/master/README.md](https://github.com/onetrueawk/awk/blob/master/README.md)): Programming language. Unlike many conventional languages, awk is "data driven": you specify what kind of data you are interested in and the operations to be performed when that data is found.
 - [jq](https://stedolan.github.io/jq/): Lightweight and flexible command-line JSON parser/processor. [reference](https://stedolan.github.io/jq/tutorial/)
+- [rg](https://www.mankier.com/1/rg): Recursively search the current directory for lines matching a pattern.
 
 
 ## File system
@@ -117,7 +123,7 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
 ## curl
 
 ## gpg, sha-256 …
-## ssh
+## ssh & rsync
 - [Difference between ssh and ~~Telnet~~](https://www.geeksforgeeks.org/difference-ssh-telnet/)
 - [ssh](https://goteleport.com/blog/how-to-set-up-ssh-keys/): 
   - OpenSSH
@@ -130,6 +136,10 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
   
   Also read about and setup ssh-agent, it will save you a LOT of time (key management, auto re-connect e.g. when your laptop goes to sleep or reboots ...).
 - findssh: ([on GitHub](https://github.com/scivision/findssh#readme)) Platform-independently find SSH servers (or other services with open ports) on an IPv4 subnet in pure Python WITHOUT NMAP. Scan entire IPv4 subnet in less than 1 second.  
+- [rsync](https://apoorvtyagi.tech/scp-command-in-linux): 
+  - rsync uses a delta transfer algorithm and a few optimizations to make the operation a lot faster compared to ssh. The files that have been copied already won't be transferred again (unless they changed since).
+  - rsync allows to restart failed transfers - you just reissue the same command and it will pick up where it left off, whereas scp will start again from scratch.
+  - rsync needs to be used over SSH to be secure.
 
 ## tmux
 - (... or alternatives like GNU Screen, Terminator, Byobu, etc.)
@@ -223,6 +233,10 @@ Tmux shortcuts
   - [stress-ng](https://wiki.ubuntu.com/Kernel/Reference/stress-ng): Stress test a computer system in various selectable way.
   - [geekbench](https://www.geekbench.com/): Simple tool to quickly benchmark a system's performance ([How to run on Linux](http://support.primatelabs.com/kb/geekbench/installing-geekbench-5-on-linux)) 
   - [iperf3](https://github.com/esnet/iperf): Simple tool to quickly benchmark the maximum achievable bandwidth on IP networks.
+  - ```lscpu```: Command to display information about the CPU architecture.
+  - ```lsmem```: Command to list the ranges of available memory with their online status.
+  - ```memtester```: Effective userspace tester for stress-testing the memory subsystem. It is very effective at finding intermittent and non-deterministic faults.
+  - ```memusage```: Profile memory usage of a program.
 - [glances](https://github.com/nicolargo/glances/blob/develop/README.rst) utility: System cross-platform monitoring tool. It allows real-time monitoring of various aspects of your system such as CPU, memory, disk, network usage etc. as well as running processes, logged in users, temperatures, voltages etc.
 - [tmuxinator](https://github.com/tmuxinator/tmuxinator/blob/master/README.md): Tool that allows you to easily manage tmux sessions by using yaml files to describe the layout of a tmux session, and open up that session with a single command.
 
