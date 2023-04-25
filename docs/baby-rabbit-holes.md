@@ -110,7 +110,20 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
 - sed ([https://www.gnu.org/software/sed/manual/sed.html](https://www.gnu.org/software/sed/manual/sed.html)): "stream editor" for editing streams of text too large to edit as a single file, or that might be generated on the fly as part of a larger data processing step: Substitution, replacing one block of text with another.
 - awk ([https://github.com/onetrueawk/awk/blob/master/README.md](https://github.com/onetrueawk/awk/blob/master/README.md)): Programming language. Unlike many conventional languages, awk is "data driven": you specify what kind of data you are interested in and the operations to be performed when that data is found.
 - [jq](https://stedolan.github.io/jq/): Lightweight and flexible command-line JSON parser/processor. [reference](https://stedolan.github.io/jq/tutorial/)
-- [rg](https://www.mankier.com/1/rg): Recursively search the current directory for lines matching a pattern.
+- [rg](https://www.linode.com/docs/guides/ripgrep-linux-installation/#install-ripgrep-on-ubuntu-and-debian) (also known as ```ripgrep```): Recursively search the current directory for lines matching a pattern, very useful to find whatever document containing whatever text in whatever [sub]directory.
+  - ```$ rg what_i_am_looking_for MyDoc_a.php MyDoc_b.php```   Look for string 'what_i_am_looking_for' in MyDoc_a.php and MyDoc_b.php
+  - ```$ rg what_i_am_looking_for  MyDoc.php -C 2```: Return results with *context*, displaying 2 lines before and 2 lines after the match in the output. Also try the options ```-B``` and ```-A``` (number of lines *before* and *after* the match).
+  - ```$ rg 'Error|Exception' MyDoc.php```: Searches the file for either ```Error``` or ```Exception```.
+  - ```$ rg 't.p' MyDoc.php```: Looks for a ```t``` and a ```p``` with any single character in between.
+  - ```$ rg ssl -i```: ***Recursively*** searches for instances of ssl in a case-insensitive manner.
+  - ```$ rg service /etc/var/configuration.nix -i```: ***Recursively*** searches a specific directory for instances of *service* in a case-insensitive manner.
+  - ```rg -g 'comp*'  key``` Searches only for the pattern ```key``` in files beginning with the substring ```comp```.
+  - ```-l``` option to only list the files having a match without additional details/
+  - ```-i``` option for case-insensitive search.
+  - ```-S``` option for smart case search.
+  - ```-F``` option to treat the search string as a string literal ([regex](https://docs.rs/regex/1.5.4/regex/#syntax) syntax).
+  - ```$ rg --type-list``` List of the available file types.
+  - ```$ rg key -t json``` Restricts the search for the pattern key to json files only.
 
 
 ## File system
@@ -137,7 +150,7 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
   Also read about and setup ssh-agent, it will save you a LOT of time (key management, auto re-connect e.g. when your laptop goes to sleep or reboots ...).
 - findssh: ([on GitHub](https://github.com/scivision/findssh#readme)) Platform-independently find SSH servers (or other services with open ports) on an IPv4 subnet in pure Python WITHOUT NMAP. Scan entire IPv4 subnet in less than 1 second.  
 - [rsync](https://apoorvtyagi.tech/scp-command-in-linux): 
-  - rsync uses a delta transfer algorithm and a few optimizations to make the operation a lot faster compared to ssh. The files that have been copied already won't be transferred again (unless they changed since).
+  - rsync uses a delta transfer algorithm and a few optimizations to make the operation a lot faster compared to ssh. The files that have been copied already won't be transferred again (unless they changed since). Can be run ad-hoc on the command line or configured to run as a deamon on the systems to keep files in sync.
   - rsync allows to restart failed transfers - you just reissue the same command and it will pick up where it left off, whereas scp will start again from scratch.
   - rsync needs to be used over SSH to be secure.
 
@@ -266,7 +279,8 @@ Tmux shortcuts
 - Nice Nix cheat sheet: [https://github.com/brainrake/nixos-tutorial/blob/master/cheatsheet.md](https://github.com/brainrake/nixos-tutorial/blob/master/cheatsheet.md)
 - NixOS the "traditional" vs. the "Flakes" way: 
 
-  Flakes have been introduced with Nix 2.4; although still an "**experimental**" feature it is the way forward, we advise you to learn and to use Flakes already.
+  - Flakes have been introduced with Nix 2.4
+  - Although still flagged as "*experimental*" feature it is the way forward, we advise you to learn Flakes already.
 - ```nix version```: Get running nix version (important as the MY₿ONK console might be running a different version from the one on MY₿ONK orchestrator).
 - ```nix-shell```: Start an interactive shell based on a Nix expression. This is distinct from ```nix shell```.
 - ```nix-build```: Build a Nix expression. This is distinct from ```nix build```.
@@ -298,6 +312,7 @@ Tmux shortcuts
 - [Introduction to the Mac command line](https://github.com/ChristopherA/intro-mac-command-line) (on GitHub)
 - [Learn Bitcoin from the command line](https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line#readme) (on GitHub)
 - [Mastering the Lightning Network](https://github.com/lnbook/lnbook#readme) (on GitHub)
+- [How to make a mint](https://groups.csail.mit.edu/mac/classes/6.805/articles/money/nsamint/nsamint.htm): The Cryptography of anonymous electronic cash (18 June 1996) 
 ## 
 
 - **The Declaration of Independence of Cyberspace (John Perry Barlow)**
