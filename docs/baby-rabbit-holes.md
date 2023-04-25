@@ -35,6 +35,10 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
   git push -u origin main
   git pull
 
+  git remote set-url origin https://git-repo/new-repository.git 
+  git remote set-url <remote_name> <ssh_remote_url>
+  git remote -v
+
   ```
 ## Command line stuff
 
