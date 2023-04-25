@@ -69,12 +69,12 @@ This example small ecosystem consists of only two elements that we are going to 
 - **One MY₿ONK orchestrator:**
   This machine is used to orchestrate your fleet of MY₿ONK consoles, it is essentially a Linux with a few additional software installed including the Nix package manager.
 - **One MY₿ONK console:**
-  This machine runs the [MY₿ONK stack](/docs/MYBONK_stack.md) on NixOS. It is setup once and its configuration can be updated remotly using MY₿ONK orchestrator.
+  This machine runs the [MY₿ONK stack](/docs/MYBONK_stack.md) on NixOS. It is setup once and its configuration can be updated remotely using MY₿ONK orchestrator.
   
 ### Terminology
 - '````#````' stands for '````$ sudo````'
 - **MY₿ONK core**: Or simply 'MY₿ONK' is a tailor-made full-node [software stack](/docs/MYBONK_stack.md) for MY₿ONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MY₿ONK core is based on nix-bitcoin itself based on nixOS.
-- **MY₿ONK console**: A full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-enery, supply chain resilience and generic parts in mind.
+- **MY₿ONK console**: A full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-energy, supply chain resilience and generic parts in mind.
 - **MY₿ONK orchestrator**:
   Used to orchestrate your [fleet of] MY₿ONK console[s], it is currently a separate Linux machine with a few additional software installed on including the Nix package manager. The MY₿ONK orchestrator will soon be integrated within the MY₿ONK console but for now it is a separate machine ([ref #30](https://github.com/mybonk/mybonk-core/issues/30#issue-1609334323)).
 - **MY₿ONK user**: The end user, you, the family man, the boucher, the baker, the hair dresser, the mechanics... Just want the thing to work, "plug and forget". Uses very simple user interface and never uses the command line. On MAINNET.
@@ -106,9 +106,10 @@ It is pre-requisite for the deployment of MY₿ONK, have a look at the section d
 Spare yourself the pain, learn good habits, save tones time and avoid getting locked out of your system by really understanding how ssh works, particularly ssh auto login (auto login *using public and private keys pair* to be specific, it is also significantly more secure than simple password-based login). 
 
 Bellow is an illustration of ssh failed login attempts by bots, hackers, you name it on your machine if you leave password authentication enabled. 
+
 ![](img/various/ssh_failed_attempts.gif)
 
-Also learn how to use ```tmux``` and ```tmuxinator``` (also in the [baby rabbit holes section](/docs/baby-rabbit-holes.md)), it's a bit steep, but this will save you *hours* every week (the ssh session will always be up and running in their respective window panes even after reboot).
+Also learn how to use ```tmux``` and ```tmuxinator``` (checkout the [baby rabbit holes section](/docs/baby-rabbit-holes.md)), it's a bit steep, but this will save you *hours* every week (the ssh session will always be up and running in their respective window panes even after reboot).
 
 
 
