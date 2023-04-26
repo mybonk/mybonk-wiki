@@ -257,6 +257,7 @@ Tmux shortcuts
 - [glances](https://github.com/nicolargo/glances/blob/develop/README.rst) utility: System cross-platform monitoring tool. It allows real-time monitoring of various aspects of your system such as CPU, memory, disk, network usage etc. as well as running processes, logged in users, temperatures, voltages etc.
 - [tmuxinator](https://github.com/tmuxinator/tmuxinator/blob/master/README.md): Tool that allows you to easily manage tmux sessions by using yaml files to describe the layout of a tmux session, and open up that session with a single command.
 
+For your convenience, in the scope of [MY₿ONK](https://github.com/mybonk/mybonk-core/blob/main/docs/INSTALLATION.md), you can reuse the tmuxinator template in the root of the Git repository ```.tmuxinator.yml```. 
 
   ![](img/various/tmuxinator_screeshot.gif)
 
@@ -264,6 +265,7 @@ Tmux shortcuts
   - ```tmuxinator list```: List all tmuxinator projects.
   - ```tmuxinator copy [project] [copy_of_project]```: Copy an existing project to a new project and open it in your editor.
   - ```tmuxinator delete [project_a] [project_b] ...```: Deletes given project(s).
+  - ```tmuxinator start -p your_tmuxinator_config.yml```: Start tmuxinator using custom configuration file (as opposed to it picking it up from default location like ```˜/.config/tmuxinator\```).
   - ```tmuxinator start console -n "console_jay" extra_param="any_string"```: Start a session ```console```, assign it project name "```console_jay```" and extra arbitrary parameter "```extra_param```" to pass value "```any_string```".
   - ```tmuxinator stop [project]```: Stop a tmux session using a project's tmuxinator config.
   - ```tmux list-sessions``` / ```tmux ls```

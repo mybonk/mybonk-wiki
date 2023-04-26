@@ -737,7 +737,14 @@ Locate the FIXME and set the target to the name of the ssh config entry created 
 
 
 # 3. Basic operations
-  
+
+This is when the tool 'tmuxinator' comes along. 
+
+Have a look at the tmuxinator section in the [baby rabbit holes](/docs/baby-rabbit-holes.md).
+
+For your convenience, in the scope of [MY₿ONK](https://github.com/mybonk/mybonk-core/blob/main/docs/INSTALLATION.md), you can reuse the tmuxinator template in the root of the Git repository [.tmuxinator.yml](/.tmuxinator_console.yml).
+
+
 ### 3.1. Backup and restore
 
 ### 3.2. Join a Federation
