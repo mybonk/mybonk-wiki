@@ -10,7 +10,7 @@
 </br>
 It is very much work in progress. 
 </br>
-Jump in, clone and join our <a href="https://t.me/mybonk_build" target="_blank">Telegram group</a>!
+It's a Wiki: Jump in, clone and join our <a href="https://t.me/mybonk_build" target="_blank">Telegram group</a>!
 </p>
 
 ---
@@ -280,6 +280,7 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
   ````
   
   Here you can see the wired network interface ```enp2s0``` has the IP address ```192.168.0.64```.
+
   To avoid having to remember this IP address we can map it to a hostname in our local ```/etc/hosts``` (this is useful to access systems that do not have a DNS entry or if you want to overwrite them in a test or development environment).
 
   ````
