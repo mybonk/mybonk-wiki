@@ -258,7 +258,12 @@ Tmux shortcuts
 - [glances](https://github.com/nicolargo/glances/blob/develop/README.rst) utility: System cross-platform monitoring tool. It allows real-time monitoring of various aspects of your system such as CPU, memory, disk, network usage etc. as well as running processes, logged in users, temperatures, voltages etc.
 - [tmuxinator](https://github.com/tmuxinator/tmuxinator/blob/master/README.md): Tool that allows you to easily manage tmux sessions by using yaml files to describe the layout of a tmux session, and open up that session with a single command.
 
-For your convenience, in the scope of [MY₿ONK](https://github.com/mybonk/mybonk-core/blob/main/docs/INSTALLATION.md), you can reuse the tmuxinator template in the root of the Git repository ```.tmuxinator.yml```. 
+  For your convenience, in the scope of [MY₿ONK](https://github.com/mybonk/mybonk-core/blob/main/docs/INSTALLATION.md), you can reuse the tmuxinator template in the root of the Git repository ```.tmuxinator_console.yml```: 
+
+  ```$ tmuxinator start -p .tmuxinator_console.yml console node="console_jay"```
+
+    - Adjust the parameter -p accordingly if you are not running the command from the project's root.
+    - You must pass the extra custom parameter node that must be either an IP address or a hostname (in hosts file or .ssh/config).
 
 
   ![](img/various/tmuxinator_screeshot.gif)

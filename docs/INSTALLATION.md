@@ -498,7 +498,9 @@ Follow the instructions on their website https://www.virtualbox.org
   - Detailed instructions: https://techcolleague.com/how-to-install-debian-on-virtualbox/
   #### **Option 2.** Using a ready-made Virtual Box VDI (Virtual Disk Image)
   - From https://www.linuxvmimages.com/images/debian-11/ 
-  - Quicker and more convenient than Option 1 as this is a pre-installed Debian System. 
+  - Quicker and more convenient than Option 1 as this is a pre-installed Debian System.
+  - Make sure you generate a new MAC address as shown in the screenshot below before you start the image otherwise if anyone else uses the same image on the network you will get network issues (several machines with same MAC address results in IP addresses conflicts).
+  ![](img/various/vm_regenerate_mac_address.png)
   - The login details are typically on the download page (in our case ``debian``/```debian``` and can become ```root``` by using ```$ sudo su -``` ). 
   - Do not use such images in a production environment. 
   - It is common to have issues with keyboard layout when accessing a machine that has been configured in a different language (e.x. the first few letters of the keyboard write ```qwerty``` instead of ```azerty``` and other keys don't behave normally). There are various ways to adjust this in the configuration but it's out of the scope of this document. The simplest and most effective is to find a way to login using the erroneous keyboard layout anyhow figuring out which key is which then once in the Desktop Environment adjust the settings in "Region & Language" > "Input Source".
