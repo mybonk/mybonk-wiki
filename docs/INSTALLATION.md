@@ -499,16 +499,14 @@ Follow the instructions on their website https://www.virtualbox.org
   #### **Option 2.** Using a ready-made Virtual Box VDI (Virtual Disk Image)
   - From https://www.linuxvmimages.com/images/debian-11/ 
   - Quicker and more convenient than Option 1 as this is a pre-installed Debian System.
+  - Make sure the network setting of its virtual machine is set to "*bridge adapter*". If unsure have a look at [ssh into a VirtualBox](https://www.golinuxcloud.com/ssh-into-virtualbox-vm/#Method-1_SSH_into_VirtualBox_using_Bridged_Network_Adapter).
   - Make sure you generate a new MAC address as shown in the screenshot below before you start the image otherwise if anyone else uses the same image on the network you will get network issues (several machines with same MAC address results in IP addresses conflicts).
-  ![](img/various/vm_regenerate_mac_address.png)
+
+    ![](img/various/vm_regenerate_mac_address.png)
+
   - The login details are typically on the download page (in our case ``debian``/```debian``` and can become ```root``` by using ```$ sudo su -``` ). 
   - Do not use such images in a production environment. 
   - It is common to have issues with keyboard layout when accessing a machine that has been configured in a different language (e.x. the first few letters of the keyboard write ```qwerty``` instead of ```azerty``` and other keys don't behave normally). There are various ways to adjust this in the configuration but it's out of the scope of this document. The simplest and most effective is to find a way to login using the erroneous keyboard layout anyhow figuring out which key is which then once in the Desktop Environment adjust the settings in "Region & Language" > "Input Source".
-
-
-
-
-
 
 
 Now you need to install some additional pretty common software packages that will be needed to continue. Debian's package manager is [apt](https://www.cyberciti.biz/tips/linux-debian-package-management-cheat-sheet.html?utm_source=Linux_Unix_Command&utm_medium=faq&utm_campaign=nixcmd). Root privileges are required to modify packages installed on the system which is why we prepend the following commands with [sudo](https://www.cyberciti.biz/tips/linux-debian-package-management-cheat-sheet.html?utm_source=Linux_Unix_Command&utm_medium=faq&utm_campaign=nixcmd).
@@ -525,9 +523,8 @@ $ sudo apt -y install curl git
 ```
 
 ### 2.3. ssh and auto login
-First of all you need the IP address of the machine you want to connect to, the MY₿ONK orchestrator's. As it runs in a Virtual Box you need to make sure the network setting of its virtual machine is set to "*bridge adapter*" for it to be assigned an IP. If unsure have a look at [ssh into a VirtualBox](https://www.golinuxcloud.com/ssh-into-virtualbox-vm/#Method-1_SSH_into_VirtualBox_using_Bridged_Network_Adapter).
 
-Also note that in Debian ssh restrictions apply to ```root``` user: 
+Note that in Debian ssh restrictions apply to ```root``` user: 
 
 In the ssh server configuration '```/etc/ssh/sshd_config```'
 
