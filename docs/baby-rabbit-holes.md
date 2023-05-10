@@ -282,7 +282,8 @@ Tmux shortcuts
   - ```tmux kill-server``` : Kills the tmux server.
   
 - VPN
-  - [Wireguard](https://www.wireguard.com/quickstart/) This VPN technology is built into the kernel; Client app widely available, allows to connect to your local network remotely using a simple QR code to authenticate.
+  - [Wireguard](https://www.wireguard.com/quickstart/) This VPN technology is built into the kernel; Client apps widely available (e.x. Tailscale), allows to connect to your local network remotely using a simple QR code to authenticate.
+  - [Tailscale](https://github.com/tailscale): Rapidly deploy a WireGuard-based VPN, a "Zero-config VPN". Helps you manage and access private or shared resources from anywhere in the world as if on local network.
   - [Zerotier](https://www.zerotier.com/) Another VPN alternative.
   
 - Chaumian ecash system

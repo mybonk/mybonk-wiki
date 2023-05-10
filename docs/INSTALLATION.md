@@ -505,6 +505,16 @@ Follow the instructions on their website https://www.virtualbox.org
     ![](img/various/vm_regenerate_mac_address.png)
 
   - The login details are typically on the download page (in our case ``debian``/```debian``` and can become ```root``` by using ```$ sudo su -``` ). 
+  - What we call hostname is the machine name you can see displayed on on the shell prompt. Because this is a pre-built image make sure you set a hostname different from the default, e.x 'orchestartor_ben', it will avoid confusion when connecting remotely. Changing the hostname is done by running the following command:
+    ```
+    # hostnamectl set-hostname orchestartor_ben
+    ```
+    Check the hostname has been updated:
+    ```
+    $ hostnamectl
+    ```
+    The shell prompt will reflect the new hostname next time you open a new terminal session.
+
   - Do not use such images in a production environment. 
   - It is common to have issues with keyboard layout when accessing a machine that has been configured in a different language (e.x. the first few letters of the keyboard write ```qwerty``` instead of ```azerty``` and other keys don't behave normally). There are various ways to adjust this in the configuration but it's out of the scope of this document. The simplest and most effective is to find a way to login using the erroneous keyboard layout anyhow figuring out which key is which then once in the Desktop Environment adjust the settings in "Region & Language" > "Input Source".
 
@@ -528,9 +538,7 @@ Note that in Debian ssh restrictions apply to ```root``` user:
 
 In the ssh server configuration '```/etc/ssh/sshd_config```'
 
-Open ```/etc/ssh/sshd_config``` using ```nano /etc/ssh/sshd_config``` and see the setting ```PermitRootLogin``` is indeed ```prohibit-password```. 
-
-Other possible values are ```without-password``` and ```yes```. ```prohibit-password``` and ```without-password``` now ban all interactive authentication methods, allowing only public-key, hostbased and GSSAPI authentication (previously it permitted keyboard-interactive and password-less authentication if those were enabled).
+Open the ssh server configuration ```/etc/ssh/sshd_config``` using ```nano /etc/ssh/sshd_config``` and see the setting ```PermitRootLogin```, its value can be ```yes```, ```prohibit-password```, ```without-password```. The later two ban all interactive authentication methods, allowing only public-key, hostbased and GSSAPI authentication.
 
 It is generally advised to avoid using user ```root``` especially to remote-access. You can use ```sudo -i``` from another user instead when needed so just leave the setting ```PermitRootLogin``` as ```prohibit-password```.
 
