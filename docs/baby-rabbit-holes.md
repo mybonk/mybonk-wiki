@@ -152,8 +152,21 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
   - ssh-add
   
   Also read about and setup ssh-agent, it will save you a LOT of time (key management, auto re-connect e.g. when your laptop goes to sleep or reboots ...).
-- findssh: ([on GitHub](https://github.com/scivision/findssh#readme)) Platform-independently find SSH servers (or other services with open ports) on an IPv4 subnet in pure Python WITHOUT NMAP. Scan entire IPv4 subnet in less than 1 second.
-- [Angry IP Scanner](https://angryip.org/): Scans LAN and WAN, IP Range, Random or file in any format, provides GUI as well as CLI.
+
+- Network scanners: 
+  - [findssh](https://github.com/scivision/findssh#readme): Command line tool to scan entire IPv4 subnet in less than 1 second. Without NMAP.
+
+  Example:
+  ```
+  $ python3 -m findssh
+  own address 192.168.0.7
+  searching 192.168.0.0/24
+  (IPv4Address('192.168.0.106'), 'SSH-2.0-OpenSSH_8.4p1 Debian-5+d')
+  (IPv4Address('192.168.0.6'), 'SSH-2.0-OpenSSH_9.1')
+  (IPv4Address('192.168.0.100'), 'SSH-2.0-OpenSSH_7.4')
+  (IPv4Address('192.168.0.82'), 'SSH-2.0-OpenSSH_8.4p1 Debian-5+d')
+  ```
+  - [Angry IP Scanner](https://angryip.org/): Scans LAN and WAN, IP Range, Random or file in any format, provides GUI as well as CLI.
 - [rsync](https://apoorvtyagi.tech/scp-command-in-linux): 
   - rsync uses a delta transfer algorithm and a few optimizations to make the operation a lot faster compared to ssh. The files that have been copied already won't be transferred again (unless they changed since). Can be run ad-hoc on the command line or configured to run as a deamon on the systems to keep files in sync.
   - rsync allows to restart failed transfers - you just reissue the same command and it will pick up where it left off, whereas scp will start again from scratch.
@@ -280,10 +293,24 @@ Tmux shortcuts
   - ```tmux kill-session -a``` : Kills all the sessions apart from the active one.
   - ```tmux kill-session``` : Kills all the sessions.
   - ```tmux kill-server``` : Kills the tmux server.
-  
+  - ```tmux-resurrect``` and ```tmux-continuum```: Tmux plugins to persist sessions across restarts.
+
 - VPN
   - [Wireguard](https://www.wireguard.com/quickstart/) This VPN technology is built into the kernel; Client apps widely available (e.x. Tailscale), allows to connect to your local network remotely using a simple QR code to authenticate.
-  - [Tailscale](https://github.com/tailscale): Rapidly deploy a WireGuard-based VPN, a "Zero-config VPN". Helps you manage and access private or shared resources from anywhere in the world as if on local network.
+  - [Tailscale](https://github.com/tailscale): [Quick tutorial](https://www.infoworld.com/article/3690616/tailscale-fast-and-easy-vpns-for-developers.html) Rapidly deploy a WireGuard-based VPN, a "Zero-config VPN": Automatically assigns each machine on your network a unique 100.x.y.z IP address, so that you can establish stable connections between them no matter where they are in the world, even when they switch networks, and even behind a firewall. Tailscal enodes uses DERP (Designated Encrypted Relay for Packets) to proxy *encrypted* WireGuard packets () through the Tailscale cloud servers when a direct path cannot be found or opened. It uses curve25519 keys as addresses.
+
+    - Commonly used:  
+    ```
+    # tailscaled
+    $ tailscale help
+    $ tailscale login
+    $ tailscale up
+    $ tailscale down
+    $ tailscale status
+    $ tailscale netcheck
+    $ tailscale ssh console_jay
+    
+    ```
   - [Zerotier](https://www.zerotier.com/) Another VPN alternative.
   
 - Chaumian ecash system
@@ -308,7 +335,9 @@ Tmux shortcuts
 - ```nix-prefetch-url```
 - ```nix-store```
 
-- ```nix repl``` ([nix repl](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-repl.html)): Start an interactive environment for evaluating Nix expressions.
+- Use [```nix repl```](https://nixos.wiki/wiki/Nix_command/repl) to interactively explore the Nix language as well as configurations, options and packages in Nixpkgs.
+
+  ![](img/various/nixrepl.png)
 
 - Garbage collection:
   - Ref. the options ```keep-derivations``` (default: ```true```) and ```keep-outputs``` (default: ```false```) in the Nix configuration file.
