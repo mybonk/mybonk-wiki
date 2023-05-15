@@ -131,9 +131,9 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
 
 
 ## File system
-- ```df```: Display disk usage (also checkout the ```glance```Glance
- utility).
-  - ```df -hT```. ```-h``` for “human readable” ```-T```, to displays the type of the filesystem.
+- ```df```: Display disk usage (also checkout the ```glance```
+utility).
+  - ```df -hT```. ```-h``` for “human readable”, ```-T``` to displays the type of the filesystem.
   - ```df -hT -t ext4```. ```-t ext4``` to display only filesystems of type ext4.
   - ```df -hT -x squashfs -x overlay -x tmpfs -x devtmpfs``` to hide given filesystem types from the output.
 - ```du```: Estimate file space usage.
@@ -295,7 +295,7 @@ Tmux shortcuts
   - ```tmux kill-server``` : Kills the tmux server.
   - ```tmux-resurrect``` and ```tmux-continuum```: Tmux plugins to persist sessions across restarts.
 
-- VPN
+- VPN / tunnels
   - [Wireguard](https://www.wireguard.com/quickstart/) This VPN technology is built into the kernel; Client apps widely available (e.x. Tailscale), allows to connect to your local network remotely using a simple QR code to authenticate.
   - [Tailscale](https://github.com/tailscale): [Quick tutorial](https://www.infoworld.com/article/3690616/tailscale-fast-and-easy-vpns-for-developers.html) Rapidly deploy a WireGuard-based VPN, a "Zero-config VPN": Automatically assigns each machine on your network a unique 100.x.y.z IP address, so that you can establish stable connections between them no matter where they are in the world, even when they switch networks, and even behind a firewall. Tailscal enodes uses DERP (Designated Encrypted Relay for Packets) to proxy *encrypted* WireGuard packets () through the Tailscale cloud servers when a direct path cannot be found or opened. It uses curve25519 keys as addresses.
 
@@ -311,7 +311,11 @@ Tmux shortcuts
     $ tailscale ssh console_jay
     
     ```
-  - [Zerotier](https://www.zerotier.com/) Another VPN alternative.
+  - [Zerotier](https://www.zerotier.com/): Another VPN alternative.
+  - [ngrok](https://ngrok.com/docs/getting-started/): Exposes local networked services behinds NATs and firewalls to the public internet over a secure tunnel. Share local websites, build/test webhook consumers and self-host personal services.
+    - [Sign up (or login)](https://dashboard.ngrok.com/) to get a TOKEN then run: 
+    ```$ ngrok config add-authtoken TOKEN```
+     - ```$ ngrok http 8000```
   
 - Chaumian ecash system
   - [Cashu](https://cashu.space/): Cashu is a free and open-source Chaumian ecash system built for Bitcoin. Cashu offers near-perfect privacy for users of custodial Bitcoin applications. Nobody needs to knows who you are, how much funds you have, and whom you transact with.
@@ -341,7 +345,7 @@ Tmux shortcuts
 
 - Garbage collection:
   - Ref. the options ```keep-derivations``` (default: ```true```) and ```keep-outputs``` (default: ```false```) in the Nix configuration file.
-  - ```nix-collect-garbage -delete-old```: Quick and easy way to clean up your system, deletes **all** old generations of **all** profiles in ```/nix/var/nix/profiles```. See the other options below for a more "surgical" way to garbage collect.
+  - ```nix-collect-garbage --delete-old```: Quick and easy way to clean up your system, deletes **all** old generations of **all** profiles in ```/nix/var/nix/profiles```. See the other options below for a more "surgical" way to garbage collect.
   - ```nix-env --delete-generations old```: Delete all old (non-current) generations of your current profile.
   - ```nix-env --delete-generations 10 11 23```: Delete a specific list of generations
   - ```nix-env --delete-generations 14d```: Delete all generations older than 14 days.
