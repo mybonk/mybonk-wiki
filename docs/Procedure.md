@@ -10,7 +10,7 @@
 <br/>
 It is very much work in progress. 
 <br/>
-Anyone can clone and contribute on [MY₿ONK GitHub](https://github.com/mybonk/mybonk-wiki/blob/main/docs/Procedure.md)
+Anyone can clone and contribute on [MYBONK GitHub](https://github.com/mybonk/mybonk-wiki/blob/main/docs/Procedure.md).
 <br/>
 Join the conversation on our <a href="https://t.me/mybonk_build" target="_blank">Telegram group</a>!
 </p>
