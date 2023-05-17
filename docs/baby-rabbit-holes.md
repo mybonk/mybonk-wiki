@@ -11,7 +11,7 @@ The sections "Commonly used" are examples you can easily copy/past.
 A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#readme](https://github.com/ruanbekker/cheatsheets#readme)
 
 
-## GitHub / Git
+## GitHub / Git GitHub CLI
 
 - Fork MY₿ONK-core and clone your forked repository it on your laptop (instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo)).
 - Commands reference [here](https://git-scm.com/docs/git).
@@ -40,6 +40,10 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
   git remote -v
 
   ```
+  - [GitHub CLI](https://docs.github.com/en/github-cli/github-cli/about-github-cli): Command-line tool that brings pull requests, issues, GitHub Actions, and other GitHub features to your terminal, so you can do all your work in one place.
+    - Authenticate with your GitHub account: ```gh auth login```
+    - ...
+
 ## Command line stuff
 
 A *shell* is a user interface for access to an operating system's services. 
