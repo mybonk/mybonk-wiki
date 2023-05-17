@@ -182,15 +182,16 @@ Tmux shortcuts
   - ````tmux list-keys````
   - ````tmux list-panes````
   -  ````tmux source-file ~/.tmux.conf````
-  - Detach a session: ````Prefix + d```` or ````tmux detach````
-  - List sessions: ````tmux ls````
-  - Attach to a session: ````tmux attach -t MY_SESSION````
-  - List sessions and switch to a different session: ````Prefix + s````
-  - Kill a session: ````tmux kill-session -t MY_SESSION````
-  - Create a window: ````tmux new-window -n MY_WINDOW```` or ````Prefix + c````
-  - Switch to a different window: ````Prefix + n```` (next), ````Prefix + p```` (previous) and ````Prefix + N```` (where ````N```` is the window index number, zero-based)
-  - Kill a window: ````tmux kill-window -t MY_WINDOW````
-  - Close a pane / window: ````Ctrl + d```` or ````Prefix + x````
+  - Sessions
+    - List sessions and switch to a different session: ````Prefix + s```` (or ````tmux ls```` followed by ````tmux attach -t SESSION````)
+    - Detach a session: ````Prefix + d```` or ````tmux detach````
+    - Kill a session: ````tmux kill-session -t MY_SESSION````
+  - Windows:
+    - Create a window: ````Prefix + c```` or ````tmux new-window -n MY_WINDOW````
+    - Close a pane / window: ````Ctrl + d```` or ````Prefix + x````
+    - Switch to a different window: ````Prefix + n```` (next), ````Prefix + p```` (previous) and ````Prefix + N```` (where ````N```` is the window index number, zero-based)
+    - Kill a window: ````tmux kill-window -t MY_WINDOW````
+    
 ## Tor
 - .onion 
 - tor hidden services
