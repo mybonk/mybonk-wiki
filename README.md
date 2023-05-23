@@ -69,5 +69,5 @@ Don't forget to start ⭐️ this project to stumble upon it again soon.
 
 
 
-[![Stargazers over time](https://starchart.cc/mybonk/mybonk-core.svg)](https://starchart.cc/mybonk/mybonk-core)
+[![Stargazers over time](https://starchart.cc/mybonk/mybonk-wiki.svg)](https://starchart.cc/mybonk/mybonk-wiki)
 
