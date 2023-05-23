@@ -15,14 +15,19 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
 
 - Fork MY₿ONK-core and clone your forked repository it on your laptop (instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo)).
 - Commands reference [here](https://git-scm.com/docs/git).
+- [How to Setup Passwordless Authentication for git push in GitHub](https://www.cyberithub.com/how-to-setup-passwordless-authentication-for-git-push-in-github/)
 - [Switch to another branch in terminal](https://stackoverflow.com/questions/47630950/how-can-i-switch-to-another-branch-in-git).
 - [Switch GitHub account in terminal](https://dev.to/0xbf/switch-github-account-in-terminal-92g).
 - Commonly used:
 
   ```
   git clone https://github.com/mybonk/mybonk-core.git
+  git remote show origin
   git status
-  git switch 
+  git show
+  git log master --graph
+  git branch
+  git switch
   git add .
 
   git add -a
@@ -75,7 +80,7 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
     - ```$PATH``` Instructs the shell which directories to search for executables, it allows to run commands without having to specify its full path.
     - .etc... .
 - Shell commands you must know *really well*:
-  - ```ls```, ```cd```, ```type```, ```mkdir```, ```mv```, ```rm```, ```ln```, ```which```,  …
+  - ```ls```, ```cd```, ```type```, ```mkdir```, ```mv```, ```rm```, ```ln```, ```which```, ```cat```, ```more```  …
   - ```hostname```, ```whoami```, ```passwd```, ```chmod```, ```chgrp```, …
   - ```ip a```
   - ```history``` 
@@ -162,7 +167,7 @@ utility).
 
   Example:
   ```
-  $ python3 -m findssh
+  $ python3 -m findssh -b 192.168.0.1
   own address 192.168.0.7
   searching 192.168.0.0/24
   (IPv4Address('192.168.0.106'), 'SSH-2.0-OpenSSH_8.4p1 Debian-5+d')
@@ -181,20 +186,24 @@ utility).
 - tmux for beginners part 1: https://dev.to/iggredible/tmux-tutorial-for-beginners-5c52 
 - tmux for beginners part 2: https://dev.to/iggredible/useful-tmux-configuration-examples-k3g
 - cheat sheet
+-  ````tmux source-file ~/.tmux.conf````
 Tmux shortcuts 
   - ````new -s MY_SESSION````
   - ````tmux list-keys````
-  - ````tmux list-panes````
-  -  ````tmux source-file ~/.tmux.conf````
   - Sessions
-    - List sessions and switch to a different session: ````Prefix + s```` (or ````tmux ls```` followed by ````tmux attach -t SESSION````)
+    - List sessions and switch to a different session: ````Prefix + s```` (or ````tmux ls```` followed by ````tmux attach -t SESSION````).
     - Detach a session: ````Prefix + d```` or ````tmux detach````
     - Kill a session: ````tmux kill-session -t MY_SESSION````
   - Windows:
     - Create a window: ````Prefix + c```` or ````tmux new-window -n MY_WINDOW````
     - Close a pane / window: ````Ctrl + d```` or ````Prefix + x````
-    - Switch to a different window: ````Prefix + n```` (next), ````Prefix + p```` (previous) and ````Prefix + N```` (where ````N```` is the window index number, zero-based)
+    - Switch to a different window: ````Prefix + n```` (next), ````Prefix + p```` (previous) and ````Prefix + N```` (where ````N```` is the window index number, zero-based).
     - Kill a window: ````tmux kill-window -t MY_WINDOW````
+  - Panes
+    - List all the panes: ````Prefix + q```` (or ````tmux list-panes````).
+    - Jump into a specific pane: ````Prefix + q```` followed by the pane number you want to jump into.
+    - Move to next pane: ````Prefix + o````
+    - Switch to last pane: ````Prefix + ;````
     
 ## Tor
 - .onion 
@@ -249,6 +258,7 @@ Tmux shortcuts
 ## http vs. https
 ## OS-layer firewall
 ## partitions filesystem
+- ```findmnt```: 
 - /
 - /mnt
 - /var
@@ -276,7 +286,7 @@ Tmux shortcuts
 - [glances](https://github.com/nicolargo/glances/blob/develop/README.rst) utility: System cross-platform monitoring tool. It allows real-time monitoring of various aspects of your system such as CPU, memory, disk, network usage etc. as well as running processes, logged in users, temperatures, voltages etc.
 - [tmuxinator](https://github.com/tmuxinator/tmuxinator/blob/master/README.md): Tool that allows you to easily manage tmux sessions by using yaml files to describe the layout of a tmux session, and open up that session with a single command.
 
-  For your convenience, in the scope of [MY₿ONK](https://github.com/mybonk/mybonk-core/blob/main/docs/INSTALLATION.md), you can reuse the tmuxinator template in the root of the Git repository ```.tmuxinator_console.yml```: 
+  For your convenience, in the scope of [MY₿ONK](https://github.com/mybonk/mybonk-wiki/blob/main/docs/Procedure.md), you can reuse the tmuxinator template in the root of the Git repository ```.tmuxinator_console.yml```: 
 
   ```$ tmuxinator start -p .tmuxinator_console.yml console node="console_jay"```
 
@@ -325,13 +335,16 @@ Tmux shortcuts
 - Chaumian ecash system
   - [Cashu](https://cashu.space/): Cashu is a free and open-source Chaumian ecash system built for Bitcoin. Cashu offers near-perfect privacy for users of custodial Bitcoin applications. Nobody needs to knows who you are, how much funds you have, and whom you transact with.
 
+- [XSATS.net](https://xsats.net/): bitcoin/sats to and from world currencies, spot price or for any given date.
+- [md5calc](https://md5calc.com/hash/sha256): Calculate the Hash of any string. 
+
 ## NixOS commands reminder
 - Nice Nix cheat sheet: [https://github.com/brainrake/nixos-tutorial/blob/master/cheatsheet.md](https://github.com/brainrake/nixos-tutorial/blob/master/cheatsheet.md)
 - NixOS the "traditional" vs. the "Flakes" way: 
 
   - Flakes have been introduced with Nix 2.4
   - Although still flagged as "*experimental*" feature it is the way forward, we advise you to learn Flakes already.
-- ```nix version```: Get running nix version (important as the MY₿ONK console might be running a different version from the one on MY₿ONK orchestrator).
+- ```nix --version```: Get running nix version (important as the MY₿ONK console might be running a different version from the one on MY₿ONK orchestrator).
 - ```nix-shell```: Start an interactive shell based on a Nix expression. This is distinct from ```nix shell```.
 - ```nix-build```: Build a Nix expression. This is distinct from ```nix build```.
 - ```nix-channel```
@@ -360,6 +373,11 @@ Tmux shortcuts
 ## Podcasts
 - nixbitcoin-dev with Stefan Livera: A security focused bitcoin node https://stephanlivera.com/episode/195/
 
+## For developers
+  - [Polar](https://lightningpolar.com/): One-click Bitcoin Lightning Networks for local app development & testing.
+  - [Rust](https://www.rust-lang.org/): Multi-paradigm, general-purpose programming language that emphasizes performance, type safety, and concurrency. It enforces memory safety—ensuring that all references point to valid memory—without requiring the use of a garbage collector or reference counting present in other memory-safe languages.
+  - [Cargo](https://doc.rust-lang.org/cargo/): Package manager for Rust.
+  - [DuckDNS](https://www.duckdns.org/): Allows to get free dynamic DNS (forces 'KYC' by login using Github, Twitter, reddit or Google account). Good for testing.
 ## Books
 - [Introduction to the Mac command line](https://github.com/ChristopherA/intro-mac-command-line) (on GitHub)
 - [Learn Bitcoin from the command line](https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line#readme) (on GitHub)

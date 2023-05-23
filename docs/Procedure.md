@@ -288,7 +288,7 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
   ````
   $ echo "192.168.0.64 mybonk_console" | sudo tee -a /etc/hosts
   ````
-  (or just edit the file manually).
+  (or just edit the file manually; we will see later that you can assign names to an IP address in .ssh/config).
 
   Now let's install, configure and enable ```sshd``` on your MY₿ONK console by tuning the nixOS configuration file:
 
@@ -479,18 +479,16 @@ Note: [Ref #30](https://github.com/mybonk/mybonk-core/issues/30#issue-1609334323
 ---
 
 
-This machine is used to orchestrate your [fleet of] MY₿ONK console[s].
+This machine is used to orchestrate your [fleet of] MY₿ONK console[s]. You build MY₿ONK system on it before it is push to the MY₿ONK console(s). For this reason it is important this machine remains clean and protected to avoid viruses and vulnerabilities. A virtual machine with the isolation it offers is ideal for this. 
 
-You could use your day to day laptop, but some people reported issues or additional pitfalls e.g. on macOS (read-only filesystem / single-user/multi-user vs. Nix package manager). 
-
-To avoid such pitfalls the following steps describe the installation of MY₿ONK orchestrator (Debian + Nix package manager) on a VirtualBox. Ideal in workshops too where everyone has a different machines/OS, let's go!
+The following steps describe the installation of MY₿ONK orchestrator (Debian + Nix package manager) on a VirtualBox.
 
 
 ### 2.1. Download and install VirtualBox
 Follow the instructions on their website https://www.virtualbox.org
 
 ### 2.2. Build the OS in VirtualBox
-  Now that VirtualBox is installed you can have an OS run on it (Linux Debian in our case).
+  Now that VirtualBox is installed you need to run an OS on it (Linux Debian in our case, or any systemd-based Linux system).
   
   There are 2 ways to do this:
   #### **Option 1.** Using the installation image from Debian
@@ -499,9 +497,9 @@ Follow the instructions on their website https://www.virtualbox.org
   - Don't forget to take note of the the machine's IP address and login details you choose during the installation!
   - Detailed instructions: https://techcolleague.com/how-to-install-debian-on-virtualbox/
   #### **Option 2.** Using a ready-made Virtual Box VDI (Virtual Disk Image)
-  - From https://www.linuxvmimages.com/images/debian-11/ 
-  - Quicker and more convenient than Option 1 as this is a pre-installed Debian System.
-  - Make sure the network setting of its virtual machine is set to "*bridge adapter*". If unsure have a look at [ssh into a VirtualBox](https://www.golinuxcloud.com/ssh-into-virtualbox-vm/#Method-1_SSH_into_VirtualBox_using_Bridged_Network_Adapter).
+  - From https://www.linuxvmimages.com/images/debian-11/ (this is not a recommendation, this is an example).
+  - More convenient and quicker than Option 1, ideal in workshops/demos as it is a pre-installed Debian System.
+  - Make sure the network setting of the machine is set to "*bridge adapter*" in VirtualBox. If unsure have a look at [ssh into a VirtualBox](https://www.golinuxcloud.com/ssh-into-virtualbox-vm/#Method-1_SSH_into_VirtualBox_using_Bridged_Network_Adapter).
   - Make sure you generate a new MAC address as shown in the screenshot below before you start the image otherwise if anyone else uses the same image on the network you will get network issues (several machines with same MAC address results in IP addresses conflicts).
 
     ![](img/various/vm_regenerate_mac_address.png)
@@ -622,49 +620,39 @@ Last login: Fri Mar  3 13:27:34 2023 from 192.168.0.64
 
 All good, now logout from your MY₿ONK console to get back to your MY₿ONK orchestrator terminal.
 
-MY₿ONK core is based on nix-bitcoin on top of which MY₿ONK specificities are overlayed.
+MY₿ONK-core is a fork of [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin), augmented of MY₿ONK specificities, best practices and community (and hardware may you decide to run on an [authentic MY₿ONK console](https://mybonk.co/get-involved)).
 
 Start by cloning nix-bitcoin project repository in your MY₿ONK orchestrator home directory:
 
 ```
-cd 
-git clone https://github.com/fort-nix/nix-bitcoin
+$ git clone https://github.com/mybonk/mybonk-core.git
 ```
 
+Navigate in the resulting directory:
 
 ```
-cd nix-bitcoin
-ls -la
-
-total 88
-drwxr-xr-x  9 debian debian 4096 Jan 11 17:58 .
-drwxr-xr-x 18 debian debian 4096 Jan 11 17:58 ..
--rw-r--r--  1 debian debian 1371 Jan 11 17:58 .cirrus.yml
-drwxr-xr-x  8 debian debian 4096 Jan 11 17:58 .git
--rw-r--r--  1 debian debian 1079 Jan 11 17:58 LICENSE
--rw-r--r--  1 debian debian 8653 Jan 11 17:58 README.md
--rw-r--r--  1 debian debian 7128 Jan 11 17:58 SECURITY.md
--rw-r--r--  1 debian debian   65 Jan 11 17:58 default.nix
-drwxr-xr-x  3 debian debian 4096 Jan 11 17:58 docs
-drwxr-xr-x  6 debian debian 4096 Jan 11 17:58 examples
--rw-r--r--  1 debian debian 2144 Jan 11 17:58 flake.lock
--rw-r--r--  1 debian debian 4121 Jan 11 17:58 flake.nix
-drwxr-xr-x  2 debian debian 4096 Jan 11 17:58 helper
-drwxr-xr-x  6 debian debian 4096 Jan 11 17:58 modules
--rw-r--r--  1 debian debian   45 Jan 11 17:58 overlay.nix
-drwxr-xr-x 16 debian debian 4096 Jan 11 17:58 pkgs
--rw-r--r--  1 debian debian  234 Jan 11 17:58 shell.nix
-drwxr-xr-x  5 debian debian 4096 Jan 11 17:58 test
+$ cd mybonk-core
 ```
 
-The directory ```examples``` contains the basic elements on top of which we are going to overlay MY₿ONK specificities and features. Don't worry too much trying to figure out what each of these files and directories do, we are only going to copy/past those we need, adjust them and explain what we do.
+It contains many files and directories:
+
+- ```configuration.nix```: Explained in a <a href="#configuration.nix">previous session</a>.
+- ```krops```: Directory used for deployment (described in section [#2.5 Deploy MY₿ONK stack to the MY₿ONK consoles](#25-deploy-mybonk-stack-to-the-mybonk-consoles))
+- ```shell.nix```: The nix-shell file as seen a bit earlier.
+- ```nix-bitcoin-release.nix```: Hydra jobset declaration
+- ```mybonk-console```: Contains the elements required to launch the deployment of MY₿ONK consoles on the network.
 
 
-Get into the ```example``` directory and run the command ```nix-shell```. It is very important you do this as [nix-shell](https://nixos.org/manual/nix/stable/command-ref/nix-shell.html) (interprets ```shell.nix```) pulls all the dependencies and gives you access to the exact versions of the specified packages.
+Just navigate in the directory ```mybonk-console```, it contains the elements needed to push your configuration onto your MY₿ONK console:
 
 ```
-cd examples
-nix-shell
+$ cd mybonk-console
+```
+
+Run the command ```nix-shell```. It is very important you do this as [nix-shell](https://nixos.org/manual/nix/stable/command-ref/nix-shell.html) (interprets ```shell.nix```) pulls all the dependencies and gives you access to the exact versions of the specified packages.
+
+```
+$ nix-shell
 ```
 
 It will take a few minutes to execute and start showing output on the terminal, be patient.
@@ -679,42 +667,11 @@ Once complete you will be greeted by a nix-bitcoin splash and the nix-shell prom
                                                 
 Enter "h" or "help" for documentation.
 
-[nix-shell:~/nix-bitcoin/examples]$
+[nix-shell:~/mybonk-core/mybonk-console]$
 ```
 
 As instructed enter "h" to see the help page describing the commands nix-bitcoin team made available to facilitate the configuration/build/deploy process.
 
-Now go back to your home directory and create a new directory ```mybonk``` in which we will construct MY₿ONK stack then deploy to the MY₿ONK console from.
-
-```
-cd
-mkdir mybonk
-cd mybonk
-```
-
-Copy the initial files and directory ```nix-bitcoin-release.nix```, ```configuration.nix```, ```shell.nix```, ```krops``` and ```.gitignore``` from ```nix-bitcoin/examples```.
-
-````
-cp -r ../nix-bitcoin/examples/{nix-bitcoin-release.nix,configuration.nix,shell.nix,krops,.gitignore} .
-````
-
-Let's look at what we have:
-````
-debian@debian11:~/mybonk$ ls -la
-total 36
-drwxr-xr-x  3 debian debian  4096 Jan 11 17:58 .
-drwxr-xr-x 18 debian debian  4096 Jan 11 17:58 ..
--rw-r--r--  1 debian debian     9 Jan 11 17:58 .gitignore
--rw-r--r--  1 debian debian 12149 Jan 11 17:58 configuration.nix
-drwxr-xr-x  2 debian debian  4096 Jan 11 17:58 krops
--rw-r--r--  1 debian debian     5 Jan 11 17:58 nix-bitcoin-release.nix
--rw-r--r--  1 debian debian   260 Jan 11 17:58 shell.nix
-````
-
-- ```configuration.nix```: Explained in a <a href="#configuration.nix">previous session</a>.
-- ```krops```: Directory used for deployment (described in section [#2.5 Deploy MY₿ONK stack to the MY₿ONK consoles](#25-deploy-mybonk-stack-to-the-mybonk-consoles))
-- ```shell.nix```: The nix-shell file as seen a bit earlier.
-- ```nix-bitcoin-release.nix```: Hydra jobset declaration
 
 
 
