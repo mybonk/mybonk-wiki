@@ -1,3 +1,7 @@
+# MYBONK orchestrator Tmuxinator.
+# Tmuxinator configuration to get started.
+# You need to configure ssh key pair (or a VPN like Tailscale) it requires auto-login to the remote machine(s).
+
 name: console
 #root: ~/
 
