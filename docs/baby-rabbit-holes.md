@@ -167,13 +167,16 @@ utility).
 
   Example:
   ```
-  $ python3 -m findssh -b 192.168.0.1
-  own address 192.168.0.7
+  $ python3 -m findssh -b 192.168.0.1 -s ssh -v
   searching 192.168.0.0/24
-  (IPv4Address('192.168.0.106'), 'SSH-2.0-OpenSSH_8.4p1 Debian-5+d')
-  (IPv4Address('192.168.0.6'), 'SSH-2.0-OpenSSH_9.1')
-  (IPv4Address('192.168.0.100'), 'SSH-2.0-OpenSSH_7.4')
+  DEBUG:asyncio:Using selector: EpollSelector
+  DEBUG:root:[Errno 111] Connect call failed ('192.168.0.19', 22)
   (IPv4Address('192.168.0.82'), 'SSH-2.0-OpenSSH_8.4p1 Debian-5+d')
+  (IPv4Address('192.168.0.136'), 'SSH-2.0-OpenSSH_9.1')
+  (IPv4Address('192.168.0.106'), 'SSH-2.0-OpenSSH_8.4p1 Debian-5+d')
+  DEBUG:root:[Errno 111] Connect call failed ('192.168.0.150', 22)
+  (IPv4Address('192.168.0.100'), 'SSH-2.0-OpenSSH_7.4')
+  DEBUG:root:[Errno 111] Connect call failed ('192.168.0.44', 22)
   ```
   - [Angry IP Scanner](https://angryip.org/): Scans LAN and WAN, IP Range, Random or file in any format, provides GUI as well as CLI.
 - [rsync](https://apoorvtyagi.tech/scp-command-in-linux): 
@@ -290,11 +293,12 @@ Tmux shortcuts
 
   ```$ tmuxinator start -p .tmuxinator_console.yml console node="console_jay"```
 
-    - Adjust the parameter -p accordingly if you are not running the command from the project's root.
-    - You must pass the extra custom parameter node that must be either an IP address or a hostname (in hosts file or .ssh/config).
+    - Adjust the parameter -p accordingly if you are not running the command from the repo's root.
+    - You must pass the extra custom parameter node that must be either an IP address or a hostname (or in .ssh/config).
 
 
   ![](img/various/tmuxinator_screeshot.gif)
+
 
   - ```tmuxinator new [project]```: Create a new project file with given name and open it in your editor.
   - ```tmuxinator list```: List all tmuxinator projects.
@@ -372,6 +376,13 @@ Tmux shortcuts
   - After removing appropriate old generations (after having used ```nix-env``` with an argument ```--delete-generations```) - you can run the garbage collector as follows: ```nix-store --gc```
 ## Podcasts
 - nixbitcoin-dev with Stefan Livera: A security focused bitcoin node https://stephanlivera.com/episode/195/
+
+## Connext projects / references
+- [seed-signer: An offline, airgapped Bitcoin signing device](https://github.com/SeedSigner/seedsigner/blob/dev/README.md)
+- [BIP39](https://iancoleman.io/bip39/): Play around and understand 12 vs 24 word seed (mnemonic) length, does it make a difference? Entropy, splitting scrambling ... (don't forget to generate a random mnemonic and select the option "Show split mnemonic cards" to see how much time it would take to brute-force attack).
+
+  ![](img/various/12_24_mnemonic_split.png)
+- [Hardware Wallet comparison / audit](https://cryptoguide.tips/hardware-wallet-comparisons/)
 
 ## For developers
   - [Polar](https://lightningpolar.com/): One-click Bitcoin Lightning Networks for local app development & testing.

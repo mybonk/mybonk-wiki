@@ -97,6 +97,8 @@ This example small ecosystem consists of only two elements that we are going to 
 
 - **Read and explore**: The pros write and read documentation, they are not so much on YouTube. For 1 hour of reading you should spend about 4 hours experimenting with what you learned and so on.
 
+- **Be patient**: Learning takes time, getting a node up and running "by hand" takes time (system build, blocks download, various indexing). Also bear in mind that some services on the stack depend on others and won't operate properly before the service(s) they depend on are not fully synchronized (e.g. Lightning Network vs. Bitcoin, Sparrow wallet vs Fulcrom).
+
 - **Don't trust, verify**: Anything you download on the internet is at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a string of hexadecimal characters).
 
 ### ssh and auto login
@@ -709,7 +711,7 @@ This is when the tool 'tmuxinator' comes along.
 
 Have a look at the tmuxinator section in the [baby rabbit holes](/docs/baby-rabbit-holes.md).
 
-For your convenience, in the scope of [MY₿ONK](https://github.com/mybonk/mybonk-core/blob/main/docs/INSTALLATION.md), you can reuse the tmuxinator template in the root of the Git repository [.tmuxinator.yml](/.tmuxinator_console.yml).
+For your convenience you can reuse the [tmuxinator template](https://github.com/mybonk/mybonk-core/blob/master/.tmuxinator_console.yml) in the scope of MY₿ONK.
 
 
 ### 3.1. Backup and restore
