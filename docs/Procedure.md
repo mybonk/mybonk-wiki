@@ -341,17 +341,17 @@ As you can read krops relies on ssh passwordless login, we have configured this 
   ```
 - It will take a few minutes to execute and start showing output on the terminal, be patient.
 - Once complete you will be greeted by a splash and the nix-shell prompt:
- ```
-                  _                 _
-  _ __ ___  _   _| |__   ___  _ __ | | __
- | '_ ` _ \| | | | '_ \ / _ \| '_ \| |/ /
- | | | | | | |_| | |_) | (_) | | | |   <
- |_| |_| |_|\__, |_.__/ \___/|_| |_|_|\_\
-            |___/
- Enter "h" or "help" for documentation.
+  ```
+                    _                 _
+    _ __ ___  _   _| |__   ___  _ __ | | __
+   | '_ ` _ \| | | | '_ \ / _ \| '_ \| |/ /
+   | | | | | | |_| | |_) | (_) | | | |   <
+   |_| |_| |_|\__, |_.__/ \___/|_| |_|_|\_\
+              |___/
+  Enter "h" or "help" for documentation.
 
 
- [nix-shell:~/mybonk-core/mybonk-console]$
+  [nix-shell:~/mybonk-core/mybonk-console]$
 ```
 
 - As instructed enter "h" to see the help page describing the commands made available to facilitate your configuration/build/deploy process.
