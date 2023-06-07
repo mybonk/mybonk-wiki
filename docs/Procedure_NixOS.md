@@ -1,6 +1,8 @@
-### 1.2 Download and install NixOS
+### Download and install NixOS
 
-  Now let's install nixOS on MY₿ONK console. 
+  MY₿ONK console runs on NixOS. You need to install NixOS. 
+
+  Let's do it.
 
   A NixOS live CD image can be downloaded from the [NixOS download page](https://nixos.org/download.html#nixos-iso) to install from (make sure you scroll down to the bottom of their home page as the first half of it is about nix *package manager* not nixOS).
   
@@ -259,4 +261,4 @@ You have learned how to:
 - Use ssh with and without password (using key pair).
 - Test these configuration changes (e.g. ```nixos-rebuild test```, ```systemctl status sshd```, ```journalctl -f -n 30 -u sshd``` ) before making them persistent across reboots (```nixos-rebuild switch```).
 
-The subsequent sections show how your MY₿ONK console(s) can easily and remotely be fully managed using a MY₿ONK orchestrator. 
+That's it, your MY₿ONK console is now ready to be operated through MY₿ONK orchestrator.

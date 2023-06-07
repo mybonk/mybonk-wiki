@@ -26,9 +26,9 @@ Join the conversation on the <a href="https://t.me/mybonk_build" target="_blank"
     - [1.1 The hardware](#11-the-hardware)
     - [1.2 Download and install NixOS](#12-download-and-install-nixos)
     - [1.3 Download and install MYBONK stack](#13-download-and-install-mybonk-stack)
-      - [**Option 1.** The "manually" way](#13-option-1)
-      - [**Option 2.** The "automated" way using MYBONK orchestrator](#13-option-2)
-  
+      - [**Option 1.** The "automated" way using MYBONK orchestrator](#13-option-1)
+      - [**Option 2.** The "manually" way](#13-option-2)
+
 - [2. Build your MYBONK orchestrator](#2-build-your-mybonk-orchestrator-machine)
     - [2.1. Download and install VirtualBox](#21-download-and-install-virtualbox)
     - [2.2. Build the OS in VirtualBox](#22-build-the-os)
@@ -47,7 +47,7 @@ Join the conversation on the <a href="https://t.me/mybonk_build" target="_blank"
 
 # Before you start
 
-![](img/various/console_vs_orchestrator.png)
+![](img/various/console_vs_orchestrator_.png)
 
 Read this document from the beginning to the end before getting your hands on the keyboard. Also watch this presentation by Valentin Gagarin about [Flattening the Learning Curve for Nix/NixOS](https://www.youtube.com/watch?v=WFRQvkfPoDI&list=WL&index=87) as Nix/NixOS is the cornerstone of MY₿ONK.
 
@@ -146,74 +146,23 @@ MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or
 Let's now install NixOS on MY₿ONK console. 
 The idea is to get NixOS system up and running from there we'll show you how any MY₿ONK console(s) can easily and remotely be fully managed using MY₿ONK orchestrator. 
 
-You can install NixOS on physical hardware by copying it onto a USB stick and booting from it; Checkout the [installation procedure](https://nixos.org/manual/nixos/stable/index.html#ch-installation) in their official documentation or the [detailed procedure](./Procedure_NixOS.md) we maintain in this repository.
+You can install NixOS on physical hardware by copying it onto a USB stick and booting from it, checkout the [installation procedure](https://nixos.org/manual/nixos/stable/index.html#ch-installation) in their official documentation or the [detailed procedure](./Procedure_NixOS.md) we maintain in this repository.
 
 *******
 ### 1.3 Download and install MYBONK stack
 
 *******
 
+
 <a name="13-option-1"></a>
-#### **Option 1.** The "manual" way
-**The "manual" way is not the recommended one, jump to the "automated" way section.**
-
-Exactly the same way we installed, configured and enabled the service openssh modifying only the nixos configuration file ```configuration.nix``` in the previous section, we can enable all sorts of services and parameters. 
-
-```bitcoind``` is readily available in nixpkgs, let's install and run it. 
-
-ssh into MY₿ONK console as '```mybonk```':
-`````
-$ssh mybonk@mybonk_console
-Last login: Tue Jan 17 10:42:32 2023 from 192.168.0.7
-[mybonk@mybonkgenesis:~]$ 
-`````
-
-Create a new file ```node.nix``` in ```/etc/nixos``` to build a basic bitcoin node with just a few lines...
-`````
-sudo nano node.nix
-`````
-And put the following content in it.
-````
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
-  cfg = config.services;
-  nbLib = config.nix-bitcoin.lib;
-  operatorName = config.nix-bitcoin.operator.name;
-in {
-  imports = [
-    ../modules.nix    
-  ];
-
-  config =  {
-    
-    services.bitcoind = {
-      enable = true;
-      listen = true;
-      dbCache = 1000;
-    };
-
-  };
-}
-
-````
-
-Now edit the main configuration file, ```configuration.nix``` to use ```node.nix``` in the ```imports```:
-````
-  imports =
-    [ 
-      ./hardware-configuration.nix
-      ./node.nix
-    ];
-
-````
+#### **Option 1.** The "automated" way using a MYBONK orchestrator
+  Ref. section [Build your MY₿ONK orchestrator](#build-orchestrator).
 
 
 <a name="13-option-2"></a>
-#### **Option 2.** The "automated" way using a MYBONK orchestrator
-  Ref. section [Build your MY₿ONK orchestrator](#build-orchestrator).
+#### **Option 2.** The "manual" way
+**The "manual" way consisting in editing MY₿ONK configuration file ```/etc/nixos/configuration.nix``` directly and locally is deprecated, use MY₿ONK orchestrator (based on krops) instead as it provides many other deployment benefits.
+
 
 ---
 
