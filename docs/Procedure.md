@@ -352,7 +352,7 @@ As you can read krops relies on ssh passwordless login, we have configured this 
 
 
   [nix-shell:~/mybonk-core/mybonk-console]$
-```
+  ```
 
 - As instructed enter "h" to see the help page describing the commands made available to facilitate your configuration/build/deploy process.
 
