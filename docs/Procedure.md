@@ -129,36 +129,35 @@ Also learn how to use ```tmux``` and ```tmuxinator``` (checkout the [baby rabbit
   
 ### 1.1 The hardware
 
-There are many many platforms, physical (HW) or virtual (Virtual Machines, Cloud) to choose from, which is what NixOS was made for in the first place and this is great. A collection of hardware specific platform profiles to optimize settings for different hardware is even being maintained at [NixOS Hardware repository](https://github.com/NixOS/nixos-hardware/blob/master/README.md).
+  There are many many platforms, physical (HW) or virtual (Virtual Machines, Cloud) to choose from, which is what NixOS was made for in the first place and this is great. A collection of hardware specific platform profiles to optimize settings for different hardware is even being maintained at [NixOS Hardware repository](https://github.com/NixOS/nixos-hardware/blob/master/README.md).
+
+  The following steps focus on MY₿ONK console hardware platform only because it would be impossible to maintain and support all the possible combinations for a specific application domain: Each hardware has its own specs, some have additional features (BIOS capabilities, onboard encryption, various kinds of storages and partition systems .etc...) or limitations (too little RAM or unreliable parts, weak power source, "moving parts", cooling issues, higher power consumption .etc...) making it unadvisable to install onto, or too difficult for an average user to setup and maintain; Even little things like bootable or not from USB stick can turn what should be a beautiful journey into hours of frustration trying to just make the thing boot until the next pitfall.
+
+  MY₿ONK console is a full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-energy, supply chain resilience and generic parts in mind. You too can get a MY₿ONK console, just join our [Telegram group](https://t.me/mybonk_build).
+
+  ![](img/various/console_v2_v3.png)
 
 
-The following steps focus on MY₿ONK console hardware platform only because it would be impossible to maintain and support all the possible combinations for a specific application domain: Each hardware has its own specs, some have additional features (BIOS capabilities, onboard encryption, various kinds of storages and partition systems .etc...) or limitations (too little RAM or unreliable parts, weak power source, "moving parts", cooling issues, higher power consumption .etc...) making it unadvisable to install onto, or too difficult for an average user to setup and maintain; Even little things like bootable or not from USB stick can turn what should be a beautiful journey into hours of frustration trying to just make the thing boot until the next pitfall.
-
-MY₿ONK console is a full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-energy, supply chain resilience and generic parts in mind. You too can get a MY₿ONK console, just join our [Telegram group](https://t.me/mybonk_build).
-
-![](img/various/console_v2_v3.png)
-
-
-MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or other distributions.
+  MY₿ONK console can also be used to run Raspiblitz similarly to Raspberry pi or other distributions.
 
 ### 1.2 Download and install NixOS
 
-Let's now install NixOS on MY₿ONK console. 
-The idea is to get NixOS system up and running from there we'll show you how any MY₿ONK console(s) can easily and remotely be fully managed using MY₿ONK orchestrator. 
+  Let's now install NixOS on MY₿ONK console. 
+  The idea is to get NixOS system up and running from there we'll show you how any MY₿ONK console(s) can easily and remotely be fully managed using MY₿ONK orchestrator. 
 
-You can install NixOS on physical hardware by copying it onto a USB stick and booting from it, checkout the [installation procedure](https://nixos.org/manual/nixos/stable/index.html#ch-installation) in their official documentation or the [detailed procedure](./Procedure_NixOS.md) we maintain in this repository.
+  You can install NixOS on physical hardware by copying it onto a USB stick and booting from it, checkout the [installation procedure](https://nixos.org/manual/nixos/stable/index.html#ch-installation) in their official documentation or the [detailed procedure](./Procedure_NixOS.md) we maintain in this repository.
 
 ### 1.3 Download and install MYBONK stack
 
+  <a name="13-option-1"></a>
+  #### **Option 1.** The "automated" way using a MYBONK orchestrator
+  - This consists is using MY₿ONK orchestrator to streamline the configuration and provisioning of your MY₿ONK console. 
+  - Ref. section [Build your MY₿ONK orchestrator](#build-orchestrator).
 
-<a name="13-option-1"></a>
-#### **Option 1.** The "automated" way using a MYBONK orchestrator
-  Ref. section [Build your MY₿ONK orchestrator](#build-orchestrator).
-
-
-<a name="13-option-2"></a>
-#### **Option 2.** The "manual" way
-**The "manual" way consisting in editing MY₿ONK configuration file ```/etc/nixos/configuration.nix``` directly and locally is deprecated, use MY₿ONK orchestrator (based on krops) instead.
+  <a name="13-option-2"></a>
+  #### **Option 2.** The "manual" way
+  - The "manual" way consisting in editing MY₿ONK configuration file ```/etc/nixos/configuration.nix``` directly and locally is deprecated. 
+  - Use MY₿ONK orchestrator (based on krops) instead.
 
 
 ---
@@ -167,11 +166,11 @@ You can install NixOS on physical hardware by copying it onto a USB stick and bo
 
 Note: [Ref #30](https://github.com/mybonk/mybonk-core/issues/30#issue-1609334323) - MY₿ONK orchestrator is planned to be integrated within the MY₿ONK console.
 
+This machine is used to orchestrate your [fleet of] MY₿ONK console[s] (services, parameters, secrets). It is used to build MY₿ONK stack configuration and deploy it remotely in a secure and streamlined manner. 
 
+For this reason it is important that this machine remains clean and protected, isolated from threats and vulnerabilities.
 
-This machine is used to orchestrate your [fleet of] MY₿ONK console[s]. MY₿ONK stack is built on it before being pushed to the MY₿ONK console(s). For this reason it is important this machine remains clean and protected to avoid viruses and vulnerabilities. A virtual machine is ideal for this. 
-
-The following sections describe the installation of MY₿ONK orchestrator: 
+The following sections describe the installation of MY₿ONK orchestrator on a VirtualBox virtual machine:
 - Download and install VirtualBox
 - Build the OS in VirtualBox
 - ssh and auto-login
@@ -184,7 +183,7 @@ The following sections describe the installation of MY₿ONK orchestrator:
 ### 2.2. Build the OS in VirtualBox
   Now that VirtualBox is installed you need to run an OS on it (Linux Debian in our case, or any systemd-based Linux system).
   
-  There are 2 ways to do this:
+  Choose one of the following 2 options:
   #### **Option 1.** Using the installation image from Debian
   - From https://www.debian.org/distrib/  
   - With this method you go through the standard steps of installing the Debian OS just as if you were installing it on a new desktop but doing it in a VirtualBox 
@@ -213,60 +212,51 @@ The following sections describe the installation of MY₿ONK orchestrator:
   - It is common to have issues with keyboard layout when accessing a machine that has been configured in a different language (e.x. the first few letters of the keyboard write ```qwerty``` instead of ```azerty``` and other keys don't behave normally). There are various ways to adjust this in the configuration but it's out of the scope of this document. The simplest and most effective is to find a way to login using the erroneous keyboard layout anyhow figuring out which key is which then once in the Desktop Environment adjust the settings in "Region & Language" > "Input Source".
 
 
-  Now you need to install some additional pretty common software packages that will be needed to continue. Debian's package manager is [apt](https://www.cyberciti.biz/tips/linux-debian-package-management-cheat-sheet.html?utm_source=Linux_Unix_Command&utm_medium=faq&utm_campaign=nixcmd). Root privileges are required to modify packages installed on the system which is why we prepend the following commands with [sudo](https://www.cyberciti.biz/tips/linux-debian-package-management-cheat-sheet.html?utm_source=Linux_Unix_Command&utm_medium=faq&utm_campaign=nixcmd).
+  - Now you need to install some additional pretty common software packages that will be needed to continue. Debian's package manager is [apt](https://www.cyberciti.biz/tips/linux-debian-package-management-cheat-sheet.html?utm_source=Linux_Unix_Command&utm_medium=faq&utm_campaign=nixcmd). Root privileges are required to modify packages installed on the system which is why we prepend the following commands with [sudo](https://www.cyberciti.biz/tips/linux-debian-package-management-cheat-sheet.html?utm_source=Linux_Unix_Command&utm_medium=faq&utm_campaign=nixcmd).
 
-  Update the packages index so we are up to date with the latest available ones:
+  - Update the packages index so we are up to date with the latest available ones:
 
-  ```
-  $ sudo apt update
-  ```
+    ```
+    $ sudo apt update
+    ```
 
-  Install the additional packages (Debian 11 Bullseye) [curl](https://manpages.org/curl), [git](https://manpages.org/git), ***[gnupg2](), [dirmngr]()***:
+  - Install the additional packages (Debian 11 Bullseye) [curl](https://manpages.org/curl), [git](https://manpages.org/git):
 
-  ```
-  $ sudo apt -y install curl git
-  ```
+    ```
+    $ sudo apt -y install curl git
+    ```
 
 ### 2.3. ssh and auto login
 
-Note that in Debian ssh restrictions apply to ```root``` user.
-Check this by opening the ssh server configuration ```/etc/ssh/sshd_config``` using ```# nano /etc/ssh/sshd_config``` and see the setting ```PermitRootLogin```, its value can be ```yes```, ```prohibit-password```, ```without-password```. The later two ban all interactive authentication methods, allowing only public-key, hostbased and GSSAPI authentication.
-
-It is generally advised to avoid using user ```root``` especially to remote-access. You can use ```sudo -i``` from another user instead when needed so just leave the setting ```PermitRootLogin``` as ```prohibit-password```.
+- In Debian ssh restrictions apply to ```root``` user.
+- Check this by opening the ssh server configuration ```/etc/ssh/sshd_config``` using ```# nano /etc/ssh/sshd_config``` and see the setting ```PermitRootLogin```, its value can be ```yes```, ```prohibit-password```, ```without-password```. The later two ban all interactive authentication methods, allowing only public-key, hostbased and GSSAPI authentication.
+- It is generally advised to avoid using user ```root``` especially to remote-access. You can use ```sudo -i``` from another user instead when needed so just leave the setting ```PermitRootLogin``` as ```prohibit-password```.
 
 
 ### 2.4. Install Nix
   
-  
+  Choose one of the following 2 options.
+
   #### **Option 1.** Using the ready-made binary distribution from nix cache
   - Quicker and more convenient than Option 2 as it has been pre-built for you.
-
-    ssh into the orchestrator and run:
+  - ssh into MY₿ONK orchestrator and run:
     ``` 
     $ sh <(curl -L https://nixos.org/nix/install)   
     ```
-
-  You can see outputs related to Nix binary being downloaded and installed. 
-
-  
-  Installation almost finished: To ensure that the necessary environment variables are set, as instructed, run the following command to 'source' the file:
-
-  ```
-  . ~/.nix-profile/etc/profile.d/nix.sh
-  ```
-      
-  Check the installation went OK
-
-  ```
-  $ nix --version
-  nix (Nix) 2.12.0
-  ```
-
-  Have a look at the nix man page to familiarize yourself with it and all its sub-commands.
-  ```
-  $ man nix
-  ```
-  
+  - You can see outputs related to Nix binary being downloaded and installed. 
+  - As instructed ensure that the necessary environment variables are set by running the following command:
+    ```
+    $ . ~/.nix-profile/etc/profile.d/nix.sh
+    ```
+  - Check the installation went OK:
+    ```
+    $ nix --version
+    nix (Nix) 2.12.0
+    ```
+  - Finally, optionally have a look at the nix man page to familiarize yourself with it and all its sub-commands:
+    ```
+    $ man nix
+    ```
 
   #### **Option 2.** Building Nix from the source
   - Regarded as the "sovereign" way to do it but takes more time.
@@ -278,41 +268,30 @@ Now that your MY₿ONK orchestrator is up and running we can use it to build MY�
 
 [MY₿ONK stack](/docs/MYBONK_stack.md) is derived from [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin/). Have a look at their GitHub, especially their [examples](https://github.com/fort-nix/nix-bitcoin/blob/master/examples/README.md) section.
 
-Login to your MY₿ONK orchestrator (make sure that the virtual machine hosting it as described in section '[2. Build your MYBONK orchestrator](#2-build-your-mybonk-orchestrator-machine)' is actually running):
+- Login to your MY₿ONK orchestrator (make sure that the virtual machine hosting it as described in section '[2. Build your MYBONK orchestrator](#2-build-your-mybonk-orchestrator-machine)' is actually running):
 
 
-```
-ssh debian@mybonk_orchestrator
-$
-```
-
-Setup passwordless ssh access for user ```root``` to connect from from your MY₿ONK orchestrator to the MY₿ONK console (have a look at the section dedicated to ssh in the [baby rabbit holes](/docs/baby-rabbit-holes.md#ssh) if needed).
-
-And add a shortcut ```mybonk-console``` in your ssh config file (```~/.ssh/config```): 
-
-
-```
-Host mybonk-console
+  ```
+  ssh debian@mybonk_orchestrator
+  $
+  ```
+- Setup passwordless ssh access for user ```root``` to connect from from your MY₿ONK orchestrator to the MY₿ONK console (have a look at the section dedicated to ssh in the [baby rabbit holes](/docs/baby-rabbit-holes.md#ssh) if needed).
+- And add a shortcut ```mybonk-console``` in your ssh config file (```~/.ssh/config```): 
+  ```
+  Host mybonk-console
     Hostname 192.168.0.64
     User root
     PubkeyAuthentication yes
     IdentityFile ~/.ssh/id_rsa
     AddKeysToAgent yes
-
-```
-
-Check that your ssh passwordless access works:
-
-```
-$ ssh mybonk-console
-Last login: Fri Mar  3 13:27:34 2023 from 192.168.0.64
-# 
-
-```
-
-All good, now you have a standard NixOS running, it will be running you your MY₿ONK console in an instant once we will have deployed MY₿ONK stack to it from your MY₿ONK orchestrator.
-
-
+  ```
+- Check that your ssh passwordless access works:
+  ```
+  $ ssh mybonk-console
+  Last login: Fri Mar  3 13:27:34 2023 from 192.168.0.64
+  # 
+  ```
+- All good, now you have a standard NixOS running, it will be running you your MY₿ONK console in an instant once we will have deployed MY₿ONK stack to it from your MY₿ONK orchestrator.
 
 ### 2.5. Deploy MYBONK stack to MYBONK consoles
   
@@ -336,27 +315,23 @@ As you can read krops relies on ssh passwordless login, we have configured this 
 
 
 - On your MY₿ONK orchestrator machine clone mybonk-core:
-  
-  ```$ git clone https://github.com/mybonk/mybonk-core.git```
-
-- Navigate in the resulting directory: 
-  
-  ```$ cd mybonk-core```
+  ```
+  $ git clone https://github.com/mybonk/mybonk-core.git
+  ```
+- Navigate to the resulting directory:
+  ```
+  $ cd mybonk-core
+  ```
 - It contains many files and directories, here is a brief description for now:
-
   - ```configuration.nix```: Explained in a <a href="#configuration.nix">previous section</a>.
   - ```krops```: Directory used for deployment (described in section [#2.5 Deploy MY₿ONK stack to the MY₿ONK consoles](#25-deploy-mybonk-stack-to-the-mybonk-consoles)).
   - ```shell.nix```: The nix-shell configuration file (sourced automatically if nix-shell is run from this directory).
   - ```nix-bitcoin-release.nix```: Hydra jobset declaration.
   - ```mybonk-console```: Directory that contains the elements required to launch the deployment of MY₿ONK consoles on the network.
-
-
-- Navigate in the directory ```mybonk-console```:
-
+- Navigate to the directory ```mybonk-console```:
   ```
   $ cd mybonk-console
   ```
-
 - Launch the nix shell ```nix-shell```:
 
   It is very important you do this as [nix-shell](https://nixos.org/manual/nix/stable/command-ref/nix-shell.html) interprets ```shell.nix```, pulls all the dependencies and gives you access to the exact versions of the specified packages.
@@ -364,48 +339,54 @@ As you can read krops relies on ssh passwordless login, we have configured this 
   ```
   $ nix-shell
   ```
-
 - It will take a few minutes to execute and start showing output on the terminal, be patient.
-
 - Once complete you will be greeted by a splash and the nix-shell prompt:
-```
-                 _                 _
- _ __ ___  _   _| |__   ___  _ __ | | __
-| '_ ` _ \| | | | '_ \ / _ \| '_ \| |/ /
-| | | | | | |_| | |_) | (_) | | | |   <
-|_| |_| |_|\__, |_.__/ \___/|_| |_|_|\_\
-           |___/
-Enter "h" or "help" for documentation.
+ ```
+                  _                 _
+  _ __ ___  _   _| |__   ___  _ __ | | __
+ | '_ ` _ \| | | | '_ \ / _ \| '_ \| |/ /
+ | | | | | | |_| | |_) | (_) | | | |   <
+ |_| |_| |_|\__, |_.__/ \___/|_| |_|_|\_\
+            |___/
+ Enter "h" or "help" for documentation.
 
 
-[nix-shell:~/mybonk-core/mybonk-console]$
+ [nix-shell:~/mybonk-core/mybonk-console]$
 ```
 
 - As instructed enter "h" to see the help page describing the commands made available to facilitate your configuration/build/deploy process.
 
 - As you can see from the previous point the command ```deploy``` is used to deploy to your MY₿ONK console:
+  ```
+  $ deploy
+  ```
 
-  ```$ deploy```
-
-- This is going to take some time, the output of the terminal is showing you the progress of the process. In the background krops:
-  - It copies ```configuration.nix``` (and additional configuration files that might have been defined) to ```/var/src``` on your MY₿ONK console.
-  - It creates a directory named ```secrets``` in which the secrets (passwords, keys) of the services are generated.
-  - It copies the directory ```secrets``` in ```/var/src/``` on your MY₿ONK console.
-  - It runs ```nixos-rebuild switch -I /var/src``` on your MY₿ONK console.
-  - Your MY₿ONK console will reconfigure on the fly and run your system as per the provided configuration.
-  - Some services take a **very** long time to start for the first time. The best examples are bitcoind and fulcrum, requiring **up to a few days** to synchronize. Software relying on these to these services to work may show warning, error messages and not work until the services have fully started for the first time (e.g. lightning network depending on bitcoind, mempool depending on fulcrum itself depending on bitcoind).
+- The output on the terminal is showing you the progress of the process. In the background krops:
+  - Copies ```configuration.nix``` (and additional configuration files that might have been defined) to ```/var/src``` on your MY₿ONK console.
+  - Creates a directory named ```secrets``` in which the secrets (passwords, keys) of the services are generated.
+  - Copies the directory ```secrets``` in ```/var/src/``` on your MY₿ONK console.
+  - Runs ```nixos-rebuild switch -I /var/src``` on your MY₿ONK console.
+  - Your MY₿ONK console will reconfigure itself on the fly and run a system as per the provided configuration.
+  
+    Some services take a **very** long time to start for the first time. The best examples are bitcoind and fulcrum, requiring **up to a few days** to synchronize. Software relying on these to these services to work may show warning, error messages and not work until the services have fully started for the first time (e.g. lightning network depending on bitcoind, mempool depending on fulcrum itself depending on bitcoind).
   - MY₿ONK stack is now running on your MY₿ONK console and you can monitor and control its behavior from MY₿ONK orchestrator.
 
 
 # 3. Basic operations
 
-Have a look at the tmuxinator section in the [baby rabbit holes](/docs/baby-rabbit-holes.md).
+Unless otherwise stated all the operations in this sections are executed from MY₿ONK orchestartor.
 
-We made a [tmuxinator template](https://github.com/mybonk/mybonk-core/blob/master/.tmuxinator_console.yml) available for you to reuse.
+Have a look at the tmuxinator section in the [baby rabbit holes](/docs/baby-rabbit-holes.md), using it will save you time and streamline your operations. We also made a [tmuxinator template](https://github.com/mybonk/mybonk-core/blob/master/.tmuxinator_console.yml) available for you to reuse.
 
 ### 3.1. Day to day commands
 
+Whereas NixOS configuration is by default under ```/etc/nixos``` our deployment mechanism based on krops operates from ```/var/src``` on the host machine.
 
+If for some reason you want to rebuild the system directly instead of using the full blown krops mechanism (```deploy```), you can run the following command on the host:
+```
+#> nixos-rebuild switch -I /var/src
+```
+This is handy to test something out but goes against the principle of streamlined deployment as the configuration on the host is now out of sync with the one maintained from MY₿ONK orchestartor and it will be overwritten next time we deploy.
 ### 3.2. Backup and restore
 
 
