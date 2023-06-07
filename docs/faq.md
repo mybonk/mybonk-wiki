@@ -16,12 +16,13 @@ Although MY₿ONK console has been designed specifically as a bitcoin-only full 
 However we focus our efforts at maintaining the code base with MY₿ONK console as hardware reference (it would be impossible to support all the hardware forms and shapes available on the market at any given time).
 
 
-Running a MY₿ONK console allows you to be confident your system is identical to the one of the other MY₿ONK users, you won't be slow-down by some sort of compatibility issues or missing drivers, you just don't have the required skills nor the time, you want it to work from the get go.
-<TODO: Add some more info>
+Running a MY₿ONK console allows you to be confident your system is identical to the one of the other MY₿ONK users, you won't be slow-down by common compatibility issues or missing drivers, you just don't have the required skills nor the time, you want it to work from the get go.
+
+![](img/various/potatoe_node.png)
 
 
 ## How to verify a file or image downloaded from the Internet?
-This is important if you are a MY₿ONK hacker (operators and 'standard' users) don't need this.
+
 There are all sorts of risks and threats associated with files and images downloaded form the Internet. 
 "Don't trust verify". This can be done by verifying files and images in two ways: verify its hash (proves integrity) or verify its signature (proves integrity and authenticity).
 
@@ -57,7 +58,7 @@ Bitcoin is for everyone, but everyone goes at a different pace and is in a diffe
 If unsure get advice on what "rabbit hole" would be best for you from other bitcoiners who know you and you trust.
 
 
-Not ready to take the plunge? Why not start by having a look at the [baby rabbit holes](/docs/baby-rabbit-holes.md) so you will be ready for when the time comes  :hole: :rabbit2:
+Not ready to take the plunge? Why not start by having a look at the [baby rabbit holes](/docs/baby-rabbit-holes.md) :hole: :rabbit2: so you will be ready for when the time comes 
 
 
 We all stand on the shoulders of giants and learn from one another. 

@@ -46,7 +46,7 @@ Like most bitcoin full node distributions MY₿ONK can run on a variety of hardw
 ----
 
 
-👉 MY₿ONK installation workshop instructions maintained [HERE](/docs/Procedure.md) (```/docs/Procedure.md```).
+👉 MY₿ONK installation workshop instructions maintained on the Wiki [HERE](/docs/Procedure.md) (```/docs/Procedure.md```).
 
 <p align="center">
 🫵 Jump in, clone the repo and join our <a href="https://t.me/mybonk_build" target="_blank">Telegram group</a> 💪

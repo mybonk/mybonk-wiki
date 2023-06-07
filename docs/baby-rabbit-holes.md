@@ -80,9 +80,10 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
     - ```$PATH``` Instructs the shell which directories to search for executables, it allows to run commands without having to specify its full path.
     - .etc... .
 - Shell commands you must know *really well*:
-  - ```ls```, ```cd```, ```type```, ```mkdir```, ```mv```, ```rm```, ```ln```, ```which```, ```cat```, ```more```  …
+  - ```ls```, ```cd```, ```type```, ```mkdir```, ```mv```, ```rm```, ```ln```, ```which```, ```cat```, ```head```, ```tail```, ```more```, ```tee``` …
   - ```hostname```, ```whoami```, ```passwd```, ```chmod```, ```chgrp```, …
   - ```ip a```
+  - ```su``` and ```sudo```: Act on the system as a different user.
   - ```history``` 
     - ```echo "$HISTFILE"```
     - ```history | grep [string]```: Find any record in history.
@@ -90,38 +91,34 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
     - ```history -d 1234```: Remove record number 1234.
       - IMPORTANT: [In Zsh this command does not work](https://apple.stackexchange.com/questions/430640/history-d-does-not-remove-history-entry-but-shows-time-of-history-entry), it is an alias to ``fc`` which doesn't have an option to delete records from the history. <[workaround](https://stackoverflow.com/questions/7243983/how-to-remove-an-entry-from-the-history-in-zsh/63494771#63494771)>
     
-
-
-
-
     - Don't forget to explore 'i-search' and 'reverse-i-search' using ``Ctrl`` + ``s`` and ``Ctrl`` + ``r`` respectively; Read this [if 'i-search' using ``Ctrl`` + ``s`` does not work](https://stackoverflow.com/questions/791765/unable-to-forward-search-bash-history-similarly-as-with-ctrl-r).
   - ```alias```
   - ```grep```: Find all files containing specific text
     - search all the files in a given directory:
-    ```
-        grep -rnw '/path/to/somewhere/' -e 'pattern'
-    ```
+      ```
+      grep -rnw '/path/to/somewhere/' -e 'pattern'
+      ```
     - only search through those files with ```.c``` or ```.h``` extensions:
-    ```
-        grep --include=\*.{c,h} -rnw '/path/to/somewhere/' -e "pattern"
-    ```
+      ```
+      grep --include=\*.{c,h} -rnw '/path/to/somewhere/' -e "pattern"
+      ```
     - exclude searching all the files with ```.o``` extension:
-    ```
-        grep --exclude=\*.o -rnw '/path/to/somewhere/' -e "pattern"
-    ```
+      ```
+      grep --exclude=\*.o -rnw '/path/to/somewhere/' -e "pattern"
+      ```
     - for directories it's possible to exclude one or more directories using the ```--exclude-dir``` parameter. For example, this will exclude the dirs ```dir1/ ```, ```dir2/``` and all of them matching ```*.dst```:
-    ```
-        grep --exclude-dir={dir1,dir2,*.dst} -rnw '/path/to/search/' -e "pattern"
-    ```
-    - ```sudo```
+      ```
+      grep --exclude-dir={dir1,dir2,*.dst} -rnw '/path/to/search/' -e "pattern"
+      ```
     - ```tee```: a command in command-line interpreters using standard streams which reads standard input and writes it to both standard output and one or more files, effectively duplicating its input. It is primarily used in conjunction with pipes and filters. The command is named after the T-splitter used in plumbing.
    - ```file```
 
 ## Text processing
-- vi (cheat-sheet [HERE](https://www.thegeekdiary.com/basic-vi-commands-cheat-sheet/))
+
+- ```vi``` (cheat-sheet [HERE](https://www.thegeekdiary.com/basic-vi-commands-cheat-sheet/))
   - ```$ vi +132 myfile```: Open myfile on line 132
-- sed ([https://www.gnu.org/software/sed/manual/sed.html](https://www.gnu.org/software/sed/manual/sed.html)): "stream editor" for editing streams of text too large to edit as a single file, or that might be generated on the fly as part of a larger data processing step: Substitution, replacing one block of text with another.
-- awk ([https://github.com/onetrueawk/awk/blob/master/README.md](https://github.com/onetrueawk/awk/blob/master/README.md)): Programming language. Unlike many conventional languages, awk is "data driven": you specify what kind of data you are interested in and the operations to be performed when that data is found.
+- ```sed``` ([https://www.gnu.org/software/sed/manual/sed.html](https://www.gnu.org/software/sed/manual/sed.html)): "stream editor" for editing streams of text too large to edit as a single file, or that might be generated on the fly as part of a larger data processing step: Substitution, replacing one block of text with another.
+- ```awk``` ([https://github.com/onetrueawk/awk/blob/master/README.md](https://github.com/onetrueawk/awk/blob/master/README.md)): Programming language. Unlike many conventional languages, awk is "data driven": you specify what kind of data you are interested in and the operations to be performed when that data is found.
 - [jq](https://stedolan.github.io/jq/): Lightweight and flexible command-line JSON parser/processor. [reference](https://stedolan.github.io/jq/tutorial/)
 - [rg](https://www.linode.com/docs/guides/ripgrep-linux-installation/#install-ripgrep-on-ubuntu-and-debian) (also known as ```ripgrep```): Recursively search the current directory for lines matching a pattern, very useful to find whatever document containing whatever text in whatever [sub]directory.
   - ```$ rg what_i_am_looking_for MyDoc_a.php MyDoc_b.php```   Look for string 'what_i_am_looking_for' in MyDoc_a.php and MyDoc_b.php
@@ -145,7 +142,8 @@ utility).
   - ```df -hT```. ```-h``` for “human readable”, ```-T``` to displays the type of the filesystem.
   - ```df -hT -t ext4```. ```-t ext4``` to display only filesystems of type ext4.
   - ```df -hT -x squashfs -x overlay -x tmpfs -x devtmpfs``` to hide given filesystem types from the output.
-- ```du```: Estimate file space usage.
+- ```du```: Estimate file space usage. 
+  - ```$ du -h -d1 /data```
 ## curl
 
 ## gpg, sha-256 …
@@ -374,15 +372,42 @@ Tmux shortcuts
   - ```nix-store --gc --print-dead```: Display what files would be deleted.
   - ```nix-store --gc --print-live```: Display what files would not be deleted. 
   - After removing appropriate old generations (after having used ```nix-env``` with an argument ```--delete-generations```) - you can run the garbage collector as follows: ```nix-store --gc```
+
+## bitcoin-related commands
+- [bitcoin-cli](https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list)
+- ```bitcoin-cli -addrinfo```
+- ```bitcoin-cli -getinfo```
+- Bitcoin-cli to execute bitcoin RPC commands ([full list](https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list)), some of the most commonly used commands are:
+- ``General Info```
+  - ```bitcoin-cli help```
+  - ```bitcoin-cli help getblockchaininfo```
+  - ```bitcoin-cli getblockchaininfo```
+  - ```bitcoin-cli getnetworkinfo```
+  - ```bitcoin-cli getmininginfo```
+  - ```bitcoin-cli getpeerinfo```
+  - ```bitcoin-cli start```
+  - ```bitcoin-cli stop```
+- Block Info
+  - ```bitcoin-cli getblockcount```
+  - ```bitcoin-cli getbestblockhash```
+  - ```bitcoin-cli getblock hash```
+  - ```bitcoin-cli getblockhash index```
+- Transaction Info
+  - ```bitcoin-cli getrawmempool```
+  - ```bitcoin-cli getrawtransaction txid```
+  - ```bitcoin-cli decoderawtransaction rawtx```
+
+
+
 ## Podcasts
 - nixbitcoin-dev with Stefan Livera: A security focused bitcoin node https://stephanlivera.com/episode/195/
 
 ## Connext projects / references
-- [seed-signer: An offline, airgapped Bitcoin signing device](https://github.com/SeedSigner/seedsigner/blob/dev/README.md)
+- [Seed-signer](https://github.com/SeedSigner/seedsigner/blob/dev/README.md): An offline, airgapped Bitcoin signing device
 - [BIP39](https://iancoleman.io/bip39/): Play around and understand 12 vs 24 word seed (mnemonic) length, does it make a difference? Entropy, splitting scrambling ... (don't forget to generate a random mnemonic and select the option "Show split mnemonic cards" to see how much time it would take to brute-force attack).
 
   ![](img/various/12_24_mnemonic_split.png)
-- [Hardware Wallet comparison / audit](https://cryptoguide.tips/hardware-wallet-comparisons/)
+- Hardware Wallets: [Comparison/audit](https://cryptoguide.tips/hardware-wallet-comparisons/)
 
 ## For developers
   - [Polar](https://lightningpolar.com/): One-click Bitcoin Lightning Networks for local app development & testing.
