@@ -148,10 +148,7 @@ The idea is to get NixOS system up and running from there we'll show you how any
 
 You can install NixOS on physical hardware by copying it onto a USB stick and booting from it, checkout the [installation procedure](https://nixos.org/manual/nixos/stable/index.html#ch-installation) in their official documentation or the [detailed procedure](./Procedure_NixOS.md) we maintain in this repository.
 
-*******
 ### 1.3 Download and install MYBONK stack
-
-*******
 
 
 <a name="13-option-1"></a>
@@ -170,7 +167,6 @@ You can install NixOS on physical hardware by copying it onto a USB stick and bo
 
 Note: [Ref #30](https://github.com/mybonk/mybonk-core/issues/30#issue-1609334323) - MY₿ONK orchestrator is planned to be integrated within the MY₿ONK console.
 
----
 
 
 This machine is used to orchestrate your [fleet of] MY₿ONK console[s]. MY₿ONK stack is built on it before being pushed to the MY₿ONK console(s). For this reason it is important this machine remains clean and protected to avoid viruses and vulnerabilities. A virtual machine is ideal for this. 
@@ -233,11 +229,8 @@ The following sections describe the installation of MY₿ONK orchestrator:
 
 ### 2.3. ssh and auto login
 
-Note that in Debian ssh restrictions apply to ```root``` user: 
-
-In the ssh server configuration '```/etc/ssh/sshd_config```'
-
-Open the ssh server configuration ```/etc/ssh/sshd_config``` using ```nano /etc/ssh/sshd_config``` and see the setting ```PermitRootLogin```, its value can be ```yes```, ```prohibit-password```, ```without-password```. The later two ban all interactive authentication methods, allowing only public-key, hostbased and GSSAPI authentication.
+Note that in Debian ssh restrictions apply to ```root``` user.
+Check this by opening the ssh server configuration ```/etc/ssh/sshd_config``` using ```# nano /etc/ssh/sshd_config``` and see the setting ```PermitRootLogin```, its value can be ```yes```, ```prohibit-password```, ```without-password```. The later two ban all interactive authentication methods, allowing only public-key, hostbased and GSSAPI authentication.
 
 It is generally advised to avoid using user ```root``` especially to remote-access. You can use ```sudo -i``` from another user instead when needed so just leave the setting ```PermitRootLogin``` as ```prohibit-password```.
 
@@ -337,18 +330,20 @@ It contains many files and directories:
 
 - ```configuration.nix```: Explained in a <a href="#configuration.nix">previous session</a>.
 - ```krops```: Directory used for deployment (described in section [#2.5 Deploy MY₿ONK stack to the MY₿ONK consoles](#25-deploy-mybonk-stack-to-the-mybonk-consoles))
-- ```shell.nix```: The nix-shell file as seen a bit earlier.
+- ```shell.nix```: The nix-shell configuration file (sourced automatically if nix-shell is run from this directory).
 - ```nix-bitcoin-release.nix```: Hydra jobset declaration
-- ```mybonk-console```: Contains the elements required to launch the deployment of MY₿ONK consoles on the network.
+- ```mybonk-console```: Directory that contains the elements required to launch the deployment of MY₿ONK consoles on the network.
 
 
-Just navigate in the directory ```mybonk-console```, it contains the elements needed to push your configuration onto your MY₿ONK console:
+Navigate in the directory ```mybonk-console```:
 
 ```
 $ cd mybonk-console
 ```
 
-Run the command ```nix-shell```. It is very important you do this as [nix-shell](https://nixos.org/manual/nix/stable/command-ref/nix-shell.html) (interprets ```shell.nix```) pulls all the dependencies and gives you access to the exact versions of the specified packages.
+Launch a nix shell ```nix-shell```. 
+
+It is very important you do this as [nix-shell](https://nixos.org/manual/nix/stable/command-ref/nix-shell.html) (interprets ```shell.nix```) pulls all the dependencies and gives you access to the exact versions of the specified packages.
 
 ```
 $ nix-shell
@@ -356,7 +351,7 @@ $ nix-shell
 
 It will take a few minutes to execute and start showing output on the terminal, be patient.
 
-Once complete you will be greeted by a nix-bitcoin splash and the nix-shell prompt:
+Once complete you will be greeted by a splash and the nix-shell prompt:
 ```
        _           _     _ _            _       
  _ __ (_)_  __    | |__ (_) |_ ___ ___ (_)_ __  
@@ -372,10 +367,6 @@ Enter "h" or "help" for documentation.
 As instructed enter "h" to see the help page describing the commands nix-bitcoin team made available to facilitate the configuration/build/deploy process.
 
 
-
-
-
-  
 
 ### 2.5. Deploy MYBONK stack to the MYBONK consoles
   
@@ -403,8 +394,6 @@ Locate the FIXME and set the target to the name of the ssh config entry created 
 
 
 # 3. Basic operations
-
-This is when the tool 'tmuxinator' comes along. 
 
 Have a look at the tmuxinator section in the [baby rabbit holes](/docs/baby-rabbit-holes.md).
 
