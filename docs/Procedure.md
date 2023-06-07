@@ -39,7 +39,7 @@ Join the conversation on the <a href="https://t.me/mybonk_build" target="_blank"
       - [**Option 1.** Using the ready-made binary distribution from nix cache](#option-1-using-the-ready-made-binary-distribution-from-nix-cache)
       - [**Option 2.** Building Nix from the source](#option-2-building-nix-from-the-source)
     - [2.4. Build MYBONK stack](#24-build-mybonk-stack)
-    - [2.5. Deploy MYBONK stack to the MYBONK consoles](#25-deploy-mybonk-stack-to-the-mybonk-consoles)
+    - [2.5. Deploy MYBONK stack to MYBONK consoles](#25-deploy-mybonk-stack-to-mybonk-consoles)
 - [3. Basic operations](#3-basic-operations)
     - [3.1. Backup and restore](#31-backup-and-restore)
     - [3.2. Join a Federation](#32-join-a-federation)
@@ -158,7 +158,7 @@ You can install NixOS on physical hardware by copying it onto a USB stick and bo
 
 <a name="13-option-2"></a>
 #### **Option 2.** The "manual" way
-**The "manual" way consisting in editing MY₿ONK configuration file ```/etc/nixos/configuration.nix``` directly and locally is deprecated, use MY₿ONK orchestrator (based on krops) instead as it provides many other deployment benefits.
+**The "manual" way consisting in editing MY₿ONK configuration file ```/etc/nixos/configuration.nix``` directly and locally is deprecated, use MY₿ONK orchestrator (based on krops) instead.
 
 
 ---
@@ -288,11 +288,11 @@ $
 
 Setup passwordless ssh access for user ```root``` to connect from from your MY₿ONK orchestrator to the MY₿ONK console (have a look at the section dedicated to ssh in the [baby rabbit holes](/docs/baby-rabbit-holes.md#ssh) if needed).
 
-And add a shortcut for it in your ssh config file (```~/.ssh/config```): 
+And add a shortcut ```mybonk-console``` in your ssh config file (```~/.ssh/config```): 
 
 
 ```
-Host mybonk-console-root
+Host mybonk-console
     Hostname 192.168.0.64
     User root
     PubkeyAuthentication yes
@@ -301,108 +301,115 @@ Host mybonk-console-root
 
 ```
 
-Now, test that you can ssh without password from your MY₿ONK orchestrator to your MY₿ONK console (using the shortcut ```mybonk-console-root``` we just created:
+Check that your ssh passwordless access works:
 
 ```
-$ ssh mybonk-console-root
+$ ssh mybonk-console
 Last login: Fri Mar  3 13:27:34 2023 from 192.168.0.64
 # 
 
 ```
 
-All good, now logout from your MY₿ONK console to get back to your MY₿ONK orchestrator terminal.
-
-MY₿ONK-core is a fork of [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin), augmented of MY₿ONK specificities, best practices and community (and hardware may you decide to run on an [authentic MY₿ONK console](https://mybonk.co/get-involved)).
-
-Start by cloning nix-bitcoin project repository in your MY₿ONK orchestrator home directory:
-
-```
-$ git clone https://github.com/mybonk/mybonk-core.git
-```
-
-Navigate in the resulting directory:
-
-```
-$ cd mybonk-core
-```
-
-It contains many files and directories:
-
-- ```configuration.nix```: Explained in a <a href="#configuration.nix">previous session</a>.
-- ```krops```: Directory used for deployment (described in section [#2.5 Deploy MY₿ONK stack to the MY₿ONK consoles](#25-deploy-mybonk-stack-to-the-mybonk-consoles))
-- ```shell.nix```: The nix-shell configuration file (sourced automatically if nix-shell is run from this directory).
-- ```nix-bitcoin-release.nix```: Hydra jobset declaration
-- ```mybonk-console```: Directory that contains the elements required to launch the deployment of MY₿ONK consoles on the network.
-
-
-Navigate in the directory ```mybonk-console```:
-
-```
-$ cd mybonk-console
-```
-
-Launch a nix shell ```nix-shell```. 
-
-It is very important you do this as [nix-shell](https://nixos.org/manual/nix/stable/command-ref/nix-shell.html) (interprets ```shell.nix```) pulls all the dependencies and gives you access to the exact versions of the specified packages.
-
-```
-$ nix-shell
-```
-
-It will take a few minutes to execute and start showing output on the terminal, be patient.
-
-Once complete you will be greeted by a splash and the nix-shell prompt:
-```
-       _           _     _ _            _       
- _ __ (_)_  __    | |__ (_) |_ ___ ___ (_)_ __  
-| '_ \| \ \/ /____| '_ \| | __/ __/ _ \| | '_ \ 
-| | | | |>  <_____| |_) | | || (_| (_) | | | | |
-|_| |_|_/_/\_\    |_.__/|_|\__\___\___/|_|_| |_|
-                                                
-Enter "h" or "help" for documentation.
-
-[nix-shell:~/mybonk-core/mybonk-console]$
-```
-
-As instructed enter "h" to see the help page describing the commands nix-bitcoin team made available to facilitate the configuration/build/deploy process.
+All good, now you have a standard NixOS running, it will be running you your MY₿ONK console in an instant once we will have deployed MY₿ONK stack to it from your MY₿ONK orchestrator.
 
 
 
-### 2.5. Deploy MYBONK stack to the MYBONK consoles
+### 2.5. Deploy MYBONK stack to MYBONK consoles
   
-There are dozens of options available to deploy a nixOS configuration: NixOps, krops, morph, NixUS, deploy-rs, Bento .etc.. , each with their pros and cons.
-[NixOps](https://github.com/NixOS/nixops/blob/master/README.md), the official DevOps tool of NixOS is nice but it has some flaws. [krops](https://github.com/krebs/krops/blob/master/README.md) solves some of these flaws with very simple concepts, some of its features are:
+MY₿ONK stack is made of MY₿ONK-core. It is a fork of [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin), augmented of the MY₿ONK specificities, best practices and community (and hardware may you decide to run on an [authentic MY₿ONK console](https://mybonk.co/get-involved)).
+
+There are dozens of options available to deploy a nixOS configuration to a remote machine: NixOps, krops, morph, NixUS, deploy-rs, Bento .etc.. , each with their pros and cons.
+
+[NixOps](https://github.com/NixOS/nixops/blob/master/README.md), the official DevOps tool of NixOS is nice but it has some flaws. 
+
+[krops](https://github.com/krebs/krops/blob/master/README.md) solves some of these flaws with very simple concepts, some of its features are:
 - store your secrets in password store
 - build your systems remotely
 - minimal overhead (it's basically just nixos-rebuild switch!)
 - run from custom nixpkgs branch/checkout/fork
 
-We are going to use krops too as it is already used by nix-bitcoin. 
+We are going to use krops, it is also used by the underlying nix-bitcoin, let's not reinvent the wheel.
 
-Read [this very well written article](https://tech.ingolf-wagner.de/nixos/krops/) to get an idea of how krops works before you get started.
+First read [this very well written article](https://tech.ingolf-wagner.de/nixos/krops/) to get a high level understanding of how krops works, we are going to perform the steps together in the next few steps.
 
-First, krops needs to ssh MY₿ONK console using automatic login with keys pair. We have done this earlier let's move on ...
+As you can read krops relies on ssh passwordless login, we have configured this in an earlier section let's move on:
 
-On your orchestrator machine make sure you are in the (```mybonk```) deployment directory, edit ```krops/deploy.nix```` which is the main deployment configuration file:
 
-Locate the FIXME and set the target to the name of the ssh config entry created earlier, i.e. mybonk-node.
+- On your MY₿ONK orchestrator machine clone mybonk-core:
+  
+  ```$ git clone https://github.com/mybonk/mybonk-core.git```
 
+- Navigate in the resulting directory: 
+  
+  ```$ cd mybonk-core```
+- It contains many files and directories, here is a brief description for now:
+
+  - ```configuration.nix```: Explained in a <a href="#configuration.nix">previous section</a>.
+  - ```krops```: Directory used for deployment (described in section [#2.5 Deploy MY₿ONK stack to the MY₿ONK consoles](#25-deploy-mybonk-stack-to-the-mybonk-consoles)).
+  - ```shell.nix```: The nix-shell configuration file (sourced automatically if nix-shell is run from this directory).
+  - ```nix-bitcoin-release.nix```: Hydra jobset declaration.
+  - ```mybonk-console```: Directory that contains the elements required to launch the deployment of MY₿ONK consoles on the network.
+
+
+- Navigate in the directory ```mybonk-console```:
+
+  ```
+  $ cd mybonk-console
+  ```
+
+- Launch the nix shell ```nix-shell```:
+
+  It is very important you do this as [nix-shell](https://nixos.org/manual/nix/stable/command-ref/nix-shell.html) interprets ```shell.nix```, pulls all the dependencies and gives you access to the exact versions of the specified packages.
+
+  ```
+  $ nix-shell
+  ```
+
+- It will take a few minutes to execute and start showing output on the terminal, be patient.
+
+- Once complete you will be greeted by a splash and the nix-shell prompt:
+```
+                 _                 _
+ _ __ ___  _   _| |__   ___  _ __ | | __
+| '_ ` _ \| | | | '_ \ / _ \| '_ \| |/ /
+| | | | | | |_| | |_) | (_) | | | |   <
+|_| |_| |_|\__, |_.__/ \___/|_| |_|_|\_\
+           |___/
+Enter "h" or "help" for documentation.
+
+
+[nix-shell:~/mybonk-core/mybonk-console]$
 ```
 
-```
+- As instructed enter "h" to see the help page describing the commands made available to facilitate your configuration/build/deploy process.
 
+- As you can see from the previous point the command ```deploy``` is used to deploy to your MY₿ONK console:
+
+  ```$ deploy```
+
+- This is going to take some time, the output of the terminal is showing you the progress of the process. In the background krops:
+  - It copies ```configuration.nix``` (and additional configuration files that might have been defined) to ```/var/src``` on your MY₿ONK console.
+  - It creates a directory named ```secrets``` in which the secrets (passwords, keys) of the services are generated.
+  - It copies the directory ```secrets``` in ```/var/src/``` on your MY₿ONK console.
+  - It runs ```nixos-rebuild switch -I /var/src``` on your MY₿ONK console.
+  - Your MY₿ONK console will reconfigure on the fly and run your system as per the provided configuration.
+  - Some services take a **very** long time to start for the first time. The best examples are bitcoind and fulcrum, requiring **up to a few days** to synchronize. Software relying on these to these services to work may show warning, error messages and not work until the services have fully started for the first time (e.g. lightning network depending on bitcoind, mempool depending on fulcrum itself depending on bitcoind).
+  - MY₿ONK stack is now running on your MY₿ONK console and you can monitor and control its behavior from MY₿ONK orchestrator.
 
 
 # 3. Basic operations
 
 Have a look at the tmuxinator section in the [baby rabbit holes](/docs/baby-rabbit-holes.md).
 
-For your convenience you can reuse the [tmuxinator template](https://github.com/mybonk/mybonk-core/blob/master/.tmuxinator_console.yml) in the scope of MY₿ONK.
+We made a [tmuxinator template](https://github.com/mybonk/mybonk-core/blob/master/.tmuxinator_console.yml) available for you to reuse.
+
+### 3.1. Day to day commands
 
 
-### 3.1. Backup and restore
+### 3.2. Backup and restore
 
-### 3.2. Join a Federation
+
+### 3.3. Join a Federation
 
 
 
