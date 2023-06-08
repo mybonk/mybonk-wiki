@@ -212,7 +212,10 @@ Tmux shortcuts
 - Tor browsers (https://www.torproject.org/download/)
 - torify / torsocks
 ## processes
-- ```systemd```, ```man systemd.service```, ```man systemd.directives```, .etc...
+- ```systemd```
+  - ```man systemd.unit```
+  - ```man systemd.service```
+  - ```man systemd.directives```
 - top
 - [systemctl](https://www.howtogeek.com/839285/how-to-list-linux-services-with-systemctl/#:~:text=To%20see%20all%20running%20services,exited%2C%20failed%2C%20or%20inactive.)
   - ```systemctl status bitcoind```
@@ -340,7 +343,7 @@ Tmux shortcuts
 - [XSATS.net](https://xsats.net/): bitcoin/sats to and from world currencies, spot price or for any given date.
 - [md5calc](https://md5calc.com/hash/sha256): Calculate the Hash of any string. 
 
-## NixOS commands reminder
+## Common Nix commands
 - Nice Nix cheat sheet: [https://github.com/brainrake/nixos-tutorial/blob/master/cheatsheet.md](https://github.com/brainrake/nixos-tutorial/blob/master/cheatsheet.md)
 - NixOS the "traditional" vs. the "Flakes" way: 
 
@@ -363,6 +366,28 @@ Tmux shortcuts
 
   ![](img/various/nixrepl.png)
 
+    ````
+    $ nix repl
+    Welcome to Nix 2.15.0. Type :? for help.
+
+    nix-repl>  
+    ````
+  - Use ```:?``` to get help on the commands 
+  - Use ```:q``` to quit nix-repl.
+    
+  - You can use autocomplete (tab, tab) from within nix-repl.
+  - To get the documentation of a built-in function use ```:doc```, for instance:
+    ```
+    nix-repl> :doc dirOf
+    ```
+  - To show the logs for a derivation use ```:log```, for instance:
+      ```
+      nix-repl> builtins.readFile drv
+      "Hello world"
+      nix-repl> :log drv
+      Hello world
+      ```
+
 - Garbage collection:
   - Ref. the options ```keep-derivations``` (default: ```true```) and ```keep-outputs``` (default: ```false```) in the Nix configuration file.
   - ```nix-collect-garbage --delete-old```: Quick and easy way to clean up your system, deletes **all** old generations of **all** profiles in ```/nix/var/nix/profiles```. See the other options below for a more "surgical" way to garbage collect.
@@ -373,7 +398,7 @@ Tmux shortcuts
   - ```nix-store --gc --print-live```: Display what files would not be deleted. 
   - After removing appropriate old generations (after having used ```nix-env``` with an argument ```--delete-generations```) - you can run the garbage collector as follows: ```nix-store --gc```
 
-## bitcoin-related commands
+## Common bitcoin-related commands
 - [bitcoin-cli](https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list)
 - ```bitcoin-cli -addrinfo```
 - ```bitcoin-cli -getinfo```
@@ -403,11 +428,11 @@ Tmux shortcuts
 - nixbitcoin-dev with Stefan Livera: A security focused bitcoin node https://stephanlivera.com/episode/195/
 
 ## Connext projects / references
-- [Seed-signer](https://github.com/SeedSigner/seedsigner/blob/dev/README.md): An offline, airgapped Bitcoin signing device
+- [Seed-signer](https://github.com/SeedSigner/seedsigner/blob/dev/README.md): Bitcoin only, open source, offline, airgapped Bitcoin signing device. Can also DIY.
+- [Blockstream Jade](https://github.com/Blockstream/Jade/blob/master/README.md): Bitcoin only, open source hardware wallet. Can also DIY.
+- Hardware Wallets [comparison and audit](https://cryptoguide.tips/hardware-wallet-comparisons/).
 - [BIP39](https://iancoleman.io/bip39/): Play around and understand 12 vs 24 word seed (mnemonic) length, does it make a difference? Entropy, splitting scrambling ... (don't forget to generate a random mnemonic and select the option "Show split mnemonic cards" to see how much time it would take to brute-force attack).
-
   ![](img/various/12_24_mnemonic_split.png)
-- Hardware Wallets: [Comparison/audit](https://cryptoguide.tips/hardware-wallet-comparisons/)
 
 ## For developers
   - [Polar](https://lightningpolar.com/): One-click Bitcoin Lightning Networks for local app development & testing.

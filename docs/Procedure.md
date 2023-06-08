@@ -113,9 +113,9 @@ Bellow is an illustration of ssh failed login attempts by bots, hackers, you nam
 
 ![](img/various/ssh_failed_attempts.gif)
 
-Also learn how to use ```tmux``` and ```tmuxinator``` (checkout the [baby rabbit holes section](/docs/baby-rabbit-holes.md)), it's a bit steep, but this will save you *hours* every week (the ssh session will always be up and running in their respective window panes even after reboot).
+Also learn how to use ```tmux``` and ```tmuxinator``` (checkout the [baby rabbit holes section](/docs/baby-rabbit-holes.md)), it will take a little time to get used to it but this will save you *hours* every week.
 
-
+![](img/various/tmuxinator_screeshot.gif)
 
 ---
 
@@ -367,10 +367,7 @@ As you can read krops relies on ssh passwordless login, we have configured this 
   - Copies the directory ```secrets``` in ```/var/src/``` on your MY₿ONK console.
   - Runs ```nixos-rebuild switch -I /var/src``` on your MY₿ONK console.
   - Your MY₿ONK console will reconfigure itself on the fly and run a system as per the provided configuration.
-  
-    Some services take a **very** long time to start for the first time. The best examples are bitcoind and fulcrum, requiring **up to a few days** to synchronize. Software relying on these to these services to work may show warning, error messages and not work until the services have fully started for the first time (e.g. lightning network depending on bitcoind, mempool depending on fulcrum itself depending on bitcoind).
   - MY₿ONK stack is now running on your MY₿ONK console and you can monitor and control its behavior from MY₿ONK orchestrator.
-
 
 # 3. Basic operations
 
@@ -378,19 +375,38 @@ Unless otherwise stated all the operations in this sections are executed from MY
 
 Have a look at the tmuxinator section in the [baby rabbit holes](/docs/baby-rabbit-holes.md), using it will save you time and streamline your operations. We also made a [tmuxinator template](https://github.com/mybonk/mybonk-core/blob/master/.tmuxinator_console.yml) available for you to reuse.
 
-### 3.1. Day to day commands
+### 3.1. Basic operations
 
-Whereas NixOS configuration is by default under ```/etc/nixos``` our deployment mechanism based on krops operates from ```/var/src``` on the host machine.
+#### 3.1.1 Start the services progressively
 
-If for some reason you want to rebuild the system directly instead of using the full blown krops mechanism (```deploy```), you can run the following command on the host:
-```
-#> nixos-rebuild switch -I /var/src
-```
-This is handy to test something out but goes against the principle of streamlined deployment as the configuration on the host is now out of sync with the one maintained from MY₿ONK orchestartor and it will be overwritten next time we deploy.
+Some services take a **very** long time to start for the first time. 
+
+The most obvious examples are bitcoind and fulcrum, requiring **up to a few days** to synchronize and index until they are ready to operate. Software relying on these services may show warnings, error messages and not work until the services they depend on have fully started (e.g. c-lightning complaining about bitcoind not being ready, mempool complaining about fulcrum itself complaining about bitcoind not being ready).
+
+This is a transitional state until the initial synchronization/indexation of these services is complete.
+
+Keep a look at the system logs, they tell you exactly what the system is busy with.
+You also stop a particular service complaining because another one is not yet ready to serve requests using the standard systemd commands e.g. ```# systemctl stop clightning``` then ```# systemctl start clightning``` once the system is ready. 
+
+#### 3.1.2 How the secrets are managed
+The deployment mechanism we use to push MYBONK stack from the orchestrator to the console(s) creates a a directory named ```secrets``` in which it generates the random default passwords and keys required for the enabled services to operate. 
+
+**Be extremely careful with what you do with the content of this directory as it allows anyone with read access to access the services**.
+
+#### 3.1.3 Rebuild MY₿ONK console configuration directly on the host (instead of pushing a new configuration using krops)
+  - Whereas NixOS configuration is by default under ```/etc/nixos``` our deployment mechanism based on krops operates from within ```/var/src``` on the host machine.
+  - If for some reason you want to rebuild the system directly instead of using the full blown krops mechanism (```deploy```), you can run the following command on the host:
+    ```
+    #> nixos-rebuild switch -I /var/src
+    ```
+  - This is handy to test something out but goes against the principle of streamlined deployment as the configuration on the host is now out of sync with the one maintained from MY₿ONK orchestrator and it will be overwritten next time we deploy.
+#### 3.1.4 REPL
+  - REPL, or Read-Eval-Print Loop, is a computer environment where user inputs are read and evaluated, and then the results are returned to the user. There is a REPL in Nix providing an interactive environment to explore tools and expressions. Search ```nix repl``` in the [baby rabbit holes](/docs/baby-rabbit-holes.md) page :hole: :rabbit2:
+    
 ### 3.2. Backup and restore
-
+  TODO: Document based on the workshops of May 23rd
 
 ### 3.3. Join a Federation
-
+  TODO: Do this after the full stack is running.
 
 
