@@ -39,6 +39,8 @@ Most full node distributions are great to experiment and learn.
 We want to inject a fresh approach and perspective into the mix with our cumulative experience.
 We focus on security-first, stripped bitcoin-only stack referred to as the "[MY₿ONK stack](/docs/MYBONK_stack.md)", or simply MY₿ONK.
 
+![](docs/img/various/console_vs_orchestrator_.png)
+
 MY₿ONK is alpha software. Use on SIGNET ([what is Signet?](https://en.bitcoin.it/wiki/Signet)) instead of MAINNET for now; This is set in in MY₿ONK console's configuration.nix via ```services.bitcoind.regtest=true;```. Bookmark [Signet block explorer](https://mempool.space/signet).
 
 Like most bitcoin full node distributions is it **possible** to run MY₿ONK on a variety of hardware or virtual machines, but it would be impossible to keep up with all the various more or less suitable hardware one can find on the market. MY₿ONK community focus on MY₿ONK console, feel free to run the code on any other hardware or virtual machine but we are not in a capacity to provide any support in that case as our objective is precisely to abstract the recurring hardware issues observed on other platforms.
