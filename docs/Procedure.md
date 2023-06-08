@@ -156,9 +156,8 @@ Also learn how to use ```tmux``` and ```tmuxinator``` (checkout the [baby rabbit
 
   <a name="13-option-2"></a>
   #### **Option 2.** The "manual" way
-  - The "manual" way consisting in editing MY₿ONK configuration file ```/etc/nixos/configuration.nix``` directly and locally is deprecated. 
-  - Use MY₿ONK orchestrator (based on krops) instead.
-
+  - The "manual" way consisting in editing MY₿ONK configuration file ```/etc/nixos/configuration.nix``` locally directly.
+  - Use "Option 1."
 
 ---
 

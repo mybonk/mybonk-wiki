@@ -62,7 +62,7 @@ Not ready to take the plunge?
  Why not start by having a look at the [baby rabbit holes](/docs/baby-rabbit-holes.md) 🕳 🐇 so you will be ready when the time will come.
 
 
-
+  ![](/docs/img/various/potatoe_node_.png)
 
 
 ----
