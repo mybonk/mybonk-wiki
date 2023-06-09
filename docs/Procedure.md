@@ -183,11 +183,13 @@ The following sections describe the installation of MY₿ONK orchestrator on a V
   Now that VirtualBox is installed you need to run an OS on it (Linux Debian in our case, or any systemd-based Linux system).
   
   Choose one of the following 2 options:
+  
   #### **Option 1.** Using the installation image from Debian
   - From https://www.debian.org/distrib/  
   - With this method you go through the standard steps of installing the Debian OS just as if you were installing it on a new desktop but doing it in a VirtualBox 
   - Don't forget to take note of the the machine's IP address and login details you choose during the installation!
   - Detailed instructions: https://techcolleague.com/how-to-install-debian-on-virtualbox/
+
   #### **Option 2.** Using a ready-made Virtual Box VDI (Virtual Disk Image)
   - From https://www.linuxvmimages.com/images/debian-11/ (this is not a recommendation, this is an example).
   - More convenient and quicker than Option 1, ideal in workshops/demos as it is a pre-installed Debian System.
