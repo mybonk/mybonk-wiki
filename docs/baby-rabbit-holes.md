@@ -217,6 +217,11 @@ Tmux shortcuts
   - ```man systemd.service```
   - ```man systemd.directives```
 - top
+- [hostnamectl](https://man7.org/linux/man-pages/man1/hostnamectl.1.html): Query and change the system hostname
+       and related settings.
+  - ```hostnamectl status```: Status.
+  - ```hostnamectl hostname```: Query hostname.
+  - ```hostnamectl hostname <name>```: Change hostname.
 - [systemctl](https://www.howtogeek.com/839285/how-to-list-linux-services-with-systemctl/#:~:text=To%20see%20all%20running%20services,exited%2C%20failed%2C%20or%20inactive.)
   - ```systemctl status bitcoind```
   - ```systemctl start bitcoind```
@@ -226,7 +231,6 @@ Tmux shortcuts
   - Show all the running processes: ```systemctl --type=service --state=running``` (where ```--state``` can be any of ```running```, ```dead```, ```exited```, ```failed``` or ```inactive```)
   - Show the service definition: ```systemctl cat bitcoind```  
   - Show the service parameters: ```systemctl show bitcoind```
-
 
 - [journalctl](https://www.digitalocean.com/community/tutorials/how-to-use-journalctl-to-view-and-manipulate-systemd-logs)
   - All the journal entries since the most recent reboot: ```journalctl -b``` 
@@ -281,6 +285,7 @@ Tmux shortcuts
 - Benchmaring
   - [powertop](https://github.com/fenrus75/powertop/blob/master/README.md): Tool to access various powersaving modes in userspace, kernel and hardware. Monitors processes and shows which utilizes the most CPU allowing to identify those with particular high power demands.
   - [stress-ng](https://wiki.ubuntu.com/Kernel/Reference/stress-ng): Stress test a computer system in various selectable way.
+  - [Byte UNIX Bench](https://github.com/kdlucas/byte-unixbench/tree/master): Since 1983, provide a basic indicator of the performance of a Unix-like system; hence, multiple tests are used to test various aspects of the system's performance.
   - [geekbench](https://www.geekbench.com/): Simple tool to quickly benchmark a system's performance ([How to run on Linux](http://support.primatelabs.com/kb/geekbench/installing-geekbench-5-on-linux)) 
   - [iperf3](https://github.com/esnet/iperf): Simple tool to quickly benchmark the maximum achievable bandwidth on IP networks.
   - ```lscpu```: Command to display information about the CPU architecture.
@@ -346,7 +351,6 @@ Tmux shortcuts
 ## Common Nix commands
 - Nice Nix cheat sheet: [https://github.com/brainrake/nixos-tutorial/blob/master/cheatsheet.md](https://github.com/brainrake/nixos-tutorial/blob/master/cheatsheet.md)
 - NixOS the "traditional" vs. the "Flakes" way: 
-
   - Flakes have been introduced with Nix 2.4
   - Although still flagged as "*experimental*" feature it is the way forward, we advise you to learn Flakes already.
 - ```nix --version```: Get running nix version (important as the MY₿ONK console might be running a different version from the one on MY₿ONK orchestrator).
@@ -358,11 +362,15 @@ Tmux shortcuts
 - ```nix-deamon```
 - ```nix-env```
 - ```nix-hash```
-- ```nix-instantiate``` 
+- ```nix-instantiate``` (same as ```nix-instantiate default.nix```)
+  - ```nix-instantiate --eval```: Very easy way to evaluate a nix file.
+  - ```nix-instantiate --eval --strict```: ```--strict``` tries to evaluation the entire result (otherwise may return ```<CODE>``` blocks).
+  - ```nix-instantiate --eval --json --strict```: Always use ```--strict``` with ```--json``` (otherwise ```<CODE>``` blocks may result in json not being able to parse).
+  - Similarly with Flakes enabled you could use ```nix eval -f default.nix```. Note that nix eval behaves as ```--strict``` (tries to evaluation the entire result).
 - ```nix-prefetch-url```
 - ```nix-store```
 
-- Use [```nix repl```](https://nixos.wiki/wiki/Nix_command/repl) to interactively explore the Nix language as well as configurations, options and packages in Nixpkgs.
+- Use [```nix repl```](https://nixos.wiki/wiki/Nix_command/repl) to interactively explore the Nix language as well as configurations, options and packages.
 
   ![](img/various/nixrepl.png)
 
@@ -398,6 +406,8 @@ Tmux shortcuts
   - ```nix-store --gc --print-live```: Display what files would not be deleted. 
   - After removing appropriate old generations (after having used ```nix-env``` with an argument ```--delete-generations```) - you can run the garbage collector as follows: ```nix-store --gc```
 
+## Nix debugging
+  - ```lib.debug.traceSeq <arg1> <arg2>```: Print a fully evaluated value.
 ## Common bitcoin-related commands
 - [bitcoin-cli](https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list)
 - ```bitcoin-cli -addrinfo```
@@ -438,6 +448,8 @@ Tmux shortcuts
   - [Polar](https://lightningpolar.com/): One-click Bitcoin Lightning Networks for local app development & testing.
   - [Rust](https://www.rust-lang.org/): Multi-paradigm, general-purpose programming language that emphasizes performance, type safety, and concurrency. It enforces memory safety—ensuring that all references point to valid memory—without requiring the use of a garbage collector or reference counting present in other memory-safe languages.
   - [Cargo](https://doc.rust-lang.org/cargo/): Package manager for Rust.
+  - [Just](https://just.systems/man/en/): Just is a handy little tool to save and run project-specific commands.
+    ![](img/various/just_tool.png)
   - [DuckDNS](https://www.duckdns.org/): Allows to get free dynamic DNS (forces 'KYC' by login using Github, Twitter, reddit or Google account). Good for testing.
 ## Books
 - [Introduction to the Mac command line](https://github.com/ChristopherA/intro-mac-command-line) (on GitHub)
