@@ -350,6 +350,7 @@ Tmux shortcuts
 
 ## Common Nix commands
 - Nice Nix cheat sheet: [https://github.com/brainrake/nixos-tutorial/blob/master/cheatsheet.md](https://github.com/brainrake/nixos-tutorial/blob/master/cheatsheet.md)
+- [https://noogle.dev](https://noogle.dev/): Search functions within the nix ecosystem based on type, name, description, example, category .etc..
 - NixOS the "traditional" vs. the "Flakes" way: 
   - Flakes have been introduced with Nix 2.4
   - Although still flagged as "*experimental*" feature it is the way forward, we advise you to learn Flakes already.
@@ -458,6 +459,8 @@ Tmux shortcuts
 - [How to make a mint](https://groups.csail.mit.edu/mac/classes/6.805/articles/money/nsamint/nsamint.htm): The Cryptography of anonymous electronic cash (18 June 1996) 
 ## 
 
+- **Crypto Pals**
+  - Page: [www.cryptopals.com](https://www.cryptopals.com/). Be scared of the emerged part of the iceberg in cryptography. Take this challenge!
 - **The Declaration of Independence of Cyberspace (John Perry Barlow)**
   - Document: [https://cryptoanarchy.wiki/people/john-perry-barlow](https://cryptoanarchy.wiki/people/john-perry-barlow)
   - Audio, red by the author: [https://www.youtube.com/watch?v=3WS9DhSIWR0](https://www.youtube.com/watch?v=3WS9DhSIWR0)
