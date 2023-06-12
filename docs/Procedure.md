@@ -357,11 +357,11 @@ As you can read krops relies on ssh passwordless login, we have configured this 
   ```
 
 - As instructed enter "h" to see the help page describing the commands made available to facilitate your configuration/build/deploy process.
-- Update your mybonk console name or IP in the target property of `krops/deploy.nix`:
+- Update the target property with your mybonk console name or IP in `krops/deploy.nix`:
 ```
 $ vi krops/deploy.nix
 ```
-Look for "FIXME" at the top of the file.
+Look for "FIXME" at the top of the file. It is recommended to add the mybonk console IP to /etc/hosts in https://github.com/mybonk/mybonk-wiki/blob/main/docs/Procedure_NixOS.md
 
 - As you can see from the previous point the command ```deploy``` is used to deploy to your MY₿ONK console:
   ```
