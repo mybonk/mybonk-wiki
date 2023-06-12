@@ -325,7 +325,7 @@ As you can read krops relies on ssh passwordless login, we have configured this 
   $ cd mybonk-core
   ```
 - It contains many files and directories, here is a brief description for now:
-  - ```configuration.nix```: Explained in a <a href="#configuration.nix">previous section</a>.
+  - ```configuration.nix```: Explained in a <a href="#configuration.nix">previous section</a>. (update your keymap and timezone here. See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones for list of valid timezone names. Add SSH pubkey of the orchestrator.)
   - ```krops```: Directory used for deployment (described in section [#2.5 Deploy MY₿ONK stack to the MY₿ONK consoles](#25-deploy-mybonk-stack-to-the-mybonk-consoles)).
   - ```shell.nix```: The nix-shell configuration file (sourced automatically if nix-shell is run from this directory).
   - ```nix-bitcoin-release.nix```: Hydra jobset declaration.
@@ -357,6 +357,11 @@ As you can read krops relies on ssh passwordless login, we have configured this 
   ```
 
 - As instructed enter "h" to see the help page describing the commands made available to facilitate your configuration/build/deploy process.
+- Update your mybonk console name or IP in the target property of `krops/deploy.nix`:
+```
+$ vi krops/deploy.nix
+```
+Look for "FIXME" at the top of the file.
 
 - As you can see from the previous point the command ```deploy``` is used to deploy to your MY₿ONK console:
   ```
