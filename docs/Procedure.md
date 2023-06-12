@@ -325,7 +325,8 @@ As you can read krops relies on ssh passwordless login, we have configured this 
   $ cd mybonk-core
   ```
 - It contains many files and directories, here is a brief description for now:
-  - ```configuration.nix```: Explained in a <a href="#configuration.nix">previous section</a>.
+  - ```configuration.nix```: This (and other .nix files it may refer to) is the configuration file of your console. All features and services are configured in the form of a Nix expression which is short, simple and human-readable. Go ahead, have a look at it, it is self-explanatory.
+  - ```hardware-configuration.nix```: You normally don't edit this file, it is specific to MY₿ONK console hardware, but you can find such files for a variety of other hardware (MY₿ONK supports only MY₿ONK console hardware).
   - ```krops```: Directory used for deployment (described in section [#2.5 Deploy MY₿ONK stack to the MY₿ONK consoles](#25-deploy-mybonk-stack-to-the-mybonk-consoles)).
   - ```shell.nix```: The nix-shell configuration file (sourced automatically if nix-shell is run from this directory).
   - ```nix-bitcoin-release.nix```: Hydra jobset declaration.
