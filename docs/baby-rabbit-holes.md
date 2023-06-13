@@ -152,10 +152,10 @@ utility).
 - ssh: 
   - OpenSSH
   - How to setup and manage ssh keys: https://goteleport.com/blog/how-to-set-up-ssh-keys/
-  - .ssh client configuration (```$HOME/.ssh/config```)
+  - .ssh client configuration (```~/.ssh/config```)
   - ssh-keygen
   - passphrase
-  - ssh-copy-id: Copy your public key on the server machine in ```$HOME/.ssh/authorized_keys``` 
+  - ssh-copy-id: Copy your public key on the server machine in ```~/.ssh/authorized_keys``` 
   - ssh-add
   
   Also read about and setup ssh-agent, it will save you a LOT of time (key management, auto re-connect e.g. when your laptop goes to sleep or reboots ...).
