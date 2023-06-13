@@ -149,9 +149,9 @@ utility).
 ## gpg, sha-256 …
 ## ssh & rsync
 - [Difference between ssh and ~~Telnet~~](https://www.geeksforgeeks.org/difference-ssh-telnet/)
-- [ssh](https://goteleport.com/blog/how-to-set-up-ssh-keys/): 
+- ssh: 
   - OpenSSH
-  - How to manage ssh keys
+  - How to setup and manage ssh keys: https://goteleport.com/blog/how-to-set-up-ssh-keys/
   - .ssh client configuration (```$HOME/.ssh/config```)
   - ssh-keygen
   - passphrase
@@ -212,11 +212,11 @@ Tmux shortcuts
 - Tor browsers (https://www.torproject.org/download/)
 - torify / torsocks
 ## processes
+- ```ps```, ```pstree```, ```top```
 - ```systemd```
   - ```man systemd.unit```
   - ```man systemd.service```
   - ```man systemd.directives```
-- top
 - [hostnamectl](https://man7.org/linux/man-pages/man1/hostnamectl.1.html): Query and change the system hostname
        and related settings.
   - ```hostnamectl status```: Status.
