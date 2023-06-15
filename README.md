@@ -7,7 +7,8 @@
 <br/>
 <p align="center">
 👉 Here is maintained the MY₿ONK Wiki, the detailed manual installation instructions ✍️. 
-
+</p>
+<p align="center">
 Anyone can take part on <a href="https://github.com/mybonk" target="_blank">MY₿ONK's GitHub</a>.
 <br/>
 Join the conversation on the <a href="https://t.me/mybonk_build" target="_blank">Telegram group</a>!
@@ -76,11 +77,11 @@ This example small ecosystem consists of only two elements that we are going to 
 - **One MY₿ONK orchestrator:**
   This machine is used to orchestrate your fleet of MY₿ONK consoles, it is essentially a Linux with a few additional software installed including the Nix package manager.
 - **One MY₿ONK console:**
-  This machine runs the [MY₿ONK stack](/docs/MYBONK_stack.md) on NixOS. It is setup once and its configuration can be updated remotely using MY₿ONK orchestrator.
+  This machine runs the [MY₿ONK core](https://github.com/mybonk/mybonk-core) stack on NixOS. It is setup once and its configuration can be updated remotely using MY₿ONK orchestrator.
   
 ### Terminology
 - '``#``' stands for '````$ sudo````'
-- **MY₿ONK core**: Or simply 'MY₿ONK' is a tailor-made full-node [software stack](/docs/MYBONK_stack.md) for MY₿ONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MY₿ONK core is based on nix-bitcoin itself based on nixOS.
+- **MY₿ONK core**: Or simply 'MY₿ONK' is a tailor-made full-node [software stack](https://github.com/mybonk/mybonk-core) for MY₿ONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MY₿ONK core is based on nix-bitcoin itself based on nixOS.
 - **MY₿ONK console**: A full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-energy, supply chain resilience and generic parts in mind.
 - **MY₿ONK orchestrator**:
   Used to orchestrate your [fleet of] MY₿ONK console[s], it is currently a separate Linux machine with a few additional software installed on including the Nix package manager. The MY₿ONK orchestrator will soon be integrated within the MY₿ONK console but for now it is a separate machine ([ref #30](https://github.com/mybonk/mybonk-core/issues/30#issue-1609334323)).
@@ -187,7 +188,7 @@ Make sure you use ssh auto login (auto login *using public and private keys pair
 
   You can install NixOS on physical hardware by copying it onto a USB stick and booting from it.
 
-  We maintain the detailed manual installation instructions of MY₿ONK console specifically [HERE](./Procedure_NixOS.md). You can also checkout [NixOS' official installation documentation](https://nixos.org/manual/nixos/stable/index.html#ch-installation).
+  We maintain the detailed manual installation instructions of MY₿ONK console specifically [HERE](./docs/Procedure_NixOS.md). You can also checkout [NixOS' official installation documentation](https://nixos.org/manual/nixos/stable/index.html#ch-installation).
 
   The complete system behavior is defined in ```/etc/nixos```
 
