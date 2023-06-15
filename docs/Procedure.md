@@ -41,9 +41,11 @@ Join the conversation on the <a href="https://t.me/mybonk_build" target="_blank"
       - [**Option 2.** Building Nix from the source](#option-2-building-nix-from-the-source)
     - [2.4. Build MYBONK stack](#24-build-mybonk-stack)
     - [2.5. Deploy MYBONK stack to MYBONK consoles](#25-deploy-mybonk-stack-to-mybonk-consoles)
-- [3. Basic operations](#3-basic-operations)
-    - [3.1. Backup and restore](#31-backup-and-restore)
-    - [3.2. Join a Federation](#32-join-a-federation)
+- [3. Operations](#3-operations)
+    - [3.1. Baby steps](#31-baby-steps)
+    - [3.2. Copy the complete blockchain from another MY₿ONK console](#32-copy-the-complete-blockchain-from-another-my₿onk-console)
+    - [3.3. Backup and restore](#33-backup-and-restore)
+    - [3.4. Join a Federation](#32-join-a-federation)
 
 
 # Before you start
@@ -75,7 +77,7 @@ This example small ecosystem consists of only two elements that we are going to 
   This machine runs the [MY₿ONK stack](/docs/MYBONK_stack.md) on NixOS. It is setup once and its configuration can be updated remotely using MY₿ONK orchestrator.
   
 ### Terminology
-- '````#````' stands for '````$ sudo````'
+- '``#``' stands for '````$ sudo````'
 - **MY₿ONK core**: Or simply 'MY₿ONK' is a tailor-made full-node [software stack](/docs/MYBONK_stack.md) for MY₿ONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MY₿ONK core is based on nix-bitcoin itself based on nixOS.
 - **MY₿ONK console**: A full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-energy, supply chain resilience and generic parts in mind.
 - **MY₿ONK orchestrator**:
@@ -121,12 +123,12 @@ Host console_jay
 ````
 
 Whereas you had to connect using the following syntax: 
-````
+````bash
 $ssh root@192.168.0.155
 ````
 
 You can now use the following syntax instead:
-````
+````bash
 $ssh console_jay
 ````
 
@@ -142,7 +144,7 @@ Your machine is now always available on whatever network, from anywhere in the w
 
 With tailscale on you can now refer to your remote machine anytime anywhere  through its Tailscale "Magic DNS" name. For instance:
 
-````
+````bash
 $ssh console_jay@dab-dominant.ts.net
 ````
 
@@ -153,12 +155,6 @@ Make sure you use ssh auto login (auto login *using public and private keys pair
 
 ![](img/various/ssh_failed_attempts.gif)
 
-
-Also learn how to use ```tmux``` and ```tmuxinator``` (checkout the [baby rabbit holes section](/docs/baby-rabbit-holes.md)). 
-
-It will take a little effort to get used to it but this will save you *hours* every week.
-
-![](img/various/tmuxinator_screeshot.gif)
 
 ---
 
@@ -193,10 +189,10 @@ It will take a little effort to get used to it but this will save you *hours* ev
 
   The complete system behavior is defined in ```/etc/nixos```
 
-    ````
-    # ls /etc/nixos
-    configuration.nix  hardware-configuration.nix
-    ````
+  ````bash
+  # ls /etc/nixos
+  configuration.nix  hardware-configuration.nix
+  ````
 
   - ```configuration.nix```: Through this file all the features and services of the system are configured in this simple, human-readable file (and other ```.nix``` files it might refer to). This file has initially been generated during system setup and contains a few settings by default.
 
@@ -246,12 +242,12 @@ It will take a little effort to get used to it but this will save you *hours* ev
 
   The service ```sshd``` is installed and configured simply by adding a few lines in ```configuration.nix``` which *by default* is under ```/etc/nixos/```:
 
-  ```` 
+  ````bash
   # nano /etc/nixos/configuration.nix
   ````
   Add the following lines:
 
-  ````
+  ````bash
   # Enable the OpenSSH daemon.
   services.openssh = {
     enable = true;
@@ -264,7 +260,7 @@ It will take a little effort to get used to it but this will save you *hours* ev
   [```nixos-rebuild```](https://nixos.wiki/wiki/Nixos-rebuild) is the NixOS command used to apply changes made to the system configuration as well as various other tasks related to managing the state of a NixOS system. For a full list of nixos-rebuild sub-commands and options have a look at it man page (````$ man nixos-rebuild````). 
 
   Now build the configuration and activate it, but don't add it (just yet) to the bootloader menu. This is done using the ```test``` subcommand:
-  ````
+  ````bash
   # sudo nixos-rebuild test
   building Nix...
   building the system configuration...
@@ -275,13 +271,13 @@ It will take a little effort to get used to it but this will save you *hours* ev
   setting up tmpfiles
   ````
   Check the system logs as the system is reconfiguring:
-  ````
+  ````bash
   # sudo journalctl -f -n 60
   ````
   Entries referring to the system changes and sshd being enabled are being displayed.
 
   Check sshd status:
-  ````
+  ````bash
   # systemctl status sshd.service 
 ● sshd.service - SSH Daemon
      Loaded: loaded (/etc/systemd/system/sshd.service; enabled; preset: enabled)
@@ -298,7 +294,7 @@ It will take a little effort to get used to it but this will save you *hours* ev
 
 Now that we know the IP address and that sshd is listening let's connect from another machine:
 
-````
+````bash
 $ ssh root@192.168.0.64
 
 (root@mybonk_console) Password: 
@@ -313,13 +309,13 @@ Now we want to configure ssh key-pair, this is typically done using ```ssh-keyge
 Instead of having to copy the public key onto the remote machine "manually" you can set it in the ```configuration.nix``` file: Let's disable password-based login and use key-pair only instead, in a couple of lines, just make sure you don't "lock yourself out" by disallowing password authentication and forgetting to copy your public key for instance.
 
 
-  ```` 
+  ````bash
   # nano /etc/nixos/configuration.nix
   ````
   
 Add the following lines making sure you replace the parameter ```openssh.authorizedKeys.keys``` with your own public key):
 
-  ````
+  ````bash
   services.openssh = {
     enable = true;
     #permitRootLogin = "yes";
@@ -333,7 +329,7 @@ Add the following lines making sure you replace the parameter ```openssh.authori
   };
   ````
 You can get your own public key using the ```cat```command in another terminal (ssh-copy-id will add user@clientmachine after the public key but the "@clientmachine" part can be removed).
-````
+````bash
 cat ~/.ssh/id_ecdsa.pub
 
 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBABTjXzlHGw941UGukM3HVUTpvsXCLgx7EZRJ83YE32qEe8HtXmGHo41YftauWwnTN5rQvMWTd0puFzXz4vKu7YC1gATUUtYNa6mzgtt+dNvTvLNcQ1vSQ5s19yKKgJjZV1MZBlcf/HklfNdS0Owja1aIrp0jKlJEaTWPXKtN6vkfLSF5r== Jay@orchestrator
@@ -342,7 +338,7 @@ ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBABTjXzl
 More details regarding sshd configuration can be found on the dedicated [nixOS Wiki page](https://nixos.wiki/wiki/SSH_public_key_authentication).
 
 Play around with the settings and ```nixos-rebuild test``` like earlier. When ready you make your changes persistent as new default option in the bootloader by running the ```switch``` subcommand:
-  ````
+  ````bash
   # sudo nixos-rebuild switch
   [sudo] password for mybonk: 
   building Nix...
@@ -418,11 +414,11 @@ The following sections describe the installation of MY₿ONK orchestrator on a V
 
   - The login details are typically on the download page (in our case ``debian``/```debian``` and can become ```root``` by using ```$ sudo su -``` ). 
   - What we call hostname is the machine name you can see displayed on on the shell prompt. Because this is a pre-built image make sure you set a hostname different from the default, e.x 'orchestartor_ben', it will avoid confusion when connecting remotely. Changing the hostname is done by running the following command:
-    ```
+    ```bash
     # hostnamectl set-hostname orchestartor_ben
     ```
     Check the hostname has been updated:
-    ```
+    ```bash
     $ hostnamectl
     ```
     The shell prompt will reflect the new hostname next time you open a terminal session.
@@ -435,13 +431,13 @@ The following sections describe the installation of MY₿ONK orchestrator on a V
 
   - Update the packages index so we are up to date with the latest available ones:
 
-    ```
+    ```bash
     $ sudo apt update
     ```
 
   - Install the additional packages (Debian 11 Bullseye) [curl](https://manpages.org/curl), [git](https://manpages.org/git):
 
-    ```
+    ```bash
     $ sudo apt -y install curl git
     ```
 
@@ -463,12 +459,12 @@ It is generally advised to avoid using user ```root``` especially to remote-acce
   #### **Option 1.** Using the ready-made binary distribution from nix cache
   - Quicker and more convenient than Option 2 as it has been pre-built for you.
   - ssh into MY₿ONK orchestrator and run:
-    ``` 
+    ```bash
     $ sh <(curl -L https://nixos.org/nix/install)   
     ```
   - You can see outputs related to Nix binary being downloaded and installed. 
   - As instructed ensure that the necessary environment variables are set by running the following command:
-    ```
+    ```bash
     $ . ~/.nix-profile/etc/profile.d/nix.sh
     ```
   - Check the installation went OK:
@@ -477,7 +473,7 @@ It is generally advised to avoid using user ```root``` especially to remote-acce
     nix (Nix) 2.12.0
     ```
   - Finally, optionally have a look at the nix man page to familiarize yourself with it and all its sub-commands:
-    ```
+    ```bash
     $ man nix
     ```
 
@@ -493,7 +489,7 @@ Now that your MY₿ONK orchestrator is up and running we can use it to build MY�
 
 - Login to your MY₿ONK orchestrator (make sure that the virtual machine hosting it as described in section '[2. Build your MYBONK orchestrator](#2-build-your-mybonk-orchestrator-machine)' is actually running):
 
-  ```
+  ```bash
   ssh debian@mybonk_orchestrator
   $
   ```
@@ -508,7 +504,7 @@ Now that your MY₿ONK orchestrator is up and running we can use it to build MY�
     AddKeysToAgent yes
   ```
 - Check that your ssh passwordless access works:
-  ```
+  ```bash
   $ ssh mybonk-console
   Last login: Fri Mar  3 13:27:34 2023 from 192.168.0.64
   # 
@@ -537,11 +533,11 @@ As you can read krops relies on ssh passwordless login, we have configured this 
 
 
 - On your MY₿ONK orchestrator machine clone mybonk-core:
-  ```
+  ```bash
   $ git clone https://github.com/mybonk/mybonk-core.git
   ```
 - Navigate to the resulting directory:
-  ```
+  ```bash
   $ cd mybonk-core
   ```
 - It contains many files and directories, here is a brief description for now:
@@ -552,14 +548,14 @@ As you can read krops relies on ssh passwordless login, we have configured this 
   - ```nix-bitcoin-release.nix```: Hydra jobset declaration.
   - ```mybonk-console```: Directory that contains the elements required to launch the deployment of MY₿ONK consoles on the network.
 - Navigate to the directory ```mybonk-console```:
-  ```
+  ```bash
   $ cd mybonk-console
   ```
 - Launch the nix shell ```nix-shell```:
 
   It is very important you do this as [nix-shell](https://nixos.org/manual/nix/stable/command-ref/nix-shell.html) interprets ```shell.nix```, pulls all the dependencies and gives you access to the exact versions of the specified packages.
 
-  ```
+  ```bash
   $ nix-shell
   ```
 - It will take a few minutes to execute and start showing output on the terminal, be patient.
@@ -580,7 +576,7 @@ As you can read krops relies on ssh passwordless login, we have configured this 
 - As instructed enter "h" to see the help page describing the commands made available to facilitate your configuration/build/deploy process.
 
 - As you can see from the previous point the command ```deploy``` is used to deploy to your MY₿ONK console:
-  ```
+  ```bash
   $ deploy
   ```
 
@@ -590,15 +586,36 @@ As you can read krops relies on ssh passwordless login, we have configured this 
   - Copies the directory ```secrets``` in ```/var/src/``` on your MY₿ONK console.
   - Runs ```nixos-rebuild switch -I /var/src``` on your MY₿ONK console.
   - Your MY₿ONK console will reconfigure itself on the fly and run a system as per the provided configuration.
-  - MY₿ONK stack is now running on your MY₿ONK console and you can monitor and control its behavior from MY₿ONK orchestrator.
 
-# 3. Basic operations
+MY₿ONK stack is now running on your MY₿ONK console and you can monitor and control its behavior either locally (not recommended) or remotely from your MY₿ONK orchestrator.
+
+# 3. Operations
 
 Unless otherwise stated all the operations in this sections are executed from MY₿ONK orchestartor.
 
-Have a look at the tmuxinator section in the [baby rabbit holes](/docs/baby-rabbit-holes.md), using it will save you time and streamline your operations. We also made a [tmuxinator template](https://github.com/mybonk/mybonk-core/blob/master/.tmuxinator_console.yml) available for you to reuse.
+Learn how to use ```tmux``` and ```tmuxinator``` in the [baby rabbit holes](/docs/baby-rabbit-holes.md), it will take a little effort to get used to it but will save you *hours* every week and streamline your operations. We also made a [tmuxinator template](https://github.com/mybonk/mybonk-core/blob/master/.tmuxinator_console.yml) available for you to reuse.
 
-### 3.1. Basic operations
+![](img/various/tmuxinator_screeshot.gif)
+
+---
+### 3.1. Baby steps
+
+Explore the running services using the following simple commands on your MY₿ONK console:
+  - General
+    - ```nodeinfo```: Helper script (nix-bitcoin module) that prints info about the node's services.
+    
+  - Bitcoin
+    - ```systemctl status bitcoind```: Standard Linux command, have a look at the section about ```systemctl``` in the [baby rabbit holes section](/docs/baby-rabbit-holes.md#ssh) if needed.
+    - ```systemctl stop bitcoind```
+    - ```systemctl start bitcoind```
+
+  - C-lightning
+    - ```systemctl status clightning```: Standard Linux command, have a look at the section about ```systemctl``` in the [baby rabbit holes section](/docs/baby-rabbit-holes.md#ssh) if needed.
+    - ```systemctl stop clightning```
+    - ```systemctl start clightning```
+    - ```lightning-cli getinfo```: Standard c-lightning CLI tool, use ```$ man lightning-cli``` if you don't know lightning-cli yet.
+
+
 
 #### 3.1.1 Start the services progressively
 
@@ -612,24 +629,166 @@ Keep a look at the system logs, they tell you exactly what the system is busy wi
 You also stop a particular service complaining because another one is not yet ready to serve requests using the standard systemd commands e.g. ```# systemctl stop clightning``` then ```# systemctl start clightning``` once the system is ready. 
 
 #### 3.1.2 How the secrets are managed
-The deployment mechanism we use to push MYBONK stack from the orchestrator to the console(s) creates a a directory named ```secrets``` in which it generates the random default passwords and keys required for the enabled services to operate. 
+The deployment mechanism we use to push MYBONK stack from the orchestrator to the console(s) (based on krops) creates a a directory named ```secrets``` in which it generates the random default passwords and keys required for the services that are enabled to operate. 
 
 **Be extremely careful with what you do with the content of this directory as it allows anyone with read access to access the services**.
+
+
 
 #### 3.1.3 Rebuild MY₿ONK console configuration directly on the host (instead of pushing a new configuration using krops)
   - Whereas NixOS configuration is by default under ```/etc/nixos``` our deployment mechanism based on krops operates from within ```/var/src``` on the host machine.
   - If for some reason you want to rebuild the system directly instead of using the full blown krops mechanism (```deploy```), you can run the following command on the host:
-    ```
-    #> nixos-rebuild switch -I /var/src
+    ```bash
+    # nixos-rebuild switch -I /var/src
     ```
   - This is handy to test something out but goes against the principle of streamlined deployment as the configuration on the host is now out of sync with the one maintained from MY₿ONK orchestrator and it will be overwritten next time we deploy.
 #### 3.1.4 REPL
   - REPL, or Read-Eval-Print Loop, is a computer environment where user inputs are read and evaluated, and then the results are returned to the user. There is a REPL in Nix providing an interactive environment to explore tools and expressions. Search ```nix repl``` in the [baby rabbit holes](/docs/baby-rabbit-holes.md) page :hole: :rabbit2:
     
-### 3.2. Backup and restore
-  TODO: Document based on the workshops of May 23rd
+---
+### 3.2. Copy the complete blockchain from another MY₿ONK console
 
-### 3.3. Join a Federation
-  TODO: Do this after the full stack is running.
+  What takes most time during a full node installation is copying the complete blockchain. This is done automatically by bitcoind when the service starts and realizes its data directory (```services.bitcoind.dataDir = "/data/bitcoind"``` by default in a MY₿ONK console) is empty or partial so it starts downloading what it needs from another random bitcoin full node on the Internet. 
+
+  Bitcoind taking care of downloading the complete blockchain (nearly 500GB at the time of writting) from the Internet for you is great but can take days and weeks depending on your and the peer peer Internet connectivity, the maximum ateinable transfer rate being at most the worst of either.
+
+  Copying the bitcoin blockchain from a local machine would take a fraction of this time.
+  
+  You absolutly don't want to copy the whole content of your ```services.bitcoind.dataDir```, only the files in the ```blocks```, ```chainstate``` and optionaly ```indexes```. These files are cross-platform and can be copied between different installations. 
+  
+  ```blocks``` and ```chainstate``` are known collectively as a node's "block database", they represent all of the information downloaded by a node during the syncing process. In other words, if you copy installation A's block database into installation B, installation B will then have the same syncing percentage as installation A. This is usually far faster than doing the normal initial sync over again. However, when you copy someone's database in this way, **you are trusting them absolutely**. Bitcoin Core assumes its block database files as 100% accurate and trustworthy, whereas during the normal initial sync it treats each block offered by a peer as invalid until proven otherwise (untill it had time to catch-up and process all the blocks sequencialy). If an attacker is able to modify your block database files, then they can do all sorts of evil things which could cause you to lose bitcoins. Therefore, **you should only copy block databases from Bitcoin installations under your personal control, and only over a secure connection**.
+
+  The files in the ```blocks``` and ```chainstate``` directories work hand in hand so it is important to copy **all of them at once** and both nodes have to be shut down while copying. Only the file with the highest number in the ```blocks``` directory is ever written to (earlier files will never change) and are accessed in a highly sequential manner. 
+  
+  The files in ```indexes``` can also be copied over but would be regenerated automatically by bitcoind if missing anyways.  
+
+  Here are 2 simple possibilities to copy these files using the common tool ```rsync```:
+
+  ##### **Option 1.** Copy from USB drive
+
+  Transfer speed: About 175 M/s -> Need about 6h to transfer 
+
+  - Plug the external drive on your MY₿ONK console
+    - USB 3.0 (blue USB ports) is theoretically 10 times faster than USB 2.0 (black ports):
+    - Make sure the external drive is USB 3.0 compatible, its USB port must be blue. 
+    - Recioprocally make sure you connect the external USB 3.0 drive any of the blue USB 3.0 ports on your MY₿ONK console.
+  - ssh to your MY₿ONK console as ```root```
+  - Identify the external USB drive using the command ```lsblk```:
+    ```bash
+    $ lsblk
+    ``` 
+
+    The output from this command looks something like this:
+
+    ```bash
+    NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+    sda      8:0    0 119.2G  0 disk
+    ├─sda1   8:1    0   512M  0 part /boot/efi
+    ├─sda2   8:2    0 109.9G  0 part /nix/store
+    │                                /
+    └─sda3   8:3    0   8.8G  0 part [SWAP]
+    sdb      8:16   0 931.5G  0 disk
+    └─sdb1   8:17   0 931.5G  0 part /data
+    sdc      8:32   0 931.5G  0 disk
+    └─sdc1   8:34   0 931.3G  0 part
+    ``` 
+
+    The disks ```sda``` and ```sdb``` are internal to MY₿ONK console. Your external disk is ```sdc``` (depending on which USB port it has been plugged it could also be ```sdd```).
+
+  - Create a temporary directory ```/mnt/unmountme``` and mount the disk ```ssd``` on it (most common filesystem types are automatically detected):
+
+    ````bash
+    # mkdir /unmountme
+    # mount /dev/sdc1 /unmountme
+    ````
+  - Now let's see how much data needs to be transfered:
+    ````bash
+    # du -h -d0 /unmountme/bitcoind/{blocks,chainstate,indexes}
+    ````
+
+    The output of this command shows:
+    ````
+    500G    /unmountme/bitcoind/blocks
+    5.1G    /unmountme/bitcoind/chainstate
+    40G     /unmountme/bitcoind/indexes
+    ````
+    
+    So we have a total of about 545G of data to transfer...
+
+  - Delete de files that potentially already exist at destination:
+    ````bash
+    # rm -rf /data/bitcoind/{blocks,chainstate,indexes}
+    ````
+  - Copy blockchain files from your external disk onto your MY₿ONK console (by default ```services.bitcoind.dataDir = "/data/bitcoind"```):
+
+    ````bash
+    # rsync -rhvPog --append-verify /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind
+    ````
+
+    The transfer can be interrupted anytime rsync will automatically resume the files transfer where it left it.
+
+    The following does the same thing but also gives a visual indication of the copy progress as well as completion time estimate ('ETA'):
+    ````bash
+    # rsync -vrltD --stats --human-readable /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind | pv -lep -s $(find /unmountme/bitcoind/{chainstate,blocks,indexes} -type f | wc -l)
+    ````
+
+  - Once ```rsync``` will have finished copying don't forget to restore the correct ownership of the imported files:
+    ````bash
+    # chown -R bitcoin:bitcoin /data/bitcoind/bitcoin/
+    ````
+
+  - Unmount the external drive and delete the temporary directory you created for it:
+    ````bash
+    # umount /unmountme
+    # rmdir /unmountme
+    ````
+
+  - Unplug your external drive.
+
+  - Start ```bitcoind``` keeping an eye on the system logs to monitor how the service is recognizing and operating on the blockchain data freshly imported from your external drive.
+    ````bash
+    # systemctl start bitcoind & journalctl -f 
+    ````
+
+
+  #### **Option 2.** Copy from another machine on the LAN
+
+  Transfer speed: --to be done--
+
+  This method is essentially the same as *Option 1.*, it uses ```rsync``` too but over the LAN.
+
+  - ssh to your MY₿ONK console as ```root```
+
+  - Copy the blockchain data, by default ```services.bitcoind.dataDir = "/data/bitcoind"``` on MY₿ONK consoles:
+
+    ````bash
+    # rsync -vrltD --stats --human-readable root@othermybonk.local:/data/bitcoind/{blocks,chainstate,indexes} /data/bitcoind
+    ````
+
+  - You might have heard about people ending up with "corrupted" or "incomplete" data and bitcoind re-downloading or re-indexing things depite of having copied the blockchain as explained here. This is most often then not due to the fact the blockchain data we copy from the remote machine is probably live, possibly leaving out some files at the end of the copy. To avoid this stop ```bitcoind``` on the remote machine and run ```rsync``` one last time to ensure clean data has been copied correctly and entirely:
+    ````bash
+    # rsync -rhvPog --append-verify /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind
+    ````
+
+  - Restore the correct ownership of the imported files:
+    ````bash
+    # chown -R bitcoin:bitcoin /data/bitcoind/
+    ````
+  - Start ```bitcoind``` keeping an eye on the system logs to monitor how the service is recognizing and operating on blockchain data freshly imported from your external drive.
+    ````bash
+    # systemctl start bitcoind & journalctl -f
+    ````
+
+---
+### 3.3. Backup and restore
+  This section explains further the process of backing-up and restoring services and their data.
+
+### 3.3.1 bitcoind
+
+### 3.3.1 clightning
+
+---
+### 3.4. Join a Federation
+  Work in progress...
 
 

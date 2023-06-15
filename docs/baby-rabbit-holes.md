@@ -136,9 +136,16 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
   - ```$ rg key -t json``` Restricts the search for the pattern key to json files only.
 
 
-## File system
-- ```df```: Display disk usage (also checkout the ```glance```
-utility).
+## File system / Block devices
+- Interesting threads about ZFS:
+  - ["what is the point of ZFS with only 1 disk"](https://www.truenas.com/community/threads/single-drive-zfs.35515/).
+  - ["benefit/risk of ZFS with only 1 disk"](https://unix.stackexchange.com/questions/672151/create-zfs-partition-on-existing-drive) (also includes the commands for a little ZFS experimentation).
+- ```lsblk```: List information about the system's available or the specified block devices.
+- ```fdisk```: Dialog-driven program to manipulate disk partition table.
+  - ```fdisk -l```: List the system's partition scheme.
+  - ```fdisk /dev/sdc```: Enter the interactive mode to manipulate the partition table of the disk ```/dev/sdc``` 
+- ```mkfs.ext4 /dev/sdc1```: Formats the partition ```/dev/sdc1``` in ext4 file system format.
+- ```df```: Display disk usage:
   - ```df -hT```. ```-h``` for “human readable”, ```-T``` to displays the type of the filesystem.
   - ```df -hT -t ext4```. ```-t ext4``` to display only filesystems of type ext4.
   - ```df -hT -x squashfs -x overlay -x tmpfs -x devtmpfs``` to hide given filesystem types from the output.
@@ -160,33 +167,37 @@ utility).
   
   Also read about and setup ssh-agent, it will save you a LOT of time (key management, auto re-connect e.g. when your laptop goes to sleep or reboots ...).
 
-- Network scanners: 
-  - [findssh](https://github.com/scivision/findssh#readme): Command line tool to scan entire IPv4 subnet in less than 1 second. Without NMAP.
-
-  Example:
-  ```
-  $ python3 -m findssh -b 192.168.0.1 -s ssh -v
-  searching 192.168.0.0/24
-  DEBUG:asyncio:Using selector: EpollSelector
-  DEBUG:root:[Errno 111] Connect call failed ('192.168.0.19', 22)
-  (IPv4Address('192.168.0.82'), 'SSH-2.0-OpenSSH_8.4p1 Debian-5+d')
-  (IPv4Address('192.168.0.136'), 'SSH-2.0-OpenSSH_9.1')
-  (IPv4Address('192.168.0.106'), 'SSH-2.0-OpenSSH_8.4p1 Debian-5+d')
-  DEBUG:root:[Errno 111] Connect call failed ('192.168.0.150', 22)
-  (IPv4Address('192.168.0.100'), 'SSH-2.0-OpenSSH_7.4')
-  DEBUG:root:[Errno 111] Connect call failed ('192.168.0.44', 22)
-  ```
-  - [Angry IP Scanner](https://angryip.org/): Scans LAN and WAN, IP Range, Random or file in any format, provides GUI as well as CLI.
 - [rsync](https://apoorvtyagi.tech/scp-command-in-linux): 
   - rsync uses a delta transfer algorithm and a few optimizations to make the operation a lot faster compared to ssh. The files that have been copied already won't be transferred again (unless they changed since). Can be run ad-hoc on the command line or configured to run as a deamon on the systems to keep files in sync.
   - rsync allows to restart failed transfers - you just reissue the same command and it will pick up where it left off, whereas scp will start again from scratch.
   - rsync needs to be used over SSH to be secure.
 
+
+- Network:
+  - Speed test: [https://www.speedtest.net]()
+  - Scanners:
+    - [findssh](https://github.com/scivision/findssh#readme): Command line tool to scan entire IPv4 subnet in less than 1 second. Without NMAP.
+
+    Example:
+    ```bash
+    $ python3 -m findssh -b 192.168.0.1 -s ssh -v
+    searching 192.168.0.0/24
+    DEBUG:asyncio:Using selector: EpollSelector
+    DEBUG:root:[Errno 111] Connect call failed ('192.168.0.19', 22)
+    (IPv4Address('192.168.0.82'), 'SSH-2.0-OpenSSH_8.4p1 Debian-5+d')
+    (IPv4Address('192.168.0.136'), 'SSH-2.0-OpenSSH_9.1')
+    (IPv4Address('192.168.0.106'), 'SSH-2.0-OpenSSH_8.4p1 Debian-5+d')
+    DEBUG:root:[Errno 111] Connect call failed ('192.168.0.150', 22)
+    (IPv4Address('192.168.0.100'), 'SSH-2.0-OpenSSH_7.4')
+    DEBUG:root:[Errno 111] Connect call failed ('192.168.0.44', 22)
+    ```
+    - [Angry IP Scanner](https://angryip.org/): Scans LAN and WAN, IP Range, Random or file in any format, provides GUI as well as CLI.
+
 ## tmux
 - (... or alternatives like GNU Screen, Terminator, Byobu, etc.)
 - tmux for beginners part 1: https://dev.to/iggredible/tmux-tutorial-for-beginners-5c52 
 - tmux for beginners part 2: https://dev.to/iggredible/useful-tmux-configuration-examples-k3g
-- cheat sheet
+
 -  ````tmux source-file ~/.tmux.conf````
 Tmux shortcuts 
   - ````new -s MY_SESSION````
@@ -219,10 +230,11 @@ Tmux shortcuts
   - ```man systemd.directives```
 - [hostnamectl](https://man7.org/linux/man-pages/man1/hostnamectl.1.html): Query and change the system hostname
        and related settings.
-  - ```hostnamectl status```: Status.
+  - ```hostnamectl status```
   - ```hostnamectl hostname```: Query hostname.
   - ```hostnamectl hostname <name>```: Change hostname.
 - [systemctl](https://www.howtogeek.com/839285/how-to-list-linux-services-with-systemctl/#:~:text=To%20see%20all%20running%20services,exited%2C%20failed%2C%20or%20inactive.)
+  - ```systemctl status```
   - ```systemctl status bitcoind```
   - ```systemctl start bitcoind```
   - ```systemctl restart bitcoind```
@@ -293,6 +305,7 @@ Tmux shortcuts
   - ```memtester```: Effective userspace tester for stress-testing the memory subsystem. It is very effective at finding intermittent and non-deterministic faults.
   - ```memusage```: Profile memory usage of a program.
 - [glances](https://github.com/nicolargo/glances/blob/develop/README.rst) utility: System cross-platform monitoring tool. It allows real-time monitoring of various aspects of your system such as CPU, memory, disk, network usage etc. as well as running processes, logged in users, temperatures, voltages etc.
+- [htop](https://www.geeksforgeeks.org/htop-command-in-linux-with-examples/amp/): Similar to glances above.
 - [tmuxinator](https://github.com/tmuxinator/tmuxinator/blob/master/README.md): Tool that allows you to easily manage tmux sessions by using yaml files to describe the layout of a tmux session, and open up that session with a single command.
 
   For your convenience, in the scope of [MY₿ONK](https://github.com/mybonk/mybonk-wiki/blob/main/docs/Procedure.md), you can reuse the tmuxinator template in the root of the Git repository ```.tmuxinator_console.yml```: 
