@@ -6,7 +6,7 @@
 </p>
 <br/>
 <p align="center">
-👉 Here is maintained the MY₿ONK Wiki, the detailed manual installation instructions ✍️. 
+👉 Here is maintained the MY₿ONK Wiki, the detailed *manual* installation instructions ✍️. 
 </p>
 <p align="center">
 Anyone can take part on <a href="https://github.com/mybonk" target="_blank">MY₿ONK's GitHub</a>.
@@ -792,6 +792,11 @@ The deployment mechanism we use to push MYBONK stack from the orchestrator to th
 
 ---
 ### 3.4. Join a Federation
-  Work in progress...
+  **Federation**, *noun*, late Latin *foederatio(n- )*: "*An encompassing entity formed by uniting smaller or more localized entities.*"
+  
+  Federation is a broad term meaning different thinks in different environments.
+  In the scope of MYBONK it my refer to a MYBONK federation, Fedimint federation and a Liquid federation.
+  
+  
 
 

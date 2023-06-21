@@ -76,11 +76,13 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
 - Environment variables in Linux-based systems:
   
     - Read ["how Environment Variables Work" (www.howtogeek.com/668503/how-to-set-environment-variables-in-bash-on-linux)](https://www.howtogeek.com/668503/how-to-set-environment-variables-in-bash-on-linux/)
+      - ```$ export JAVA_HOME=/opt/openjdk11```
+      - ```$ echo $JAVA_HOME```
     - ```$SHELL``` The default shell being used on the system.
     - ```$PATH``` Instructs the shell which directories to search for executables, it allows to run commands without having to specify its full path.
     - .etc... .
 - Shell commands you must know *really well*:
-  - ```ls```, ```cd```, ```type```, ```mkdir```, ```mv```, ```rm```, ```ln```, ```which```, ```cat```, ```head```, ```tail```, ```more```, ```tee``` …
+  - ```ls```, ```cd```, ```type```, ```mkdir```, ```mv```, ```rm```, ```ln```, ```which```, ```whereis```, ```cat```, ```head```, ```tail```, ```more```, ```tee``` …
   - ```hostname```, ```whoami```, ```passwd```, ```chmod```, ```chgrp```, …
   - ```ip a```
   - ```su``` and ```sudo```: Act on the system as a different user.
@@ -112,6 +114,7 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
       ```
     - ```tee```: a command in command-line interpreters using standard streams which reads standard input and writes it to both standard output and one or more files, effectively duplicating its input. It is primarily used in conjunction with pipes and filters. The command is named after the T-splitter used in plumbing.
    - ```file```
+   - ```md5sum```: Calculates and verifies 128-bit MD5 hashes as a compact digital fingerprint of a file. There is theoretically an unlimited number of files that will have any given MD5 hash.
 
 ## Text processing
 
@@ -152,6 +155,23 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
 - ```du```: Estimate file space usage. 
   - ```$ du -h -d1 /data```
 ## curl
+- ```curl -O https://testdomain.com/testfile.tar.gz```: Save file.
+- ```curl -o mydownload.tar.gz https://testdomain.com/testfile.tar.gz``` (**little 'o'**): Save file as ```mydownload.tar.gz```.
+- ```curl -I https://www.google.com```: Query the header of a server (same as ```-head```). 
+- ```curl -k https://localhost/my_test_endpoint```: Ignore invalid or self-signed certificates (same as ```--insecure```).
+- Make a POST request (through parameters and JSON):
+  - ```curl --data "param1=test1&param2=test2" http://test.com```
+  - ```curl  -H 'Content-Type: application/json' --data '{"param1":"test1","param2":"test2"}' http://www.test.com```
+- ```curl -X 'PUT' -d '{"param1":"test1" "param2":"test3"}' \http://test.com/1```: Specify a type of request (here 'PUT').
+- ```curl -u <user:password> https://my-test-api.com/endpoint1```: Basic Authentication for various protocols (same as ```-user```).
+- Update name resolution: test an API before deploying and want to hit in the endpoint in the test machine rather than the actual endpoint, you can pass in a custom resolution for that request: Works similarly to ```/etc/hosts``` host-resolution.
+- Upload a file: curl with the -F option emulates a filled-in form when the user has clicked the submit button. This option causes curl to POST data using the Content-Type multipart/form-data: 
+  - ```curl -F @field_name=@path/to/local_file <upload_URL>```
+  - ```curl -F @field_name=@path/to/local_file_1, @field_name=@path/to/local_file_2, @field_name=@path/to/local_file_3,  <upload_URL>```
+- ```curl -w "%{time_total}\n" -o /dev/null -s www.test.com```: Use ```-w``` to display information (stdout) after a transfer. ```total_time``` is one of the interesting parameters curl returns
+
+## wget
+- Download a complete remote directory, includes no parent and recursive to only get the desired directory.```wget --no-parent -r http://WEBSITE.com/DIRECTORY```
 
 ## gpg, sha-256 …
 ## ssh & rsync
@@ -300,8 +320,8 @@ Tmux shortcuts
   - [Byte UNIX Bench](https://github.com/kdlucas/byte-unixbench/tree/master): Since 1983, provide a basic indicator of the performance of a Unix-like system; hence, multiple tests are used to test various aspects of the system's performance.
   - [geekbench](https://www.geekbench.com/): Simple tool to quickly benchmark a system's performance ([How to run on Linux](http://support.primatelabs.com/kb/geekbench/installing-geekbench-5-on-linux)) 
   - [iperf3](https://github.com/esnet/iperf): Simple tool to quickly benchmark the maximum achievable bandwidth on IP networks.
-  - ```lscpu```: Command to display information about the CPU architecture.
-  - ```lsmem```: Command to list the ranges of available memory with their online status.
+  - ```lscpu```: Part of ```util-linux```, command to display information about the CPU architecture.
+  - ```lsmem```: Part of ```util-linux```, command to list the ranges of available memory with their online status.
   - ```memtester```: Effective userspace tester for stress-testing the memory subsystem. It is very effective at finding intermittent and non-deterministic faults.
   - ```memusage```: Profile memory usage of a program.
 - [glances](https://github.com/nicolargo/glances/blob/develop/README.rst) utility: System cross-platform monitoring tool. It allows real-time monitoring of various aspects of your system such as CPU, memory, disk, network usage etc. as well as running processes, logged in users, temperatures, voltages etc.
@@ -457,6 +477,26 @@ Tmux shortcuts
 - Hardware Wallets [comparison and audit](https://cryptoguide.tips/hardware-wallet-comparisons/).
 - [BIP39](https://iancoleman.io/bip39/): Play around and understand 12 vs 24 word seed (mnemonic) length, does it make a difference? Entropy, splitting scrambling ... (don't forget to generate a random mnemonic and select the option "Show split mnemonic cards" to see how much time it would take to brute-force attack).
   ![](img/various/12_24_mnemonic_split.png)
+- Other package managers:
+  - Homebrew
+    - $ brew search android-platform-tools
+    - $ brew install android-platform-tools
+    - $ brew info android-platform-tools
+    - $ brew remove android-platform-tools
+  - apt
+  - Tea
+## Federations
+- FEDIMINT (by Fedi):
+  - Explanation video by Obi and Justin (Bitcoin Miami 2023): [https://www.youtube.com/watch?v=_ByXD659Tcc]().
+  - Fedimint on [GitHub](https://github.com/fedimint).
+  - Telegram: 
+    - [@fedimint](https://t.me/fedimint)
+    - [@fedibtc](https://t.me/fedimint)
+  - [Discord](https://discord.gg/zwQhqBqq).
+ - LIQUID (by Blockstream)
+    - ...  
+    - ..
+
 
 ## For developers
   - [Polar](https://lightningpolar.com/): One-click Bitcoin Lightning Networks for local app development & testing.
