@@ -1,7 +1,7 @@
 <p align="center">
 <img
     width="320"
-    src="docs/img/mybonk_label.png"
+    src="docs/img/mybonk-logo.png"
     alt="MY₿ONK logo">
 </p>
 <br/>
