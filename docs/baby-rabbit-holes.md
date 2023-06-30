@@ -11,7 +11,7 @@ The sections "Commonly used" are examples you can easily copy/past.
 A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#readme](https://github.com/ruanbekker/cheatsheets#readme)
 
 
-## GitHub / Git GitHub CLI
+## Git / GitHub
 
 - Fork MY₿ONK-core and clone your forked repository it on your laptop (instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo)).
 - Commands reference [here](https://git-scm.com/docs/git).
@@ -44,10 +44,13 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
   git remote set-url <remote_name> <ssh_remote_url>
   git remote -v
 
+  git diff dir/filename 
+
   ```
-  - [GitHub CLI](https://docs.github.com/en/github-cli/github-cli/about-github-cli): Command-line tool that brings pull requests, issues, GitHub Actions, and other GitHub features to your terminal, so you can do all your work in one place.
+- [GitHub CLI](https://docs.github.com/en/github-cli/github-cli/about-github-cli): Command-line tool that brings pull requests, issues, GitHub Actions, and other GitHub features to your terminal, so you can do all your work in one place.
     - Authenticate with your GitHub account: ```gh auth login```
     - ...
+- [Source Tree](https://www.sourcetreeapp.com/) application: Free graphical user interface (GUI) desktop client that simplifies how you interact with Git repositories (some people are more comfortable with this rather than using Git CLI). Here is are [good simple tutorials](https://confluence.atlassian.com/get-started-with-sourcetree) to get started.
 
 ## Command line stuff
 
@@ -83,9 +86,9 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
     - .etc... .
 - Shell commands you must know *really well*:
   - ```ls```, ```cd```, ```type```, ```mkdir```, ```mv```, ```rm```, ```ln```, ```which```, ```whereis```, ```cat```, ```head```, ```tail```, ```more```, ```tee``` …
-  - ```hostname```, ```whoami```, ```passwd```, ```chmod```, ```chgrp```, …
+  - ```uname -a```, ```hostname```, ```whoami```, ```passwd```, ```chmod```, ```chgrp```, …
   - ```ip a```
-  - ```su``` and ```sudo```: Act on the system as a different user.
+  - ```su```/```sudo```, ```doas```: Used to assume the identity of another user on the system (they are both similar tools, ```doas``` has been ported from the OpenBSD project and could be assumed "safer" than ```sudo``` as it is less error-prone e.g. when setting up somewhat complicated patterns in ```/etc/sudoers```).
   - ```history``` 
     - ```echo "$HISTFILE"```
     - ```history | grep [string]```: Find any record in history.
@@ -506,10 +509,11 @@ Tmux shortcuts
     ![](img/various/just_tool.png)
   - [DuckDNS](https://www.duckdns.org/): Allows to get free dynamic DNS (forces 'KYC' by login using Github, Twitter, reddit or Google account). Good for testing.
 ## Books
-- [Introduction to the Mac command line](https://github.com/ChristopherA/intro-mac-command-line) (on GitHub)
+- [Introduction to the Mac command line](https://github.com/ChristopherA/intro-mac-command-line) (on GitHub).
 - [Learn Bitcoin from the command line](https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line#readme) (on GitHub)
-- [Mastering the Lightning Network](https://github.com/lnbook/lnbook#readme) (on GitHub)
-- [How to make a mint](https://groups.csail.mit.edu/mac/classes/6.805/articles/money/nsamint/nsamint.htm): The Cryptography of anonymous electronic cash (18 June 1996) 
+- [Mastering the Lightning Network](https://github.com/lnbook/lnbook#readme) (on GitHub).
+- [The NixOS and Flakes book](https://nixos-and-flakes.thiscute.world/introduction/): The NixOS and Flakes book.
+- [How to make a mint](https://groups.csail.mit.edu/mac/classes/6.805/articles/money/nsamint/nsamint.htm): The Cryptography of anonymous electronic cash (18 June 1996).
 ## 
 
 - **Crypto Pals**
