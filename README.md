@@ -80,7 +80,7 @@ This example small ecosystem consists of only two elements that we are going to 
   This machine runs the [MY₿ONK core](https://github.com/mybonk/mybonk-core) stack on NixOS. It is setup once and its configuration can be updated remotely using MY₿ONK orchestrator.
   
 ### Terminology
-- '``#``' stands for '````$ sudo````' (or ```$ doas``` which is a similar tool)
+- '``#``' stands for '````$ sudo````' (or '```$ doas```' which is a similar tool).
 - **MY₿ONK core**: Or simply 'MY₿ONK' is a tailor-made full-node [software stack](https://github.com/mybonk/mybonk-core) for MY₿ONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MY₿ONK core is based on nix-bitcoin itself based on nixOS.
 - **MY₿ONK console**: A full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-energy, supply chain resilience and generic parts in mind.
 - **MY₿ONK orchestrator**:
@@ -666,7 +666,7 @@ The deployment mechanism we use to push MYBONK stack from the orchestrator to th
 
   Here are 2 simple possibilities to copy these files using the common tool ```rsync```:
 
-  ##### **Option 1.** Copy from USB drive
+  #### **Option 1.** Copy from USB drive
 
   Transfer speed: About 175 M/s -> Need about 6h to transfer 
 
