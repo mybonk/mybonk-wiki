@@ -80,7 +80,7 @@ This example small ecosystem consists of only two elements that we are going to 
   This machine runs the [MY₿ONK core](https://github.com/mybonk/mybonk-core) stack on NixOS. It is setup once and its configuration can be updated remotely using MY₿ONK orchestrator.
   
 ### Terminology
-- '``#``' stands for '````$ sudo````'
+- '``#``' stands for '````$ sudo````' (or ```$ doas``` which is a similar tool)
 - **MY₿ONK core**: Or simply 'MY₿ONK' is a tailor-made full-node [software stack](https://github.com/mybonk/mybonk-core) for MY₿ONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MY₿ONK core is based on nix-bitcoin itself based on nixOS.
 - **MY₿ONK console**: A full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-energy, supply chain resilience and generic parts in mind.
 - **MY₿ONK orchestrator**:
@@ -264,7 +264,7 @@ Make sure you use ssh auto login (auto login *using public and private keys pair
 
   Now build the configuration and activate it, but don't add it (just yet) to the bootloader menu. This is done using the ```test``` subcommand:
   ````bash
-  # sudo nixos-rebuild test
+  # nixos-rebuild test
   building Nix...
   building the system configuration...
   activating the configuration...
@@ -275,7 +275,7 @@ Make sure you use ssh auto login (auto login *using public and private keys pair
   ````
   Check the system logs as the system is reconfiguring:
   ````bash
-  # sudo journalctl -f -n 60
+  # journalctl -f -n 60
   ````
   Entries referring to the system changes and sshd being enabled are being displayed.
 
@@ -342,8 +342,7 @@ More details regarding sshd configuration can be found on the dedicated [nixOS W
 
 Play around with the settings and ```nixos-rebuild test``` like earlier. When ready you make your changes persistent as new default option in the bootloader by running the ```switch``` subcommand:
   ````bash
-  # sudo nixos-rebuild switch
-  [sudo] password for mybonk: 
+  # nixos-rebuild switch
   building Nix...
   building the system configuration...
   updating GRUB 2 menu...
@@ -415,7 +414,7 @@ The following sections describe the installation of MY₿ONK orchestrator on a V
 
     ![](docs/img/various/vm_regenerate_mac_address.png)
 
-  - The login details are typically on the download page (in our case ``debian``/```debian``` and can become ```root``` by using ```$ sudo su -``` ). 
+  - The login details are typically on the download page (in our case ``debian``/```debian``` and can become ```root``` by using ```sudo``` (or ```doas``` which is a similar tool). 
   - What we call hostname is the machine name you can see displayed on on the shell prompt. Because this is a pre-built image make sure you set a hostname different from the default, e.x 'orchestartor_ben', it will avoid confusion when connecting remotely. Changing the hostname is done by running the following command:
     ```bash
     # hostnamectl set-hostname orchestartor_ben
@@ -430,18 +429,18 @@ The following sections describe the installation of MY₿ONK orchestrator on a V
   - It is common to have issues with keyboard layout when accessing a machine that has been configured in a different language (e.x. the first few letters of the keyboard write ```qwerty``` instead of ```azerty``` and other keys don't behave normally). There are various ways to adjust this in the configuration but it's out of the scope of this document. The simplest and most effective is to find a way to login using the erroneous keyboard layout anyhow figuring out which key is which then once in the Desktop Environment adjust the settings in "Region & Language" > "Input Source".
 
 
-  - Now you need to install some additional pretty common software packages that will be needed to continue. Debian's package manager is [apt](https://www.cyberciti.biz/tips/linux-debian-package-management-cheat-sheet.html?utm_source=Linux_Unix_Command&utm_medium=faq&utm_campaign=nixcmd). Root privileges are required to modify packages installed on the system which is why we prepend the following commands with [sudo](https://www.cyberciti.biz/tips/linux-debian-package-management-cheat-sheet.html?utm_source=Linux_Unix_Command&utm_medium=faq&utm_campaign=nixcmd).
+  - Now you need to install some additional pretty common software packages that will be needed to continue. Debian's package manager is [apt](https://www.cyberciti.biz/tips/linux-debian-package-management-cheat-sheet.html?utm_source=Linux_Unix_Command&utm_medium=faq&utm_campaign=nixcmd). Root privileges are required to modify packages installed on the system so call  [these commands](https://www.cyberciti.biz/tips/linux-debian-package-management-cheat-sheet.html?utm_source=Linux_Unix_Command&utm_medium=faq&utm_campaign=nixcmd) with ```sudo``` (or ```doas```).
 
   - Update the packages index so we are up to date with the latest available ones:
 
     ```bash
-    $ sudo apt update
+    # apt update
     ```
 
   - Install the additional packages (Debian 11 Bullseye) [curl](https://manpages.org/curl), [git](https://manpages.org/git):
 
     ```bash
-    $ sudo apt -y install curl git
+    # apt -y install curl git
     ```
 
 ### 2.3. ssh and auto login
@@ -452,7 +451,7 @@ For more security some Linux distributions restrict ssh usage, for instance such
 
 Check this by opening the sshd configuration ```/etc/ssh/sshd_config``` on the target machine using ```# nano /etc/ssh/sshd_config``` and see the setting ```PermitRootLogin```, its value can be ```yes```, ```prohibit-password```, ```without-password```. The later two ban all interactive authentication methods, allowing only public-key, hostbased and GSSAPI authentication.
 
-It is generally advised to avoid using user ```root``` especially to remote-access. You can use ```sudo -i``` from another user instead when needed so just leave the setting ```PermitRootLogin``` as ```prohibit-password```.
+It is generally advised to avoid using user ```root``` especially to remote-access. You can use ```sudo``` (or ```doas``` whichever is available on your system) from another user instead when needed so just leave the setting ```PermitRootLogin``` as ```prohibit-password```.
 
 
 ### 2.4. Install Nix
@@ -786,12 +785,24 @@ The deployment mechanism we use to push MYBONK stack from the orchestrator to th
 ### 3.3. Backup and restore
   This section explains further the process of backing-up and restoring services and their data.
 
+                ˜˜˜˜ONGOING˜˜˜˜ 
+
 ### 3.3.1 bitcoin
+
+
+                ˜˜˜˜ONGOING˜˜˜˜ 
 
 ### 3.3.1 clightning
 
+
+                ˜˜˜˜ONGOING˜˜˜˜ 
+
 ---
 ### 3.4. Join a Federation
+
+
+                ˜˜˜˜ONGOING˜˜˜˜ 
+
   **Federation**, *noun*, late Latin *foederatio(n- )*: "*An encompassing entity formed by uniting smaller or more localized entities.*"
   
   Federation is a broad term meaning different thinks in different environments.
