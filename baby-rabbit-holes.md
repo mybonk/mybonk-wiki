@@ -331,15 +331,14 @@ Tmux shortcuts
 - [htop](https://www.geeksforgeeks.org/htop-command-in-linux-with-examples/amp/): Similar to glances above.
 - [tmuxinator](https://github.com/tmuxinator/tmuxinator/blob/master/README.md): Tool that allows you to easily manage tmux sessions by using yaml files to describe the layout of a tmux session, and open up that session with a single command.
 
+  ![](docs/img/various/tmuxinator_screeshot.gif)
+
   For your convenience, in the scope of [MY₿ONK](https://github.com/mybonk/mybonk-wiki/blob/main/docs/Procedure.md), you can reuse the tmuxinator template in the root of the Git repository ```.tmuxinator_console.yml```: 
 
   ```$ tmuxinator start -p .tmuxinator_console.yml console node="console_jay"```
 
     - Adjust the parameter -p accordingly if you are not running the command from the repo's root.
     - You must pass the extra custom parameter node that must be either an IP address or a hostname (or in .ssh/config).
-
-
-  ![](img/various/tmuxinator_screeshot.gif)
 
 
   - ```tmuxinator new [project]```: Create a new project file with given name and open it in your editor.
@@ -409,7 +408,7 @@ Tmux shortcuts
 
 - Use [```nix repl```](https://nixos.wiki/wiki/Nix_command/repl) to interactively explore the Nix language as well as configurations, options and packages.
 
-  ![](img/various/nixrepl.png)
+  ![](docs/img/various/nixrepl.png)
 
     ````
     $ nix repl
@@ -479,7 +478,7 @@ Tmux shortcuts
 - [Blockstream Jade](https://github.com/Blockstream/Jade/blob/master/README.md): Bitcoin only, open source hardware wallet. Can also DIY.
 - Hardware Wallets [comparison and audit](https://cryptoguide.tips/hardware-wallet-comparisons/).
 - [BIP39](https://iancoleman.io/bip39/): Play around and understand 12 vs 24 word seed (mnemonic) length, does it make a difference? Entropy, splitting scrambling ... (don't forget to generate a random mnemonic and select the option "Show split mnemonic cards" to see how much time it would take to brute-force attack).
-  ![](img/various/12_24_mnemonic_split.png)
+  ![](docs/img/various/12_24_mnemonic_split.png)
 - Other package managers:
   - Homebrew
     - $ brew search android-platform-tools
@@ -506,7 +505,7 @@ Tmux shortcuts
   - [Rust](https://www.rust-lang.org/): Multi-paradigm, general-purpose programming language that emphasizes performance, type safety, and concurrency. It enforces memory safety—ensuring that all references point to valid memory—without requiring the use of a garbage collector or reference counting present in other memory-safe languages.
   - [Cargo](https://doc.rust-lang.org/cargo/): Package manager for Rust.
   - [Just](https://just.systems/man/en/): Just is a handy little tool to save and run project-specific commands.
-    ![](img/various/just_tool.png)
+    ![](docs/img/various/just_tool.png)
   - [DuckDNS](https://www.duckdns.org/): Allows to get free dynamic DNS (forces 'KYC' by login using Github, Twitter, reddit or Google account). Good for testing.
 ## Books
 - [Introduction to the Mac command line](https://github.com/ChristopherA/intro-mac-command-line) (on GitHub).
