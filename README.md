@@ -67,7 +67,7 @@ It is assumed that you know a little bit of everything but not enough so we show
 
 You too can contribute to improving this document on GitHub.
   
-Enjoy the ride, no stress, check out our  [baby rabbit holes](/docs/baby-rabbit-holes.md)  :hole: :rabbit2: and the [FAQ](/docs/faq.md) 👷 
+Enjoy the ride, no stress, check out our  [baby rabbit holes](/baby-rabbit-holes.md)  :hole: :rabbit2: and the [FAQ](/faq.md) 👷 
 
 
 ### Overview
@@ -113,7 +113,7 @@ This example small ecosystem consists of only two elements that we are going to 
 
 This is so important that we felt it deserved its own section.
 
-ssh is a pre-requisite for the deployment of MY₿ONK, have a look at the section dedicated to ssh in the [baby rabbit holes section](/docs/baby-rabbit-holes.md#ssh) 🕳 🐇
+ssh is a pre-requisite for the deployment of MY₿ONK, have a look at the section dedicated to ssh in the [baby rabbit holes section](/baby-rabbit-holes.md#ssh) 🕳 🐇
 
 Spare yourself the pain, learn good habits, save tones time and avoid getting locked out of your system by really understanding how ssh works, particularly ssh auto login (auto login *using public and private keys pair* to be specific), as it is also significantly more secure than simple password-based login.
 
@@ -595,7 +595,7 @@ MY₿ONK stack is now running on your MY₿ONK console and you can monitor and c
 
 Unless otherwise stated all the operations in this sections are executed from MY₿ONK orchestartor.
 
-Learn how to use ```tmux``` and ```tmuxinator``` in the [baby rabbit holes](/docs/baby-rabbit-holes.md), it will take a little effort to get used to it but will save you *hours* every week and streamline your operations. We also made a [tmuxinator template](https://github.com/mybonk/mybonk-core/blob/master/.tmuxinator_console.yml) available for you to reuse.
+Learn how to use ```tmux``` and ```tmuxinator``` in the [baby rabbit holes](/baby-rabbit-holes.md), it will take a little effort to get used to it but will save you *hours* every week and streamline your operations. We also made a [tmuxinator template](https://github.com/mybonk/mybonk-core/blob/master/.tmuxinator_console.yml) available for you to reuse.
 
 ![](docs/img/various/tmuxinator_screeshot.gif)
 
@@ -607,12 +607,12 @@ Explore the running services using the following simple commands on your MY₿ON
     - ```nodeinfo```: Helper script (nix-bitcoin module) that prints info about the node's services.
     
   - Bitcoin
-    - ```systemctl status bitcoind```: Standard Linux command, have a look at the section about ```systemctl``` in the [baby rabbit holes section](/docs/baby-rabbit-holes.md#ssh) if needed.
+    - ```systemctl status bitcoind```: Standard Linux command, have a look at the section about ```systemctl``` in the [baby rabbit holes section](/baby-rabbit-holes.md#ssh) if needed.
     - ```systemctl stop bitcoind```
     - ```systemctl start bitcoind```
 
   - C-lightning
-    - ```systemctl status clightning```: Standard Linux command, have a look at the section about ```systemctl``` in the [baby rabbit holes section](/docs/baby-rabbit-holes.md#ssh) if needed.
+    - ```systemctl status clightning```: Standard Linux command, have a look at the section about ```systemctl``` in the [baby rabbit holes section](/baby-rabbit-holes.md#ssh) if needed.
     - ```systemctl stop clightning```
     - ```systemctl start clightning```
     - ```lightning-cli getinfo```: Standard c-lightning CLI tool, use ```$ man lightning-cli``` if you don't know lightning-cli yet.
@@ -645,7 +645,7 @@ The deployment mechanism we use to push MYBONK stack from the orchestrator to th
     ```
   - This is handy to test something out but goes against the principle of streamlined deployment as the configuration on the host is now out of sync with the one maintained from MY₿ONK orchestrator and it will be overwritten next time we deploy.
 #### 3.1.4 REPL
-  - REPL, or Read-Eval-Print Loop, is a computer environment where user inputs are read and evaluated, and then the results are returned to the user. There is a REPL in Nix providing an interactive environment to explore tools and expressions. Search ```nix repl``` in the [baby rabbit holes](/docs/baby-rabbit-holes.md) page :hole: :rabbit2:
+  - REPL, or Read-Eval-Print Loop, is a computer environment where user inputs are read and evaluated, and then the results are returned to the user. There is a REPL in Nix providing an interactive environment to explore tools and expressions. Search ```nix repl``` in the [baby rabbit holes](/baby-rabbit-holes.md) page :hole: :rabbit2:
     
 ---
 ### 3.2. Copy the complete blockchain from another MY₿ONK console
