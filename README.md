@@ -753,7 +753,7 @@ The deployment mechanism we use to push MYBONK stack from the orchestrator to th
     ````
 
 
-  #### **Option 2.** Copy from another machine on the LAN
+  #### **Option 2.** Copy from another machine over the LAN
 
   Transfer speed: --to be done--
 
@@ -788,7 +788,12 @@ The deployment mechanism we use to push MYBONK stack from the orchestrator to th
                 ˜˜˜˜ONGOING˜˜˜˜ 
 
 ### 3.3.1 bitcoin
-
+#### How to generate recovery phrase from private key?
+  - If you have a private key, there is no way to obtain the recovery phrase from it. 
+  - This is because the recovery phrase is used as a seed to generate a hierarchical deterministic *master extended private key* (aka "master key" or "master seed"), as described in [BIP 39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki) and [BIP 32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki) and this process is not reversible.
+  - Also, a *private key* is not an *master extended private key* which is needed for an HD ("hierarchical-deterministic") wallet. 
+  - If you have a lone address (not derived from a *master extended private key*) the best you can do is import that single address manually.
+  - Many wallets do not support importing of individual addresses for safety, because they wouldn't be covered by the recovery phrase.
 
                 ˜˜˜˜ONGOING˜˜˜˜ 
 

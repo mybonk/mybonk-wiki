@@ -14,6 +14,8 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
 ## Git / GitHub
 
 - Fork MY₿ONK-core and clone your forked repository it on your laptop (instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo)).
+- What is a "*pull request*"? (video explanation): https://www.youtube.com/watch?v=For9VtrQx58 
+- Difference between *merge* is "*rebase*"? (video explanation): https://www.youtube.com/watch?v=dO9BtPDIHJ8
 - Commands reference [here](https://git-scm.com/docs/git).
 - [How to Setup Passwordless Authentication for git push in GitHub](https://www.cyberithub.com/how-to-setup-passwordless-authentication-for-git-push-in-github/)
 - [Switch to another branch in terminal](https://stackoverflow.com/questions/47630950/how-can-i-switch-to-another-branch-in-git).
