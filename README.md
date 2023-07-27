@@ -595,7 +595,12 @@ MY₿ONK stack is now running on your MY₿ONK console and you can monitor and c
 
 Unless otherwise stated all the operations in this sections are executed from MY₿ONK orchestartor.
 
-Learn how to use ```tmux``` and ```tmuxinator``` in the [baby rabbit holes](/baby-rabbit-holes.md), it will take a little effort to get used to it but will save you *hours* every week and streamline your operations. We also made a [tmuxinator template](https://github.com/mybonk/mybonk-core/blob/master/.tmuxinator_console.yml) available for you to reuse.
+Learn how to use ```tmux``` and ```tmuxinator``` in the [baby rabbit holes](/baby-rabbit-holes.md), it will take a little effort to get used to it but will save you *hours* every week and streamline your operations. We also made a [tmuxinator_console.yml](https://github.com/mybonk/mybonk-core/blob/master/.tmuxinator_console.yml) template available for you to reuse.
+
+  ```
+  $ cd mybonk-core
+  $ tmuxinator start -p ./.tmuxinator_console.yml console node="root@mybonk-jay.dab-dominant.ts.net"
+  ```
 
 ![](docs/img/various/tmuxinator_screeshot.gif)
 
@@ -611,13 +616,22 @@ Explore the running services using the following simple commands on your MY₿ON
     - ```systemctl stop bitcoind```
     - ```systemctl start bitcoind```
 
-  - C-lightning
+  - c-lightning
     - ```systemctl status clightning```: Standard Linux command, have a look at the section about ```systemctl``` in the [baby rabbit holes section](/baby-rabbit-holes.md#ssh) if needed.
     - ```systemctl stop clightning```
     - ```systemctl start clightning```
     - ```lightning-cli getinfo```: Standard c-lightning CLI tool, use ```$ man lightning-cli``` if you don't know lightning-cli yet.
 
+  - c-lightning-REST
+    - Creates a Lightning Network REST API. 
+    - Implemented as a service unit.
+    - As you can guess it depends on c-lightning running. 
+    - Seems to have been created to allow RTL to run with a c-lightning node instead of only LND. 
+    - You can create any kind of applications using the Lightning commands exposed through http interface ([documentation](https://github.com/Ride-The-Lightning/c-lightning-REST#apis)).
 
+https://github.com/Ride-The-Lightning/c-lightning-REST
+
+It really takes advantage of and shows the power of the plugin capabilities of c-lightning, with 3rd parties being able to add to the infrastructure independently!
 
 #### 3.1.1 Start the services progressively
 

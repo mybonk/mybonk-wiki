@@ -21,8 +21,18 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
 - [Switch to another branch in terminal](https://stackoverflow.com/questions/47630950/how-can-i-switch-to-another-branch-in-git).
 - [Switch GitHub account in terminal](https://dev.to/0xbf/switch-github-account-in-terminal-92g).
 - Commonly used:
-
+  - Your identity
+    - The first thing you should do when you install Git is to set your user name and email address. This is important because every Git commit uses this information, and it’s immutably baked into the commits you start creating:
+      ```
+      $ git config --global user.name "John Doe"
+      $ git config --global user.email johndoe@example.com
+      ```
+  
   ```
+  more ~/.gitconfig
+  git config -l
+  git config user.name
+
   git clone https://github.com/mybonk/mybonk-core.git
   git remote show origin
   git status
@@ -47,6 +57,15 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
   git remote -v
 
   git diff dir/filename 
+
+  git log -S "signet" --pretty=format:'%h %an %ad %s'
+  
+  git blame README.md
+  git blame -e README.md
+  git blame -L 1,5 README.md
+  git blame -w README.md
+  git blame -M README.md
+  git blame -C README.md
 
   ```
 - [GitHub CLI](https://docs.github.com/en/github-cli/github-cli/about-github-cli): Command-line tool that brings pull requests, issues, GitHub Actions, and other GitHub features to your terminal, so you can do all your work in one place.
@@ -118,7 +137,7 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
       grep --exclude-dir={dir1,dir2,*.dst} -rnw '/path/to/search/' -e "pattern"
       ```
     - ```tee```: a command in command-line interpreters using standard streams which reads standard input and writes it to both standard output and one or more files, effectively duplicating its input. It is primarily used in conjunction with pipes and filters. The command is named after the T-splitter used in plumbing.
-   - ```file```
+   - ```watch```: Execute a program periodically showing output in fullscreen e.g. ```$ watch du -ac -d0 /data/bitcoind/blocks```.
    - ```md5sum```: Calculates and verifies 128-bit MD5 hashes as a compact digital fingerprint of a file. There is theoretically an unlimited number of files that will have any given MD5 hash.
 
 ## Text processing
@@ -247,6 +266,9 @@ Tmux shortcuts
 - tor hidden services
 - Tor browsers (https://www.torproject.org/download/)
 - torify / torsocks
+
+## I2P
+- Tor vs I2P ([https://www.cloudwards.net/i2p-vs-tor/](https://www.cloudwards.net/i2p-vs-tor/))
 ## processes
 - ```ps```, ```pstree```, ```top```
 - ```systemd```
@@ -386,11 +408,20 @@ Tmux shortcuts
 - [md5calc](https://md5calc.com/hash/sha256): Calculate the Hash of any string. 
 
 ## Common Nix commands
-- Nice Nix cheat sheet: [https://github.com/brainrake/nixos-tutorial/blob/master/cheatsheet.md](https://github.com/brainrake/nixos-tutorial/blob/master/cheatsheet.md)
-- [https://noogle.dev](https://noogle.dev/): Search functions within the nix ecosystem based on type, name, description, example, category .etc..
+- Nice Nix cheat sheet: 
+  - [https://github.com/brainrake/nixos-tutorial/blob/master/cheatsheet.md](https://github.com/brainrake/nixos-tutorial/blob/master/cheatsheet.md)
+- Search the Nix ecosystem:
+  - [https://search.nixos.org/](): Search Nix packages, NixOS options, Flakes.
+  - [https://noogle.dev](): Search nix functions based on type, name, description, example, category .etc..
 - NixOS the "traditional" vs. the "Flakes" way: 
   - Flakes have been introduced with Nix 2.4
   - Although still flagged as "*experimental*" feature it is the way forward, we advise you to learn Flakes already.
+- Run nix software with no installation steps:
+  - Not using flakes: 
+    - Load ```memtester``` from nixpkgs and make it available from interactive shell:  ```nix-shell -p memtester```.
+  - Using flakes: 
+    - [https://determinate.systems/posts/nix-run]()
+  
 - ```nix --version```: Get running nix version (important as the MY₿ONK console might be running a different version from the one on MY₿ONK orchestrator).
 - ```nix-shell```: Start an interactive shell based on a Nix expression. This is distinct from ```nix shell```.
 - ```nix-build```: Build a Nix expression. This is distinct from ```nix build```.
@@ -422,17 +453,22 @@ Tmux shortcuts
   - Use ```:q``` to quit nix-repl.
     
   - You can use autocomplete (tab, tab) from within nix-repl.
-  - To get the documentation of a built-in function use ```:doc```, for instance:
+  - Get the documentation of a [built-in function](https://nixos.org/manual/nix/stable/language/builtins.html) ```:doc```, for instance:
     ```
     nix-repl> :doc dirOf
     ```
-  - To show the logs for a derivation use ```:log```, for instance:
+  - Show the logs for a derivation use ```:log```, for instance:
       ```
       nix-repl> builtins.readFile drv
       "Hello world"
       nix-repl> :log drv
       Hello world
       ```
+
+  - load nixos configuration from a nix file
+    ```
+    $ nix repl --file '<nixpkgs/nixos>' -I nixos-config=./configuration.nix
+    ```
 
 - Garbage collection:
   - Ref. the options ```keep-derivations``` (default: ```true```) and ```keep-outputs``` (default: ```false```) in the Nix configuration file.
@@ -448,6 +484,9 @@ Tmux shortcuts
   - ```lib.debug.traceSeq <arg1> <arg2>```: Print a fully evaluated value.
 ## Common bitcoin-related commands
 - [bitcoin-cli](https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list)
+- Pipe the output of ```bitcoin-cli``` through ```jq```, for instance:
+  - ``` $ bitcoin-cli getblockchaininfo | jq '.'``` to get pretty JSON output formatting.
+  - ```$ bitcoin-cli getblockchaininfo | jq '.verificationprogress'```
 - ```bitcoin-cli -addrinfo```
 - ```bitcoin-cli -getinfo```
 - Bitcoin-cli to execute bitcoin RPC commands ([full list](https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list)), some of the most commonly used commands are:
@@ -470,7 +509,16 @@ Tmux shortcuts
   - ```bitcoin-cli getrawtransaction txid```
   - ```bitcoin-cli decoderawtransaction rawtx```
 
-
+## Common clightning-related commands
+- [clightning-cli](https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list): lightning-cli simply uses the JSON RPC interface to talk to lightningd, and prints the results.
+- Complete list of all JSON-RPC commands: [HERE](https://docs.corelightning.org/docs/api-reference)
+- Simple examples:
+  ```
+  $ lightning-cli --version
+  $ lightning-cli help
+  $ lightning-cli getchaininfo
+  $ lightning-cli getinfo
+  ```
 
 ## Podcasts
 - nixbitcoin-dev with Stefan Livera: A security focused bitcoin node https://stephanlivera.com/episode/195/
