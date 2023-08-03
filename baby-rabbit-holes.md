@@ -81,6 +81,13 @@ A *terminal* is a program that opens a graphical window and lets you interact wi
 
 A *CLI* (command-line interface) is what deal with when you interact with the shell. 
 
+- System version
+  - OS name and version in Linux: 
+    - ```cat /etc/os-release```
+    - ```lsb_release -a```
+    - ```hostnamectl```
+  - Linux kernel version:
+    - ```hostnamectl```
 
 - Terminal vs. iTerm2 ([features](https://iterm2.com/features.html)).
   - iTerm2 hotkeys: 
@@ -168,8 +175,9 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
   - ["what is the point of ZFS with only 1 disk"](https://www.truenas.com/community/threads/single-drive-zfs.35515/).
   - ["benefit/risk of ZFS with only 1 disk"](https://unix.stackexchange.com/questions/672151/create-zfs-partition-on-existing-drive) (also includes the commands for a little ZFS experimentation).
 - ```lsblk```: List information about the system's available or the specified block devices.
-- ```fdisk```: Dialog-driven program to manipulate disk partition table.
+- ```fdisk```: Dialog-driven program to see and manipulate disk partition table.
   - ```fdisk -l```: List the system's partition scheme.
+  - ```fdisk -l | grep "Disk /"```: See all the available disks.
   - ```fdisk /dev/sdc```: Enter the interactive mode to manipulate the partition table of the disk ```/dev/sdc``` 
 - ```mkfs.ext4 /dev/sdc1```: Formats the partition ```/dev/sdc1``` in ext4 file system format.
 - ```df```: Display disk usage:
@@ -197,7 +205,9 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
 ## wget
 - Download a complete remote directory, includes no parent and recursive to only get the desired directory.```wget --no-parent -r http://WEBSITE.com/DIRECTORY```
 
-## gpg, sha-256 …
+## Cryptography
+- The difference between seed words and private key: https://youtu.be/Y_A3j8GzaO8
+
 ## ssh & rsync
 - [Difference between ssh and ~~Telnet~~](https://www.geeksforgeeks.org/difference-ssh-telnet/)
 - ssh: 
@@ -287,7 +297,8 @@ Tmux shortcuts
   - ```systemctl restart bitcoind```
   - ```systemctl stop bitcoind```
   
-  - Show all the running processes: ```systemctl --type=service --state=running``` (where ```--state``` can be any of ```running```, ```dead```, ```exited```, ```failed``` or ```inactive```)
+  - Show all the running processes: ```systemctl --type=service --state=running``` (where ```--state``` can be any of ```running```, ```dead```, ```exited```, ```failed``` or ```inactive```).
+  - ```pstree```: Tool to display a tree of processes.
   - Show the service definition: ```systemctl cat bitcoind```  
   - Show the service parameters: ```systemctl show bitcoind```
 
@@ -353,6 +364,7 @@ Tmux shortcuts
   - ```memusage```: Profile memory usage of a program.
 - [glances](https://github.com/nicolargo/glances/blob/develop/README.rst) utility: System cross-platform monitoring tool. It allows real-time monitoring of various aspects of your system such as CPU, memory, disk, network usage etc. as well as running processes, logged in users, temperatures, voltages etc.
 - [htop](https://www.geeksforgeeks.org/htop-command-in-linux-with-examples/amp/): Similar to glances above.
+- [btop](https://github.com/aristocratos/btop): Similar tool to ```glances``` and ```htop``` above.
 - [tmuxinator](https://github.com/tmuxinator/tmuxinator/blob/master/README.md): Tool that allows you to easily manage tmux sessions by using yaml files to describe the layout of a tmux session, and open up that session with a single command.
 
   ![](docs/img/various/tmuxinator_screeshot.gif)
@@ -440,8 +452,9 @@ Tmux shortcuts
 - ```nix-store```
 
 - Use [```nix repl```](https://nixos.wiki/wiki/Nix_command/repl) to interactively explore the Nix language as well as configurations, options and packages.
+  - Video: [Running Nix Code: nix eval and nix repl](https://www.youtube.com/watch?v=9kXahFVnFqw&list=WL&index=271).
 
-  ![](docs/img/various/nixrepl.png)
+   ![](docs/img/various/nixrepl.png)
 
     ````
     $ nix repl
@@ -469,6 +482,17 @@ Tmux shortcuts
     ```
     $ nix repl --file '<nixpkgs/nixos>' -I nixos-config=./configuration.nix
     ```
+
+  - Add everything that you see passed to modules: options, config, pkgs, lib, and the other "Special ones":
+    ```
+    $ nix repl>:l <nixpkgs/nixos>
+    ```
+  - Similarly on Flake systems:
+    ```
+    $ nix repl>:lf /etc/nixos
+    $ nix repl>nixosConfigurations.<hostname>
+    ```
+
 
 - Garbage collection:
   - Ref. the options ```keep-derivations``` (default: ```true```) and ```keep-outputs``` (default: ```false```) in the Nix configuration file.
@@ -551,6 +575,7 @@ Tmux shortcuts
 
 
 ## For developers
+  - Great Nix language tour: https://nixcloud.io/tour
   - [Polar](https://lightningpolar.com/): One-click Bitcoin Lightning Networks for local app development & testing.
   - [Rust](https://www.rust-lang.org/): Multi-paradigm, general-purpose programming language that emphasizes performance, type safety, and concurrency. It enforces memory safety—ensuring that all references point to valid memory—without requiring the use of a garbage collector or reference counting present in other memory-safe languages.
   - [Cargo](https://doc.rust-lang.org/cargo/): Package manager for Rust.
