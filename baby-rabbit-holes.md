@@ -79,13 +79,26 @@ A *shell* is a user interface for access to an operating system's services.
 
 A *terminal* is a program that opens a graphical window and lets you interact with the shell.
 
+It is common that the keyboard layout the system is configured with is different from the keyboard you actually use (e.g. system keyboard configured US layout but you use a keyboard with a French layout), read this article "https://www.baeldung.com/linux/console-change-keyboard-layout" to fix this.
+
 A *CLI* (command-line interface) is what deal with when you interact with the shell. 
+
+- [RTFM!](https://en.wiktionary.org/wiki/RTFM)
+  - The most important command is ```man``` which stands for "manual" e.g.
+    ```
+    $ man mkdir
+    ```
+  - Hit ```h``` for help and ```q``` to leave the manual.
+  - scroll through the manual using 'arrow up' and 'arrow down'.
+  - Jump pages up and down using 'space bar' and 'Shift + space bar'.
+  - Search for a term in a manual using ```/``` e.g. ```/ignore``` then hit: 
+     - ```n``` for next match 
+     - ```Shift + n``` for previous match
+  - Search for a term in all the manuals: ``````
 
 - System version
   - OS name and version in Linux: 
     - ```cat /etc/os-release```
-    - ```lsb_release -a```
-    - ```hostnamectl```
   - Linux kernel version:
     - ```hostnamectl```
 
@@ -96,7 +109,6 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
     - make font larger: `Cmd` + `+`
     - make font smaller: `Cmd` + `-`
 - Shell: 
-  - The most important command on the command line is ```man``` (it stands for "manual", so [RTFM](https://en.wiktionary.org/wiki/RTFM)!).
   - ```bash``` and its history (sh, csh, tsh, ksh ...).
   - ```zsh``` adds great new features over ```bash```. (Note that as of macOS Catalina, the default shell in macOS is Zsh and Bash is deprecated), most noticeably:
     - Automatic cd: Just type the name of the directory without ``cd``.
@@ -107,14 +119,15 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
 - Environment variables in Linux-based systems:
   
     - Read ["how Environment Variables Work" (www.howtogeek.com/668503/how-to-set-environment-variables-in-bash-on-linux)](https://www.howtogeek.com/668503/how-to-set-environment-variables-in-bash-on-linux/)
-      - ```$ export JAVA_HOME=/opt/openjdk11```
-      - ```$ echo $JAVA_HOME```
-    - ```$SHELL``` The default shell being used on the system.
-    - ```$PATH``` Instructs the shell which directories to search for executables, it allows to run commands without having to specify its full path.
-    - .etc... .
+      - ```$ export EDITOR=vi```
+      - ```$ echo $EDITOR```
+      - ```$ printenv```: Print all the environment variables.
+        - ```$SHELL``` The default shell being used on the system.
+        - ```$PATH``` Instructs the shell which directories to search for executables, it allows to run commands without having to specify its full path.
+        - .etc... .
 - Shell commands you must know *really well*:
-  - ```ls```, ```cd```, ```type```, ```mkdir```, ```mv```, ```rm```, ```ln```, ```which```, ```whereis```, ```cat```, ```head```, ```tail```, ```more```, ```tee``` …
-  - ```uname -a```, ```hostname```, ```whoami```, ```passwd```, ```chmod```, ```chgrp```, …
+  - ```pwd```, ```ls```, ```cd```, ```type```, ```mkdir```, ```mv```, ```rm```, ```ln```, ```which```, ```whereis```, ```cat```, ```head```, ```tail```, ```more```, ```tee``` …
+  - ```uname -a```, ```hostname```, ```whoami```, ```passwd```, ```chown```, ```chgrp```, ```chmod```, …
   - ```ip a```
   - ```su```/```sudo```, ```doas```: Used to assume the identity of another user on the system (they are both similar tools, ```doas``` has been ported from the OpenBSD project and could be assumed "safer" than ```sudo``` as it is less error-prone e.g. when setting up somewhat complicated patterns in ```/etc/sudoers```).
   - ```history``` 
@@ -127,26 +140,40 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
     - Don't forget to explore 'i-search' and 'reverse-i-search' using ``Ctrl`` + ``s`` and ``Ctrl`` + ``r`` respectively; Read this [if 'i-search' using ``Ctrl`` + ``s`` does not work](https://stackoverflow.com/questions/791765/unable-to-forward-search-bash-history-similarly-as-with-ctrl-r).
   - ```alias```
   - ```grep```: Find all files containing specific text
-    - search all the files in a given directory:
-      ```
-      grep -rnw '/path/to/somewhere/' -e 'pattern'
-      ```
-    - only search through those files with ```.c``` or ```.h``` extensions:
-      ```
-      grep --include=\*.{c,h} -rnw '/path/to/somewhere/' -e "pattern"
-      ```
-    - exclude searching all the files with ```.o``` extension:
-      ```
-      grep --exclude=\*.o -rnw '/path/to/somewhere/' -e "pattern"
-      ```
-    - for directories it's possible to exclude one or more directories using the ```--exclude-dir``` parameter. For example, this will exclude the dirs ```dir1/ ```, ```dir2/``` and all of them matching ```*.dst```:
-      ```
-      grep --exclude-dir={dir1,dir2,*.dst} -rnw '/path/to/search/' -e "pattern"
-      ```
+    - On a file:
+      - Most basic use
+        ```
+        $ grep 'keyword' /path/to/file.log
+        ```
+      - To also show the 5 lines before and the 2 lines after the keyword occurrences as well as highlighting the occurrences in color:
+        ```$ grep -B 5 -A 2 --color 'keyword' /path/to/file.log```
+    - On directories:
+      - Search all the files in a given *directory*:
+        ```
+        grep -rnw '/path/to/somewhere/' -e 'pattern'
+        ```
+      - Only search through those files with ```.c``` or ```.h``` extensions:
+        ```
+        grep --include=\*.{c,h} -rnw '/path/to/somewhere/' -e "pattern"
+        ```
+      - Exclude searching all the files with ```.o``` extension:
+        ```
+        grep --exclude=\*.o -rnw '/path/to/somewhere/' -e "pattern"
+        ```
+      - Exclude one or more directories using the ```--exclude-dir``` parameter. For example, this will exclude the dirs ```dir1/ ```, ```dir2/``` and all of them matching ```*.dst```:
+        ```
+        grep --exclude-dir={dir1,dir2,*.dst} -rnw '/path/to/search/' -e "pattern"
+        ```
     - ```tee```: a command in command-line interpreters using standard streams which reads standard input and writes it to both standard output and one or more files, effectively duplicating its input. It is primarily used in conjunction with pipes and filters. The command is named after the T-splitter used in plumbing.
-   - ```watch```: Execute a program periodically showing output in fullscreen e.g. ```$ watch du -ac -d0 /data/bitcoind/blocks```.
+   - ```watch```: Execute a program periodically showing output in fullscreen e.g. 
+    - ```$ watch 'du -ac -d0 /data/bitcoind/blocks'```
+    - ```$ watch -n 2 'bitcoin-cli -getinfo | grep progress'```
    - ```md5sum```: Calculates and verifies 128-bit MD5 hashes as a compact digital fingerprint of a file. There is theoretically an unlimited number of files that will have any given MD5 hash.
-
+  - Command to search for files through directories.
+    - ```find /search/directory/ -name "matching file search criteria" -actions```
+    - ```find /dir/to/search -name "pattern" -print```
+    - ```find /dir/to/search -name "file-to-search" -print```
+    - ```find /dir/to/search -name "file-to-search" -print [-action]```
 ## Text processing
 
 - ```vi``` (cheat-sheet [HERE](https://www.thegeekdiary.com/basic-vi-commands-cheat-sheet/))
@@ -169,23 +196,30 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
   - ```$ rg --type-list``` List of the available file types.
   - ```$ rg key -t json``` Restricts the search for the pattern key to json files only.
 
+## File processing
+
+  - ```$ tar -xvf myfile.tar.gz```: Untar a file.
 
 ## File system / Block devices
-- Interesting threads about ZFS:
-  - ["what is the point of ZFS with only 1 disk"](https://www.truenas.com/community/threads/single-drive-zfs.35515/).
-  - ["benefit/risk of ZFS with only 1 disk"](https://unix.stackexchange.com/questions/672151/create-zfs-partition-on-existing-drive) (also includes the commands for a little ZFS experimentation).
 - ```lsblk```: List information about the system's available or the specified block devices.
+
+- ```df```: Display disk usage:
+  - ```df -hT```. ```-h``` for “human readable”, ```-T``` to displays the type of the filesystem.
+  - ```df -hT .```. '```.```' for whatever partition the current directory is residing on.
+  - ```df -hT -t ext4```. ```-t ext4``` to display only filesystems of type ext4.
+  - ```df -hT -x squashfs -x overlay -x tmpfs -x devtmpfs``` to hide given filesystem types from the output.
+- ```du```: Estimate file space usage. 
+  - ```$ du -h -d1 /data```
+
 - ```fdisk```: Dialog-driven program to see and manipulate disk partition table.
   - ```fdisk -l```: List the system's partition scheme.
   - ```fdisk -l | grep "Disk /"```: See all the available disks.
   - ```fdisk /dev/sdc```: Enter the interactive mode to manipulate the partition table of the disk ```/dev/sdc``` 
 - ```mkfs.ext4 /dev/sdc1```: Formats the partition ```/dev/sdc1``` in ext4 file system format.
-- ```df```: Display disk usage:
-  - ```df -hT```. ```-h``` for “human readable”, ```-T``` to displays the type of the filesystem.
-  - ```df -hT -t ext4```. ```-t ext4``` to display only filesystems of type ext4.
-  - ```df -hT -x squashfs -x overlay -x tmpfs -x devtmpfs``` to hide given filesystem types from the output.
-- ```du```: Estimate file space usage. 
-  - ```$ du -h -d1 /data```
+
+- Interesting threads about ZFS:
+  - ["what is the point of ZFS with only 1 disk"](https://www.truenas.com/community/threads/single-drive-zfs.35515/).
+  - ["benefit/risk of ZFS with only 1 disk"](https://unix.stackexchange.com/questions/672151/create-zfs-partition-on-existing-drive) (also includes the commands for a little ZFS experimentation).
 ## curl
 - ```curl -O https://testdomain.com/testfile.tar.gz```: Save file.
 - ```curl -o mydownload.tar.gz https://testdomain.com/testfile.tar.gz``` (**little 'o'**): Save file as ```mydownload.tar.gz```.
@@ -230,7 +264,7 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
 - Network:
   - Speed test: [https://www.speedtest.net]()
   - Scanners:
-    - [findssh](https://github.com/scivision/findssh#readme): Command line tool to scan entire IPv4 subnet in less than 1 second. Without NMAP.
+    - [findssh](https://github.com/scivision/findssh#readme): Command line tool to scan entire IPv4 subnet in less than 1 second. Without NMAP. It is extremely quick but sometimes it misses some hosts so run it a couple of time to be sure it scanned them all.
 
     Example:
     ```bash
@@ -291,13 +325,18 @@ Tmux shortcuts
   - ```hostnamectl hostname```: Query hostname.
   - ```hostnamectl hostname <name>```: Change hostname.
 - [systemctl](https://www.howtogeek.com/839285/how-to-list-linux-services-with-systemctl/#:~:text=To%20see%20all%20running%20services,exited%2C%20failed%2C%20or%20inactive.)
+  
   - ```systemctl status```
   - ```systemctl status bitcoind```
   - ```systemctl start bitcoind```
   - ```systemctl restart bitcoind```
   - ```systemctl stop bitcoind```
+  - ```systemctl enable --now bitcoind```
+  - ```systemctl disable bitcoind```
   
+  - ```systemctl list-unit-files --type service -all```: List all the services on your system and their status.
   - Show all the running processes: ```systemctl --type=service --state=running``` (where ```--state``` can be any of ```running```, ```dead```, ```exited```, ```failed``` or ```inactive```).
+  - ```systemctl daemon-reload```: Reload systemd files. If you change a service file in /etc/systemd/system/, daemon-reload will reload these files.
   - ```pstree```: Tool to display a tree of processes.
   - Show the service definition: ```systemctl cat bitcoind```  
   - Show the service parameters: ```systemctl show bitcoind```
@@ -357,7 +396,13 @@ Tmux shortcuts
   - [stress-ng](https://wiki.ubuntu.com/Kernel/Reference/stress-ng): Stress test a computer system in various selectable way.
   - [Byte UNIX Bench](https://github.com/kdlucas/byte-unixbench/tree/master): Since 1983, provide a basic indicator of the performance of a Unix-like system; hence, multiple tests are used to test various aspects of the system's performance.
   - [geekbench](https://www.geekbench.com/): Simple tool to quickly benchmark a system's performance ([How to run on Linux](http://support.primatelabs.com/kb/geekbench/installing-geekbench-5-on-linux)) 
-  - [iperf3](https://github.com/esnet/iperf): Simple tool to quickly benchmark the maximum achievable bandwidth on IP networks.
+  - [iperf3](https://github.com/esnet/iperf): Simple tool to quickly benchmark the maximum 
+  achievable bandwidth on IP networks.
+    - Run iperf3 as a server: ```iperf3 -s```
+    - Run an iperf3 server on a specific port: ```iperf3 -s -p port```
+    - Start bandwidth test: ```iperf3 -c server```
+    - Run iperf3 in multiple parallel streams: ```iperf3 -c server -P streams```
+    - Reverse direction of the test. Server sends data to the client: ```iperf3 -c server -R```
   - ```lscpu```: Part of ```util-linux```, command to display information about the CPU architecture.
   - ```lsmem```: Part of ```util-linux```, command to list the ranges of available memory with their online status.
   - ```memtester```: Effective userspace tester for stress-testing the memory subsystem. It is very effective at finding intermittent and non-deterministic faults.
@@ -417,7 +462,7 @@ Tmux shortcuts
   - [Cashu](https://cashu.space/): Cashu is a free and open-source Chaumian ecash system built for Bitcoin. Cashu offers near-perfect privacy for users of custodial Bitcoin applications. Nobody needs to knows who you are, how much funds you have, and whom you transact with.
 
 - [XSATS.net](https://xsats.net/): bitcoin/sats to and from world currencies, spot price or for any given date.
-- [md5calc](https://md5calc.com/hash/sha256): Calculate the Hash of any string. 
+- [md5calc](https://md5calc.com/hash/sha256): Website to calculate the Hash of any string. 
 
 ## Common Nix commands
 - Nice Nix cheat sheet: 
@@ -509,7 +554,7 @@ Tmux shortcuts
 ## Common bitcoin-related commands
 - [bitcoin-cli](https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list)
 - Pipe the output of ```bitcoin-cli``` through ```jq```, for instance:
-  - ``` $ bitcoin-cli getblockchaininfo | jq '.'``` to get pretty JSON output formatting.
+  - ```$ bitcoin-cli getblockchaininfo | jq '.'``` to get pretty JSON output formatting.
   - ```$ bitcoin-cli getblockchaininfo | jq '.verificationprogress'```
 - ```bitcoin-cli -addrinfo```
 - ```bitcoin-cli -getinfo```
@@ -518,17 +563,21 @@ Tmux shortcuts
   - ```bitcoin-cli help```
   - ```bitcoin-cli help getblockchaininfo```
   - ```bitcoin-cli getblockchaininfo```
+  - ```bitcoin-cli getpeerinfo```
   - ```bitcoin-cli getnetworkinfo```
   - ```bitcoin-cli getmininginfo```
-  - ```bitcoin-cli getpeerinfo```
-  - ```bitcoin-cli start```
-  - ```bitcoin-cli stop```
+  
 - Block Info
   - ```bitcoin-cli getblockcount```
   - ```bitcoin-cli getbestblockhash```
   - ```bitcoin-cli getblock hash```
   - ```bitcoin-cli getblockhash index```
 - Transaction Info
+  - ```bitcoin-cli getwalletinfo```
+  - ```bitcoin-cli createwallet```
+  - ```bitcoin-cli listreceivedbyaddress 0 true```: List of accounts on the system.
+  - ```bitcoin-cli setaccount 1GBykdD628RbYPr3MUhANiWchoCcE52eW2 myfirstaccount```: To associate an existing address (here : 1GBykdD628RbYPr3MUhANiWchoCcE52eW2) to an account name.
+  - ```bitcoin-cli sendfrom myfirstaccount 1AYJyqQHCixxxxxxffevxxxxQosCWqn1bT 0.15```: Send bitcoins (here : 0.15) to an address (here : 1AYJyqQHCixxxxxxffevxxxxQosCWqn1bT) 
   - ```bitcoin-cli getrawmempool```
   - ```bitcoin-cli getrawtransaction txid```
   - ```bitcoin-cli decoderawtransaction rawtx```
@@ -582,6 +631,7 @@ Tmux shortcuts
   - [Just](https://just.systems/man/en/): Just is a handy little tool to save and run project-specific commands.
     ![](docs/img/various/just_tool.png)
   - [DuckDNS](https://www.duckdns.org/): Allows to get free dynamic DNS (forces 'KYC' by login using Github, Twitter, reddit or Google account). Good for testing.
+  - How to compile Bitcoin Core and run the unit and functonal tests: https://jonatack.github.io/articles/how-to-compile-bitcoin-core-and-run-the-tests
 ## Books
 - [Introduction to the Mac command line](https://github.com/ChristopherA/intro-mac-command-line) (on GitHub).
 - [Learn Bitcoin from the command line](https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line#readme) (on GitHub)

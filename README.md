@@ -607,6 +607,10 @@ Learn how to use ```tmux``` and ```tmuxinator``` in the [baby rabbit holes](/bab
 ---
 ### 3.1. Baby steps
 
+Your node must be running 24/7. It consumes very little electricity and the goal if to have a mesh of nodes that are super resilient and available. Again: Keep your node running all the time. If you ever have to move it to another location run the appropriate command ```# shutdown -h``` and let the system halt and power off. 
+
+This will also avoid potential physical damage, data corruption and in the worst but unlikely case funds being locked as a consequence.
+
 Explore the running services using the following simple commands on your MY₿ONK console:
   - General
     - ```nodeinfo```: Helper script (nix-bitcoin module) that prints info about the node's services.
@@ -738,22 +742,24 @@ The deployment mechanism we use to push MYBONK stack from the orchestrator to th
   - Copy blockchain files from your external disk onto your MY₿ONK console (by default ```services.bitcoind.dataDir = "/data/bitcoind"```):
 
     ````bash
-    # rsync -rhvPog --append-verify /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind
+    # rsync -avhW --progress --exclude --exclude '*/*.lock' /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind
     ````
+
+    Note: 
 
     The transfer can be interrupted anytime rsync will automatically resume the files transfer where it left it.
 
     The following does the same thing but also gives a visual indication of the copy progress as well as completion time estimate ('ETA'):
     ````bash
-    # rsync -vrltD --stats --human-readable /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind | pv -lep -s $(find /unmountme/bitcoind/{chainstate,blocks,indexes} -type f | wc -l)
+    # rsync -avhW --stats --exclude '*/*.lock' --human-readable /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind | pv -lep -s $(find /unmountme/bitcoind/{chainstate,blocks,indexes} -type f | wc -l)
     ````
 
-  - Once ```rsync``` will have finished copying don't forget to restore the correct ownership of the imported files:
+  - Once ```rsync``` will have finished copying you will have to restore the correct ownership of the imported files:
     ````bash
     # chown -R bitcoin:bitcoin /data/bitcoind/bitcoin/
     ````
 
-  - Unmount the external drive and delete the temporary directory you created for it:
+  - Unmount the external drive and delete the temporary directory you created to mount it:
     ````bash
     # umount /unmountme
     # rmdir /unmountme
@@ -778,12 +784,12 @@ The deployment mechanism we use to push MYBONK stack from the orchestrator to th
   - Copy the blockchain data, by default ```services.bitcoind.dataDir = "/data/bitcoind"``` on MY₿ONK consoles:
 
     ````bash
-    # rsync -vrltD --stats --human-readable root@othermybonk.local:/data/bitcoind/{blocks,chainstate,indexes} /data/bitcoind
+    # rsync -avhW --stats --human-readable root@othermybonk.local:/data/bitcoind/{blocks,chainstate,indexes} /data/bitcoind
     ````
 
   - You might have heard about people ending up with "corrupted" or "incomplete" data and bitcoind re-downloading or re-indexing things depite of having copied the blockchain as explained here. This is most often then not due to the fact the blockchain data we copy from the remote machine is probably live, possibly leaving out some files at the end of the copy. To avoid this stop ```bitcoind``` on the remote machine and run ```rsync``` one last time to ensure clean data has been copied correctly and entirely:
     ````bash
-    # rsync -rhvPog --append-verify /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind
+    # rsync -avhW --append-verify /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind
     ````
 
   - Restore the correct ownership of the imported files:
