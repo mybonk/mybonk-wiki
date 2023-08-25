@@ -597,9 +597,21 @@ Unless otherwise stated all the operations in this sections are executed from MY
 
 Learn how to use ```tmux``` and ```tmuxinator``` in the [baby rabbit holes](/baby-rabbit-holes.md), it will take a little effort to get used to it but will save you *hours* every week and streamline your operations. We also made a [tmuxinator_console.yml](https://github.com/mybonk/mybonk-core/blob/master/.tmuxinator_console.yml) template available for you to reuse.
 
+In the following example we pass the extra 'node' parameter (```node="mybonk-jay"```), it is the network name or IP address of the node to connect to (whatever you configured in your ```hosts``` file, your ssh or Tailscale configuration). The parameter ```-c``` allows to set a name for the session.
+
   ```
   $ cd mybonk-core
-  $ tmuxinator start -p ./.tmuxinator_console.yml console node="root@mybonk-jay.dab-dominant.ts.net"
+  $ tmuxinator start -p ../.tmuxinator.yml -c mybonk-jay node="mybonk-jay"
+  ```
+
+  You can now kill the session you just created by using the following command:
+  ```
+  $ tmux kill-session -t mybonk-jay
+  ```
+
+  You can kill all the running sessions using the following command:
+  ```
+  $ tmux kill-server
   ```
 
 ![](docs/img/various/tmuxinator_screeshot.gif)
@@ -817,11 +829,11 @@ The deployment mechanism we use to push MYBONK stack from the orchestrator to th
 
                 ˜˜˜˜ONGOING˜˜˜˜ 
 
-### 3.3.1 clightning
+### 3.3.2 clightning
 
 
                 ˜˜˜˜ONGOING˜˜˜˜ 
-
+### 3.3.2 RTL (Ride the Lightning)
 ---
 ### 3.4. Join a Federation
 
