@@ -254,7 +254,7 @@ Make sure you use ssh auto login (auto login *using public and private keys pair
   # Enable the OpenSSH daemon.
   services.openssh = {
     enable = true;
-    permitRootLogin = "yes";
+    settings.PermitRootLogin = "yes";
   };
   ````
 
@@ -321,7 +321,7 @@ Add the following lines making sure you replace the parameter ```openssh.authori
   ````bash
   services.openssh = {
     enable = true;
-    #permitRootLogin = "yes";
+    #settings.PermitRootLogin = "yes";
   };
 
   users.users.root = {
