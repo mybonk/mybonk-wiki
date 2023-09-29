@@ -18,8 +18,7 @@ Join the conversation on the <a href="https://t.me/mybonk_build" target="_blank"
 
 ---
 # Table of Contents 
-Tip: Click the 'TOC' button (![Github TOC button](docs/img/github-toc-icon.svg)) in the
-top right corner to display the table of content in a separate pane.
+Tip: Click the 'TOC' button (![Github TOC button](docs/img/github-toc-icon.svg)) in one of the top corners to display the table of content in a separate pane.
 - [0. Before you start](#before-you-start)
   - [Overview](#overview)
   - [Terminology](#terminology)
@@ -57,49 +56,48 @@ top right corner to display the table of content in a separate pane.
 
 Read this document from the beginning to the end before getting your hands on the keyboard. Also watch this presentation by Valentin Gagarin about [Flattening the Learning Curve for Nix/NixOS](https://www.youtube.com/watch?v=WFRQvkfPoDI&list=WL&index=87) as Nix/NixOS is the cornerstone of MY₿ONK.
 
-You might have a feeling of "déjà vu" as it is essentially a scrambled from various sources including [nixOS](https://nixos.org) and [nixOS manual](https://nixos.org/manual/nixos/stable/index.html), [nixOS Wiki](https://nixos.wiki/wiki/Main_Page), [nix-bitcoin](https://nixbitcoin.org/), [Virtual Box](https://www.virtualbox.org/), [Raspibolt](https://raspibolt.org/) and [Raspiblitz](https://github.com/rootzoll/raspiblitz#readme) (although the approach of MY₿ONK is radically different). 
+You might have a feeling of "déjà vu" as it is essentially a scrambled from various sources from [nixOS manual](https://nixos.org/manual/nixos/stable/index.html), [nixOS Wiki](https://nixos.wiki/wiki/Main_Page), [nix-bitcoin](https://nixbitcoin.org/), [Virtual Box](https://www.virtualbox.org/), [Raspibolt](https://raspibolt.org/), [Raspiblitz](https://github.com/rootzoll/raspiblitz#readme) (although the approach of MY₿ONK is radically different). 
 
-If you have any experience with the command line or already run any other full node you have a significant advantage, you could complete this setup in 2 hours maybe, otherwise allocate 1 day.
+If you have any experience with the command line or already run any other full node you have a significant advantage, you could complete this setup in 2 hours maybe, otherwise allocate 1 day (excluding the time required for blockchain download and indexations which is what takes most time, possibly days unless you have a recent local copy of these e.g. on the local network or USB drive).
   
-We [collaboratively] take great pride and care maintaining this document so it remains up to date and concise, often it refers to external links. Explore these external links when instructed to, this will make the journey smoother.
-  
-It is assumed that you know a little bit of everything but not enough so we show you the way step by step based on the typical MY₿ONK setup.
+It is assumed that you know a little bit of everything but not enough so we show you the way step by step based on the MY₿ONK setup (one MY₿ONK orchestrator and one MY₿ONK console).
+
+We [collaboratively] take great pride and care maintaining this document so it remains up to date and concise, often it refers to external links. Explore these external links, it will make your journey smoother.
 
 You too can contribute to improving this document on GitHub.
   
 Enjoy the ride, no stress, check out our  [baby rabbit holes](/baby-rabbit-holes.md)  :hole: :rabbit2: and the [FAQ](/faq.md) 👷 
 
-
-### Overview
-This example small ecosystem consists of only two elements that we are going to build together:
-
- 
-- **One MY₿ONK orchestrator:**
-  This machine is used to orchestrate your fleet of MY₿ONK consoles, it is essentially a Linux with a few additional software installed including the Nix package manager.
-- **One MY₿ONK console:**
-  This machine runs the [MY₿ONK core](https://github.com/mybonk/mybonk-core) stack on NixOS. It is setup once and its configuration can be updated remotely using MY₿ONK orchestrator.
-  
 ### Terminology
 - '``#``' stands for '````$ sudo````' (or '```$ doas```' which is a similar tool).
-- **MY₿ONK core**: Or simply 'MY₿ONK' is a tailor-made full-node [software stack](https://github.com/mybonk/mybonk-core) for MY₿ONK console (although it can run on pretty much any hardware if you are ready to tune and hack a little bit). MY₿ONK core is based on nix-bitcoin itself based on nixOS.
-- **MY₿ONK console**: A full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-energy, supply chain resilience and generic parts in mind.
-- **MY₿ONK orchestrator**:
-  Used to orchestrate your [fleet of] MY₿ONK console[s], it is currently a separate Linux machine with a few additional software installed on including the Nix package manager. The MY₿ONK orchestrator will soon be integrated within the MY₿ONK console but for now it is a separate machine ([ref #30](https://github.com/mybonk/mybonk-core/issues/30#issue-1609334323)).
+- **MY₿ONK console:**
+  Full-node, bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-energy, supply chain resilience and generic parts in mind. This machine runs the [MY₿ONK core](https://github.com/mybonk/mybonk-core) stack over NixOS. It is setup once and its configuration can be updated remotely, on the fly, using MY₿ONK orchestrator.
+- **MY₿ONK orchestrator:**
+  Machine is used to orchestrate your [fleet of] MY₿ONK console(s), it is essentially a Linux with a few additional software installed including the Nix package manager.
+- **MY₿ONK core**: Or simply 'MY₿ONK' is a tailor-made full-node [software stack](https://github.com/mybonk/mybonk-core) for MY₿ONK console (although it can run on pretty much any hardware if you are ready to hack some). MY₿ONK core is based on a nix-bitcoin overlay running on nixOS.
 - **MY₿ONK user**: The end user, you, the family man, the boucher, the baker, the hair dresser, the mechanics... Just want the thing to work, "plug and forget". Uses very simple user interface and never uses the command line. On MAINNET.
-- **MY₿ONK operator**: A "MY₿ONK user" that got really serious about it and decided to learn more, move to the next level. Has some "skin in the game" on MAINNET and is happy to experiment on SIGNET. Many operators take part in nodes Federations or create their own Federation.
+- **MY₿ONK operator**: A "MY₿ONK user" that got really serious about it and decided to move to the next level. Has some "skin in the game" on MAINNET and is happy to experiment on SIGNET. Many operators take part in nodes Federations or create their own Federation.
 - **MY₿ONK hacker**: A "MY₿ONK operator" so deep in the rabbit hole, bitcoin, privacy and sovereignty that he became a MY₿ONK hacker. That's an advanced user, student, Maker, researcher, security expert .etc... Just want to tear things apart. Love to use command line. On SIGNET.
+
+### Overview
+This small ecosystem example consists of only two elements that we are going to build together:
+- One MY₿ONK console
+- One MY₿ONK orchestrator
+
+
 
 ### Advice
 
 - **Nix vs. NixOS**: It is *very* important to understand the concept that nix and nixOS are different things: 
-  - [Nix](https://nixos.org/manual/nix/stable/) is a purely functional package management and build system. Nix is also the expression language designed specifically for the Nix, it is a pure, lazy, functional language. 
+  - [Nix](https://nixos.org/manual/nix/stable/) is a functional *package management and build system*. 
+  - Nix is also the *expression language* designed specifically for the Nix. It is a pure, lazy and functional language. 
     - Purity means that operations in the language don't have side-effects (for instance, there is no variable assignment).
     - Laziness means that arguments to functions are evaluated only when they are needed.
     - Functional means that functions are “normal” values that can be passed around and manipulated in interesting ways. The language is *not* a full-featured, general purpose language. Its main job is to describe packages, compositions of packages, and the variability within packages.
-
-  - NixOS is a Linux distribution based on Nix. In NixOS, the entire operating system — the kernel, applications, system packages, configuration files, and so on — is all built by the Nix package manager. [Here is an overview of the NixOS Linux distribution on NixOS Wiki](https://nixos.wiki/wiki/Overview_of_the_NixOS_Linux_distribution). Furthermore:
-
-    - See how Nix and NixOS work and relate: [https://nixos.org/guides/how-nix-works.html](https://nixos.org/guides/how-nix-works.html)
+  - And there is also NixOS, which is a *Linux distribution based on Nix*. 
+    - In NixOS, the entire operating system — the kernel, applications, system packages, configuration files, and so on — is all built by the Nix package manager. 
+    - [Here](https://nixos.wiki/wiki/Overview_of_the_NixOS_Linux_distribution)  is an overview of the NixOS Linux distribution.
+    - See how Nix and NixOS relate: [https://nixos.org/guides/how-nix-works.html](https://nixos.org/guides/how-nix-works.html)
     - A general introduction to the Nix and NixOS ecosystem: [https://nix.dev](https://nix.dev/)
     - Search functions within the nix ecosystem based on type, name, description, example, category .etc..: [https://noogle.dev](https://noogle.dev/)
 
@@ -107,7 +105,7 @@ This example small ecosystem consists of only two elements that we are going to 
 
 - **Be patient**: Learning takes time, getting a node up and running "by hand" takes time (system build, blocks download, various indexing). Also bear in mind that some services on the stack depend on others and won't operate properly before the service(s) they depend on are fully synchronized (e.g. Lightning Network vs. Bitcoin, Sparrow wallet vs Fulcrum).
 
-- **Don't trust, verify**: Anything you download on the internet is at risk of being malicious software. Know your sources. Always run the GPG (signature) or SHA-256 (hash) verification (typically next to the download link of an image or package there is a string of hexadecimal characters).
+- **Don't trust, verify**: Anything you download on the internet is at risk of being malicious software. Know your sources. Always run the GPG (signature) / SHA-256 (hash) verification (typically next to the download link of an image or package there is a string of hexadecimal characters).
 
 ### ssh auto login and tmux
 

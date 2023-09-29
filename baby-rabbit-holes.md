@@ -127,8 +127,9 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
         - .etc... .
 - Shell commands you must know *really well*:
   - ```pwd```, ```ls```, ```cd```, ```type```, ```mkdir```, ```mv```, ```rm```, ```ln```, ```which```, ```whereis```, ```cat```, ```head```, ```tail```, ```more```, ```tee``` …
+  - ```tree```: Outputs a depth-indented listing of files making it easy to visualize the organization of files and directories within a given path. With no arguments the tree lists the files in the current directory. When directory arguments are given, the tree lists all the files or directories found in the given directories each in turn. 
   - ```uname -a```, ```hostname```, ```whoami```, ```passwd```, ```chown```, ```chgrp```, ```chmod```, …
-  - ```ip a```
+  - ```ip a``` / ```hostname -I```: Tells you the IP address of your system.
   - ```su```/```sudo```, ```doas```: Used to assume the identity of another user on the system (they are both similar tools, ```doas``` has been ported from the OpenBSD project and could be assumed "safer" than ```sudo``` as it is less error-prone e.g. when setting up somewhat complicated patterns in ```/etc/sudoers```).
   - ```history``` 
     - ```echo "$HISTFILE"```
@@ -174,6 +175,7 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
     - ```find /dir/to/search -name "pattern" -print```
     - ```find /dir/to/search -name "file-to-search" -print```
     - ```find /dir/to/search -name "file-to-search" -print [-action]```
+
 ## Text processing
 
 - ```vi``` (cheat-sheet [HERE](https://www.thegeekdiary.com/basic-vi-commands-cheat-sheet/))
@@ -374,6 +376,13 @@ Tmux shortcuts
 - update
 ## http vs. https
 ## OS-layer firewall
+The following commands are replaces by configuration parameters in the NixOS configuration.
+- ```sudo netstat -lptu```: See what port is open and what process is listening.
+- ```sudo ufw allow 9999```: Open port 9999.
+- ```sudo ufw enable```: In case ```ufw``` is not running (check with sudo ```ufw``` status).
+
+
+
 ## partitions filesystem
 - ```findmnt```: 
 - /
@@ -479,7 +488,7 @@ Tmux shortcuts
   - Using flakes: 
     - [https://determinate.systems/posts/nix-run]()
   
-- ```nix --version```: Get running nix version (important as the MY₿ONK console might be running a different version from the one on MY₿ONK orchestrator).
+- ```nix --version```: Get running nix version.
 - ```nix-shell```: Start an interactive shell based on a Nix expression. This is distinct from ```nix shell```.
 - ```nix-build```: Build a Nix expression. This is distinct from ```nix build```.
 - ```nix-channel```
@@ -594,7 +603,10 @@ Tmux shortcuts
   ```
 
 ## Podcasts
-- nixbitcoin-dev with Stefan Livera: A security focused bitcoin node https://stephanlivera.com/episode/195/
+- [Citadel Dispatch #37, Sep 2021](https://fountain.fm/episode/4VMvLwI6VXY5uG4xJhfu): Building software from source code, reproducible builds, reducing trust, coin selection, coin control, coinjoin
+- [Citadel Dispatch #42, Nov 2021](https://fountain.fm/episode/sPtROvlhO5v6niLY8fvy): Security focused bitcoin nodes with @nixbitcoinorg, @n1ckler, and @seardsalmon
+- [nixbitcoin-dev with Stefan Livera](https://stephanlivera.com/episode/195/): A security focused bitcoin node.
+
 
 ## Connext projects / references
 - [Seed-signer](https://github.com/SeedSigner/seedsigner/blob/dev/README.md): Bitcoin only, open source, offline, airgapped Bitcoin signing device. Can also DIY.
@@ -625,6 +637,8 @@ Tmux shortcuts
 
 ## For developers
   - Great Nix language tour: https://nixcloud.io/tour
+  - [Poetry2nix](https://www.tweag.io/blog/2020-08-12-poetry2nix/): Developping Python with Poetry & Poetry2Nix: Reproducible, flexible, Python environments.
+  - [The difference between RPC and REST](https://nordicapis.com/whats-the-difference-between-rpc-and-rest/)
   - [Polar](https://lightningpolar.com/): One-click Bitcoin Lightning Networks for local app development & testing.
   - [Rust](https://www.rust-lang.org/): Multi-paradigm, general-purpose programming language that emphasizes performance, type safety, and concurrency. It enforces memory safety—ensuring that all references point to valid memory—without requiring the use of a garbage collector or reference counting present in other memory-safe languages.
   - [Cargo](https://doc.rust-lang.org/cargo/): Package manager for Rust.

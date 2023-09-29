@@ -1,8 +1,10 @@
 # How to burn the latest factory image on Sipeed LicheePi4A 
 
-- Source (in progress and in Chinese, pass it through Google translate for now): https://wiki.sipeed.com/hardware/en/lichee/th1520/lpi4a/4_burn_image.html
+- Source: https://wiki.sipeed.com/hardware/en/lichee/th1520/lpi4a/4_burn_image.html
 
-- Board boot process is ```brom -> uboot spl -> uboot -> opensbi -> kernel```
+- I use a Mac to build and burn, these steps are very similar if you use another system.
+
+- Board boot process is ```brom -> U-Boot SPL -> U-Boot -> openSBI -> kernel```
 
 - We will use the tool ```fastboot``` which is part of the "android tools" to burn the image (the official documentation refers to some ```burn_tool.zip``` not too sure what it is specifically but ```fastboot``` does the job):
     - Install android tools:
@@ -44,44 +46,28 @@
         - light-lpi4a-ddr2G.dtb #history dtb
     - The **root** filesystem ```rootfs.ext4```, in this case a Debian system.
 
-**in the following commands make sure you change the paths to whatever latest version available**:
+**in the following commands make sure you change the paths to whatever latest version available (in this example it is 20230721)**:
 
     ``` 
-    $ wget --no-parent -r https://mirror.iscas.ac.cn/revyos/extra/images/lpi4a/20230511/
+    $ wget --no-parent -r https://mirror.iscas.ac.cn/revyos/extra/images/lpi4a/20230721/
     ```
 
 - Navigate to the location:
     ````
-    $ cd mirror.iscas.ac.cn/revyos/extra/images/lpi4a/20230511/
+    $ cd mirror.iscas.ac.cn/revyos/extra/images/lpi4a/20230721/
     ````
 
-- Check the hash of the downloaded files (**make sure you change the filename to whatever you downloaded**), the calculated hash must match the one in ```md5sum.txt```
-    ```
-    $ md5sum ./boot.ext4
-    e30a5ee03bf4cf0d87794908eca41767  boot.ext4
-
-    $ md5sum ./rootfs.ext4
-    776a960a4926f667adb2abfa2049872a  rootfs.ext4
-
-    $ cat ./md5sum.txt
-    e30a5ee03bf4cf0d87794908eca41767  boot.ext4
-    776a960a4926f667adb2abfa2049872a  rootfs.ext4
-    ```
-
 - Burn the board:
-    - Press and hold the "BOOT" button on the board while plugging the USB-C to power it. 
-    - Using a tool like ```lsusb``` (on MacOS you can use [this one](https://github.com/jlhonora/lsusb#readme)) the board show up something like this ```Bus 020 Device 005: ID 2345:7654 2345 USB download gadget```.
+    - Press and hold the "BOOT" button on the board while plugging the USB-C to power it from your laptop.
+    - If needed you can use a tool like ```lsusb``` to show what is going on the USB ports (on MacOS you can use [this one](https://github.com/jlhonora/lsusb#readme)), The board is represented by a line similar to this: 
     
-    - Check and create the partitions on the flash (**burning the system will be very slow if you don't**):
+        ```Bus 020 Device 005: ID 2345:7654 2345 USB download gadget```.
+    
+    - Create the partition on the flash (**the burning process will be very slow if you don't do this**):
         ````
         $ sudo fastboot flash ram ./u-boot-with-spl.bin
         $ sudo fastboot reboot
-        $ sleep 10
         ````
-        NOTE1: SPL (Secondary Program Loader) is a platform specific stage of U-Boot and should be the first in the boot chain. It can also be built from source.
-
-        NOTE2: If ```u-boot-with-spl.bin``` is not present in the repository copy it from a previous version (parent directory).
-
         Which will return something like this:
         ````
         Sending 'ram' (935 KB)                             OKAY [  0.247s]
