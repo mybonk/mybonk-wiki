@@ -261,8 +261,14 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
   - rsync uses a delta transfer algorithm and a few optimizations to make the operation a lot faster compared to ssh. The files that have been copied already won't be transferred again (unless they changed since). Can be run ad-hoc on the command line or configured to run as a deamon on the systems to keep files in sync.
   - rsync allows to restart failed transfers - you just reissue the same command and it will pick up where it left off, whereas scp will start again from scratch.
   - rsync needs to be used over SSH to be secure.
-
-
+  - Example 1: From local to local (instead of using ```scp```):
+    ````bash
+    # rsync -avhW --progress --exclude --exclude '*/*.lock' /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind
+    ````
+  - Example 2: Same thing but also gives a visual indication of the copy progress as well as completion time estimate ('ETA'):
+    ````bash
+    # rsync -avhW --stats --exclude '*/*.lock' --human-readable /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind | pv -lep -s $(find /unmountme/bitcoind/{chainstate,blocks,indexes} -type f | wc -l)
+    ````
 - Network:
   - Speed test: [https://www.speedtest.net]()
   - Scanners:
