@@ -129,6 +129,7 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
   - ```pwd```, ```ls```, ```cd```, ```type```, ```mkdir```, ```mv```, ```rm```, ```ln```, ```which```, ```whereis```, ```cat```, ```head```, ```tail```, ```more```, ```tee``` …
   - ```tree```: Outputs a depth-indented listing of files making it easy to visualize the organization of files and directories within a given path. With no arguments the tree lists the files in the current directory. When directory arguments are given, the tree lists all the files or directories found in the given directories each in turn. 
   - ```uname -a```, ```hostname```, ```whoami```, ```passwd```, ```chown```, ```chgrp```, ```chmod```, …
+  - ```uptime```:  Tell how long the system has been running.
   - ```ip a``` / ```hostname -I```: Tells you the IP address of your system.
   - ```su```/```sudo```, ```doas```: Used to assume the identity of another user on the system (they are both similar tools, ```doas``` has been ported from the OpenBSD project and could be assumed "safer" than ```sudo``` as it is less error-prone e.g. when setting up somewhat complicated patterns in ```/etc/sudoers```).
   - ```history``` 
@@ -211,7 +212,9 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
   - ```df -hT -t ext4```. ```-t ext4``` to display only filesystems of type ext4.
   - ```df -hT -x squashfs -x overlay -x tmpfs -x devtmpfs``` to hide given filesystem types from the output.
 - ```du```: Estimate file space usage. 
-  - ```$ du -h -d1 /data```
+  - ```$ du -h /data```. ```-h``` for “human readable”.
+  - ```$ du -s /data```. ```-s``` for “summary”.
+  - ```$ du -ah --time```. Shows the time of the last modification to any file in the directory or subdirectory. ``--time`` with with the ``-ah`` flags is very useful e.g. someone writes files somewhere by accident and you need to find where.
 
 - ```fdisk```: Dialog-driven program to see and manipulate disk partition table.
   - ```fdisk -l```: List the system's partition scheme.
@@ -382,7 +385,14 @@ Tmux shortcuts
 - update
 ## http vs. https
 ## OS-layer firewall
-The following commands are replaces by configuration parameters in the NixOS configuration.
+
+What is the difference between IPtables and UFW Linux firewalls? 
+
+UFW is built upon IPtables, IPtables a very flexible tool but it’s more complex as compared to UFW. Also IPtables requires a deeper understanding of TCP/IP, which might not be the case with every Linux user, so UFW is the solution. UFW allows the user to configure firewall rules easily using IPtables under the hood. Hence, for an average Linux user UFW is the best way to get started with setting up different firewall rules. 
+
+We discuss and use UFW in our scope. 
+
+In the NixOS the following commands are replaced by configuration parameters in the its configuration file.
 - ```sudo netstat -lptu```: See what port is open and what process is listening.
 - ```sudo ufw allow 9999```: Open port 9999.
 - ```sudo ufw enable```: In case ```ufw``` is not running (check with sudo ```ufw``` status).
@@ -390,13 +400,13 @@ The following commands are replaces by configuration parameters in the NixOS con
 
 
 ## partitions filesystem
-- ```findmnt```: 
-- /
-- /mnt
-- /var
-- /etc
-- /tmp
-- /lib
+- ```findmnt```: Lists all mounted filesytems or search for a filesystem. It is able to search in /etc/fstab, /etc/fstab.d, /etc/mtab or /proc/self/mountinfo. If device or mountpoint is not given, all filesystems are shown.
+  - `/`
+  - `/mnt`
+  - `/var`
+  - `/etc`
+  - `/tmp`
+  - `/lib`
 
 
 ## UEFI vs. Legacy Boot
@@ -422,6 +432,7 @@ The following commands are replaces by configuration parameters in the NixOS con
   - ```lsmem```: Part of ```util-linux```, command to list the ranges of available memory with their online status.
   - ```memtester```: Effective userspace tester for stress-testing the memory subsystem. It is very effective at finding intermittent and non-deterministic faults.
   - ```memusage```: Profile memory usage of a program.
+  - ```dmesg```: Shows Kernel Messages.
 - [glances](https://github.com/nicolargo/glances/blob/develop/README.rst) utility: System cross-platform monitoring tool. It allows real-time monitoring of various aspects of your system such as CPU, memory, disk, network usage etc. as well as running processes, logged in users, temperatures, voltages etc.
 - [htop](https://www.geeksforgeeks.org/htop-command-in-linux-with-examples/amp/): Similar to glances above.
 - [btop](https://github.com/aristocratos/btop): Similar tool to ```glances``` and ```htop``` above.
@@ -429,7 +440,7 @@ The following commands are replaces by configuration parameters in the NixOS con
 
   ![](docs/img/various/tmuxinator_screeshot.gif)
 
-  For your convenience, in the scope of [MY₿ONK](https://github.com/mybonk/mybonk-wiki/blob/main/docs/Procedure.md), you can reuse the tmuxinator template in the root of the Git repository ```.tmuxinator_console.yml```: 
+  For your convenience, in [MY₿ONK](https://github.com/mybonk/mybonk-wiki) Wiki there is a [tmuxinator template](https://github.com/mybonk/mybonk-core/blob/master/.tmuxinator.yml) you can reuse: 
 
   ```$ tmuxinator start -p .tmuxinator_console.yml console node="console_jay"```
 
@@ -538,7 +549,7 @@ The following commands are replaces by configuration parameters in the NixOS con
       Hello world
       ```
 
-  - load nixos configuration from a nix file
+  - load nixos configuration from a nix file (not Flake):
     ```
     $ nix repl --file '<nixpkgs/nixos>' -I nixos-config=./configuration.nix
     ```
@@ -652,6 +663,7 @@ The following commands are replaces by configuration parameters in the NixOS con
     ![](docs/img/various/just_tool.png)
   - [DuckDNS](https://www.duckdns.org/): Allows to get free dynamic DNS (forces 'KYC' by login using Github, Twitter, reddit or Google account). Good for testing.
   - How to compile Bitcoin Core and run the unit and functonal tests: https://jonatack.github.io/articles/how-to-compile-bitcoin-core-and-run-the-tests
+  - [asciinema](https://asciinema.org/): Record and share your terminal sessions, the simple way.
 ## Books
 - [Introduction to the Mac command line](https://github.com/ChristopherA/intro-mac-command-line) (on GitHub).
 - [Learn Bitcoin from the command line](https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line#readme) (on GitHub)

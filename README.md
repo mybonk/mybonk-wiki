@@ -11,10 +11,8 @@
 <p align="center">
 Anyone can take part on <a href="https://github.com/mybonk" target="_blank">MY₿ONK's GitHub</a>.
 <br/>
-Join the conversation on the <a href="https://t.me/mybonk_build" target="_blank">Telegram group</a>!
+Join the conversation on our <a href="https://t.me/mybonk_build" target="_blank">Telegram group</a>!
 </p>
-
-![](/docs/img/various/potatoe_node.png)
 
 ---
 # Table of Contents 
@@ -591,7 +589,7 @@ MY₿ONK stack is now running on your MY₿ONK console and you can monitor and c
 
 # 3. Operations
 
-Unless otherwise stated all the operations in this sections are executed from MY₿ONK orchestartor.
+Unless otherwise stated all the operations in this sections are executed from MY₿ONK orchestrator.
 
 Learn how to use ```tmux``` and ```tmuxinator``` in the [baby rabbit holes](/baby-rabbit-holes.md), it will take a little effort to get used to it but will save you *hours* every week and streamline your operations. We also made a [tmuxinator_console.yml](https://github.com/mybonk/mybonk-core/blob/master/.tmuxinator_console.yml) template available for you to reuse.
 
