@@ -102,12 +102,15 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
   - Linux kernel version:
     - ```hostnamectl```
 
-- Terminal vs. iTerm2 ([features](https://iterm2.com/features.html)).
+- Terminal / iTerm2 ([features](https://iterm2.com/features.html)).
   - iTerm2 hotkeys: 
-    - toggle maximize window: `Cmd` + `Alt` + `=`
+    - toggle maximize window: `Cmd` + `Alt` + `=`.
     - toggle full screen: `Cmd` + `Enter`.
-    - make font larger: `Cmd` + `+`
-    - make font smaller: `Cmd` + `-`
+    - make font larger: `Cmd` + `+`.
+    - make font smaller: `Cmd` + `-`.
+  - Clear the terminal window: ``clear``.
+  - Reset your terminal when it gets messed up by control sequences: ``reset``.
+
 - Shell: 
   - ```bash``` and its history (sh, csh, tsh, ksh ...).
   - ```zsh``` adds great new features over ```bash```. (Note that as of macOS Catalina, the default shell in macOS is Zsh and Bash is deprecated), most noticeably:
@@ -122,7 +125,7 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
       - ```$ export EDITOR=vi```
       - ```$ echo $EDITOR```
       - ```$ printenv```: Print all the environment variables.
-        - ```$SHELL``` The default shell being used on the system.
+        - ```$SHELL``` The default shell being used on the system (e.x. `zsh`, `bash` ...).
         - ```$PATH``` Instructs the shell which directories to search for executables, it allows to run commands without having to specify its full path.
         - .etc... .
 - Shell commands you must know *really well*:
@@ -204,8 +207,8 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
   - ```$ tar -xvf myfile.tar.gz```: Untar a file.
 
 ## File system / Block devices
-- ```lsblk```: List information about the system's available or the specified block devices.
-
+- ```lsblk```: List information about the system's available or the specified block devices (e.g. disks, USB sticks ...).
+- Test block device performances: ```hdparm -t --direct /dev/sda1``` (if not installed run nix-shell -p hdparm).
 - ```df```: Display disk usage:
   - ```df -hT```. ```-h``` for “human readable”, ```-T``` to displays the type of the filesystem.
   - ```df -hT .```. '```.```' for whatever partition the current directory is residing on.
@@ -353,9 +356,11 @@ Tmux shortcuts
   - Show the service parameters: ```systemctl show bitcoind```
 
 - [journalctl](https://www.digitalocean.com/community/tutorials/how-to-use-journalctl-to-view-and-manipulate-systemd-logs)
-  - All the journal entries since the most recent reboot: ```journalctl -b``` 
-  - Display the timestamps in UTC: ```journalctl --utc``` 
+  - Show only kernel messages: ```journalctl -k```
+  - Show messages from a specific boot (most recent by default or from specified BOOT_ID): ```journalctl -b``` 
+  - As previous but displays only the errors, if any: ```journalctl --no-pager -b -p err```
   - List previous boots: ```journalctl --list-boots```
+  - Display the timestamps in UTC: ```journalctl --utc``` 
   - ```journalctl --since "2015-01-10" --until "2015-01-11 03:00"```
   - ```journalctl --since yesterday```
   - ```journalctl --since 09:00 --until "1 hour ago"```
@@ -392,12 +397,11 @@ UFW is built upon IPtables, IPtables a very flexible tool but it’s more comple
 
 We discuss and use UFW in our scope. 
 
-In the NixOS the following commands are replaced by configuration parameters in the its configuration file.
-- ```sudo netstat -lptu```: See what port is open and what process is listening.
+In NixOS the following commands are replaced by configuration parameters in the configuration file (```networking.firewall.allowTCPPorts``` .etc...) so you would not have to run them manually.
 - ```sudo ufw allow 9999```: Open port 9999.
 - ```sudo ufw enable```: In case ```ufw``` is not running (check with sudo ```ufw``` status).
 
-
+- ```sudo netstat -lptu```: See what ports are open and what processes listen to them.
 
 ## partitions filesystem
 - ```findmnt```: Lists all mounted filesytems or search for a filesystem. It is able to search in /etc/fstab, /etc/fstab.d, /etc/mtab or /proc/self/mountinfo. If device or mountpoint is not given, all filesystems are shown.
@@ -412,8 +416,11 @@ In the NixOS the following commands are replaced by configuration parameters in 
 ## UEFI vs. Legacy Boot
 
 ## Other tools / resources
+- [SSHFS](https://phoenixnap.com/kb/sshfs): Tool to safely mount a remote folder from a server to a local machine. The client extends the SSH file transfer protocol, which helps locally mount a remote file system as a disk image securely.
+- [Gocryptfs](https://nuetzlich.net/gocryptfs/): Tool to perform *file*-based encryption. It’s fast, lightweight, well-documented. In contrast to *disk*-based encryption software, which operates on whole disks, gocryptfs works on individual files that can be backed up or synchronized efficiently using standard tools like sshfs or rsync. Read more about it [HERE](https://www.baeldung.com/linux/gocryptfs-encrypt-decrypt-dirs).
 - [QEMU](https://www.qemu.org/): A generic and open source machine emulator (full-system and user-mode emulation) and virtualizer. It is the emulator the NixOS community uses primarily.
 - [WSL](https://devblogs.microsoft.com/commandline/announcing-wsl-2/): Windows Subsystem for Linux to run ELF64 Linux binaries on Windows (if you have Windows system but would like to run Linux programs and commands this is what you need if you prefer not to use a full fledged virtual machine).
+- [multitail](https://vanheusden.com/multitail/): MultiTail lets you view multiple files like the original tail program. The difference is that it creates multiple windows on your console (ncurses). It can also monitor wildcards: if another file matching the wildcard has a more recent modification date, it will automatically switch to that file.
 - [websocketd](https://github.com/joewalnes/websocketd): Small command-line tool that will wrap an existing command-line interface program, and allow it to be accessed via a WebSocket. WebSocket-capable applications can now be built very easily. As long as you can write an executable program that reads STDIN and writes to STDOUT, you can build a WebSocket server. No networking libraries necessary.
 - [wscat](https://github.com/websockets/wscat/blob/master/README.md): WebSocket cat.
 - Benchmaring
@@ -433,6 +440,9 @@ In the NixOS the following commands are replaced by configuration parameters in 
   - ```memtester```: Effective userspace tester for stress-testing the memory subsystem. It is very effective at finding intermittent and non-deterministic faults.
   - ```memusage```: Profile memory usage of a program.
   - ```dmesg```: Shows Kernel Messages.
+  - ```dmesg -n 1```: Temporarily suppress all kernel logging to the console.
+- [inxi](https://smxi.org/docs/inxi.htm): A full featured CLI system information tool, example:
+  - ```$ inxi -Fxzb --usb```
 - [glances](https://github.com/nicolargo/glances/blob/develop/README.rst) utility: System cross-platform monitoring tool. It allows real-time monitoring of various aspects of your system such as CPU, memory, disk, network usage etc. as well as running processes, logged in users, temperatures, voltages etc.
 - [htop](https://www.geeksforgeeks.org/htop-command-in-linux-with-examples/amp/): Similar to glances above.
 - [btop](https://github.com/aristocratos/btop): Similar tool to ```glances``` and ```htop``` above.
@@ -456,7 +466,7 @@ In the NixOS the following commands are replaced by configuration parameters in 
   - ```tmuxinator start console -n "console_jay" extra_param="any_string"```: Start a session ```console```, assign it project name "```console_jay```" and extra arbitrary parameter "```extra_param```" to pass value "```any_string```".
   - ```tmuxinator stop [project]```: Stop a tmux session using a project's tmuxinator config.
   - ```tmux list-sessions``` / ```tmux ls```
-  - ```tmux kill-session -t name_of_session_to_kill```
+  - ```tmux kill-session -t name_of_session_to_kill``` : Kills a specific session.
   - ```tmux kill-session -a``` : Kills all the sessions apart from the active one.
   - ```tmux kill-session``` : Kills all the sessions.
   - ```tmux kill-server``` : Kills the tmux server.
@@ -464,7 +474,7 @@ In the NixOS the following commands are replaced by configuration parameters in 
 
 - VPN / tunnels
   - [Wireguard](https://www.wireguard.com/quickstart/) This VPN technology is built into the kernel; Client apps widely available (e.x. Tailscale), allows to connect to your local network remotely using a simple QR code to authenticate.
-  - [Tailscale](https://github.com/tailscale): [Quick tutorial](https://www.infoworld.com/article/3690616/tailscale-fast-and-easy-vpns-for-developers.html) Rapidly deploy a WireGuard-based VPN, a "Zero-config VPN": Automatically assigns each machine on your network a unique 100.x.y.z IP address, so that you can establish stable connections between them no matter where they are in the world, even when they switch networks, and even behind a firewall. Tailscal enodes uses DERP (Designated Encrypted Relay for Packets) to proxy *encrypted* WireGuard packets () through the Tailscale cloud servers when a direct path cannot be found or opened. It uses curve25519 keys as addresses.
+  - [Tailscale](https://github.com/tailscale): [Quick tutorial](https://www.infoworld.com/article/3690616/tailscale-fast-and-easy-vpns-for-developers.html) Rapidly deploy a WireGuard-based VPN, a "Zero-config VPN": Automatically assigns each machine on your network a unique 100.x.y.z IP address, so that you can establish stable connections between them no matter where they are in the world, even when they switch networks, and even behind a firewall. Tailscal nodes use DERP (Designated Encrypted Relay for Packets) to proxy *encrypted* WireGuard packets through the Tailscale cloud servers when a direct path cannot be found or opened. It uses curve25519 keys as addresses.
 
     - Commonly used:  
     ```
@@ -506,7 +516,7 @@ In the NixOS the following commands are replaced by configuration parameters in 
     - [https://determinate.systems/posts/nix-run]()
   
 - ```nix --version```: Get running nix version.
-- ```nix-shell```: Start an interactive shell based on a Nix expression. This is distinct from ```nix shell```.
+- ```nix-shell```: Start an interactive shell based on a Nix expression. This is distinct from ```nix shell``` ([great explanation of the difference between 'nix-shell' and 'nix shell'](https://discourse.nixos.org/t/nix-shell-nix-shell-and-nix-develop/25964/4)).
 - ```nix-build```: Build a Nix expression. This is distinct from ```nix build```.
 - ```nix-channel```
 - ```nix-collect-garbage```
@@ -626,6 +636,7 @@ In the NixOS the following commands are replaced by configuration parameters in 
 
 
 ## Connext projects / references
+- [nix-community/awesome-nix](https://github.com/nix-community/awesome-nix): "*A curated list of the best resources in the Nix community.*".
 - [Seed-signer](https://github.com/SeedSigner/seedsigner/blob/dev/README.md): Bitcoin only, open source, offline, airgapped Bitcoin signing device. Can also DIY.
 - [Blockstream Jade](https://github.com/Blockstream/Jade/blob/master/README.md): Bitcoin only, open source hardware wallet. Can also DIY.
 - Hardware Wallets [comparison and audit](https://cryptoguide.tips/hardware-wallet-comparisons/).
@@ -674,6 +685,8 @@ In the NixOS the following commands are replaced by configuration parameters in 
 
 - **Crypto Pals**
   - Page: [www.cryptopals.com](https://www.cryptopals.com/). Be scared of the emerged part of the iceberg in cryptography. Take this challenge!
+- **Déclaration des Droits de l'Homme et du Citoyen de 1789** [https://www.conseil-constitutionnel.fr](https://www.conseil-constitutionnel.fr/node/3850/pdf) 
+  - Document (site of Conseil Constitutionnel of France): [https://www.conseil-constitutionnel.fr/node/3850/pdf](https://www.conseil-constitutionnel.fr/node/3850/pdf)
 - **The Declaration of Independence of Cyberspace (John Perry Barlow)**
   - Document: [https://cryptoanarchy.wiki/people/john-perry-barlow](https://cryptoanarchy.wiki/people/john-perry-barlow)
   - Audio, red by the author: [https://www.youtube.com/watch?v=3WS9DhSIWR0](https://www.youtube.com/watch?v=3WS9DhSIWR0)

@@ -45,8 +45,8 @@ Tip: Click the 'TOC' button (![Github TOC button](docs/img/github-toc-icon.svg))
     - [3.1. Baby steps](#31-baby-steps)
     - [3.2. Copy the complete blockchain from another MY₿ONK console](#32-copy-the-complete-blockchain-from-another-my₿onk-console)
     - [3.3. Backup and restore](#33-backup-and-restore)
-    - [3.4. Join a Federation](#32-join-a-federation)
-
+    - [3.4. Node recovery](#34-node-recovery)
+    - [3.5. Join a Federation](#35-join-a-federation)
 
 # Before you start
 
@@ -831,7 +831,11 @@ The deployment mechanism we use to push MYBONK stack from the orchestrator to th
                 ˜˜˜˜ONGOING˜˜˜˜ 
 ### 3.3.2 RTL (Ride the Lightning)
 ---
-### 3.4. Join a Federation
+
+### 3.4. Node Recovery
+https://node-recovery.com/
+Particularily interesting on this page is the "Zombie Channel Recovery Matcher" section.
+### 3.5. Join a Federation
 
 
                 ˜˜˜˜ONGOING˜˜˜˜ 
