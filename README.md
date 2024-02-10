@@ -11,7 +11,7 @@
 <p align="center">
 Anyone can take part on <a href="https://github.com/mybonk" target="_blank">MY₿ONK's GitHub</a>.
 <br/>
-Join the conversation on our <a href="https://t.me/mybonk_build" target="_blank">Telegram group</a>!
+Join the conversation on our Telegram group</a>!
 </p>
 
 ---
@@ -171,7 +171,7 @@ Make sure you use ssh auto login (auto login *using public and private keys pair
 
   The following steps focus on MY₿ONK console hardware platform only because it would be impossible to maintain and support all the possible combinations for a specific application domain: Each hardware has its own specs, some have additional features (BIOS capabilities, onboard encryption, various kinds of storages and partition systems .etc...) or limitations (too little RAM or unreliable parts, weak power source, "moving parts", cooling issues, higher power consumption .etc...) making it unadvisable to install onto, or too difficult for an average user to setup and maintain; Even little things like bootable or not from USB stick can turn what should be a beautiful journey into hours of frustration trying to just make the thing boot until the next pitfall.
 
-  MY₿ONK console is a full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-energy, supply chain resilience and generic parts in mind. You too can get a MY₿ONK console, just join our [Telegram group](https://t.me/mybonk_build).
+  MY₿ONK console is a full-node bitcoin-only hardware platform designed with anonymity, security, low price, performance, durability, low-energy, supply chain resilience and generic parts in mind. You too can get a MY₿ONK console.
 
   ![](docs/img/various/console_v2_v3.png)
 
