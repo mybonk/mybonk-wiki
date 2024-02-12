@@ -513,7 +513,7 @@ Now that your MY₿ONK orchestrator is up and running we can use it to build MY�
   
 The main component of MY₿ONK stack is MY₿ONK-core. It is a fork of [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin), augmented of the MY₿ONK specificities, best practices and community (and hardware may you be running an [authentic MY₿ONK console](https://mybonk.co/)).
 
-There are dozens of options available to deploy a nixOS configuration to a remote machine: NixOps, krops, morph, NixUS, deploy-rs, Bento .etc.. , each with their pros and cons.
+There are dozens of options available to deploy a nixOS configuration to a remote machine: NixOps, krops, morph, NixUS, deploy-rs, colmena, Bento, NixOS-anywhere .etc.. , each with their pros and cons.
 
 [NixOps](https://github.com/NixOS/nixops/blob/master/README.md), the official DevOps tool of NixOS is nice but it has some flaws. 
 
