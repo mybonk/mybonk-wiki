@@ -133,7 +133,7 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
   - ```tree```: Outputs a depth-indented listing of files making it easy to visualize the organization of files and directories within a given path. With no arguments the tree lists the files in the current directory. When directory arguments are given, the tree lists all the files or directories found in the given directories each in turn. 
   - ```uname -a```, ```hostname```, ```whoami```, ```passwd```, ```chown```, ```chgrp```, ```chmod```, …
   - ```uptime```:  Tell how long the system has been running.
-  - ```ip a``` / ```hostname -I```: Tells you the IP address of your system.
+  - ```ip a```: Tells you the IP address of your system.
   - ```su```/```sudo```, ```doas```: Used to assume the identity of another user on the system (they are both similar tools, ```doas``` has been ported from the OpenBSD project and could be assumed "safer" than ```sudo``` as it is less error-prone e.g. when setting up somewhat complicated patterns in ```/etc/sudoers```).
   - ```history``` 
     - ```echo "$HISTFILE"```
@@ -636,7 +636,9 @@ In NixOS the following commands are replaced by configuration parameters in the 
 
 
 ## Connext projects / references
-- [nix-community/awesome-nix](https://github.com/nix-community/awesome-nix): "*A curated list of the best resources in the Nix community.*".
+- [nix-community/awesome-nix](https://github.com/nix-community/awesome-nix): "*A curated list of the best resources in the Nix community.*".If you are using an SSD it may be useful to enable TRIM support as well as set filesystem flags to improve the SSD performance:
+
+fileSystems."/".options = [ "noatime" "nodiratime" "discard" ];
 - [Seed-signer](https://github.com/SeedSigner/seedsigner/blob/dev/README.md): Bitcoin only, open source, offline, airgapped Bitcoin signing device. Can also DIY.
 - [Blockstream Jade](https://github.com/Blockstream/Jade/blob/master/README.md): Bitcoin only, open source hardware wallet. Can also DIY.
 - Hardware Wallets [comparison and audit](https://cryptoguide.tips/hardware-wallet-comparisons/).
