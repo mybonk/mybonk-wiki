@@ -637,7 +637,7 @@ In NixOS the following commands are replaced by parameters in the configuration 
 - [nixbitcoin-dev with Stefan Livera](https://stephanlivera.com/episode/195/): A security focused bitcoin node.
 
 
-## Connext projects / references
+## Other projects and references
 - [nix-community/awesome-nix](https://github.com/nix-community/awesome-nix): "*A curated list of the best resources in the Nix community.*".If you are using an SSD it may be useful to enable TRIM support as well as set filesystem flags to improve the SSD performance:
 
 fileSystems."/".options = [ "noatime" "nodiratime" "discard" ];
@@ -684,6 +684,22 @@ fileSystems."/".options = [ "noatime" "nodiratime" "discard" ];
 - [Learn Bitcoin from the command line](https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line#readme) (on GitHub)
 - [Mastering the Lightning Network](https://github.com/lnbook/lnbook#readme) (on GitHub).
 - [The NixOS and Flakes book](https://nixos-and-flakes.thiscute.world/introduction/): The NixOS and Flakes book.
+
+## Cool little command line stuff to explain things to kids
+
+Load any of the following from nixpkgs and make them available in an interactive shell (no trace will remain after you exit the shell): ```nix-shell -p asciiquarium cmatrix fortune cowsay sl figlet toilet oneko```
+ 
+- asciiquarium: Enjoy the mysteries of the sea from the safety of your own terminal.
+- cmatrix: Shows a scrolling 'Matrix' like screen on the terminal.
+- fortune: Simple program that displays random poignant, inspirational, silly or snide phrases from a database of quotations.
+- cowsay: Simple little ASCII art tool that prints a picture of a cow with a speech bubble message; you can enter the following command to "pipe" the output of the aforementioned `fortune` command to create your own wise cow. `fortune | cowsay`
+- sl: Animated ASCII steam locomotive with a few nice hidden options
+- figlet: ASCII banner creator
+- toilet: More ASCII fonts. For some reason, they named it toilet.
+- oneko: Adds an animated cat to your terminal who will follow your mouse (get it?)
+- bastet: Tetris on the command-line.
+- ninvaders: Space Invaders on a command-line.
+- moon-buggy: Jump, fire, on a command-line.
 ## 
 
 - **Crypto Pals**
