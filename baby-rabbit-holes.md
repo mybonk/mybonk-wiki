@@ -37,7 +37,7 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
   git remote show origin
   git status
   git show
-  git log master --graph
+  git log main --graph
   git branch
   git switch
   git add .
@@ -201,7 +201,7 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
   - ```-F``` option to treat the search string as a string literal ([regex](https://docs.rs/regex/1.5.4/regex/#syntax) syntax).
   - ```$ rg --type-list``` List of the available file types.
   - ```$ rg key -t json``` Restricts the search for the pattern key to json files only.
-
+- [more, less, most](https://www.baeldung.com/linux/more-less-most-commands): Terminal pagers. They are used to view files page by page, and/or line by line, each having their own prominent feature or advantage.
 ## File processing
 
   - ```$ tar -xvf myfile.tar.gz```: Untar a file.
@@ -256,7 +256,7 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
   - OpenSSH
   - How to setup and manage ssh keys: https://goteleport.com/blog/how-to-set-up-ssh-keys/
   - .ssh client configuration (```~/.ssh/config```)
-  - ssh-keygen
+  - ssh-keygen  e.x. ```$ ssh-keygen -t ecdsa -b 521```
   - passphrase
   - ssh-copy-id: Copy your public key on the server machine in ```~/.ssh/authorized_keys``` 
   - ssh-add
@@ -397,11 +397,10 @@ UFW is built upon IPtables, IPtables a very flexible tool but it’s more comple
 
 We discuss and use UFW in our scope. 
 
-In NixOS the following commands are replaced by configuration parameters in the configuration file (```networking.firewall.allowTCPPorts``` .etc...) so you would not have to run them manually.
-- ```sudo ufw allow 9999```: Open port 9999.
-- ```sudo ufw enable```: In case ```ufw``` is not running (check with sudo ```ufw``` status).
-
-- ```sudo netstat -lptu```: See what ports are open and what processes listen to them.
+In NixOS the following commands are replaced by parameters in the configuration file (```networking.firewall.allowTCPPorts``` .etc...) you should not run them manually.
+- ```$ sudo ufw allow 9999```: Open port 9999.
+- ```$ sudo ufw enable```: In case ```ufw``` is not running (check with sudo ```ufw``` status).
+- ```$ sudo netstat -lptu```: See what ports are open and what processes listen to them.
 
 ## partitions filesystem
 - ```findmnt```: Lists all mounted filesytems or search for a filesystem. It is able to search in /etc/fstab, /etc/fstab.d, /etc/mtab or /proc/self/mountinfo. If device or mountpoint is not given, all filesystems are shown.
@@ -424,6 +423,7 @@ In NixOS the following commands are replaced by configuration parameters in the 
 - [websocketd](https://github.com/joewalnes/websocketd): Small command-line tool that will wrap an existing command-line interface program, and allow it to be accessed via a WebSocket. WebSocket-capable applications can now be built very easily. As long as you can write an executable program that reads STDIN and writes to STDOUT, you can build a WebSocket server. No networking libraries necessary.
 - [wscat](https://github.com/websockets/wscat/blob/master/README.md): WebSocket cat.
 - Benchmaring
+  - [lshw](): Small tool to extract detailed information on the hardware configuration of the  machine. It can report on memory, firmware version, mainboard configuration, CPU version and speed, cache configuration, bus speed, etc. in various output format. e.x. ```$ lshw -short```, ```$ lshw -json```...
   - [powertop](https://github.com/fenrus75/powertop/blob/master/README.md): Tool to access various powersaving modes in userspace, kernel and hardware. Monitors processes and shows which utilizes the most CPU allowing to identify those with particular high power demands.
   - [stress-ng](https://wiki.ubuntu.com/Kernel/Reference/stress-ng): Stress test a computer system in various selectable way.
   - [Byte UNIX Bench](https://github.com/kdlucas/byte-unixbench/tree/master): Since 1983, provide a basic indicator of the performance of a Unix-like system; hence, multiple tests are used to test various aspects of the system's performance.
@@ -443,6 +443,7 @@ In NixOS the following commands are replaced by configuration parameters in the 
   - ```dmesg -n 1```: Temporarily suppress all kernel logging to the console.
 - [inxi](https://smxi.org/docs/inxi.htm): A full featured CLI system information tool, example:
   - ```$ inxi -Fxzb --usb```
+- [pv](https://www.geeksforgeeks.org/pv-command-in-linux-with-examples/): Pipe Viewer, command-line tool that allows to monitor data being sent through pipe. It provides the ability to monitor progress of a given application (time elapsed, completed progress, data transfer speed, ETA).
 - [glances](https://github.com/nicolargo/glances/blob/develop/README.rst) utility: System cross-platform monitoring tool. It allows real-time monitoring of various aspects of your system such as CPU, memory, disk, network usage etc. as well as running processes, logged in users, temperatures, voltages etc.
 - [htop](https://www.geeksforgeeks.org/htop-command-in-linux-with-examples/amp/): Similar to glances above.
 - [btop](https://github.com/aristocratos/btop): Similar tool to ```glances``` and ```htop``` above.
@@ -494,7 +495,8 @@ In NixOS the following commands are replaced by configuration parameters in the 
     ```$ ngrok config add-authtoken TOKEN```
      - ```$ ngrok http 8000```
   
-- Chaumian ecash system
+- ecash system
+  - [HOW TO MAKE A MINT: The Cryptography Of Anonymous Electronic Cash](https://groups.csail.mit.edu/mac/classes/6.805/articles/money/nsamint/nsamint.htm) by Laurie Law, Susan Sabett, Jerry Solinas, National Security Agency Office of Information Security Research and Technology. 18 June 1996.
   - [Cashu](https://cashu.space/): Cashu is a free and open-source Chaumian ecash system built for Bitcoin. Cashu offers near-perfect privacy for users of custodial Bitcoin applications. Nobody needs to knows who you are, how much funds you have, and whom you transact with.
 
 - [XSATS.net](https://xsats.net/): bitcoin/sats to and from world currencies, spot price or for any given date.
