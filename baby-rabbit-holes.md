@@ -496,7 +496,7 @@ In NixOS the following commands are replaced by parameters in the configuration 
      - ```$ ngrok http 8000```
   
 - ecash system
-  - [HOW TO MAKE A MINT: The Cryptography Of Anonymous Electronic Cash](https://groups.csail.mit.edu/mac/classes/6.805/articles/money/nsamint/nsamint.htm) by Laurie Law, Susan Sabett, Jerry Solinas, National Security Agency Office of Information Security Research and Technology. 18 June 1996.
+  - [How To Make a Mint: The Cryptography Of Anonymous Electronic Cash](https://groups.csail.mit.edu/mac/classes/6.805/articles/money/nsamint/nsamint.htm) by Laurie Law, Susan Sabett, Jerry Solinas, NSA (National Security Agency), 18 June 1996. ([Did the NSA create bitcoin?](https://www.youtube.com/watch?v=uSbE67K2NeE)).
   - [Cashu](https://cashu.space/): Cashu is a free and open-source Chaumian ecash system built for Bitcoin. Cashu offers near-perfect privacy for users of custodial Bitcoin applications. Nobody needs to knows who you are, how much funds you have, and whom you transact with.
 
 - [XSATS.net](https://xsats.net/): bitcoin/sats to and from world currencies, spot price or for any given date.
@@ -684,7 +684,6 @@ fileSystems."/".options = [ "noatime" "nodiratime" "discard" ];
 - [Learn Bitcoin from the command line](https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line#readme) (on GitHub)
 - [Mastering the Lightning Network](https://github.com/lnbook/lnbook#readme) (on GitHub).
 - [The NixOS and Flakes book](https://nixos-and-flakes.thiscute.world/introduction/): The NixOS and Flakes book.
-- [How to make a mint](https://groups.csail.mit.edu/mac/classes/6.805/articles/money/nsamint/nsamint.htm): The Cryptography of anonymous electronic cash (18 June 1996).
 ## 
 
 - **Crypto Pals**
