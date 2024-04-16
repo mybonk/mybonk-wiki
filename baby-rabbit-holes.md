@@ -2,78 +2,17 @@
 
 Ordered list of "basic" skills that need to be acquired to enjoy the ride.
 
-Go through this slowly. It is tempting to speed-read through a book, call it done, and move on to the next book. To get the most out of this, take your time understanding each section. 
+Go through this slowly. It is tempting to speed-read through a book, call it done, and move on to the next book. 
 
-For every 5 minutes you spend reading you should spend 15 minutes tinkering around with what you just read. Break things. 
+To get the most out of this, take your time understanding each section. 
 
-The sections "Commonly used" are examples you can easily copy/past.
+For every 5 minutes you spend reading you should spend 15 minutes tinkering around with what you just read. 
+Play around, copy/past, break things, have fun.
 
 A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#readme](https://github.com/ruanbekker/cheatsheets#readme)
 
 
-## Git / GitHub
-
-- Fork MY₿ONK-core and clone your forked repository it on your laptop (instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo)).
-- What is a "*pull request*"? (video explanation): https://www.youtube.com/watch?v=For9VtrQx58 
-- Difference between *merge* is "*rebase*"? (video explanation): https://www.youtube.com/watch?v=dO9BtPDIHJ8
-- Commands reference [here](https://git-scm.com/docs/git).
-- [How to Setup Passwordless Authentication for git push in GitHub](https://www.cyberithub.com/how-to-setup-passwordless-authentication-for-git-push-in-github/)
-- [Switch to another branch in terminal](https://stackoverflow.com/questions/47630950/how-can-i-switch-to-another-branch-in-git).
-- [Switch GitHub account in terminal](https://dev.to/0xbf/switch-github-account-in-terminal-92g).
-- Commonly used:
-  - Your identity
-    - The first thing you should do when you install Git is to set your user name and email address. This is important because every Git commit uses this information, and it’s immutably baked into the commits you start creating:
-      ```
-      $ git config --global user.name "John Doe"
-      $ git config --global user.email johndoe@example.com
-      ```
-  
-  ```
-  more ~/.gitconfig
-  git config -l
-  git config user.name
-
-  git clone https://github.com/mybonk/mybonk-core.git
-  git remote show origin
-  git status
-  git show
-  git log main --graph
-  git branch
-  git switch
-  git add .
-
-  git add -a
-  git add -A
-  git commit -m "commit message"
-
-  git mv filename dir/filename
-  git add --all
-  git push
-  git push -u origin main
-  git pull
-
-  git remote set-url origin https://git-repo/new-repository.git 
-  git remote set-url <remote_name> <ssh_remote_url>
-  git remote -v
-
-  git diff dir/filename 
-
-  git log -S "signet" --pretty=format:'%h %an %ad %s'
-  
-  git blame README.md
-  git blame -e README.md
-  git blame -L 1,5 README.md
-  git blame -w README.md
-  git blame -M README.md
-  git blame -C README.md
-
-  ```
-- [GitHub CLI](https://docs.github.com/en/github-cli/github-cli/about-github-cli): Command-line tool that brings pull requests, issues, GitHub Actions, and other GitHub features to your terminal, so you can do all your work in one place.
-    - Authenticate with your GitHub account: ```gh auth login```
-    - ...
-- [Source Tree](https://www.sourcetreeapp.com/) application: Free graphical user interface (GUI) desktop client that simplifies how you interact with Git repositories (some people are more comfortable with this rather than using Git CLI). Here is are [good simple tutorials](https://confluence.atlassian.com/get-started-with-sourcetree) to get started.
-
-## Command line stuff
+## First steps with command-line
 
 A *shell* is a user interface for access to an operating system's services. 
 
@@ -83,18 +22,36 @@ It is common that the keyboard layout the system is configured with is different
 
 A *CLI* (command-line interface) is what deal with when you interact with the shell. 
 
-- [RTFM!](https://en.wiktionary.org/wiki/RTFM)
-  - The most important command is ```man``` which stands for "manual" e.g.
-    ```
-    $ man mkdir
-    ```
-  - Hit ```h``` for help and ```q``` to leave the manual.
-  - scroll through the manual using 'arrow up' and 'arrow down'.
-  - Jump pages up and down using 'space bar' and 'Shift + space bar'.
-  - Search for a term in a manual using ```/``` e.g. ```/ignore``` then hit: 
-     - ```n``` for next match 
-     - ```Shift + n``` for previous match
-  - Search for a term in all the manuals: ``````
+### [RTFM!](https://en.wiktionary.org/wiki/RTFM)
+The most important command is ```man``` which stands for "manual". It explains what the command is and how to use it. Don't spend hours on youtube, read the manuals. e.g.
+  ```
+  $ man git
+
+  NAME
+          git - the stupid content tracker
+
+  SYNOPSIS
+          git [-v | --version] [-h | --help] [-C <path>] [-c <name>=<value>]
+              [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]
+            [-p|--paginate|-P|--no-pager] [--no-replace-objects] [--bare]
+            [--git-dir=<path>] [--work-tree=<path>] [--namespace=<name>]
+            [--config-env=<name>=<envvar>] <command> [<args>]
+
+
+  DESCRIPTION
+          Git is a fast, scalable, distributed revision control system with an unusually rich command set that provides both high-level operations and full access to internals.
+
+  [...]
+  ```
+- Hit ```h``` for help and ```q``` to leave the manual.
+- scroll through the manual using 'arrow up' and 'arrow down'.
+- Jump pages up and down using 'space bar' and 'Shift + space bar'.
+- Search for a term in a manual using ```/``` e.g. ```/ignore``` then hit: 
+    - ```n``` for next match 
+    - ```Shift + n``` for previous match
+- Search for a term in all the manuals: ``````
+
+### Most common commands
 
 - System version
   - OS name and version in Linux: 
@@ -113,7 +70,7 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
 
 - Shell: 
   - ```bash``` and its history (sh, csh, tsh, ksh ...).
-  - ```zsh``` adds great new features over ```bash```. (Note that as of macOS Catalina, the default shell in macOS is Zsh and Bash is deprecated), most noticeably:
+  - ```zsh``` pronounced Z shell, is `bash` on steroids with extended features and support for plugins and themes, most noticeably:
     - Automatic cd: Just type the name of the directory without ``cd``.
     - Recursive path expansion: e.x. “/u/lo/b” expands to “/usr/local/bin”.
     - Spelling correction and approximate completion: Minor typo mistakes in file or directory names are fixed automatically.
@@ -121,14 +78,17 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
 
 - Environment variables in Linux-based systems:
   
-    - Read ["how Environment Variables Work" (www.howtogeek.com/668503/how-to-set-environment-variables-in-bash-on-linux)](https://www.howtogeek.com/668503/how-to-set-environment-variables-in-bash-on-linux/)
+    - Read ["how environment variables work" (www.howtogeek.com/668503/how-to-set-environment-variables-in-bash-on-linux)](https://www.howtogeek.com/668503/how-to-set-environment-variables-in-bash-on-linux/)
+      - ```$ printenv```: Print all the environment variables.
+        - ```$SHELL```: The default shell being used on the system (e.x. `zsh`, `bash` ...).
+        - ```$PATH```: Instructs the shell which directories to search for executables, it allows to run commands without having to specify its full path.
+        - - .etc... 
       - ```$ export EDITOR=vi```
       - ```$ echo $EDITOR```
-      - ```$ printenv```: Print all the environment variables.
-        - ```$SHELL``` The default shell being used on the system (e.x. `zsh`, `bash` ...).
-        - ```$PATH``` Instructs the shell which directories to search for executables, it allows to run commands without having to specify its full path.
-        - .etc... .
-- Shell commands you must know *really well*:
+      - .etc...                       
+                                                                                
+- Shell commands you must know *really well* :
+  - ```man```, ```apropos```, ```whatis```: Display manual documentation pages in various ways.
   - ```pwd```, ```ls```, ```cd```, ```type```, ```mkdir```, ```mv```, ```rm```, ```ln```, ```which```, ```whereis```, ```cat```, ```head```, ```tail```, ```more```, ```tee``` …
   - ```tree```: Outputs a depth-indented listing of files making it easy to visualize the organization of files and directories within a given path. With no arguments the tree lists the files in the current directory. When directory arguments are given, the tree lists all the files or directories found in the given directories each in turn. 
   - ```uname -a```, ```hostname```, ```whoami```, ```passwd```, ```chown```, ```chgrp```, ```chmod```, …
@@ -180,6 +140,89 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
     - ```find /dir/to/search -name "file-to-search" -print```
     - ```find /dir/to/search -name "file-to-search" -print [-action]```
 
+## The importance of Git / GitHub
+
+GitHub (or GitLab or other alternative) is a platform on the Internet used for storing, tracking, and collaborating on projects. It makes it easy to share all sorts of files and collaborate with peers in an asynchronous but coordinated way. GitHub also serves as a social networking site where developers can openly network, collaborate, and pitch their work.
+
+> "If your work is not on Github it does not exist"  
+> -Ben Arc
+
+- Manual: `$ man git`
+- How to fork a repository (instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo)).
+- What is a "*pull request*"? (video explanation): https://www.youtube.com/watch?v=For9VtrQx58 
+
+- Commonly used:
+  - Your identity
+    - The first thing you should do when you install Git is to set your user name and email address. This is important because every Git commit uses this information, and it’s immutably baked into the commits you start creating:
+      ```
+      $ git config --global user.name "John Doe"
+      $ git config --global user.email johndoe@example.com
+      ```
+  
+  ```
+  more ~/.gitconfig
+  git config -l
+  git config user.name
+
+  git clone https://github.com/mybonk/mybonk-core.git
+  git remote show origin
+  git status
+  git show
+  git log main --graph
+  git branch
+  git switch
+  git add .
+
+  git add -a
+  git add -A
+  git commit -m "commit message"
+
+  git mv filename dir/filename
+  git add --all
+  git push
+  git push -u origin main
+  git pull
+
+  git remote set-url origin https://git-repo/new-repository.git 
+  git remote set-url <remote_name> <ssh_remote_url>
+  git remote -v
+
+  git diff dir/filename 
+
+  git log -S "signet" --pretty=format:'%h %an %ad %s'
+  
+  git blame README.md
+  git blame -e README.md
+  git blame -L 1,5 README.md
+  git blame -w README.md
+  git blame -M README.md
+  git blame -C README.md
+
+  ```
+
+### Good to know
+  - [What is the difference between *merge* and *rebase*?](https://www.youtube.com/watch?v=dO9BtPDIHJ8)
+  - [How to Setup Passwordless Authentication for git push in GitHub](https://www.cyberithub.com/how-to-setup-passwordless-authentication-for-git-push-in-github/).
+  - [Switch to another branch (on the command line)](https://stackoverflow.com/questions/47630950/how-can-i-switch-to-another-branch-in-git).
+  - [Switch GitHub account in terminal (on the command line)](https://dev.to/0xbf/switch-github-account-in-terminal-92g).
+
+### Git front ends
+  
+  Using one of the following might saves you time by simplifying your interactions with Git.
+  - [Lazygit](https://github.com/kdheepak/lazygit.nvim/): Nice command-line based Git front-end.
+  - [Source Tree](https://www.sourcetreeapp.com/): Graphical GUI desktop client. Here is are [good simple tutorials](https://confluence.atlassian.com/get-started-with-sourcetree) to get started.
+  - [Ungit](https://github.com/FredrikNoren/ungit/blob/master/README.md): "The easiest way to use git. On any platform. Anywhere."
+  - [Magit!](https://github.com/magit/magit/blob/main/README.md): Version control system Git, implemented as an Emacs package.
+
+### [GitHub CLI](https://docs.github.com/en/github-cli/github-cli/about-github-cli) 
+Command-line tool that brings pull requests, issues, GitHub Actions, and other GitHub features to your terminal, so you can do all your work in one place.
+
+Authenticate with your GitHub account: 
+
+    $ gh auth login
+    
+
+
 ## Text processing
 
 - ```vi``` (cheat-sheet [HERE](https://www.thegeekdiary.com/basic-vi-commands-cheat-sheet/))
@@ -229,8 +272,8 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
   - ["what is the point of ZFS with only 1 disk"](https://www.truenas.com/community/threads/single-drive-zfs.35515/).
   - ["benefit/risk of ZFS with only 1 disk"](https://unix.stackexchange.com/questions/672151/create-zfs-partition-on-existing-drive) (also includes the commands for a little ZFS experimentation).
 ## curl
-- ```curl -O https://testdomain.com/testfile.tar.gz```: Save file.
-- ```curl -o mydownload.tar.gz https://testdomain.com/testfile.tar.gz``` (**little 'o'**): Save file as ```mydownload.tar.gz```.
+- ```curl -O https://testdomain.com/testfile.tar.gz```: Download the file `testfile.tar.gz`.
+- ```curl -o mydownload.tar.gz https://testdomain.com/testfile.tar.gz``` (**little 'o'**): Download to the file ```mydownload.tar.gz```.
 - ```curl -I https://www.google.com```: Query the header of a server (same as ```-head```). 
 - ```curl -k https://localhost/my_test_endpoint```: Ignore invalid or self-signed certificates (same as ```--insecure```).
 - Make a POST request (through parameters and JSON):
@@ -250,35 +293,42 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
 ## Cryptography
 - The difference between seed words and private key: https://youtu.be/Y_A3j8GzaO8
 
-## ssh & rsync
-- [Difference between ssh and ~~Telnet~~](https://www.geeksforgeeks.org/difference-ssh-telnet/)
-- ssh: 
-  - OpenSSH
-  - How to setup and manage ssh keys: https://goteleport.com/blog/how-to-set-up-ssh-keys/
-  - .ssh client configuration (```~/.ssh/config```)
-  - ssh-keygen  e.x. ```$ ssh-keygen -t ecdsa -b 521```
-  - passphrase
-  - ssh-copy-id: Copy your public key on the server machine in ```~/.ssh/authorized_keys``` 
-  - ssh-add
+## ssh
+SSH, a.k.a Secure Shell or *Secure Socket Shell* allows to connect a remote machine, execute commands, upload and download files.
+- [Difference between ssh and Telnet](https://www.geeksforgeeks.org/difference-ssh-telnet/)
+- OpenSSH
+- How to setup and manage ssh keys: https://goteleport.com/blog/how-to-set-up-ssh-keys/
+- .ssh client configuration (```~/.ssh/config```)
+- ssh-keygen  e.x. ```$ ssh-keygen -t ecdsa -b 521```
+- passphrase
+- ssh-copy-id: Copy your public key on the server machine in ```~/.ssh/authorized_keys``` 
+- ssh-add
   
-  Also read about and setup ssh-agent, it will save you a LOT of time (key management, auto re-connect e.g. when your laptop goes to sleep or reboots ...).
+Also read about and setup ssh-agent, it will save you a LOT of time (key management, auto re-connect e.g. when your laptop goes to sleep or reboots ...).
 
-- [rsync](https://apoorvtyagi.tech/scp-command-in-linux): 
-  - rsync uses a delta transfer algorithm and a few optimizations to make the operation a lot faster compared to ssh. The files that have been copied already won't be transferred again (unless they changed since). Can be run ad-hoc on the command line or configured to run as a deamon on the systems to keep files in sync.
-  - rsync allows to restart failed transfers - you just reissue the same command and it will pick up where it left off, whereas scp will start again from scratch.
-  - rsync needs to be used over SSH to be secure.
+## [rsync](https://apoorvtyagi.tech/scp-command-in-linux)
+  rsync uses a delta transfer algorithm and a few optimizations to make the operation a lot faster compared to ```scp```. The files that have been copied already won't be transferred again (unless they changed since). Can be run ad-hoc on the command line or configured to run as a deamon on the systems to keep files in sync.
+
+  rsync allows to restart failed transfers - you just reissue the same command and it will pick up where it left off, whereas scp will start again from scratch.
+  
+  rsync needs to be used over SSH to be secure.
+
   - Example 1: From local to local (instead of using ```scp```):
+    
     ````bash
-    # rsync -avhW --progress --exclude --exclude '*/*.lock' /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind
+    $ rsync -avhW --progress --exclude --exclude '*/*.lock' /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind
     ````
+  
   - Example 2: Same thing but also gives a visual indication of the copy progress as well as completion time estimate ('ETA'):
     ````bash
-    # rsync -avhW --stats --exclude '*/*.lock' --human-readable /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind | pv -lep -s $(find /unmountme/bitcoind/{chainstate,blocks,indexes} -type f | wc -l)
+    $ rsync -avhW --stats --exclude '*/*.lock' --human-readable /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind | pv -lep -s $(find /unmountme/bitcoind/{chainstate,blocks,indexes} -type f | wc -l)
     ````
-- Network:
-  - Speed test: [https://www.speedtest.net]()
-  - Scanners:
-    - [findssh](https://github.com/scivision/findssh#readme): Command line tool to scan entire IPv4 subnet in less than 1 second. Without NMAP. It is extremely quick but sometimes it misses some hosts so run it a couple of time to be sure it scanned them all.
+## Network
+  ### Speed test
+  
+  - [https://www.speedtest.net]()
+  ### Scanners
+  - [findssh](https://github.com/scivision/findssh#readme): Super quick command line tool that scans an entire IPv4 subnet in less than 1 second. Without NMAP. It is extremely quick but sometimes it misses some hosts so run it a couple of time to be sure it scanned them all.
 
     Example:
     ```bash
@@ -293,40 +343,46 @@ A *CLI* (command-line interface) is what deal with when you interact with the sh
     (IPv4Address('192.168.0.100'), 'SSH-2.0-OpenSSH_7.4')
     DEBUG:root:[Errno 111] Connect call failed ('192.168.0.44', 22)
     ```
-    - [Angry IP Scanner](https://angryip.org/): Scans LAN and WAN, IP Range, Random or file in any format, provides GUI as well as CLI.
+  - [Angry IP Scanner](https://angryip.org/): Scans LAN and WAN, IP Range, Random or file in any format, provides GUI as well as CLI.
+
+  ### Tor
+  - .onion 
+  - tor hidden services
+  - Tor browsers (https://www.torproject.org/download/)
+  - torify / torsocks
+
+  ### I2P
+  - Tor vs I2P ([https://www.cloudwards.net/i2p-vs-tor/](https://www.cloudwards.net/i2p-vs-tor/))
+
 
 ## tmux
-- (... or alternatives like GNU Screen, Terminator, Byobu, etc.)
-- tmux for beginners part 1: https://dev.to/iggredible/tmux-tutorial-for-beginners-5c52 
-- tmux for beginners part 2: https://dev.to/iggredible/useful-tmux-configuration-examples-k3g
+... or alternatives like GNU Screen, Terminator, Byobu, .etc...)
 
--  ````tmux source-file ~/.tmux.conf````
-Tmux shortcuts 
-  - ````new -s MY_SESSION````
-  - ````tmux list-keys````
-  - Sessions
-    - List sessions and switch to a different session: ````Prefix + s```` (or ````tmux ls```` followed by ````tmux attach -t SESSION````).
-    - Detach a session: ````Prefix + d```` or ````tmux detach````
-    - Kill a session: ````tmux kill-session -t MY_SESSION````
-  - Windows:
-    - Create a window: ````Prefix + c```` or ````tmux new-window -n MY_WINDOW````
-    - Close a pane / window: ````Ctrl + d```` or ````Prefix + x````
-    - Switch to a different window: ````Prefix + n```` (next), ````Prefix + p```` (previous) and ````Prefix + N```` (where ````N```` is the window index number, zero-based).
-    - Kill a window: ````tmux kill-window -t MY_WINDOW````
-  - Panes
-    - List all the panes: ````Prefix + q```` (or ````tmux list-panes````).
-    - Jump into a specific pane: ````Prefix + q```` followed by the pane number you want to jump into.
-    - Move to next pane: ````Prefix + o````
-    - Switch to last pane: ````Prefix + ;````
-    
-## Tor
-- .onion 
-- tor hidden services
-- Tor browsers (https://www.torproject.org/download/)
-- torify / torsocks
+### tmux for beginners: 
+- part 1: https://dev.to/iggredible/tmux-tutorial-for-beginners-5c52 
+- part 2: https://dev.to/iggredible/useful-tmux-configuration-examples-k3g
 
-## I2P
-- Tor vs I2P ([https://www.cloudwards.net/i2p-vs-tor/](https://www.cloudwards.net/i2p-vs-tor/))
+````$ tmux source-file ~/.tmux.conf````
+
+````$ new -s MY_SESSION````
+
+````$ tmux list-keys````
+
+### tmux shortcuts
+- Sessions
+  - List sessions and switch to a different session: ````Prefix + s```` (or ````tmux ls```` followed by ````tmux attach -t SESSION````).
+  - Detach a session: ````Prefix + d```` or ````tmux detach````
+  - Kill a session: ````tmux kill-session -t MY_SESSION````
+- Windows:
+  - Create a window: ````Prefix + c```` or ````tmux new-window -n MY_WINDOW````
+  - Close a pane / window: ````Ctrl + d```` or ````Prefix + x````
+  - Switch to a different window: ````Prefix + n```` (next), ````Prefix + p```` (previous) and ````Prefix + N```` (where ````N```` is the window index number, zero-based).
+  - Kill a window: ````tmux kill-window -t MY_WINDOW````
+- Panes
+  - List all the panes: ````Prefix + q```` (or ````tmux list-panes````).
+  - Jump into a specific pane: ````Prefix + q```` followed by the pane number you want to jump into.
+  - Move to next pane: ````Prefix + o````
+  - Switch to last pane: ````Prefix + ;````                           
 ## processes
 - ```ps```, ```pstree```, ```top```
 - ```systemd```
@@ -381,7 +437,7 @@ Tmux shortcuts
   - ```journalctl -u bitcoind.service```
   - ```journalctl -u bitcoind.service -u clightning.service --since today```
   
-- [logger](https://www.serverwatch.com/guides/use-logger-to-write-messages-to-log-files/)
+- [logger](https://www.serverwatch.com/guides/use-logger-to-write-messages-to-log-files/): Write messages directly to Log Files.
 
 
 ## certificate 
@@ -685,21 +741,39 @@ fileSystems."/".options = [ "noatime" "nodiratime" "discard" ];
 - [Mastering the Lightning Network](https://github.com/lnbook/lnbook#readme) (on GitHub).
 - [The NixOS and Flakes book](https://nixos-and-flakes.thiscute.world/introduction/): The NixOS and Flakes book.
 
-## Cool little command line stuff to explain things to kids
+## Run a package without having to install it
 
-Load any of the following from nixpkgs and make them available in an interactive shell (no trace will remain after you exit the shell): ```nix-shell -p asciiquarium cmatrix fortune cowsay sl figlet toilet oneko```
+This is a great feature of NixOS. For example I can open a shell with the `asciiquarium` package available in it:
+```
+$ nix-shell -p asciiquarium
+```
+
+
+Now get this: that command didn't actually _install_ anything. When I leave the shell (with `exit` or `ctrl+d`), `asciiquarium` is no longer there, and it doesn't pollute my user environment.
+
+Alternatively, if you have Flakes enabled you can us the following command
+```bash
+$ nix shell nixpkgs#asciiquarium
+```
+
+You can play around with plenty of nifty little programs kids love: ```$ nix-shell -p asciiquarium cmatrix fortune cowsay sl figlet toilet oneko``` .etc...
  
-- asciiquarium: Enjoy the mysteries of the sea from the safety of your own terminal.
-- cmatrix: Shows a scrolling 'Matrix' like screen on the terminal.
-- fortune: Simple program that displays random poignant, inspirational, silly or snide phrases from a database of quotations.
-- cowsay: Simple little ASCII art tool that prints a picture of a cow with a speech bubble message; you can enter the following command to "pipe" the output of the aforementioned `fortune` command to create your own wise cow. `fortune | cowsay`
-- sl: Animated ASCII steam locomotive with a few nice hidden options
-- figlet: ASCII banner creator
-- toilet: More ASCII fonts. For some reason, they named it toilet.
-- oneko: Adds an animated cat to your terminal who will follow your mouse (get it?)
-- bastet: Tetris on the command-line.
-- ninvaders: Space Invaders on a command-line.
-- moon-buggy: Jump, fire, on a command-line.
+- `asciiquarium`: Enjoy the mysteries of the sea from the safety of your own terminal.
+- `cmatrix`: Shows a scrolling 'Matrix' like screen on the terminal.
+- `fortune`: Simple program that displays random poignant, inspirational, silly or snide phrases from a database of quotations.
+- `cowsay`: Simple little ASCII art tool that prints a picture of a cow with a speech bubble message; you can enter the following command to "pipe" the output of the aforementioned `fortune` command to create your own wise cow. Try out `$ fortune | cowsay`
+- `sl`: Animated ASCII steam locomotive with a few nice hidden options
+- `figlet`: ASCII banner creator
+- `toilet`: More ASCII fonts. For some reason, they named it toilet.
+- `oneko`: Adds an animated cat to your terminal who will follow your mouse (get it?)
+- `bastet`: Tetris on the command-line.
+- `ninvaders`: Space Invaders on a command-line.
+- `moon-buggy`: Jump, fire, on a command-line.
+
+Many other little games are bundled in a package. The package `bsdgame` for instance  has cool command-line games; use [https://search.nixos.org/](https://search.nixos.org/packages?channel=unstable&show=bsdgames&from=0&size=50&sort=relevance&type=packages&query=bsdgames) to find out which ones they are and run them!
+
+![](docs/img/various/searchnixosog.png)
+
 ## 
 
 - **Crypto Pals**

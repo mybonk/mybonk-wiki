@@ -10,11 +10,9 @@
 ## Can I install MYBONK core stack on another hardware than MYBONK console?
 
 ==100%==. 
-Although MY₿ONK console has been designed specifically as a bitcoin-only full node with price, performance, durability, portability energy-efficience, supply chain resilience and generic parts in mind you can run the software stack on whatever hardware you deem suitable for purpose. 
-
+Although MY₿ONK console has been designed specifically as a bitcoin-only full node with price, performance, durability, portability, energy-efficiency, supply chain resilience and generic parts in mind you can run the software stack on whatever hardware you deem suitable for purpose. 
 
 However we focus our efforts at maintaining the code base with MY₿ONK console as hardware reference (it would be impossible to support all the hardware forms and shapes available on the market at any given time).
-
 
 Running a MY₿ONK console allows you to be confident your system is identical to the one of the other MY₿ONK users, you won't be slow-down by common compatibility issues or missing drivers, you just don't have the required skills nor the time, you want it to work from the get go.
 
