@@ -2,6 +2,8 @@
 
 Ordered list of "basic" skills that need to be acquired to enjoy the ride.
 
+Applies to Linux, whatever the distribution, although we use NixOS ourselves and have a section dedicated to it.
+
 Go through this slowly. It is tempting to speed-read through a book, call it done, and move on to the next book. 
 
 To get the most out of this, take your time understanding each section. 
@@ -330,7 +332,7 @@ Also read about and setup ssh-agent, it will save you a LOT of time (key managem
   ### Scanners
   - [findssh](https://github.com/scivision/findssh#readme): Super quick command line tool that scans an entire IPv4 subnet in less than 1 second. Without NMAP. It is extremely quick but sometimes it misses some hosts so run it a couple of time to be sure it scanned them all.
 
-    Example:
+    Example to scan the complete network for sshd listening:
     ```bash
     $ python3 -m findssh -b 192.168.0.1 -s ssh -v
     searching 192.168.0.0/24
@@ -735,19 +737,71 @@ fileSystems."/".options = [ "noatime" "nodiratime" "discard" ];
   - [DuckDNS](https://www.duckdns.org/): Allows to get free dynamic DNS (forces 'KYC' by login using Github, Twitter, reddit or Google account). Good for testing.
   - How to compile Bitcoin Core and run the unit and functonal tests: https://jonatack.github.io/articles/how-to-compile-bitcoin-core-and-run-the-tests
   - [asciinema](https://asciinema.org/): Record and share your terminal sessions, the simple way.
+
 ## Books
 - [Introduction to the Mac command line](https://github.com/ChristopherA/intro-mac-command-line) (on GitHub).
 - [Learn Bitcoin from the command line](https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line#readme) (on GitHub)
 - [Mastering the Lightning Network](https://github.com/lnbook/lnbook#readme) (on GitHub).
 - [The NixOS and Flakes book](https://nixos-and-flakes.thiscute.world/introduction/): The NixOS and Flakes book.
 
-## Run a package without having to install it
+
+## NixOS/Nix specific
+
+### Search NixOS/Nix packages on the command line
+
+#### Method 1
+Just use `nix-shell`'s autocomplete feature: Press the < tab > key as you enter the name, you'll see all Nix package names that begin with the text you entered (takes a second or two to complete):
+
+```
+$ nix-shell -p asciiq
+asciiquarium
+```
+
+Note: Nix shell autocomplete applies only on the Nix *package names* (not its description nor any other metadata).
+
+#### Method 2
+
+Use the `nix` terminal app with `search`:
+
+```
+$ nix search nixpkgs asciiquarium
+* legacyPackages.x86_64-linux.asciiquarium (1.1)
+  Enjoy the mysteries of the sea from the safety of your own terminal!
+
+* legacyPackages.x86_64-linux.asciiquarium-transparent (2023-02-19)
+  An aquarium/sea animation in ASCII art (with option of transparent background)
+
+```
+
+Notes: 
+- Whereas the nix-shell "autocomplete" seen earlier (Method 1) applies only on the Nix package names, ``nix search`` does a full-text search.
+- The command to be used if Flakes are enabled is `nix search nixpkgs asciiquarium` else it is `nix search asciiquarium`.
+- Add the `--json` flag to get more information in the output (and pipe through `jq` to get it in a nice readable format):
+  ```
+  $ nix search nixpkgs --json asciiquarium | jq
+
+  evaluating 'legacyPackages.x86_64-linux'
+  evaluating 'legacyPackages.x86_64-linux'{
+    "legacyPackages.x86_64-linux.asciiquarium": {
+      "description": "Enjoy the mysteries of the sea from the safety of your own terminal!",
+      "pname": "asciiquarium",
+      "version": "1.1"
+    },
+    "legacyPackages.x86_64-linux.asciiquarium-transparent": {
+      "description": "An aquarium/sea animation in ASCII art (with option of transparent background)",
+      "pname": "asciiquarium-transparent-unstable",
+      "version": "2023-02-19"
+    }
+  }
+
+  ```
+
+### Run a package without having to install it
 
 This is a great feature of NixOS. For example I can open a shell with the `asciiquarium` package available in it:
 ```
 $ nix-shell -p asciiquarium
 ```
-
 
 Now get this: that command didn't actually _install_ anything. When I leave the shell (with `exit` or `ctrl+d`), `asciiquarium` is no longer there, and it doesn't pollute my user environment.
 
@@ -774,7 +828,7 @@ Many other little games are bundled in a package. The package `bsdgame` for inst
 
 ![](docs/img/various/searchnixosog.png)
 
-## 
+## Others
 
 - **Crypto Pals**
   - Page: [www.cryptopals.com](https://www.cryptopals.com/). Be scared of the emerged part of the iceberg in cryptography. Take this challenge!
