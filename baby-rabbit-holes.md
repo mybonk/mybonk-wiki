@@ -505,7 +505,12 @@ In NixOS the following commands are replaced by parameters in the configuration 
 ## Other tools / resources
 - [SSHFS](https://phoenixnap.com/kb/sshfs): Tool to safely mount a remote folder from a server to a local machine. The client extends the SSH file transfer protocol, which helps locally mount a remote file system as a disk image securely.
 - [Gocryptfs](https://nuetzlich.net/gocryptfs/): Tool to perform *file*-based encryption. It’s fast, lightweight, well-documented. In contrast to *disk*-based encryption software, which operates on whole disks, gocryptfs works on individual files that can be backed up or synchronized efficiently using standard tools like sshfs or rsync. Read more about it [HERE](https://www.baeldung.com/linux/gocryptfs-encrypt-decrypt-dirs).
-- [QEMU](https://www.qemu.org/): A generic and open source machine emulator (full-system and user-mode emulation) and virtualizer. It is the emulator the NixOS community uses primarily.
+- [VirtualBox](https://www.virtualbox.org/): By Oracle Corporation. Simple, Cross-platform, Open-source, great performances, all-in-one, virtual machine program. Even though it is primarily fit for desktop usage, it can be run in headless mode.
+- [QEMU](https://www.qemu.org/): Open-source machine virtualizer and emulator. It supports a wide range of hardware architectures and guest operating systems. Coupled with KVM it runs VMs that perform well because KVM is hardware-level virtualization and QEMU is a software-level virtualization.
+Technically, QEMU is a type-2 hypervisor. 
+- [QuickEMU](https://github.com/quickemu-project/quickemu/blob/master/README.md): Terminal-based tool that lets you rapidly create optimized desktop virtual machines and manage them with ease. The tool chooses the best configuration by default as per available system resources. It also downloads the image for the selected operating system. All you have to do is install the operating system as you would normally do and get started.
+- [QuickGUI](https://github.com/quickemu-project/quickgui/blob/main/README.md): Makes it convenient to utilize Quickemu’s abilities to quickly create and manage multiple VMs without needing to configure anything. What’s more interesting: you do not need elevated privileges to make it work.
+- [KVM](https://linux-kvm.org): "Kernel-based Virtual Machine" Baked into Linux. You can run VMs out of the box. It is a "type-1 hypervisor" a.k.a "hardware-based". It converts the Linux host into a hypervisor to run virtual machines with bare metal performance. You can create guest/virtual machines of different operating systems too. Have a look at QuickEMU and QuickGUI for tools to make your life easier.
 - [WSL](https://devblogs.microsoft.com/commandline/announcing-wsl-2/): Windows Subsystem for Linux to run ELF64 Linux binaries on Windows (if you have Windows system but would like to run Linux programs and commands this is what you need if you prefer not to use a full fledged virtual machine).
 - [multitail](https://vanheusden.com/multitail/): MultiTail lets you view multiple files like the original tail program. The difference is that it creates multiple windows on your console (ncurses). It can also monitor wildcards: if another file matching the wildcard has a more recent modification date, it will automatically switch to that file.
 - [websocketd](https://github.com/joewalnes/websocketd): Small command-line tool that will wrap an existing command-line interface program, and allow it to be accessed via a WebSocket. WebSocket-capable applications can now be built very easily. As long as you can write an executable program that reads STDIN and writes to STDOUT, you can build a WebSocket server. No networking libraries necessary.
@@ -561,7 +566,7 @@ In NixOS the following commands are replaced by parameters in the configuration 
   
 - ecash system
   - [How To Make a Mint: The Cryptography Of Anonymous Electronic Cash](https://groups.csail.mit.edu/mac/classes/6.805/articles/money/nsamint/nsamint.htm) by Laurie Law, Susan Sabett, Jerry Solinas, NSA (National Security Agency), 18 June 1996. ([Did the NSA create bitcoin?](https://www.youtube.com/watch?v=uSbE67K2NeE)).
-  - [Cashu](https://cashu.space/): Cashu is a free and open-source Chaumian ecash system built for Bitcoin. Cashu offers near-perfect privacy for users of custodial Bitcoin applications. Nobody needs to knows who you are, how much funds you have, and whom you transact with.
+  - [Cashu](https://cashu.space/): Cashu is a free and Open-source Chaumian ecash system built for Bitcoin. Cashu offers near-perfect privacy for users of custodial Bitcoin applications. Nobody needs to knows who you are, how much funds you have, and whom you transact with.
 
 - [XSATS.net](https://xsats.net/): bitcoin/sats to and from world currencies, spot price or for any given date.
 - [md5calc](https://md5calc.com/hash/sha256): Website to calculate the Hash of any string. 
@@ -616,8 +621,8 @@ In NixOS the following commands are replaced by parameters in the configuration 
 
 ## Other projects and references
 
-- [Seed-signer](https://github.com/SeedSigner/seedsigner/blob/dev/README.md): Bitcoin only, open source, offline, airgapped Bitcoin signing device. Can also DIY.
-- [Blockstream Jade](https://github.com/Blockstream/Jade/blob/master/README.md): Bitcoin only, open source hardware wallet. Can also DIY.
+- [Seed-signer](https://github.com/SeedSigner/seedsigner/blob/dev/README.md): Bitcoin only, Open-source, offline, airgapped Bitcoin signing device. Can also DIY.
+- [Blockstream Jade](https://github.com/Blockstream/Jade/blob/master/README.md): Bitcoin only, Open-source hardware wallet. Can also DIY.
 - Hardware Wallets [comparison and audit](https://cryptoguide.tips/hardware-wallet-comparisons/).
 - [BIP39](https://iancoleman.io/bip39/): Play around and understand 12 vs 24 word seed (mnemonic) length, does it make a difference? Entropy, splitting scrambling ... (don't forget to generate a random mnemonic and select the option "Show split mnemonic cards" to see how much time it would take to brute-force attack).
   ![](docs/img/various/12_24_mnemonic_split.png)
