@@ -296,18 +296,85 @@ Authenticate with your GitHub account:
 ## Cryptography
 - The difference between seed words and private key: https://youtu.be/Y_A3j8GzaO8
 
-## ssh
-SSH, a.k.a Secure Shell or *Secure Socket Shell* allows to connect a remote machine, execute commands, upload and download files.
-- [Difference between ssh and Telnet](https://www.geeksforgeeks.org/difference-ssh-telnet/)
+## Remote Access
+
+Spare yourself the pain, learn good habits, save tones time and avoid getting locked out of your system by really understanding how SSH (a.k.a Secure Shell or *Secure Socket Shell*) works, how it allows you to connect a remote machine, execute commands, upload and download files. 
+
+- For history, what is the [difference between Telnet and ssh](https://www.geeksforgeeks.org/difference-ssh-telnet/)
 - OpenSSH
-- How to setup and manage ssh keys: https://goteleport.com/blog/how-to-set-up-ssh-keys/
 - .ssh client configuration (`~/.ssh/config`)
-- ssh-keygen  e.x. `$ ssh-keygen -t ecdsa -b 521`
-- passphrase
-- ssh-copy-id: Copy your public key on the server machine in `~/.ssh/authorized_keys` 
-- ssh-add
-  
-Also read about and setup ssh-agent, it will save you a LOT of time (key management, auto re-connect e.g. when your laptop goes to sleep or reboots ...).
+- How to setup and manage ssh keys: https://goteleport.com/blog/how-to-set-up-ssh-keys/
+  - `ssh-keygen`  e.x. `$ ssh-keygen -t ecdsa -b 521`
+  - `passphrase`
+  - `ssh-copy-id`: Copy your public key on the server machine's `~/.ssh/authorized_keys` 
+  - `ssh-add`
+  - ssh-agent, will save you a LOT of time (key management, auto re-connect e.g. when your laptop goes to sleep or reboots ...).
+
+
+Use ssh auto login (auto login *using public and private keys pair* to be specific) as it is also significantly more secure than basic password-based login. Bellow is a real time illustration of ssh failed login attempts initiated from the Internet (bots, hackers, you name it) on a machine with password authentication left enabled (instead of using ssh auto login).
+
+![](docs/img/various/ssh_failed_attempts.gif)
+
+
+
+For reference:
+
+````bash
+$ssh root@192.168.0.155
+#
+````
+
+IP addresses (here ```192.168.0.155```) are not "human friendly". You can associate an IP address to an arbitrary name, easier to remember. This can be configured in your ssh configuration file ```~/.ssh/config```. Here is an example in its simplest form:
+
+````
+Host console_jay
+  HostName 192.168.0.155
+  User root
+````
+
+You can now use the following simple syntax instead to connect:
+````bash
+$ssh console_jay
+````
+
+This is all very nice until you change environment or move your hardware to another network: A new IP address will be assigned to the machine and the shorthand ```console_jay``` will no longer work, you now have to figure out what the new IP address of your machine (scan the network or physically connect to serial) which is frustrating and time consuming.
+
+A more effective way to deal with this issue and streamline remote access altogether is to use WireGuard/Tailscale. Tailscale basically hides all the nitty gritty of ssh by managing the VPN for you in the background. 
+
+Have a look at this [Tailscale Quick tutorial](https://www.infoworld.com/article/3690616/tailscale-fast-and-easy-vpns-for-developers.html).
+
+To enable Tailscale: 
+- Create credentials on [https://login.tailscale.com](https://login.tailscale.com).
+- Install and run the Tailscale service on each machines you want to have remote access to.
+- Attach each of the machines to the VPN.
+
+With tailscale on you can now refer to your remote machine anytime anywhere through its Tailscale "Magic DNS" name:
+
+````bash
+$ tailscale ssh console_jay@dab-dominant.ts.net
+````
+
+Or even just:
+
+````bash
+$ tailscale ssh console_jay
+````
+
+Note that Tailscale's "Magic DNS" and ssh commands are transparently wrapped through the Tailscale VPN. So `$ ssh console_jay` will work as well as `$ tailscale ssh console_jay`.
+
+![](docs/img/various/tailscale_portal.png)
+
+Commonly used:  
+```bash
+# tailscaled
+$ tailscale help
+$ tailscale login
+$ tailscale up
+$ tailscale down
+$ tailscale status
+$ tailscale netcheck
+$ tailscale ssh console_jay
+```
 
 ## [rsync](https://apoorvtyagi.tech/scp-command-in-linux)
   rsync uses a delta transfer algorithm and a few optimizations to make the operation a lot faster compared to `scp`. The files that have been copied already won't be transferred again (unless they changed since). Can be run ad-hoc on the command line or configured to run as a deamon on the systems to keep files in sync.
@@ -516,6 +583,8 @@ Technically, QEMU is a type-2 hypervisor.
 - [websocketd](https://github.com/joewalnes/websocketd): Small command-line tool that will wrap an existing command-line interface program, and allow it to be accessed via a WebSocket. WebSocket-capable applications can now be built very easily. As long as you can write an executable program that reads STDIN and writes to STDOUT, you can build a WebSocket server. No networking libraries necessary.
 - [wscat](https://github.com/websockets/wscat/blob/master/README.md): WebSocket cat.
 - Benchmaring
+  - [free]() -m
+Using the free -m command to check your Linux memory usage,
   - [lshw](): Small tool to extract detailed information on the hardware configuration of the  machine. It can report on memory, firmware version, mainboard configuration, CPU version and speed, cache configuration, bus speed, etc. in various output format. e.x. `$ lshw -short`, `$ lshw -json`...
   - [powertop](https://github.com/fenrus75/powertop/blob/master/README.md): Tool to access various powersaving modes in userspace, kernel and hardware. Monitors processes and shows which utilizes the most CPU allowing to identify those with particular high power demands.
   - [stress-ng](https://wiki.ubuntu.com/Kernel/Reference/stress-ng): Stress test a computer system in various selectable way.
@@ -547,17 +616,7 @@ Technically, QEMU is a type-2 hypervisor.
   - [Wireguard](https://www.wireguard.com/quickstart/) This VPN technology is built into the kernel; Client apps widely available (e.x. Tailscale), allows to connect to your local network remotely using a simple QR code to authenticate.
   - [Tailscale](https://github.com/tailscale): [Quick tutorial](https://www.infoworld.com/article/3690616/tailscale-fast-and-easy-vpns-for-developers.html) Rapidly deploy a WireGuard-based VPN, a "Zero-config VPN": Automatically assigns each machine on your network a unique 100.x.y.z IP address, so that you can establish stable connections between them no matter where they are in the world, even when they switch networks, and even behind a firewall. Tailscal nodes use DERP (Designated Encrypted Relay for Packets) to proxy *encrypted* WireGuard packets through the Tailscale cloud servers when a direct path cannot be found or opened. It uses curve25519 keys as addresses.
 
-    - Commonly used:  
-    ``` bash
-    # tailscaled
-    $ tailscale help
-    $ tailscale login
-    $ tailscale up
-    $ tailscale down
-    $ tailscale status
-    $ tailscale netcheck
-    $ tailscale ssh console_jay
-    ```
+
   - [Zerotier](https://www.zerotier.com/): Another VPN alternative.
   - [ngrok](https://ngrok.com/docs/getting-started/): Exposes local networked services behinds NATs and firewalls to the public internet over a secure tunnel. Share local websites, build/test webhook consumers and self-host personal services.
     - [Sign up (or login)](https://dashboard.ngrok.com/) to get a TOKEN then run: 
