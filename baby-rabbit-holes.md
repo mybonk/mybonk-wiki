@@ -84,7 +84,7 @@ The most important command is `man` which stands for "manual". It explains what 
       - `$ printenv`: Print all the environment variables.
         - `$SHELL`: The default shell being used on the system (e.x. `zsh`, `bash` ...).
         - `$PATH`: Instructs the shell which directories to search for executables, it allows to run commands without having to specify its full path.
-        - - .etc... 
+        - .etc... 
       - `$ export EDITOR=vi`
       - `$ echo $EDITOR`
       - .etc...                       
@@ -137,7 +137,7 @@ The most important command is `man` which stands for "manual". It explains what 
     - `$ watch 'du -ac -d0 /data/bitcoind/blocks'`
     - `$ watch -n 2 'bitcoin-cli -getinfo | grep progress'`
    - `md5sum`: Calculates and verifies 128-bit MD5 hashes as a compact digital fingerprint of a file. There is theoretically an unlimited number of files that will have any given MD5 hash.
-  - Command to search for files through directories.
+  - Command to search for files through directories:
     - `find /search/directory/ -name "matching file search criteria" -actions`
     - `find /dir/to/search -name "pattern" -print`
     - `find /dir/to/search -name "file-to-search" -print`
@@ -145,7 +145,7 @@ The most important command is `man` which stands for "manual". It explains what 
 
 ## The importance of Git / GitHub
 
-GitHub (or GitLab or other alternative) is a platform on the Internet used for storing, tracking, and collaborating on projects. It makes it easy to share all sorts of files and collaborate with peers in an asynchronous but coordinated way. GitHub also serves as a social networking site where developers can openly network, collaborate, and pitch their work.
+ GitHub (or GitLab or other alternative) is a platform on the Internet used for storing, tracking, and collaborating on projects. It makes it easy to share all sorts of files and collaborate with peers in an asynchronous but coordinated way. GitHub also serves as a social networking site where developers can openly network, collaborate, and pitch their work.
 
 > "If your work is not on Github it does not exist"  
 > -Ben Arc
@@ -265,7 +265,7 @@ Authenticate with your GitHub account:
   - `$ du -s /data`. `-s` for “summary”.
   - `$ du -ah --time`. Shows the time of the last modification to any file in the directory or subdirectory. ``--time`` with with the ``-ah`` flags is very useful e.g. someone writes files somewhere by accident and you need to find where.
 
-- `fdisk`: Dialog-driven program to see and manipulate disk partition table.
+- `fdisk`: Dialog-driven program to see and manipulate disk partition table:
   - `fdisk -l`: List the system's partition scheme.
   - `fdisk -l | grep "Disk /"`: See all the available disks.
   - `fdisk /dev/sdc`: Enter the interactive mode to manipulate the partition table of the disk `/dev/sdc` 
@@ -381,7 +381,7 @@ $ tailscale ssh console_jay
 
   rsync allows to restart failed transfers - you just reissue the same command and it will pick up where it left off, whereas scp will start again from scratch.
   
-  rsync needs to be used over SSH to be secure.
+  rsync needs to be used over SSH to be secure:
 
   - Example 1: From local to local (instead of using `scp`):
     
