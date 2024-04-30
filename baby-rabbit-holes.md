@@ -152,7 +152,8 @@ The most important command is `man` which stands for "manual". It explains what 
 
 - Manual: `$ man git`
 - How to fork a repository (instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo)).
-- What is a "*pull request*"? (video explanation): https://www.youtube.com/watch?v=For9VtrQx58 
+- What is a "*pull request*"? (video explanation): https://www.youtube.com/watch?v=For9VtrQx58.
+- What is `stash`/`pop`, when to use them: https://www.youtube.com/watch?v=urSlkC-6lZE.
 
 - Commonly used:
   - Your identity
@@ -185,12 +186,15 @@ The most important command is `man` which stands for "manual". It explains what 
   git push
   git push -u origin main
   git pull
+  git reflog
 
   git remote set-url origin https://git-repo/new-repository.git 
   git remote set-url <remote_name> <ssh_remote_url>
   git remote -v
 
   git diff dir/filename 
+  git stash push
+  git pop
 
   git log -S "signet" --pretty=format:'%h %an %ad %s'
   

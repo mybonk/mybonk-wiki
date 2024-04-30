@@ -39,8 +39,8 @@ Tip: Click the 'TOC' button (![Github TOC button](docs/img/github-toc-icon.svg))
     - [2.4. Install Nix](#24-install-nix)
       - [**Option 1.** Using the ready-made binary distribution from nix cache](#option-1-using-the-ready-made-binary-distribution-from-nix-cache)
       - [**Option 2.** Building Nix from the source](#option-2-building-nix-from-the-source)
-    - [2.4. Build MYBONK stack](#24-build-mybonk-stack)
-    - [2.5. Deploy MYBONK stack to MYBONK consoles](#25-deploy-mybonk-stack-to-mybonk-consoles)
+    - [2.5. Build MYBONK stack](#25-build-mybonk-stack)
+    - [2.6. Deploy MYBONK stack to MYBONK consoles](#26-deploy-mybonk-stack-to-mybonk-consoles)
 - [3. Operations](#3-operations)
     - [3.1. Baby steps](#31-baby-steps)
     - [3.2. Copy the complete blockchain from another MY₿ONK console](#32-copy-the-complete-blockchain-from-another-my₿onk-console)
@@ -81,8 +81,6 @@ Enjoy the ride, no stress, check out our  [baby rabbit holes](/baby-rabbit-holes
 This small ecosystem example consists of only two elements that we are going to build together:
 - One MY₿ONK console
 - One MY₿ONK orchestrator
-
-
 
 ### Advice
 
@@ -343,26 +341,30 @@ The following sections describe the installation of MY₿ONK orchestrator on a V
   Follow the instructions on their website https://www.virtualbox.org
 
 ### 2.2. Build the OS in VirtualBox
-  Now that VirtualBox is installed you need to run an OS on it (Linux Debian in our case, or any systemd-based Linux system).
+  Now that VirtualBox is installed you need to install an OS on it (Linux Debian in our case, or any systemd-based Linux system).
   
   Choose one of the following 2 options:
 
 #### **Option 1.** Using the installation image from Debian
-  - From https://www.debian.org/distrib/  
-  - With this method you go through the standard steps of installing the Debian OS just as if you were installing it on a new desktop but doing it in a VirtualBox 
-  - Don't forget to take note of the the machine's IP address and login details you choose during the installation!
+  - Time required: 40mins (excluding download time).
+  - From https://www.debian.org/distrib/
+  - With this method you go through the standard steps of installing the Debian OS from scratch just as if you were installing it on a new machine, only it is in a virtual machine. 
+  - Don't forget to take note of the login details you choose during the installation!
   - Detailed instructions: https://techcolleague.com/how-to-install-debian-on-virtualbox/
 
 
 #### **Option 2.** Using a ready-made Virtual Box VDI (Virtual Disk Image)
-  - From https://www.linuxvmimages.com/images/debian-11/ (this is not a recommendation, this is an example).
-  - More convenient and quicker than Option 1, ideal in workshops/demos as it is a pre-installed Debian System.
-  - Make sure the network setting of the machine is set to "*bridge adapter*" in VirtualBox. If unsure have a look at [ssh into a VirtualBox](https://www.golinuxcloud.com/ssh-into-virtualbox-vm/#Method-1_SSH_into_VirtualBox_using_Bridged_Network_Adapter).
-  - Make sure you generate a new MAC address as shown in the screenshot below before you start the image otherwise if anyone else uses the same image on the network you will get network issues (several machines with same MAC address results in IP addresses conflicts).
+  - Time required: 5mins (excluding download time).
+  - From https://www.linuxvmimages.com/images/debian-11/ (this is an example, not a recommendation).
+  - Do not use such images in a production environment. 
+  - Quicker and more convenient than Option 1, ideal in workshops/demos as it is a pre-installed "ready to go" Debian system.
+  - Make sure the network setting of your new machine is set to "*bridge adapter*" in VirtualBox. If unsure have a look at [ssh into a VirtualBox](https://www.golinuxcloud.com/ssh-into-virtualbox-vm/#Method-1_SSH_into_VirtualBox_using_Bridged_Network_Adapter).
+  - Make sure you generate a new MAC address as shown in the screenshot below before you start the image of this new machine otherwise if anyone else uses the same image on the network you will get network issues (several machines with same MAC address results in IP addresses conflicts).
 
     ![](docs/img/various/vm_regenerate_mac_address.png)
 
-  - The login details are typically on the download page (in our case `debian`/`debian` and can become `root` by using `sudo` (or `doas` which is a similar tool). 
+  - The default login details are typically mentioned near the link of the image you downloaded: In our case `debian`/`debian` and can become `root` by using `sudo` (or `doas` which is a similar tool).
+  - It is common to have issues with keyboard layout when accessing a machine that has been configured in a different language (e.x. the first few letters of the keyboard write `qwerty` instead of `azerty` and other keys don't behave normally). There are various ways to adjust this in the configuration but it's out of the scope of this document. The simplest and most effective is to find a way to login using the erroneous keyboard layout anyhow figuring out which key is which then once in the Desktop Environment adjust the settings in "Region & Language" > "Input Source".
   - What we call hostname is the machine name you can see displayed on on the shell prompt. Because this is a pre-built image make sure you set a hostname different from the default, e.x 'orchestartor_ben', it will avoid confusion when connecting remotely. Changing the hostname is done by running the following command:
     ```bash
     # hostnamectl set-hostname orchestartor_ben
@@ -373,9 +375,6 @@ The following sections describe the installation of MY₿ONK orchestrator on a V
     ```
     The shell prompt will reflect the new hostname next time you open a terminal session.
 
-  - Do not use such images in a production environment. 
-  - It is common to have issues with keyboard layout when accessing a machine that has been configured in a different language (e.x. the first few letters of the keyboard write `qwerty` instead of `azerty` and other keys don't behave normally). There are various ways to adjust this in the configuration but it's out of the scope of this document. The simplest and most effective is to find a way to login using the erroneous keyboard layout anyhow figuring out which key is which then once in the Desktop Environment adjust the settings in "Region & Language" > "Input Source".
-
 
   - Now you need to install some additional pretty common software packages that will be needed to continue. Debian's package manager is [apt](https://www.cyberciti.biz/tips/linux-debian-package-management-cheat-sheet.html?utm_source=Linux_Unix_Command&utm_medium=faq&utm_campaign=nixcmd). Root privileges are required to modify packages installed on the system so call  [these commands](https://www.cyberciti.biz/tips/linux-debian-package-management-cheat-sheet.html?utm_source=Linux_Unix_Command&utm_medium=faq&utm_campaign=nixcmd) with `sudo` (or `doas`).
 
@@ -385,7 +384,7 @@ The following sections describe the installation of MY₿ONK orchestrator on a V
     # apt update
     ```
 
-  - Install the additional packages (Debian 11 Bullseye) [curl](https://manpages.org/curl), [git](https://manpages.org/git):
+  - Install the additional packages: [curl](https://manpages.org/curl) and [git](https://manpages.org/git):
 
     ```bash
     # apt -y install curl git
@@ -393,7 +392,7 @@ The following sections describe the installation of MY₿ONK orchestrator on a V
 
 ### 2.3. ssh and auto login
 
-You'd want to access your MY₿ONK orchestrator using ssh. 
+You want to access your MY₿ONK orchestrator using ssh. 
 
 For more security some Linux distributions restrict ssh usage, for instance such restrictions may apply to `root` user.
 
@@ -432,7 +431,7 @@ It is generally advised to avoid using user `root` especially to remote-access. 
   - Follow the instructions on nix page https://nixos.org/nix/manual/#ch-installing-source
   
 
-### 2.4. Build MYBONK stack
+### 2.5. Build MYBONK stack
 Now that your MY₿ONK orchestrator is up and running we can use it to build MY₿ONK stack and deploy it seamlessly to the [fleet of] MY₿ONK console(s) in a secure, controlled and effortless way.
 
 [MY₿ONK](https://github.com/mybonk) is derived from nix-bitcoin. Have a look at the GitHub, especially the [MYBONK-core](https://github.com/mybonk/mybonk-core) directory.
@@ -443,7 +442,7 @@ Now that your MY₿ONK orchestrator is up and running we can use it to build MY�
   ssh debian@mybonk_orchestrator
   $
   ```
-- Setup passwordless ssh access for user `root` to connect from from your MY₿ONK orchestrator to the MY₿ONK console as described in the section [ssh, auto login and tmux](#ssh-auto-login-and-tmux)
+- Setup passwordless ssh access for user `root` to connect from your MY₿ONK orchestrator to the MY₿ONK console as described in the section [ssh, auto login and tmux](#ssh-auto-login-and-tmux)
 - And add a shortcut `mybonk-console` in your ssh config file (`~/.ssh/config`): 
   ```
   Host mybonk-console
@@ -459,9 +458,9 @@ Now that your MY₿ONK orchestrator is up and running we can use it to build MY�
   Last login: Fri Mar  3 13:27:34 2023 from 192.168.0.64
   # 
   ```
-- All good, now you have a standard NixOS running, it will be running you your MY₿ONK console in an instant once we will have deployed MY₿ONK stack to it from your MY₿ONK orchestrator.
+- All good, now you have a standard NixOS running, it will be running your MY₿ONK console in an instant once we will have deployed MY₿ONK stack to it from your MY₿ONK orchestrator.
 
-### 2.5. Deploy MYBONK stack to MYBONK consoles
+### 2.6. Deploy MYBONK stack to MYBONK consoles
   
 The main component of MY₿ONK stack is MY₿ONK-core. It is a fork of [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin), augmented of the MY₿ONK specificities, best practices and community (and hardware may you be running an [authentic MY₿ONK console](https://mybonk.co/)).
 
@@ -477,7 +476,7 @@ There are dozens of options available to deploy a nixOS configuration to a remot
 
 We are going to use krops, it is also used by the underlying nix-bitcoin, let's not reinvent the wheel.
 
-First read [this very well written article](https://tech.ingolf-wagner.de/nixos/krops/) to get a high level understanding of how krops works, we are going to perform the steps together in the next few steps.
+First read [this very well written article](https://tech.ingolf-wagner.de/nixos/krops/) to get a high level understanding of how krops works, here we are going to perform the steps together.
 
 As you can read krops relies on ssh passwordless login, we have configured this in an earlier section let's move on:
 
@@ -543,16 +542,16 @@ MY₿ONK stack is now running on your MY₿ONK console and you can monitor and c
 
 Unless otherwise stated all the operations in this sections are executed from MY₿ONK orchestrator.
 
-Learn how to use `tmux` and `tmuxinator` in the [baby rabbit holes](/baby-rabbit-holes.md), it will take a little effort to get used to it but will save you *hours* every week and streamline your operations. We also made a [tmuxinator_console.yml](https://github.com/mybonk/mybonk-core/blob/master/.tmuxinator_console.yml) template available for you to reuse.
+Learn how to use `tmux` and `tmuxinator` in the [baby rabbit holes](/baby-rabbit-holes.md#tmux--tmuxinator), it will take a little effort to get used to it but will save you *hours* every week and streamline your operations. We also made a [tmuxinator_console.yml](https://github.com/mybonk/mybonk-core/blob/master/.tmuxinator_console.yml) template available for you to reuse.
 
-In the following example we pass the extra 'node' parameter (`node="mybonk-jay"`), it is the network name or IP address of the node to connect to (whatever you configured in your `hosts` file, your ssh or Tailscale configuration). The parameter `-c` allows to set a name for the session.
+In the following example we pass the extra 'node' parameter (`node="mybonk-jay"`), it is the network name or IP address of the node to connect to (whatever you configured in your `hosts` file, your ssh or Tailscale configuration). The parameter `-c` allows to name the session.
 
   ```
   $ cd mybonk-core
   $ tmuxinator start -p ../.tmuxinator.yml -c mybonk-jay node="mybonk-jay"
   ```
 
-  You can now kill the session you just created by using the following command:
+  You can kill the session you just created by using the following command:
   ```
   $ tmux kill-session -t mybonk-jay
   ```
@@ -567,7 +566,7 @@ In the following example we pass the extra 'node' parameter (`node="mybonk-jay"`
 ---
 ### 3.1. Baby steps
 
-Your node must be running 24/7. It consumes very little electricity and the goal if to have a mesh of nodes that are super resilient and available. Again: Keep your node running all the time. If you ever have to move it to another location run the appropriate command `# shutdown -h` and let the system halt and power off. 
+Your node must be running 24/7. It consumes very little electricity and the goal is to have a mesh of nodes that are super resilient and available. Again: Keep your node running all the time. If you ever have to move it to another location run the appropriate command `# shutdown -h` and let the system halt and power off properly before unplugging it. 
 
 This will also avoid potential physical damage, data corruption and in the worst but unlikely case funds being locked as a consequence.
 
@@ -576,12 +575,12 @@ Explore the running services using the following simple commands on your MY₿ON
     - `nodeinfo`: Helper script (nix-bitcoin module) that prints info about the node's services.
     
   - Bitcoin
-    - `systemctl status bitcoind`: Standard Linux command, have a look at the section about `systemctl` in the [baby rabbit holes section](/baby-rabbit-holes.md#ssh) if needed.
+    - `systemctl status bitcoind`: Standard Linux command, have a look at the section about `systemctl` in the [baby rabbit holes section](/baby-rabbit-holes.md) if needed.
     - `systemctl stop bitcoind`
     - `systemctl start bitcoind`
 
   - c-lightning
-    - `systemctl status clightning`: Standard Linux command, have a look at the section about `systemctl` in the [baby rabbit holes section](/baby-rabbit-holes.md#ssh) if needed.
+    - `systemctl status clightning`: Standard Linux command, have a look at the section about `systemctl` in the [baby rabbit holes section](/baby-rabbit-holes.md) if needed.
     - `systemctl stop clightning`
     - `systemctl start clightning`
     - `lightning-cli getinfo`: Standard c-lightning CLI tool, use `$ man lightning-cli` if you don't know lightning-cli yet.
@@ -591,11 +590,7 @@ Explore the running services using the following simple commands on your MY₿ON
     - Implemented as a service unit.
     - As you can guess it depends on c-lightning running. 
     - Seems to have been created to allow RTL to run with a c-lightning node instead of only LND. 
-    - You can create any kind of applications using the Lightning commands exposed through http interface ([documentation](https://github.com/Ride-The-Lightning/c-lightning-REST#apis)).
-
-https://github.com/Ride-The-Lightning/c-lightning-REST
-
-It really takes advantage of and shows the power of the plugin capabilities of c-lightning, with 3rd parties being able to add to the infrastructure independently!
+    - You can create any kind of applications using the Lightning commands exposed through http interface ([documentation](https://github.com/Ride-The-Lightning/c-lightning-REST#apis)). It really takes advantage of and shows the power of the plugin capabilities of c-lightning, with 3rd parties being able to add to the infrastructure independently!
 
 #### 3.1.1 Start the services progressively
 
