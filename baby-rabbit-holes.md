@@ -194,7 +194,9 @@ The most important command is `man` which stands for "manual". It explains what 
 
   git diff dir/filename 
   git stash push
-  git pop
+  git stash list
+  git stash pop
+  git stash apply
 
   git log -S "signet" --pretty=format:'%h %an %ad %s'
   
