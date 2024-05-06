@@ -93,7 +93,7 @@ The most important command is `man` which stands for "manual". It explains what 
   - `man`: User manual of given command. 
   - `apropos`: Search all the man pages using keywords to find commands and their functions (read [this](https://www.geeksforgeeks.org/apropos-command-in-linux-with-examples/)).
   - `whatis`: Display manual documentation pages in various ways.
-  - `pwd`, `ls`, `cd`, `type`, `mkdir`, `mv`, `rm`, `ln`, `which`, `whereis`, `cat`, `head`, `tail`, `more`, `tee` …
+  - `pwd`, `ls`, `cd`, `type`, `mkdir`, `mv`, `rm`, `ln`, `which`, `stat`, `whereis`, `cat`, `head`, `tail`, `more`, `tee` …
   - `uname -a`, `hostname`, `whoami`, `passwd`, `chown`, `chgrp`, `chmod`, …
   - `uptime`:  Tell how long the system has been running.
   - `ip a`: Tells you the IP address of your system.
@@ -254,6 +254,12 @@ Authenticate with your GitHub account:
   - `$ rg --type-list` List of the available file types.
   - `$ rg key -t json` Restricts the search for the pattern key to json files only.
 - [more, less, most](https://www.baeldung.com/linux/more-less-most-commands): Terminal pagers. They are used to view files page by page, and/or line by line, each having their own prominent feature or advantage.
+- [pandoc](https://pandoc.org/index.html): Pandoc is best described as a "universal document converter". It can convert between numerous markup and word processing formats including various flavors of Markdown, HTML, Word docx, pdf .etc...  
+Example to render `README.md` so that it is nicely formatted and readable on a terminal: 
+  ```bash
+  $ pandoc -t plain README.md | less
+  ```
+
 ## File processing
 
   - `$ tar -xvf myfile.tar.gz`: Untar a file.
