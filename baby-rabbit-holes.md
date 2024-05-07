@@ -219,9 +219,14 @@ The most important command is `man` which stands for "manual". It explains what 
   
   Using one of the following might saves you time by simplifying your interactions with Git.
   - [Lazygit](https://github.com/kdheepak/lazygit.nvim/): Nice command-line based Git front-end.
+    ![Lazygit screenshot](docs/img/various/Lazygit_interactive_rebase.gif)
   - [Source Tree](https://www.sourcetreeapp.com/): Graphical GUI desktop client. Here is are [good simple tutorials](https://confluence.atlassian.com/get-started-with-sourcetree) to get started.
+    ![Source Tree screenshot](docs/img/various/source_tree_screenshot.png)
   - [Ungit](https://github.com/FredrikNoren/ungit/blob/master/README.md): "The easiest way to use git. On any platform. Anywhere."
+    ![Ungit screenshot](docs/img/various/ungit_screenshot.gif)
+
   - [Magit!](https://github.com/magit/magit/blob/main/README.md): Version control system Git, implemented as an Emacs package.
+    ![Magit screenshot](docs/img/various/magit-screenshot.png)
 
 ### [GitHub CLI](https://docs.github.com/en/github-cli/github-cli/about-github-cli) 
 Command-line tool that brings pull requests, issues, GitHub Actions, and other GitHub features to your terminal, so you can do all your work in one place.
