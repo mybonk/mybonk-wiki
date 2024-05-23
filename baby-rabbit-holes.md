@@ -413,7 +413,7 @@ $ tailscale ssh console_jay
 ## Network
   ### Speed test
   
-  - [https://www.speedtest.net]()
+  - [https://www.speedtest.net](https://www.speedtest.net)
   ### Scanners
   - [findssh](https://github.com/scivision/findssh#readme): Super quick command line tool that scans an entire IPv4 subnet in less than 1 second. Without NMAP. It is extremely quick but sometimes it misses some hosts so run it a couple of time to be sure it scanned them all.
 
@@ -600,9 +600,8 @@ Technically, QEMU is a type-2 hypervisor.
 - [websocketd](https://github.com/joewalnes/websocketd): Small command-line tool that will wrap an existing command-line interface program, and allow it to be accessed via a WebSocket. WebSocket-capable applications can now be built very easily. As long as you can write an executable program that reads STDIN and writes to STDOUT, you can build a WebSocket server. No networking libraries necessary.
 - [wscat](https://github.com/websockets/wscat/blob/master/README.md): WebSocket cat.
 - Benchmaring
-  - [free]() -m
-Using the free -m command to check your Linux memory usage,
-  - [lshw](): Small tool to extract detailed information on the hardware configuration of the  machine. It can report on memory, firmware version, mainboard configuration, CPU version and speed, cache configuration, bus speed, etc. in various output format. e.x. `$ lshw -short`, `$ lshw -json`...
+  - Use the `$ free -m` command to check your Linux memory usage.
+  - `lshw`: Small tool to extract detailed information on the hardware configuration of the  machine. It can report on memory, firmware version, mainboard configuration, CPU version and speed, cache configuration, bus speed, etc. in various output format. e.x. `$ lshw -short`, `$ lshw -json`...
   - [powertop](https://github.com/fenrus75/powertop/blob/master/README.md): Tool to access various powersaving modes in userspace, kernel and hardware. Monitors processes and shows which utilizes the most CPU allowing to identify those with particular high power demands.
   - [stress-ng](https://wiki.ubuntu.com/Kernel/Reference/stress-ng): Stress test a computer system in various selectable way.
   - [Byte UNIX Bench](https://github.com/kdlucas/byte-unixbench/tree/master): Since 1983, provide a basic indicator of the performance of a Unix-like system; hence, multiple tests are used to test various aspects of the system's performance.
@@ -712,7 +711,7 @@ Using the free -m command to check your Linux memory usage,
   - Tea
 ## Federations
 - FEDIMINT (by Fedi):
-  - Explanation video by Obi and Justin (Bitcoin Miami 2023): [https://www.youtube.com/watch?v=_ByXD659Tcc]().
+  - Explanation video by Obi and Justin (Bitcoin Miami 2023): [https://www.youtube.com/watch?v=_ByXD659Tcc](https://www.youtube.com/watch?v=_ByXD659Tcc).
   - Fedimint on [GitHub](https://github.com/fedimint).
   - Telegram: 
     - [@fedimint](https://t.me/fedimint)
@@ -751,8 +750,8 @@ Using the free -m command to check your Linux memory usage,
 - Nice Nix cheat sheet: 
   - [https://github.com/brainrake/nixos-tutorial/blob/master/cheatsheet.md](https://github.com/brainrake/nixos-tutorial/blob/master/cheatsheet.md)
 - Search the Nix ecosystem:
-  - [https://search.nixos.org](): Search Nix packages, NixOS options, Flakes.
-  - [https://noogle.dev](): Search nix functions based on type, name, description, example, category .etc..
+  - [https://search.nixos.org](https://search.nixos.org): Search Nix packages, NixOS options, Flakes.
+  - [https://noogle.dev](https://noogle.dev): Search nix functions based on type, name, description, example, category .etc..
 - NixOS the "traditional" vs. the "Flakes" way: 
   - Flakes have been introduced with Nix 2.4
   - Although still flagged as "*experimental*" feature it is the way forward, we advise you to learn Flakes already.
