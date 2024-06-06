@@ -689,6 +689,8 @@ $ systemctl status bitcoind
 ### Using bitcoin JSON-RPC API calls
 The bitcoin JSON-RPC API allows to interact with bitcoin deamon in a varierty of ways: cURL, JavaScript, Python ...
 
+First you need to make sure Bitcoin Core is setup to accept Remote Procedure Calls (RPC): 
+
 For instance you could run `getnetworkinfo` using the following cURL:
 ```
 curl -u public:2S8PWBZ71wMXdrsAxL21 -d '{"jsonrpc": "1.0", "id": "curltest", "method": "getnetworkinfo", "params": [] }' -H 'content-type: text/plain;' http://mybonk-jay:8332/
@@ -722,8 +724,12 @@ In conculsion, you could even run these RPC commands without using cURL: You wou
 ```bash
 $ systemctl status clightning
 ```
-### Using clightning's command line interface `clightning-cli`
+### Using clightning's command line interface `lightning-cli`
 `lightning-cli` is simply a wrapper over [core-lightning JSON RPC](https://docs.corelightning.org/docs/api-reference) to interact with the lightning deamon, and print the result.
+```bash
+$ lightning-cli --version
+$ lightning-cli help
+```
 - Complete list of all JSON-RPC commands: [HERE](https://docs.corelightning.org/docs/api-reference)
 - Simple examples:
   ```bash
@@ -731,6 +737,17 @@ $ systemctl status clightning
   $ lightning-cli help
   $ lightning-cli getchaininfo
   $ lightning-cli getinfo
+  ```
+Something fun to do is to stream stats from one node (the "source") to another (the "target"): 
+- On the "source" machine run the following command to send 100 times between 2000 and 65000 sats using keysend to node with pubkey `0278e764e98cf94ef1f33684bac0f7cc85b3d445465cc4c0171d07107079aaf4cc` (replace by the pubkey of your target node):
+
+  ```bash
+  $ for i in {1..100}; do lightning-cli keysend 0278e764e98cf94ef1f33684bac0f7cc85b3d445465cc4c0171d07107079aaf4cc `shuf -i 2000000-65000000 -n 1`; done
+  ```
+- Now on the "target" machine run the following command to observe lightning channels grow as the payments are processed:
+
+  ```bash
+  $ watch "lightning-cli listfunds | jq '.channels[] | .our_amount_msat'"
   ```
 
 ### Using clightning JSON-RPC API calls
