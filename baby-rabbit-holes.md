@@ -163,51 +163,55 @@ The most important command is `man` which stands for "manual". It explains what 
       $ git config --global user.email johndoe@example.com
       ```
   
-  ```
-  more ~/.gitconfig
-  git config -l
-  git config user.name
-
-  git clone https://github.com/mybonk/mybonk-core.git
-  git remote show origin
-  git status
-  git show
-  git log main --graph
-  git branch
-  git switch
-  git add .
-
-  git add -a
-  git add -A
-  git commit -m "commit message"
-
-  git mv filename dir/filename
-  git add --all
-  git push
-  git push -u origin main
-  git pull
-  git reflog
-
-  git remote set-url origin https://git-repo/new-repository.git 
-  git remote set-url <remote_name> <ssh_remote_url>
-  git remote -v
-
-  git diff dir/filename 
-  git stash push
-  git stash list
-  git stash pop
-  git stash apply
-
-  git log -S "signet" --pretty=format:'%h %an %ad %s'
   
-  git blame README.md
-  git blame -e README.md
-  git blame -L 1,5 README.md
-  git blame -w README.md
-  git blame -M README.md
-  git blame -C README.md
+  `more ~/.gitconfig`
 
-  ```
+  `git config -l`
+
+  `git config user.name`
+
+  `git clone https://github.com/mybonk/mybonk-core.git`
+
+  `git remote show origin`
+
+  `git status`
+
+  `git show`
+
+  `git log main --graph`
+
+  `git branch`
+
+  `git switch`
+
+  `git checkout origin/main` / `git checkout origin/main <file_name>`
+
+  `git add .` / `git add -a` / `git add -A`
+
+  `git mv filename dir/filename`
+
+  `git restore --staged file-to-unstage.txt`: Unstage a file in the Git index and undo a git add operation. Command introduced in 2019 as (Git 2.23). Are NOT recommended `git rm` (may remove the file not only from the index, but also from the repo altogether) and `git reset` (is "too powerful" and may result in rewriting of branch history).
+
+  `git commit -m "commit message"`
+
+  `git push` / `git push -u origin main`
+
+  `git pull`
+
+  `git reflog`
+
+  `git remote set-url origin https://git-repo/new-repository.git` / 
+  `git remote set-url <remote_name> <ssh_remote_url>` / 
+  `git remote -v`
+
+  `git diff <dir or file name>`
+  
+  `git log` / `git log --oneline` / `git log -S "signet" --pretty=format:'%h %an %ad %s'`
+
+  `git blame README.md` (also try the options `-e`, `-w`, `-M`, `-C`, `-L 1,5` )
+
+  `git stash push` / `git stash list` / `git stash pop` / `git stash apply`
+
 
 ### Good to know
   - [What is the difference between *merge* and *rebase*?](https://www.youtube.com/watch?v=dO9BtPDIHJ8)
@@ -292,23 +296,23 @@ Example to render `README.md` so that it is nicely formatted and readable on a t
   - ["what is the point of ZFS with only 1 disk"](https://www.truenas.com/community/threads/single-drive-zfs.35515/).
   - ["benefit/risk of ZFS with only 1 disk"](https://unix.stackexchange.com/questions/672151/create-zfs-partition-on-existing-drive) (also includes the commands for a little ZFS experimentation).
 ## curl
-- `curl -O https://testdomain.com/testfile.tar.gz`: Download the file `testfile.tar.gz`.
-- `curl -o mydownload.tar.gz https://testdomain.com/testfile.tar.gz` (**little 'o'**): Download to the file `mydownload.tar.gz`.
-- `curl -I https://www.google.com`: Query the header of a server (same as `-head`). 
-- `curl -k https://localhost/my_test_endpoint`: Ignore invalid or self-signed certificates (same as `--insecure`).
+- `$ curl -O https://testdomain.com/testfile.tar.gz`: Download the file `testfile.tar.gz`.
+- `$ curl -o mydownload.tar.gz https://testdomain.com/testfile.tar.gz` (**little 'o'**): Download to the file `mydownload.tar.gz`.
+- `$ curl -I https://www.google.com`: Query the header of a server (same as `-head`). 
+- `$ curl -k https://localhost/my_test_endpoint`: Ignore invalid or self-signed certificates (same as `--insecure`).
 - Make a POST request (through parameters and JSON):
-  - `curl --data "param1=test1&param2=test2" http://test.com`
-  - `curl  -H 'Content-Type: application/json' --data '{"param1":"test1","param2":"test2"}' http://www.test.com`
-- `curl -X 'PUT' -d '{"param1":"test1" "param2":"test3"}' \http://test.com/1`: Specify a type of request (here 'PUT').
-- `curl -u <user:password> https://my-test-api.com/endpoint1`: Basic Authentication for various protocols (same as `-user`).
+  - `$ curl --data "param1=test1&param2=test2" http://test.com`
+  - `$ curl  -H 'Content-Type: application/json' --data '{"param1":"test1","param2":"test2"}' http://www.test.com`
+- `$ curl -X 'PUT' -d '{"param1":"test1" "param2":"test3"}' \http://test.com/1`: Specify a type of request (here 'PUT').
+- `$ curl -u <user:password> https://my-test-api.com/endpoint1`: Basic Authentication for various protocols (same as `-user`).
 - Update name resolution: test an API before deploying and want to hit in the endpoint in the test machine rather than the actual endpoint, you can pass in a custom resolution for that request: Works similarly to `/etc/hosts` host-resolution.
 - Upload a file: curl with the -F option emulates a filled-in form when the user has clicked the submit button. This option causes curl to POST data using the Content-Type multipart/form-data: 
-  - `curl -F @field_name=@path/to/local_file <upload_URL>`
-  - `curl -F @field_name=@path/to/local_file_1, @field_name=@path/to/local_file_2, @field_name=@path/to/local_file_3,  <upload_URL>`
-- `curl -w "%{time_total}\n" -o /dev/null -s www.test.com`: Use `-w` to display information (stdout) after a transfer. `total_time` is one of the interesting parameters curl returns
+  - `$ curl -F @field_name=@path/to/local_file <upload_URL>`
+  - `$ curl -F @field_name=@path/to/local_file_1, @field_name=@path/to/local_file_2, @field_name=@path/to/local_file_3,  <upload_URL>`
+- `$ curl -w "%{time_total}\n" -o /dev/null -s www.test.com`: Use `-w` to display information (stdout) after a transfer. `total_time` is one of the interesting parameters curl returns
 
 ## wget
-- Download a complete remote directory, includes no parent and recursive to only get the desired directory.`wget --no-parent -r http://WEBSITE.com/DIRECTORY`
+- Download a complete remote directory, includes no parent and recursive to only get the desired directory.`$ wget --no-parent -r http://WEBSITE.com/DIRECTORY`
 
 ## Cryptography
 - The difference between seed words and private key: https://youtu.be/Y_A3j8GzaO8
@@ -513,7 +517,7 @@ $ tailscale ssh console_jay
   - `systemctl status bitcoind`
   - `systemctl start bitcoind`
   - `systemctl restart bitcoind`
-  - `systemctl stop bitcoind`
+  - `systemctl stop mempool fulcrum`
   - `systemctl enable --now bitcoind`
   - `systemctl disable bitcoind`
   
@@ -632,7 +636,6 @@ Technically, QEMU is a type-2 hypervisor.
   - [Wireguard](https://www.wireguard.com/quickstart/) This VPN technology is built into the kernel; Client apps widely available (e.x. Tailscale), allows to connect to your local network remotely using a simple QR code to authenticate.
   - [Tailscale](https://github.com/tailscale): [Quick tutorial](https://www.infoworld.com/article/3690616/tailscale-fast-and-easy-vpns-for-developers.html) Rapidly deploy a WireGuard-based VPN, a "Zero-config VPN": Automatically assigns each machine on your network a unique 100.x.y.z IP address, so that you can establish stable connections between them no matter where they are in the world, even when they switch networks, and even behind a firewall. Tailscal nodes use DERP (Designated Encrypted Relay for Packets) to proxy *encrypted* WireGuard packets through the Tailscale cloud servers when a direct path cannot be found or opened. It uses curve25519 keys as addresses.
 
-
   - [Zerotier](https://www.zerotier.com/): Another VPN alternative.
   - [ngrok](https://ngrok.com/docs/getting-started/): Exposes local networked services behinds NATs and firewalls to the public internet over a secure tunnel. Share local websites, build/test webhook consumers and self-host personal services.
     - [Sign up (or login)](https://dashboard.ngrok.com/) to get a TOKEN then run: 
@@ -647,38 +650,80 @@ Technically, QEMU is a type-2 hypervisor.
 - [md5calc](https://md5calc.com/hash/sha256): Website to calculate the Hash of any string. 
 
 ## Common bitcoin-related commands
-- [bitcoin-cli](https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list)
-- Pipe the output of `bitcoin-cli` through `jq`, for instance:
-  - `$ bitcoin-cli getblockchaininfo | jq '.'` to get pretty JSON output formatting.
+
+
+- Check bitcoin deamon is running: 
+```bash
+$ systemctl status bitcoind
+```
+
+### Using bitcoin's command line interface bitcoin-cli
+`bitcoin-cli` is the most straightforward way to execute bitcoin RPC commands ([full list of RPC commands](https://developer.bitcoin.org/reference/rpc/)), here are *some* of the most commonly used:
+- `$ bitcoin-cli -getinfo`
+- `$ bitcoin-cli getblockchaininfo`
+- It is a good idea to pipe through `jq` to get pretty JSON output formatting or extract specific data, for instance:
+  - `$ bitcoin-cli getblockchaininfo | jq '.'`
   - `$ bitcoin-cli getblockchaininfo | jq '.verificationprogress'`
-- `bitcoin-cli -addrinfo`
-- `bitcoin-cli -getinfo`
-- Bitcoin-cli to execute bitcoin RPC commands ([full list](https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list)), some of the most commonly used commands are:
 - General Info
-  - `bitcoin-cli help`
-  - `bitcoin-cli help getblockchaininfo`
-  - `bitcoin-cli getblockchaininfo`
-  - `bitcoin-cli getpeerinfo`
-  - `bitcoin-cli getnetworkinfo`
-  - `bitcoin-cli getmininginfo`
-  
+  - `$ bitcoin-cli help`
+  - `$ bitcoin-cli help getblockchaininfo`
+  - `$ bitcoin-cli getblockchaininfo`
+  - `$ bitcoin-cli getpeerinfo`
+  - `$ bitcoin-cli getnetworkinfo`
+  - `$ bitcoin-cli getmininginfo`
 - Block Info
-  - `bitcoin-cli getblockcount`
-  - `bitcoin-cli getbestblockhash`
-  - `bitcoin-cli getblock hash`
-  - `bitcoin-cli getblockhash index`
+  - `$ bitcoin-cli getblockcount`
+  - `$ bitcoin-cli getbestblockhash`
+  - `$ bitcoin-cli getblock <hash>`
+  - `$ bitcoin-cli getblockhash <index>`
 - Transaction Info
-  - `bitcoin-cli getwalletinfo`
-  - `bitcoin-cli createwallet`
-  - `bitcoin-cli listreceivedbyaddress 0 true`: List of accounts on the system.
-  - `bitcoin-cli setaccount 1GBykdD628RbYPr3MUhANiWchoCcE52eW2 myfirstaccount`: To associate an existing address (here : 1GBykdD628RbYPr3MUhANiWchoCcE52eW2) to an account name.
-  - `bitcoin-cli sendfrom myfirstaccount 1AYJyqQHCixxxxxxffevxxxxQosCWqn1bT 0.15`: Send bitcoins (here : 0.15) to an address (here : 1AYJyqQHCixxxxxxffevxxxxQosCWqn1bT) 
-  - `bitcoin-cli getrawmempool`
-  - `bitcoin-cli getrawtransaction txid`
-  - `bitcoin-cli decoderawtransaction rawtx`
+  - `$ bitcoin-cli getwalletinfo`
+  - `$ bitcoin-cli createwallet`
+  - `$ bitcoin-cli listreceivedbyaddress 0 true`: List of accounts on the system.
+  - `$ bitcoin-cli setaccount 1GBykdD628RbYPr3MUhANiWchoCcE52eW2 myfirstaccount`: To associate an existing address (here : 1GBykdD628RbYPr3MUhANiWchoCcE52eW2) to an account name.
+  - `$ bitcoin-cli sendfrom myfirstaccount 1AYJyqQHCixxxxxxffevxxxxQosCWqn1bT 0.15`: Send bitcoins (here : 0.15) to an address (here : 1AYJyqQHCixxxxxxffevxxxxQosCWqn1bT) 
+  - `$ bitcoin-cli getrawmempool`
+  - `$ bitcoin-cli getrawtransaction <txid>`
+  - `$ bitcoin-cli decoderawtransaction <rawtx>`
+
+### Using bitcoin JSON-RPC API calls
+The bitcoin JSON-RPC API allows to interact with bitcoin deamon in a varierty of ways: cURL, JavaScript, Python ...
+
+For instance you could run `getnetworkinfo` using the following cURL:
+```
+curl -u public:2S8PWBZ71wMXdrsAxL21 -d '{"jsonrpc": "1.0", "id": "curltest", "method": "getnetworkinfo", "params": [] }' -H 'content-type: text/plain;' http://mybonk-jay:8332/
+```
+Most noticably you need to use the option `-u` (or `--user`) to pass valid crenentials (here username `public` and password `2S8PWBZ71wMXdrsAxL21`) allowing you to connect else you will get an `401 Unauthorized` error. Username is either `public` or `priviledged`, their password in `/etc/nix-bitcoin-secrets/bitcoin-rpcpassword-{public|priviledged}`.
+
+Also make sure that the method you call (`getnetworkinfo`, `getpeerinfo`, `listwallets`...) is indeed in the RPC whitelist else you will get a 
+
+You can use curl with the `-v` (verbose) parameter to see the headers sent: The text after the `Basic` keyword is the base64 encoded text string of the `username:password` combination that was passed with the `-u` parameter.
+```bash
+Authorization: Basic cHVibGljOjJTOFBXQlo3MXdNWGRyc0F4TDIx
+```
+To manually generate the base64 encoded credentials on Linux, you can simply call:
+
+```bash
+$ echo -n "username:password" | base64 -w0
+cHVibGljOjJTOFBXQlo3MXdNWGRyc0F4TDIx
+```
+
+To test this end to end, you can remove `-u username:password` and substitute with `-H Authorization: Basic cHVibGljOjJTOFBXQlo3MXdNWGRyc0F4TDIx` and it will still authenticate just fine:
+
+```bash
+$ curl -v -d '{"rpc": "1.0", "id": "curltest", "method": "getnetworkinfo", "params": [] }' -H 'content-type: text/plain;' -H 'Authorization: Basic cHVibGljOjJTOFBXQlo3MXdNWGRyc0F4TDIx' http://mybonk-jay:8332/
+```
+
+In conculsion, you could even run these RPC commands without using cURL: You would just need to base64 encode the `username:password` combination and set the HTTP `Authorization` header with the type as `Basic` along with the base64 encoded string.
 
 ## Common clightning-related commands
-- [clightning-cli](https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list): lightning-cli simply uses the JSON RPC interface to talk to lightningd, and prints the results.
+
+- Check bitcoin deamon is running: 
+```bash
+$ systemctl status clightning
+```
+### Using clightning's command line interface `clightning-cli`
+`lightning-cli` is simply a wrapper over [core-lightning JSON RPC](https://docs.corelightning.org/docs/api-reference) to interact with the lightning deamon, and print the result.
 - Complete list of all JSON-RPC commands: [HERE](https://docs.corelightning.org/docs/api-reference)
 - Simple examples:
   ```bash
@@ -687,6 +732,11 @@ Technically, QEMU is a type-2 hypervisor.
   $ lightning-cli getchaininfo
   $ lightning-cli getinfo
   ```
+
+### Using clightning JSON-RPC API calls
+Similarly to the bitcoin JSON-RPC, the clightning JSON-RPC API allows to interact with clightning deamon in a varierty of ways: cURL, JavaScript, Python ...
+
+[Corelightning documentation](https://docs.corelightning.org/reference/lightning-invoice) is very well done with clear examples.
 
 ## Podcasts
 - [Citadel Dispatch #37, Sep 2021](https://fountain.fm/episode/4VMvLwI6VXY5uG4xJhfu): Building software from source code, reproducible builds, reducing trust, coin selection, coin control, coinjoin
@@ -724,8 +774,10 @@ Technically, QEMU is a type-2 hypervisor.
 
 ## For developers
   - Great Nix language tour: https://nixcloud.io/tour
-  - [Poetry2nix](https://www.tweag.io/blog/2020-08-12-poetry2nix/): Developping Python with Poetry & Poetry2Nix: Reproducible, flexible, Python environments.
   - [The difference between RPC and REST](https://nordicapis.com/whats-the-difference-between-rpc-and-rest/)
+  - [HTTP-TRACKER](https://chromewebstore.google.com/detail/http-tracker/fklakbbaaknbgcedidhblbnhclijnhbi) Chrome extension: Allows to inspect HTTP request headers, cookies, data, response Headers, cookies and even **add/modify request headers** before sending requests.
+  ![](docs/img/various/http-tracker.jpg)
+  - [Poetry2nix](https://www.tweag.io/blog/2020-08-12-poetry2nix/): Developping Python with Poetry & Poetry2Nix: Reproducible, flexible, Python environments.
   - [Polar](https://lightningpolar.com/): One-click Bitcoin Lightning Networks for local app development & testing.
   - [Rust](https://www.rust-lang.org/): Multi-paradigm, general-purpose programming language that emphasizes performance, type safety, and concurrency. It enforces memory safety—ensuring that all references point to valid memory—without requiring the use of a garbage collector or reference counting present in other memory-safe languages.
   - [Cargo](https://doc.rust-lang.org/cargo/): Package manager for Rust.
