@@ -295,7 +295,8 @@ Example to render `README.md` so that it is nicely formatted and readable on a t
 - Interesting threads about ZFS:
   - ["what is the point of ZFS with only 1 disk"](https://www.truenas.com/community/threads/single-drive-zfs.35515/).
   - ["benefit/risk of ZFS with only 1 disk"](https://unix.stackexchange.com/questions/672151/create-zfs-partition-on-existing-drive) (also includes the commands for a little ZFS experimentation).
-## curl
+## cURL
+Great tutorial on how to use cURL
 - `$ curl -O https://testdomain.com/testfile.tar.gz`: Download the file `testfile.tar.gz`.
 - `$ curl -o mydownload.tar.gz https://testdomain.com/testfile.tar.gz` (**little 'o'**): Download to the file `mydownload.tar.gz`.
 - `$ curl -I https://www.google.com`: Query the header of a server (same as `-head`). 
