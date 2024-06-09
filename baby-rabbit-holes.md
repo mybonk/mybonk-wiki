@@ -296,7 +296,7 @@ Example to render `README.md` so that it is nicely formatted and readable on a t
   - ["what is the point of ZFS with only 1 disk"](https://www.truenas.com/community/threads/single-drive-zfs.35515/).
   - ["benefit/risk of ZFS with only 1 disk"](https://unix.stackexchange.com/questions/672151/create-zfs-partition-on-existing-drive) (also includes the commands for a little ZFS experimentation).
 ## cURL
-Great tutorial on how to use cURL
+Great tutorial on how to use cURL: [https://curl.se/docs/httpscripting.html](https://curl.se/docs/httpscripting.html)
 - `$ curl -O https://testdomain.com/testfile.tar.gz`: Download the file `testfile.tar.gz`.
 - `$ curl -o mydownload.tar.gz https://testdomain.com/testfile.tar.gz` (**little 'o'**): Download to the file `mydownload.tar.gz`.
 - `$ curl -I https://www.google.com`: Query the header of a server (same as `-head`). 
@@ -720,6 +720,8 @@ $ curl -v -d '{"rpc": "1.0", "id": "curltest", "method": "getnetworkinfo", "para
 In conculsion, you could even run these RPC commands without using cURL: You would just need to base64 encode the `username:password` combination and set the HTTP `Authorization` header with the type as `Basic` along with the base64 encoded string.
 
 ## Common clightning-related commands
+
+This is a nice cheatsheet for [https://github.com/grubles/cln-cheatsheet](https://github.com/grubles/cln-cheatsheet)
 
 - Check bitcoin deamon is running: 
 ```bash
