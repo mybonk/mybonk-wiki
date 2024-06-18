@@ -573,7 +573,7 @@ We discuss and use UFW in our scope.
 In NixOS the following commands are replaced by parameters in the configuration file (`networking.firewall.allowTCPPorts` .etc...) you should not run them manually.
 - `$ sudo ufw allow 9999`: Open port 9999.
 - `$ sudo ufw enable`: In case `ufw` is not running (check with sudo `ufw` status).
-- `$ sudo netstat -lptu`: See what ports are open and what processes listen to them.
+- `$ netstat -ano`: See what ports are open and what processes uses to them.
 
 ## partitions / filesystems
 
@@ -741,17 +741,32 @@ $ lightning-cli help
   $ lightning-cli getchaininfo
   $ lightning-cli getinfo
   ```
-Something fun to do is to stream stats from one node (the "source") to another (the "target"): 
-- On the "source" machine run the following command to send 100 times between 2000 and 65000 sats using keysend to node with pubkey `0278e764e98cf94ef1f33684bac0f7cc85b3d445465cc4c0171d07107079aaf4cc` (replace by the pubkey of your target node):
+Something fun to do is to stream stats from one node (the "source") to another (the "destination"): 
+- On the "source" machine run the following command to send 100 times between 2000 and 65000 sats using keysend to node with pubkey `0278e764e98cf94ef1f33684bac0f7cc85b3d445465cc4c0171d07107079aaf4cc` (replace by the pubkey of your destination node):
 
   ```bash
   $ for i in {1..100}; do lightning-cli keysend 0278e764e98cf94ef1f33684bac0f7cc85b3d445465cc4c0171d07107079aaf4cc `shuf -i 2000000-65000000 -n 1`; done
   ```
-- Now on the "target" machine run the following command to observe lightning channels grow as the payments are processed:
+- Now on the "destination" machine run the following command to observe lightning channels grow as the payments are processed:
 
   ```bash
   $ watch "lightning-cli listfunds | jq '.channels[] | .our_amount_msat'"
   ```
+
+Another example is sending funds onchain using lightning-cli, which is also possible. 
+
+- Generate a new bitcoin address (`bech32` address format by default):
+  ```
+  $ lightning-cli newaddr
+  {
+    "bech32": "tb1qmws65ajdzfk3etqzumfk9ujumjhj8tgvk7rwys"
+  }
+  ```
+- Now send funds to the address you have generated in the previous step:
+  ```
+  $ lightning-cli withdraw tb1qmws65ajdzfk3etqzumfk9ujumjhj8tgvk7rwys 10000000
+  ```
+  The command will take a couple of seconds to complete and will return the `txid` (transaction id) along with other data. The command `withdraw` has a few optional parameters, have a look at its documentation.
 
 ### Using clightning JSON-RPC API calls
 Similarly to the bitcoin JSON-RPC, the clightning JSON-RPC API allows to interact with clightning deamon in a varierty of ways: cURL, JavaScript, Python ...
@@ -986,6 +1001,7 @@ $ nix-shell -p asciiquarium cmatrix fortune cowsay sl figlet toilet oneko
 - `cowsay`: Simple little ASCII art tool that prints a picture of a cow with a speech bubble message; you can enter the following command to "pipe" the output of the aforementioned `fortune` command to create your own wise cow. Try out `$ fortune | cowsay`
 - `sl`: Animated ASCII steam locomotive with a few nice hidden options
 - `figlet`: ASCII banner creator
+- `pipes`: Animated pipes terminal screensaver.
 - `toilet`: More ASCII fonts. For some reason, they named it toilet.
 - `oneko`: Adds an animated cat to your terminal who will follow your mouse (get it?)
 - `bastet`: Tetris on the command-line.
