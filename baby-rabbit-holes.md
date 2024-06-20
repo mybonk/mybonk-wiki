@@ -276,15 +276,15 @@ Example to render `README.md` so that it is nicely formatted and readable on a t
 ## File system / Block devices
 - `lsblk`: List information about the system's available or the specified block devices (e.g. disks, USB sticks ...).
 - Test block device performances: `hdparm -t --direct /dev/sda1` (if not installed run nix-shell -p hdparm).
-- `df`: Display disk usage:
-  - `df -hT`. `-h` for “human readable”, `-T` to displays the type of the filesystem.
+- `df`: "Disk Free" displays disk usage:
+  - `df -hT`. `-h` for “human readable”, add `-T` to display the type of the filesystem.
   - `df -hT .`. '`.`' for whatever partition the current directory is residing on.
   - `df -hT -t ext4`. `-t ext4` to display only filesystems of type ext4.
   - `df -hT -x squashfs -x overlay -x tmpfs -x devtmpfs` to hide given filesystem types from the output.
-- `du`: Estimate file space usage. 
+- `du`: "Disk Usage" to get space usage of directory/subdirectory. 
   - `$ du -h /data`. `-h` for “human readable”.
   - `$ du -s /data`. `-s` for “summary”.
-  - `$ du -ah --time`. Shows the time of the last modification to any file in the directory or subdirectory. ``--time`` with with the ``-ah`` flags is very useful e.g. someone writes files somewhere by accident and you need to find where.
+  - `$ du -ah --time`. Shows the time of the last modification to any file in the directory or subdirectory. ``--time`` with the ``-ah`` flags is very useful e.g. someone writes files somewhere by accident and you need to find where.
 
 - `fdisk`: Dialog-driven program to see and manipulate disk partition table:
   - `fdisk -l`: List the system's partition scheme.
