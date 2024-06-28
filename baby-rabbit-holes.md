@@ -145,10 +145,12 @@ The most important command is `man` which stands for "manual". It explains what 
 
 ## The importance of Git / GitHub
 
+ > "If your work is not on Github it does not exist"  
+> -Ben Arc
+
  GitHub (or GitLab or other alternative) is a platform on the Internet used for storing, tracking, and collaborating on projects. It makes it easy to share all sorts of files and collaborate with peers in an asynchronous but coordinated way. GitHub also serves as a social networking site where developers can openly network, collaborate, and pitch their work.
 
-> "If your work is not on Github it does not exist"  
-> -Ben Arc
+ ![Source Tree screenshot](docs/img/various/git_comic.png)
 
 - Manual: `$ man git`
 - How to fork a repository (instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo)).
@@ -605,6 +607,7 @@ Technically, QEMU is a type-2 hypervisor.
 - [websocketd](https://github.com/joewalnes/websocketd): Small command-line tool that will wrap an existing command-line interface program, and allow it to be accessed via a WebSocket. WebSocket-capable applications can now be built very easily. As long as you can write an executable program that reads STDIN and writes to STDOUT, you can build a WebSocket server. No networking libraries necessary.
 - [wscat](https://github.com/websockets/wscat/blob/master/README.md): WebSocket cat.
 - Benchmaring
+  - `time`: The simplest, shell built-in, tool to measure a command execution time. 
   - Use the `$ free -m` command to check your Linux memory usage.
   - `lshw`: Small tool to extract detailed information on the hardware configuration of the  machine. It can report on memory, firmware version, mainboard configuration, CPU version and speed, cache configuration, bus speed, etc. in various output format. e.x. `$ lshw -short`, `$ lshw -json`...
   - [powertop](https://github.com/fenrus75/powertop/blob/master/README.md): Tool to access various powersaving modes in userspace, kernel and hardware. Monitors processes and shows which utilizes the most CPU allowing to identify those with particular high power demands.
@@ -844,6 +847,7 @@ Similarly to the bitcoin JSON-RPC, the clightning JSON-RPC API allows to interac
   - Although still flagged as "*experimental*" feature it is the way forward, we advise you to learn Flakes already.
   
 - `nix --version`: Get running nix version.
+- `nix-info -m`
 - `nix-shell`: Start an interactive shell based on a Nix expression. This is distinct from `nix shell` ([great explanation of the difference between 'nix-shell' and 'nix shell'](https://discourse.nixos.org/t/nix-shell-nix-shell-and-nix-develop/25964/4)).
 - `nix-build`: Build a Nix expression. This is distinct from `nix build`.
 - `nix-channel`
