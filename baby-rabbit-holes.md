@@ -13,6 +13,10 @@ Play around, copy/past, break things, have fun.
 
 A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#readme](https://github.com/ruanbekker/cheatsheets#readme)
 
+## UNIX vs. Linux? What's the difference?
+
+Here is a good article: 
+![UNIX in the 60s](docs/img/various/unix70s.jpeg)
 
 ## First steps with command-line
 
