@@ -15,8 +15,8 @@ A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#r
 
 ## UNIX vs. Linux? What's the difference?
 
-Here is a good article: 
-![UNIX in the 60s](docs/img/various/unix70s.jpeg)
+Good read on how Unix started and influenced Linux: [https://www.redhat.com/sysadmin/unix-linux-history]
+![UNIX in the 70s](docs/img/various/unix70s.jpeg)
 
 ## First steps with command-line
 
@@ -81,6 +81,7 @@ The most important command is `man` which stands for "manual". It explains what 
     - Recursive path expansion: e.x. “/u/lo/b” expands to “/usr/local/bin”.
     - Spelling correction and approximate completion: Minor typo mistakes in file or directory names are fixed automatically.
     - Plugin and theme support: This is the greatest feature of Zsh. Use [Oh My Zsh](https://github.com/ohmyzsh/ohmyzsh#readme) manage these effortlessly (list of plugins [HERE](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins)).
+  - [Fuzzy Finder](https://www.freecodecamp.org/news/fzf-a-command-line-fuzzy-finder-missing-demo-a7de312403ff/): A tool that can change your tech life into “before” and “after” parts.
 
 - Environment variables in Linux-based systems:
   
@@ -111,15 +112,23 @@ The most important command is `man` which stands for "manual". It explains what 
     
     - Don't forget to explore 'i-search' and 'reverse-i-search' using ``Ctrl`` + ``s`` and ``Ctrl`` + ``r`` respectively; Read this [if 'i-search' using ``Ctrl`` + ``s`` does not work](https://stackoverflow.com/questions/791765/unable-to-forward-search-bash-history-similarly-as-with-ctrl-r).
   - `alias`
-  - `grep`: Find all files containing specific text
+  - `grep`: 
     - On a file:
-      - Most basic use
+      - Most basic use: all the lines containing 'keyword':
         ```
         $ grep 'keyword' /path/to/file.log
         ```
       - To also show the 5 lines before and the 2 lines after the keyword occurrences as well as highlighting the occurrences in color:
         `$ grep -B 5 -A 2 --color 'keyword' /path/to/file.log`
-    - On directories:
+      - Exclude a single pattern using the the -v flag: `grep -v "pattern" file`:
+        ```
+        # journalctl -n 50 |grep -v  "sudo"
+        ```
+      - Exclude multiple patterns using the -e flag combined with the -v flag: 
+        ```
+        # journalctl -n 50 |grep -v -e  "sudo" -e "background"
+        ```
+    - On directories: Find all files containing specific text
       - Search all the files in a given *directory*:
         ```
         grep -rnw '/path/to/somewhere/' -e 'pattern'
@@ -141,6 +150,7 @@ The most important command is `man` which stands for "manual". It explains what 
     - `$ watch 'du -ac -d0 /data/bitcoind/blocks'`
     - `$ watch -n 2 'bitcoin-cli -getinfo | grep progress'`
    - `md5sum`: Calculates and verifies 128-bit MD5 hashes as a compact digital fingerprint of a file. There is theoretically an unlimited number of files that will have any given MD5 hash.
+   - `sha256`: Similar to md5 but based on 256-bits, considered more secure and less prone to theoretical collisions.
   - Command to search for files through directories:
     - `find /search/directory/ -name "matching file search criteria" -actions`
     - `find /dir/to/search -name "pattern" -print`
@@ -454,7 +464,7 @@ $ tailscale ssh console_jay
 
 
 ## tmux & tmuxinator
-... or alternatives like GNU Screen, Terminator, Byobu, .etc...)
+... or alternatives like GNU Screen, Terminator, Byobu, .etc...
 
 ### tmux for beginners: 
 - part 1: https://dev.to/iggredible/tmux-tutorial-for-beginners-5c52 
@@ -838,6 +848,50 @@ Similarly to the bitcoin JSON-RPC, the clightning JSON-RPC API allows to interac
 
 ## NixOS/Nix specific
 
+If you are actualy running NixOS operating system (as opposed to just Nix which is the package manager), you can lookup the currently active NixOS configuration. For example:
+```bash
+$ nixos-version
+23.05.20230915.360a7d3 (Stoat)
+```
+Of course you also use the traditional Linux commands to know more:
+- OS name and version in Linux: 
+    - `cat /etc/os-release`
+    ```bash
+    BUG_REPORT_URL="https://github.com/NixOS/nixpkgs/issues"
+    BUILD_ID="23.05.20230915.360a7d3"
+    DOCUMENTATION_URL="https://nixos.org/learn.html"
+    HOME_URL="https://nixos.org/"
+    ID=nixos
+    LOGO="nix-snowflake"
+    NAME=NixOS
+    PRETTY_NAME="NixOS 23.05 (Stoat)"
+    SUPPORT_END="2023-12-31"
+    SUPPORT_URL="https://nixos.org/community.html"
+    VERSION="23.05 (Stoat)"
+    VERSION_CODENAME=stoat
+    VERSION_ID="23.05"
+    ```
+
+- and:
+  ```$ hostnamectl```
+    
+  ```bash
+     Static hostname: mybonk-jay
+         Icon name: computer-vm
+           Chassis: vm 🖴
+        Machine ID: b93a6b5ab0384df583b2f691e3ed314c
+           Boot ID: 82b819d538bd4a1a93ec046fc8f511e5
+    Virtualization: kvm
+  Operating System: NixOS 23.05 (Stoat)
+    OS Support End: Sun 2023-12-31
+  OS Support Expired: 10month 5d
+            Kernel: Linux 6.1.52
+      Architecture: x86-64
+   Hardware Vendor: 
+    Hardware Model: vServer
+  Firmware Version: 20171111
+     Firmware Date: Sat 2017-11-11
+  ```
 
 ### Common Nix commands
 
