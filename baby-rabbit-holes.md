@@ -81,7 +81,7 @@ The most important command is `man` which stands for "manual". It explains what 
     - Recursive path expansion: e.x. “/u/lo/b” expands to “/usr/local/bin”.
     - Spelling correction and approximate completion: Minor typo mistakes in file or directory names are fixed automatically.
     - Plugin and theme support: This is the greatest feature of Zsh. Use [Oh My Zsh](https://github.com/ohmyzsh/ohmyzsh#readme) manage these effortlessly (list of plugins [HERE](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins)).
-  - [Fuzzy Finder](https://www.freecodecamp.org/news/fzf-a-command-line-fuzzy-finder-missing-demo-a7de312403ff/): A tool that can change your tech life into “before” and “after” parts.
+  - [fzf (Fuzzy Finde](https://www.freecodecamp.org/news/fzf-a-command-line-fuzzy-finder-missing-demo-a7de312403ff/): A tool that can change your tech life into “before” and “after” parts.
 
 - Environment variables in Linux-based systems:
   
@@ -342,7 +342,7 @@ Spare yourself the pain, learn good habits, save tones time and avoid getting lo
 - OpenSSH
 - .ssh client configuration (`~/.ssh/config`)
 - How to setup and manage ssh keys: https://goteleport.com/blog/how-to-set-up-ssh-keys/
-  - `ssh-keygen`  e.x. `$ ssh-keygen -t ecdsa -b 521`
+  - `ssh-keygen`  e.x. `$ ssh-keygen -t ecdsa -b 521`, `ssh-keygen -R 5.72.114.57`
   - `passphrase`
   - `ssh-copy-id`: Copy your public key on the server machine's `~/.ssh/authorized_keys` 
   - `ssh-add`
@@ -879,8 +879,8 @@ Of course you also use the traditional Linux commands to know more:
      Static hostname: mybonk-jay
          Icon name: computer-vm
            Chassis: vm 🖴
-        Machine ID: b93a6b5ab0384df583b2f691e3ed314c
-           Boot ID: 82b819d538bd4a1a93ec046fc8f511e5
+        Machine ID: b93a6b5ab0384df583b2f691e312314c
+           Boot ID: 82b819d538bd4a1a93ec046fc81111e5
     Virtualization: kvm
   Operating System: NixOS 23.05 (Stoat)
     OS Support End: Sun 2023-12-31
