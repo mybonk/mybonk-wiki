@@ -190,6 +190,11 @@ The most important command is `man` which stands for "manual". It explains what 
 
   `git remote show origin`
 
+  `git remote set-url`: You may need to change the connection type to GitHub from https to ssh (if you use private-public keys to connect). This is done by using the `git remote set-url` and changing `https://github.com/mybonk/mybonk-core.git` by `git@github.com://github.com/mybonk/mybonk-core.git`.
+  ```bash
+  $ git remote set-url origin git@github.com://github.com/mybonk/mybonk-core.git
+  ```
+
   `git status`
 
   `git show`
