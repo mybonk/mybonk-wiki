@@ -150,7 +150,7 @@ The most important command is `man` which stands for "manual". It explains what 
     - `$ watch 'du -ac -d0 /data/bitcoind/blocks'`
     - `$ watch -n 2 'bitcoin-cli -getinfo | grep progress'`
    - `md5sum`: Calculates and verifies 128-bit MD5 hashes as a compact digital fingerprint of a file. There is theoretically an unlimited number of files that will have any given MD5 hash.
-   - `sha256`: Similar to md5 but based on 256-bits, considered more secure and less prone to theoretical collisions.
+   - `sha256sum`: Similar to md5 but based on 256-bits, considered more secure and less prone to theoretical collisions.
   - Command to search for files through directories:
     - `find /search/directory/ -name "matching file search criteria" -actions`
     - `find /dir/to/search -name "pattern" -print`
