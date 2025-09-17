@@ -427,15 +427,20 @@ $ tailscale ssh console_jay
   
   rsync needs to be used over SSH to be secure:
 
-  - Example 1: From local to local (instead of using `scp`):
+  - Example 1: From **local to local** (instead of using `scp`):
     
     ```bash
     $ rsync -avhW --progress --exclude --exclude '*/*.lock' /unmountme/bitcoin/{blocks,chainstate,indexes} /data/bitcoin
     ```
   
-  - Example 2: Same thing but also gives a visual indication of the copy progress as well as completion time estimate ('ETA'):
+  - Example 2: Same thing (**local to local**) but also gives a visual indication of the copy progress as well as completion time estimate ('ETA'):
     ```bash
     $ rsync -avhW --stats --exclude '*/*.lock' --human-readable /unmountme/bitcoin/{blocks,chainstate,indexes} /data/bitcoin | pv -lep -s $(find /unmountme/bitcoin/{chainstate,blocks,indexes} -type f | wc -l)
+    ```
+
+  - Example 3: Same thing but **to a remote server** (over the network as opposed to locally):
+    ```bash
+    # rsync -avhW --stats --exclude '*/*.lock' --human-readable /data/bitcoin/{blocks,chainstate,indexes} bitcoin@192.168.0.127:/data/bitcoin
     ```
 ## Network
   ### Speed test
