@@ -98,8 +98,8 @@ The most important command is `man` which stands for "manual". It explains what 
   - `man`: User manual of given command. 
   - `apropos`: Search all the man pages using keywords to find commands and their functions (read [this](https://www.geeksforgeeks.org/apropos-command-in-linux-with-examples/)).
   - `whatis`: Display manual documentation pages in various ways.
-  - `pwd`, `ls`, `cd`, `type`, `mkdir`, `mv`, `rm`, `ln`, `which`, `stat`, `whereis`, `cat`, `head`, `tail`, `more`, `tee` …
-  - `uname -a`, `hostname`, `whoami`, `passwd`, `chown`, `chgrp`, `chmod`, …
+  - `pwd`, `ls`, `cd`, `type`, `mkdir`, `mv`, `rm`, `ln` (and know the difference between a "soft" and a "hard" link), `which`, `stat`, `whereis`, `cat`, `head`, `tail`, `more`, `tee` …
+  - `uname -a`, `hostname`, `whoami`, `passwd`, `chown`, `chgrp`, `chmod`, `adduser`, `usermod`, …
   - `uptime`:  Tell how long the system has been running.
   - `ip a`: Tells you the IP address of your system.
   - `su`/`sudo`, `doas`: Used to assume the identity of another user on the system (they are both similar tools, `doas` has been ported from the OpenBSD project and could be assumed "safer" than `sudo` as it is less error-prone e.g. when setting up somewhat complicated patterns in `/etc/sudoers`).
@@ -147,7 +147,7 @@ The most important command is `man` which stands for "manual". It explains what 
         ```
     - `tee`: a command in command-line interpreters using standard streams which reads standard input and writes it to both standard output and one or more files, effectively duplicating its input. It is primarily used in conjunction with pipes and filters. The command is named after the T-splitter used in plumbing.
    - `watch`: Execute a program periodically showing output in fullscreen e.g. 
-    - `$ watch 'du -ac -d0 /data/bitcoind/blocks'`
+    - `$ watch 'du -ac -d0 /data/bitcoin/blocks'`
     - `$ watch -n 2 'bitcoin-cli -getinfo | grep progress'`
    - `md5sum`: Calculates and verifies 128-bit MD5 hashes as a compact digital fingerprint of a file. There is theoretically an unlimited number of files that will have any given MD5 hash.
    - `sha256sum`: Similar to md5 but based on 256-bits, considered more secure and less prone to theoretical collisions.
@@ -350,8 +350,9 @@ Spare yourself the pain, learn good habits, save tones time and avoid getting lo
   - `ssh-keygen`  e.x. `$ ssh-keygen -t ecdsa -b 521`, `ssh-keygen -R 5.72.114.57`
   - `passphrase`
   - `ssh-copy-id`: Copy your public key on the server machine's `~/.ssh/authorized_keys` 
-  - `ssh-add`
-  - ssh-agent, will save you a LOT of time (key management, auto re-connect e.g. when your laptop goes to sleep or reboots ...).
+  - `ssh-agent`: Will save you a LOT of time (key management, auto re-connect e.g. when your laptop goes to sleep or reboots ...).
+  - `ssh-add -l`: Displays the fingerprint of all identities currently represented by the agent
+  - `ssh-add`: Add your rsa keys to the ssh-agent (can ).
 
 
 Use ssh auto login (auto login *using public and private keys pair* to be specific) as it is also significantly more secure than basic password-based login. Bellow is a real time illustration of ssh failed login attempts initiated from the Internet (bots, hackers, you name it) on a machine with password authentication left enabled (instead of using ssh auto login).
@@ -429,12 +430,12 @@ $ tailscale ssh console_jay
   - Example 1: From local to local (instead of using `scp`):
     
     ```bash
-    $ rsync -avhW --progress --exclude --exclude '*/*.lock' /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind
+    $ rsync -avhW --progress --exclude --exclude '*/*.lock' /unmountme/bitcoin/{blocks,chainstate,indexes} /data/bitcoin
     ```
   
   - Example 2: Same thing but also gives a visual indication of the copy progress as well as completion time estimate ('ETA'):
     ```bash
-    $ rsync -avhW --stats --exclude '*/*.lock' --human-readable /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind | pv -lep -s $(find /unmountme/bitcoind/{chainstate,blocks,indexes} -type f | wc -l)
+    $ rsync -avhW --stats --exclude '*/*.lock' --human-readable /unmountme/bitcoin/{blocks,chainstate,indexes} /data/bitcoin | pv -lep -s $(find /unmountme/bitcoin/{chainstate,blocks,indexes} -type f | wc -l)
     ```
 ## Network
   ### Speed test
@@ -611,6 +612,15 @@ In NixOS the following commands are replaced by parameters in the configuration 
 
 
 ## UEFI vs. Legacy Boot
+
+## Privacy tools
+- [deviceinfo.me](https://www.deviceinfo.me/): Web-based tool allowing you to see detailed information about the fingerprint you expose on the Internet: Kind of OS, browser, IP address, geolocation, real time mouse position, display, speakers, microphone, device motion, to name a few... 
+- [Mullvad browser](https://mullvad.net/en/browser): A free and open-source web browser designed to significantly reduce online tracking and minimize browser fingerprinting. It is developed by Mullvad VPN in collaboration with the Tor Project. It's a good compromise before having to use Tor browser as Mullvad does not force all traffic through the Tor network by default: It relies your VPN to mask IP address thus it is quicker than using the Tor network.
+- [Tor browser](https://www.torproject.org/): A free and open-source web browser (built on Mozilla Firefox and developed by the Tor Project) specifically designed for strong privacy and anonymity online since all browsing traffic is routed through the Tor network. It is recommended for users who require very strong online anonymity (journalists, activists, and users living in restrictive environments or seeking to avoid censorship, surveillance, or location-based targeting).
+- [Tor network](https://www.torproject.org/): The Tor network is a decentralized, global system of volunteer-run servers (relays) that enables anonymous communication by obscuring a user's IP address and routing internet traffic through multiple encrypted layers, similar to an onion. This process, known as "onion routing," hides your location and browsing history from your ISP, local network observers, and the websites you visit, making it a powerful tool for online privacy and to avoid censorship.
+- [NymVPN](https://github.com/nymtech): NymVPN deploys noise to make traffic patterns untraceable. It runs on a decentralized, permissionless mixnet, ensuring that even Nym cannot log any data by design. It employs open-source cryptographic protocols to enable secure and anonymous packet transmission.
+- [DnsLeakTest](https://dnsleaktest.com/): A DNS leak occurs when using a VPN or similar privacy-focused network, where DNS requests still go to your ISP's server instead of through the privacy-focus network. This exposes your online activity and IP address, undermining the privacy goals of using a VPN. DnsLeakTest is a Web-based tool that tests for such leaks.
+- [BrowserLeaks](https://browserleaks.com/dns): Tool similar to DnsLeakTest.
 
 ## Other tools / resources
 - [SSHFS](https://phoenixnap.com/kb/sshfs): Tool to safely mount a remote folder from a server to a local machine. The client extends the SSH file transfer protocol, which helps locally mount a remote file system as a disk image securely.
