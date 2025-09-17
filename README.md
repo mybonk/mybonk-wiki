@@ -5,14 +5,17 @@
     alt="MY₿ONK logo">
 </p>
 <br/>
-<p align="center">
-👉 Here is maintained the MY₿ONK Wiki, the detailed *manual* installation instructions ✍️ which is part of the reproducibility project.
 
-[!CAUTION]
-The following instructions are  deprecated, the standard and preferred way to install MYBONK is using the simple mybonk-erase-and-install script from MYBONK github repository https://github.com/mybonk/mybonk/blob/main/README.md. 
-Obviously we don't want to delete this page as it contains valuable information regarding the fuddling around the development of what is today the integrated and automated mybonk--erase-and-install script.
-</p>
 <p align="center">
+[!CAUTION]
+The following instructions are  **DEPREDICATED**, the standard and preferred way of installing MYBONK now is the automated script `mybonk-erase-and-install.sh` from MYBONK repository (see workshop [INSTALL MYBONK IN LESS THAN 10 MINS](https://github.com/mybonk/mybonk/blob/main/README.md). 
+
+Obviously we don't want to delete this page as it contains valuable information regarding the fuddling around the development of what is today the integrated and automated script `mybonk-erase-and-install.sh`.
+</p>
+
+
+<p align="center">
+
 Anyone can take part on <a href="https://github.com/mybonk" target="_blank">MY₿ONK's GitHub</a>.
 <br/>
 Join the conversation on our Telegram group</a>!
