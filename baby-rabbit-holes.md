@@ -186,13 +186,13 @@ The most important command is `man` which stands for "manual". It explains what 
 
   `git config user.name`
 
-  `git clone https://github.com/mybonk/mybonk-core.git`
+  `git clone https://github.com/mybonk/mybonk.git`
 
   `git remote show origin`
 
-  `git remote set-url`: You may need to change the connection type to GitHub from https to ssh (if you use private-public keys to connect). This is done by using the `git remote set-url` and changing `https://github.com/mybonk/mybonk-core.git` by `git@github.com://github.com/mybonk/mybonk-core.git`.
+  `git remote set-url`: You may need to change the connection type to GitHub from https to ssh (if you use private-public keys to connect). This is done by using the `git remote set-url` and changing `https://github.com/mybonk/mybonk.git` by `git@github.com:mybonk/mybonk.git`.
   ```bash
-  $ git remote set-url origin git@github.com://github.com/mybonk/mybonk-core.git
+  $ git remote set-url origin git@github.com:mybonk/mybonk.git
   ```
 
   `git status`
@@ -294,6 +294,9 @@ Example to render `README.md` so that it is nicely formatted and readable on a t
 
   - `$ tar -xvf myfile.tar.gz`: Untar a file.
 
+## Processes
+- `setsid` command that allows programs to run independently of the terminal that launched them, making it an ideal solution for running long-lasting background jobs or services. In the background this command calls fork if already a process group leader, else it executes the program in the current process.
+
 ## File system / Block devices
 - `lsblk`: List information about the system's available or the specified block devices (e.g. disks, USB sticks ...).
 - Test block device performances: `hdparm -t --direct /dev/sda1` (if not installed run nix-shell -p hdparm).
@@ -302,9 +305,9 @@ Example to render `README.md` so that it is nicely formatted and readable on a t
   - `df -hT .`. '`.`' for whatever partition the current directory is residing on.
   - `df -hT -t ext4`. `-t ext4` to display only filesystems of type ext4.
   - `df -hT -x squashfs -x overlay -x tmpfs -x devtmpfs` to hide given filesystem types from the output.
-- `du`: "Disk Usage" to get space usage of directory/subdirectory. 
-  - `$ du -h /data`. `-h` for “human readable”.
-  - `$ du -s /data`. `-s` for “summary”.
+- `du`: "Disk Usage" displays the disk space used by directories:
+  - `$ du -sh $HOME`: `-sh` for “human readable” and "summary", lists the size of each directory within `$HOME`.
+  - `$ du -sh $HOME/*`: Same as previous but for all subdirectories within `$HOME`.
   - `$ du -ah --time`. Shows the time of the last modification to any file in the directory or subdirectory. ``--time`` with the ``-ah`` flags is very useful e.g. someone writes files somewhere by accident and you need to find where.
 
 - `fdisk`: Dialog-driven program to see and manipulate disk partition table:
@@ -347,13 +350,13 @@ Spare yourself the pain, learn good habits, save tones time and avoid getting lo
 - OpenSSH
 - .ssh client configuration (`~/.ssh/config`)
 - How to setup and manage ssh keys: https://goteleport.com/blog/how-to-set-up-ssh-keys/
-  - `ssh-keygen`  e.x. `$ ssh-keygen -t ecdsa -b 521`, `ssh-keygen -R 5.72.114.57`
+  - `ssh-keygen`: Generate a new key pair. e.x. `$ ssh-keygen -t ecdsa -b 521`
+  - `ssh-keygen -R 5.73.114.57`: Removes all keys belonging to host 5.73.114.57 from a known_hosts file. This is convenient when you rebuild a machine causing its fingerprint to change making ssh complain about "REMOTE HOST IDENTIFICATION HAS CHANGED!".
   - `passphrase`
   - `ssh-copy-id`: Copy your public key on the server machine's `~/.ssh/authorized_keys` 
   - `ssh-agent`: Will save you a LOT of time (key management, auto re-connect e.g. when your laptop goes to sleep or reboots ...).
   - `ssh-add -l`: Displays the fingerprint of all identities currently represented by the agent
-  - `ssh-add`: Add your rsa keys to the ssh-agent (can ).
-
+  - `ssh-add`: Add your rsa keys to the ssh-agent.
 
 Use ssh auto login (auto login *using public and private keys pair* to be specific) as it is also significantly more secure than basic password-based login. Bellow is a real time illustration of ssh failed login attempts initiated from the Internet (bots, hackers, you name it) on a machine with password authentication left enabled (instead of using ssh auto login).
 
@@ -380,6 +383,8 @@ You can now use the following simple syntax instead to connect:
 ````bash
 $ssh console_jay
 ````
+
+I may 
 
 This is all very nice until you change environment or move your hardware to another network: A new IP address will be assigned to the machine and the shorthand ```console_jay``` will no longer work, you now have to figure out what the new IP address of your machine (scan the network or physically connect to serial) which is frustrating and time consuming.
 
@@ -430,17 +435,17 @@ $ tailscale ssh console_jay
   - Example 1: From **local to local** (instead of using `scp`):
     
     ```bash
-    $ rsync -avhW --progress --checksum --exclude --exclude '*/*.lock' /unmountme/bitcoin/{blocks,chainstate,indexes} /data/bitcoin
+    $ rsync -avz --partial --inplace --append --progress --exclude '*/*.lock' /unmountme/bitcoin/{blocks,chainstate,indexes} /data/bitcoin
     ```
   
   - Example 2: Same thing (**local to local**) but also gives a visual indication of the copy progress as well as completion time estimate ('ETA'):
     ```bash
-    $ rsync -avhW --stats --checksum --exclude '*/*.lock' --human-readable /unmountme/bitcoin/{blocks,chainstate,indexes} /data/bitcoin | pv -lep -s $(find /unmountme/bitcoin/{chainstate,blocks,indexes} -type f | wc -l)
+    $ rsync -avz --partial --inplace --append --stats --exclude '*/*.lock' /unmountme/bitcoin/{blocks,chainstate,indexes} /data/bitcoin | pv -lep -s $(find /unmountme/bitcoin/{chainstate,blocks,indexes} -type f | wc -l)
     ```
 
   - Example 3: Same thing but **to a remote server** (over the network as opposed to locally):
     ```bash
-    # rsync -avhW --stats --checksum --exclude '*/*.lock' --human-readable /data/bitcoin/{blocks,chainstate,indexes} bitcoin@192.168.0.127:/data/bitcoin
+    $ rsync -avz --partial --inplace --append --stats --exclude '*/*.lock' /data/bitcoin/{blocks,chainstate,indexes} bitcoin@192.168.0.127:/data/bitcoin
     ```
 ## Network
   ### Speed test
@@ -481,19 +486,19 @@ $ tailscale ssh console_jay
 - part 1: https://dev.to/iggredible/tmux-tutorial-for-beginners-5c52 
 - part 2: https://dev.to/iggredible/useful-tmux-configuration-examples-k3g
 
-`$tmux source-file ~/.tmux.conf`
+`tmux source-file ~/.tmux.conf`
 
-`$tmux new -s MY_SESSION`
+`tmux new -s MY_SESSION`
 
-`$tmux list-keys`
+`tmux list-keys`
 
-`$tmux list-sessions` / `$tmux ls`
+`tmux list-sessions` / `$tmux ls`
 
-`$tmux kill-session -t name_of_session_to_kill` : Kills a specific session.
+`tmux kill-session -t name_of_session_to_kill` : Kills a specific session.
 
-`$tmux kill-session -a` : Kills all the sessions apart from the active one.
+`tmux kill-session -a` : Kills all the sessions apart from the active one.
 
-`$tmux kill-session` : Kills *all* the sessions.
+`tmux kill-session` : Kills *all* the sessions.
 
 `tmux kill-server` : Kills the tmux server.
 
@@ -528,6 +533,9 @@ $ tailscale ssh console_jay
 - `tmuxinator start console -n "console_jay" extra_param="any_string"`: Start a session `console`, assign it project name "`console_jay`" and extra arbitrary parameter "`extra_param`" to pass value "`any_string`".
 - `tmuxinator stop [project]`: Stop a tmux session using a project's tmuxinator config.
 
+The following command allows to access a remote tmuxinator over ssh. It is very powerful because the sessions are persisted even if you close the ssh connection and reconnect. The remote tmux and tmuxinator are used so they need to be installed on the remote machine. Similarly the configuration files .tmux and .tmuxinator are looked for in the home directory of the user you ssh with on the remote server.
+
+``ssh -o TCPKeepAlive=no -t admin@192.168.0.97 "cd '.' ; tmuxinator start console -p .tmuxinator.yml ; sh --login"``
 ## processes
 - `ps`, `pstree`, `top`
 - `systemd`
@@ -700,13 +708,17 @@ $ systemctl status bitcoind
 - `$ bitcoin-cli -getinfo`
 - `$ bitcoin-cli getblockchaininfo`
 - It is a good idea to pipe through `jq` to get pretty JSON output formatting or extract specific data, for instance:
-  - `$ bitcoin-cli getblockchaininfo | jq '.'`
-  - `$ bitcoin-cli getblockchaininfo | jq '.verificationprogress'`
+  - `$ bitcoin-cli getblockchaininfo | jq '.'` to get the output nicely formatted in JSON format.
+  - `$ bitcoin-cli getblockchaininfo | jq '.verificationprogress'` to extract a specific element in the top-level of the JSON output.
 - General Info
   - `$ bitcoin-cli help`
   - `$ bitcoin-cli help getblockchaininfo`
   - `$ bitcoin-cli getblockchaininfo`
+  - `$ bitcoin-cli getindexinfo`
   - `$ bitcoin-cli getpeerinfo`
+  - `$ bitcoin-cli getpeerinfo |jq '.[] | [ .id, .addr ]'` to extract only the values of each of the peers id and address.
+  - `$ bitcoin-cli getpeerinfo |jq -r '.[] | [ .id, .addr ] | @tsv'` same as previous but displayed as a table.
+  - `$ bitcoin-cli getpeerinfo | jq -r '(["ID","ADDR"] | (., map(length*"-"))), (.[] | [.id, .addr]) | @tsv'` same as previous but adding a header to the table.
   - `$ bitcoin-cli getnetworkinfo`
   - `$ bitcoin-cli getmininginfo`
 - Block Info
@@ -719,7 +731,7 @@ $ systemctl status bitcoind
   - `$ bitcoin-cli createwallet`
   - `$ bitcoin-cli listreceivedbyaddress 0 true`: List of accounts on the system.
   - `$ bitcoin-cli setaccount 1GBykdD628RbYPr3MUhANiWchoCcE52eW2 myfirstaccount`: To associate an existing address (here : 1GBykdD628RbYPr3MUhANiWchoCcE52eW2) to an account name.
-  - `$ bitcoin-cli sendfrom myfirstaccount 1AYJyqQHCixxxxxxffevxxxxQosCWqn1bT 0.15`: Send bitcoins (here : 0.15) to an address (here : 1AYJyqQHCixxxxxxffevxxxxQosCWqn1bT) 
+  - `$ bitcoin-cli sendfrom myfirstaccount 1AYJyqQHCixxxxxxffevxxxxQosCWqn1bT 0.15`: Send 0.15 bitcoin to address `1AYJyqQHCixxxxxxffevxxxxQosCWqn1bT`
   - `$ bitcoin-cli getrawmempool`
   - `$ bitcoin-cli getrawtransaction <txid>`
   - `$ bitcoin-cli decoderawtransaction <rawtx>`
@@ -727,28 +739,28 @@ $ systemctl status bitcoind
 ### Using bitcoin JSON-RPC API calls
 The bitcoin JSON-RPC API allows to interact with bitcoin deamon in a varierty of ways: cURL, JavaScript, Python ...
 
-First you need to make sure Bitcoin Core is setup to accept Remote Procedure Calls (RPC): 
+First you need to make sure Bitcoin is setup to accept Remote Procedure Calls (RPC): 
 
 For instance you could run `getnetworkinfo` using the following cURL:
 ```
 curl -u public:2S8PWBZ71wMXdrsAxL21 -d '{"jsonrpc": "1.0", "id": "curltest", "method": "getnetworkinfo", "params": [] }' -H 'content-type: text/plain;' http://mybonk-jay:8332/
 ```
-Most noticably you need to use the option `-u` (or `--user`) to pass valid crenentials (here username `public` and password `2S8PWBZ71wMXdrsAxL21`) allowing you to connect else you will get an `401 Unauthorized` error. Username is either `public` or `priviledged`, their password in `/etc/nix-bitcoin-secrets/bitcoin-rpcpassword-{public|priviledged}`.
+Most noticably you need to use the option `-u` (or `--user`) to pass valid credentials (here username `public` and password `2S8PWBZ71wMXdrsAxL21`) otherwize you will get an `401 Unauthorized` error. Username is either `public` or `priviledged`, their password in `/etc/nix-bitcoin-secrets/bitcoin-rpcpassword-{public|priviledged}`.
 
-Also make sure that the method you call (`getnetworkinfo`, `getpeerinfo`, `listwallets`...) is indeed in the RPC whitelist else you will get a 
+Also make sure that the method you call (`getnetworkinfo`, `getpeerinfo`, `listwallets`...) is defined in the RPC whitelist.
 
-You can use curl with the `-v` (verbose) parameter to see the headers sent: The text after the `Basic` keyword is the base64 encoded text string of the `username:password` combination that was passed with the `-u` parameter.
+You can use curl with the `-v` (verbose) parameter to see the sent headers: The text after the `Basic` keyword is the base64 encoded text string of the `username:password` that were passed with the `-u` parameter.
 ```bash
 Authorization: Basic cHVibGljOjJTOFBXQlo3MXdNWGRyc0F4TDIx
 ```
-To manually generate the base64 encoded credentials on Linux, you can simply call:
+To manually generate this base64 encoded credentials you can simply use:
 
 ```bash
 $ echo -n "username:password" | base64 -w0
 cHVibGljOjJTOFBXQlo3MXdNWGRyc0F4TDIx
 ```
 
-To test this end to end, you can remove `-u username:password` and substitute with `-H Authorization: Basic cHVibGljOjJTOFBXQlo3MXdNWGRyc0F4TDIx` and it will still authenticate just fine:
+To test this end to end, you can remove `-u username:password` and substitute with `-H Authorization: Basic cHVibGljOjJTOFBXQlo3MXdNWGRyc0F4TDIx`, the authenticate will work too:
 
 ```bash
 $ curl -v -d '{"rpc": "1.0", "id": "curltest", "method": "getnetworkinfo", "params": [] }' -H 'content-type: text/plain;' -H 'Authorization: Basic cHVibGljOjJTOFBXQlo3MXdNWGRyc0F4TDIx' http://mybonk-jay:8332/
@@ -856,7 +868,7 @@ Similarly to the bitcoin JSON-RPC, the clightning JSON-RPC API allows to interac
   - [Just](https://just.systems/man/en/): Just is a handy little tool to save and run project-specific commands.
     ![](docs/img/various/just_tool.png)
   - [DuckDNS](https://www.duckdns.org/): Allows to get free dynamic DNS (forces 'KYC' by login using Github, Twitter, reddit or Google account). Good for testing.
-  - How to compile Bitcoin Core and run the unit and functonal tests: https://jonatack.github.io/articles/how-to-compile-bitcoin-core-and-run-the-tests
+  - How to compile Bitcoin and run the unit and functonal tests: https://jonatack.github.io/articles/how-to-compile-bitcoin-core-and-run-the-tests
   - [asciinema](https://asciinema.org/): Record and share your terminal sessions, the simple way.
 
 ## Books
