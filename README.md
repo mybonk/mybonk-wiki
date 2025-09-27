@@ -7,10 +7,10 @@
 <br/>
 
 <p align="center">
-[!CAUTION]
-The following instructions are  **DEPREDICATED**, the standard and preferred way of installing MYBONK now is the automated script `mybonk-erase-and-install.sh` from MYBONK repository (see workshop [INSTALL MYBONK IN LESS THAN 10 MINS](https://github.com/mybonk/mybonk/blob/main/README.md). 
 
-Obviously we don't want to delete this page as it contains valuable information regarding the fuddling around the development of what is today the integrated and automated script `mybonk-erase-and-install.sh`.
+> [!WARNING]  
+> The following instructions are  **DEPREDICATED**, the standard and preferred way of installing MYBONK now is the automated script `mybonk-erase-and-install.sh` from MYBONK repository (see workshop [INSTALL MYBONK IN LESS THAN 10 MINS](https://github.com/mybonk/mybonk/blob/main/README.md).
+> Obviously we don't want to delete this page as it contains valuable information regarding the fuddling around the development of what is today the integrated and automated script `mybonk-erase-and-install.sh`.
 </p>
 
 
@@ -20,6 +20,7 @@ Anyone can take part on <a href="https://github.com/mybonk" target="_blank">MYâ‚
 <br/>
 Join the conversation on our Telegram group</a>!
 </p>
+
 
 ---
 # Table of Contents 
@@ -704,7 +705,7 @@ The deployment mechanism we use to push MYBONK stack from the orchestrator to th
   - Copy blockchain files from your external disk onto your MYâ‚¿ONK console (by default `services.bitcoind.dataDir = "/data/bitcoind"`):
 
     ```bash
-    # rsync -avhW --progress --exclude --exclude '*/*.lock' /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind
+    # rsync -avhW --progress --update --exclude '*/*.lock' /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind
     ```
 
     Note: 
@@ -751,7 +752,7 @@ The deployment mechanism we use to push MYBONK stack from the orchestrator to th
 
   - You might have heard about people ending up with "corrupted" or "incomplete" data and bitcoind re-downloading or re-indexing things depite of having copied the blockchain as explained here. This is most often then not due to the fact the blockchain data we copy from the remote machine is probably live, possibly leaving out some files at the end of the copy. To avoid this stop `bitcoind` on the remote machine and run `rsync` one last time to ensure clean data has been copied correctly and entirely:
     ```bash
-    # rsync -avhW --append-verify /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind
+    # rsync -avhW --update /unmountme/bitcoind/{blocks,chainstate,indexes} /data/bitcoind
     ```
 
   - Restore the correct ownership of the imported files:
