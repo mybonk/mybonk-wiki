@@ -10,7 +10,7 @@
 
 > [!WARNING]  
 > The following instructions are  **DEPREDICATED**, the standard and preferred way of installing MYBONK now is the automated script `mybonk-erase-and-install.sh` from MYBONK repository (see workshop [INSTALL MYBONK IN LESS THAN 10 MINS](https://github.com/mybonk/mybonk/blob/main/README.md).
-> Obviously we don't want to delete this page as it contains valuable information regarding the fuddling around the development of what is today the integrated and automated script `mybonk-erase-and-install.sh`.
+> Obviously we don't want to delete this page as it contains valuable information regarding the fuddling around the development of what is today the integrated and automated scripts `mybonk-erase-and-install.sh` and `mybonk-rebuild.sh`.
 </p>
 
 
