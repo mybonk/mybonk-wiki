@@ -98,7 +98,7 @@ The most important command is `man` which stands for "manual". It explains what 
   - `man`: User manual of given command. 
   - `apropos`: Search all the man pages using keywords to find commands and their functions (read [this](https://www.geeksforgeeks.org/apropos-command-in-linux-with-examples/)).
   - `whatis`: Display manual documentation pages in various ways.
-  - `pwd`, `ls`, `cd`, `type`, `mkdir`, `mv`, `rm`, `ln` (and know the difference between a "soft" and a "hard" link), `which`, `stat`, `whereis`, `cat`, `head`, `tail`, `more`, `tee` …
+  - `pwd` (print working directory), `ls` (list), `cd` (change directory), `type` (determine the type of a command), `mkdir` (make directory), `mv` (move), `rm` (remove), `ln` (and know the difference between a "soft" and a "hard" link), `which` (identifies "which" executable will be run when a command is issued), `stat` (provides detailed status information or metadata about a file or directory), `whereis` (used to locate the binary, source, and manual files associated with a command), `cat` (concatenate files and display their combined content), `head`, `tail`, `more`, `tee` …
   - `uname -a`, `hostname`, `whoami`, `passwd`, `chown`, `chgrp`, `chmod`, `adduser`, `usermod`, …
   - `uptime`:  Tell how long the system has been running.
   - `ip a`: Tells you the IP address of your system.
@@ -355,7 +355,7 @@ Spare yourself the pain, learn good habits, save tones time and avoid getting lo
   - `passphrase`
   - `ssh-copy-id`: Copy your public key on the server machine's `~/.ssh/authorized_keys` 
   - `ssh-agent`: Will save you a LOT of time (key management, auto re-connect e.g. when your laptop goes to sleep or reboots ...).
-  - `ssh-add -l`: Displays the fingerprint of all identities currently represented by the agent
+  - `ssh-add -l`: Displays the fingerprint of all identities currently represented by the agent.
   - `ssh-add`: Add your rsa keys to the ssh-agent.
 
 Use ssh auto login (auto login *using public and private keys pair* to be specific) as it is also significantly more secure than basic password-based login. Bellow is a real time illustration of ssh failed login attempts initiated from the Internet (bots, hackers, you name it) on a machine with password authentication left enabled (instead of using ssh auto login).
@@ -384,7 +384,7 @@ You can now use the following simple syntax instead to connect:
 $ssh console_jay
 ````
 
-I may 
+### Tailscale
 
 This is all very nice until you change environment or move your hardware to another network: A new IP address will be assigned to the machine and the shorthand ```console_jay``` will no longer work, you now have to figure out what the new IP address of your machine (scan the network or physically connect to serial) which is frustrating and time consuming.
 
@@ -423,6 +423,23 @@ $ tailscale down
 $ tailscale status
 $ tailscale netcheck
 $ tailscale ssh console_jay
+```
+
+### How to SSH to machine A via machine B
+This is done using ssh "port forwarding" using netcat (nc).
+You can ssh to machine A via machine B by adding similar entries in your `~/.ssh/config`:
+```
+Host machine_B          # Machine B definition
+Hostname 12.34.45.56    # Change this IP address to the address of machine b
+User operator           # Change the default user accordingly 
+
+Host machine_A          # Machine A definition (the target host)
+ProxyCommand ssh -q machine_B nc hostname.or.IP.address.internal.machine 22
+```
+Now you can reach Machine A directly having Machine B used in the back-end transparently.
+You have a single SSH host target name to reach Machine A, you can as well use it in ssh, scp, sftp ...
+```
+scp somefile user@machine_A:~/
 ```
 
 ## [rsync](https://apoorvtyagi.tech/scp-command-in-linux)
@@ -857,6 +874,13 @@ Similarly to the bitcoin JSON-RPC, the clightning JSON-RPC API allows to interac
 
 
 ## For developers
+  - [Visual Studio Code](https://code.visualstudio.com/): Free, powerful, and lightweight source code editor with built-in support for JavaScript, TypeScript, Node js ... and a vast ecosystem of extensions.
+    > [!TIP]
+    > The following command allows to launch a Visual Studio workspace on a remote machine.
+    > Don't forget `ssh-remote+` in the option `--remote`.
+    ```
+    $ code --remote ssh-remote+johndow@myremotemachine /Users/jay/github/mybonk-wiki
+    ```
   - Great Nix language tour: https://nixcloud.io/tour
   - [The difference between RPC and REST](https://nordicapis.com/whats-the-difference-between-rpc-and-rest/)
   - [HTTP-TRACKER](https://chromewebstore.google.com/detail/http-tracker/fklakbbaaknbgcedidhblbnhclijnhbi) Chrome extension: Allows to inspect HTTP request headers, cookies, data, response Headers, cookies and even **add/modify request headers** before sending requests.
@@ -1001,6 +1025,7 @@ Of course you also use the traditional Linux commands to know more:
 
 ### Garbage collection:
   - Ref. the options `keep-derivations` (default: `true`) and `keep-outputs` (default: `false`) in the Nix configuration file.
+  - `nixos-rebuild list-generations`:  List  the  available  generations in a similar manner to the boot loader menu.
   - `nix-collect-garbage --delete-old`: Quick and easy way to clean up your system, deletes **all** old generations of **all** profiles in `/nix/var/nix/profiles`. See the other options below for a more "surgical" way to garbage collect.
   - `nix-env --delete-generations old`: Delete all old (non-current) generations of your current profile.
   - `nix-env --delete-generations 10 11 23`: Delete a specific list of generations
