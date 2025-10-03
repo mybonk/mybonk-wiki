@@ -876,7 +876,7 @@ Similarly to the bitcoin JSON-RPC, the clightning JSON-RPC API allows to interac
 ## For developers
   - [Visual Studio Code](https://code.visualstudio.com/): Free, powerful, and lightweight source code editor with built-in support for JavaScript, TypeScript, Node js ... and a vast ecosystem of extensions.
     > [!TIP]
-    > The following command allows to launch a Visual Studio workspace on a remote machine.
+    > The following command opens a Visual Studio workspace on a remote machine.
     > Don't forget `ssh-remote+` in the option `--remote`.
     ```
     $ code --remote ssh-remote+johndow@myremotemachine /Users/jay/github/mybonk-wiki
