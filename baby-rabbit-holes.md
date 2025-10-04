@@ -104,11 +104,13 @@ The most important command is `man` which stands for "manual". It explains what 
   - `ip a`: Tells you the IP address of your system.
   - `su`/`sudo`, `doas`: Used to assume the identity of another user on the system (they are both similar tools, `doas` has been ported from the OpenBSD project and could be assumed "safer" than `sudo` as it is less error-prone e.g. when setting up somewhat complicated patterns in `/etc/sudoers`).
   - `history` 
-    - `echo "$HISTFILE"`
+    - `echo "$HISTFILE"`: Points to the file where your shell history is stored.
     - `history | grep [string]`: Find any record in history.
     - `history -c`: Remove all records.
     - `history -d 1234`: Remove record number 1234.
-      - IMPORTANT: [In Zsh this command does not work](https://apple.stackexchange.com/questions/430640/history-d-does-not-remove-history-entry-but-shows-time-of-history-entry), it is an alias to ``fc`` which doesn't have an option to delete records from the history. <[workaround](https://stackoverflow.com/questions/7243983/how-to-remove-an-entry-from-the-history-in-zsh/63494771#63494771)>
+    - `history -a` and `history -r`: Append or read entries to/from the history list. Very convenient to move commands history across from one of your terminals to another. You could automate this by defining the environment variable `PROMPT_COMMAND` (the `$PROMPT_COMMAND` is run before a prompt is shown on the terminal) e.g. `PROMPT_COMMAND="history -a; history -r"`.
+    
+    > [!TIP]: [These options don't work in Zsh?](https://apple.stackexchange.com/questions/430640/history-d-does-not-remove-history-entry-but-shows-time-of-history-entry): Zsc relies on the command `fc` (e.g. `fc -W` and `fc -R` to write or read the history file). <[workaround](https://stackoverflow.com/questions/7243983/how-to-remove-an-entry-from-the-history-in-zsh/63494771#63494771)>
     
     - Don't forget to explore 'i-search' and 'reverse-i-search' using ``Ctrl`` + ``s`` and ``Ctrl`` + ``r`` respectively; Read this [if 'i-search' using ``Ctrl`` + ``s`` does not work](https://stackoverflow.com/questions/791765/unable-to-forward-search-bash-history-similarly-as-with-ctrl-r).
   - `alias`
@@ -234,6 +236,39 @@ The most important command is `man` which stands for "manual". It explains what 
   `git stash push` / `git stash list` / `git stash pop` / `git stash apply`
 
 
+### How to fork after cloning?
+
+I cloned a git repo to my local machine, played around with it a bit and found it cool.
+
+Now I would like to keep the result as I modified it in my own github space. How can I proceed?
+
+I suppose the regular way would have been to fork the repo on the first place to my space, clone it, modify and then push it to GitHub, but now I cloned the original's author repo, how can I commit that as a new thing in my personnal?
+
+**ANSWER:**
+
+First rename the old remote as upstream, in case you want to be able to keep in sync with the original repository.
+
+`git remote rename origin upstream`
+
+Then add your forked repository as origin:
+
+`git remote add origin https://github.com/<your-username>/<your-project>`
+
+Or if you're using ssh:
+
+`git remote add origin git@github.com:<your-username>/<your-project>.git`
+
+To push to your repository:
+
+`git push -u origin master`
+
+To pull from the base repository:
+
+`git pull upstream`
+
+It is recommend you do all of your work in a separate branch, not the master branch. It will be easier to rebase to the upstream/master branch in case you want to make a pull request.
+
+You don't really have to rename the origin to upstream - the remote names can be arbitrary, but it is recommended to keep up with [the naming convention used by GitHub](https://help.github.com/articles/fork-a-repo/#keep-your-fork-synced).
 ### Good to know
   - [What is the difference between *merge* and *rebase*?](https://www.youtube.com/watch?v=dO9BtPDIHJ8)
   - [How to Setup Passwordless Authentication for git push in GitHub](https://www.cyberithub.com/how-to-setup-passwordless-authentication-for-git-push-in-github/).
@@ -661,6 +696,7 @@ Technically, QEMU is a type-2 hypervisor.
 - [QuickEMU](https://github.com/quickemu-project/quickemu/blob/master/README.md): Terminal-based tool that lets you rapidly create optimized desktop virtual machines and manage them with ease. The tool chooses the best configuration by default as per available system resources. It also downloads the image for the selected operating system. All you have to do is install the operating system as you would normally do and get started.
 - [QuickGUI](https://github.com/quickemu-project/quickgui/blob/main/README.md): Makes it convenient to utilize Quickemu’s abilities to quickly create and manage multiple VMs without needing to configure anything. What’s more interesting: you do not need elevated privileges to make it work.
 - [KVM](https://linux-kvm.org): "Kernel-based Virtual Machine" Baked into Linux. You can run VMs out of the box. It is a "type-1 hypervisor" a.k.a "hardware-based". It converts the Linux host into a hypervisor to run virtual machines with bare metal performance. You can create guest/virtual machines of different operating systems too. Have a look at QuickEMU and QuickGUI for tools to make your life easier.
+- [Virsh](https://github.com/libvirt/libvirt): A command-line utility for managing virtual machines that are controlled by libvirt, the virtualization management library. It provides a wide range of commands to create, edit, monitor, and control VMs running on hypervisors like QEMU, KVM and many others.
 - [WSL](https://devblogs.microsoft.com/commandline/announcing-wsl-2/): Windows Subsystem for Linux to run ELF64 Linux binaries on Windows (if you have Windows system but would like to run Linux programs and commands this is what you need if you prefer not to use a full fledged virtual machine).
 - [multitail](https://vanheusden.com/multitail/): MultiTail lets you view multiple files like the original tail program. The difference is that it creates multiple windows on your console (ncurses). It can also monitor wildcards: if another file matching the wildcard has a more recent modification date, it will automatically switch to that file.
 - [websocketd](https://github.com/joewalnes/websocketd): Small command-line tool that will wrap an existing command-line interface program, and allow it to be accessed via a WebSocket. WebSocket-capable applications can now be built very easily. As long as you can write an executable program that reads STDIN and writes to STDOUT, you can build a WebSocket server. No networking libraries necessary.
@@ -875,9 +911,9 @@ Similarly to the bitcoin JSON-RPC, the clightning JSON-RPC API allows to interac
 
 ## For developers
   - [Visual Studio Code](https://code.visualstudio.com/): Free, powerful, and lightweight source code editor with built-in support for JavaScript, TypeScript, Node js ... and a vast ecosystem of extensions.
-    > [!TIP]
-    > The following command opens a Visual Studio workspace on a remote machine.
-    > Don't forget `ssh-remote+` in the option `--remote`.
+  > [!TIP]
+  > The following command opens a Visual Studio workspace on a remote machine.
+  > Don't forget `ssh-remote+` in the option `--remote`.
     ```
     $ code --remote ssh-remote+johndow@myremotemachine /Users/jay/github/mybonk-wiki
     ```
