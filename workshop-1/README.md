@@ -16,11 +16,10 @@ Understanding these distinctions is crucial. You can use the Nix package manager
 
 If you're new to the Nix ecosystem, these resources will help:
 
-- [Nix Language Basics](https://nix.dev/tutorials/nix-language)
-- [Nix Package Manager Introduction](https://nix.dev/tutorials/first-steps/)
-- [NixOS Manual](https://nixos.org/manual/nixos/stable/)
-- [Nix Flakes Introduction](https://nixos.wiki/wiki/Flakes)
-- [Basic Linux Commands Cheat Sheet](https://github.com/mybonk/mybonk-wiki/blob/main/baby-rabbit-holes.md)
+
+- [Nix Pills](https://nixos.org/guides/nix-pills/) - Deep dive 💊 into Nix (the *language*)
+- [NixOS & Nix Flakes Book](https://nixos-and-flakes.thiscute.world/introduction/) - 🛠️ ❤️ The unofficial & opinionated 📖 for beginners! Check it out!
+- [Basic Linux Commands Cheat Sheet](../baby-rabbit-holes.md) - Our own cheat sheet you can copy/past commands from 🙋
 
 ### Prerequisites
 
@@ -29,26 +28,26 @@ To follow this workshop, you'll need:
 - A laptop with the Nix package manager installed, or running NixOS
 - Basic command line knowledge
 - Basic Git knowledge
-- Some awareness of Nix/NixOS (you've heard of it before!)
+- To at least have heard of Nix or NixOS before
 
 ### Important: Disk Space Considerations
 
-Nix keeps multiple generations of your system, cached packages, and build artifacts in `/nix/store`. This can quickly consume significant disk space, especially when experimenting. Here's what you need to know:
+Nix keeps multiple generations of your system, cached packages, and build artifacts in `/nix/store`. This can possibly consume a lot of disk space when experimenting and building often. Here's what you need to know:
 
 **Why does Nix use so much space?**
 - Every system generation is preserved (for rollback capability)
 - Build dependencies are cached
 - Multiple versions of packages can coexist
-- Garbage collection doesn't happen automatically
+- Garbage collection doesn't happen automatically *by design*
 
-**How to manage disk space:**
+**If you need to manage disk space:**
 
 ```bash
 # View what's using space
 nix-store --query --requisites /run/current-system | wc -l
 du -sh /nix/store
 
-# Delete old generations (older than 7 days)
+# Delete old generations (e.x. older than 7 days)
 nix-collect-garbage --delete-older-than 7d
 
 # Aggressive cleanup (delete everything not currently in use)
@@ -59,7 +58,7 @@ sudo nix-collect-garbage -d
 sudo nixos-rebuild boot  # Recreate boot menu
 ```
 
-**Best practice**: Run garbage collection weekly during the experimentation phase.
+**Best practice**: Have a look at your disk space now and then, run garbage collection as needed when experimenting.
 
 ---
 
@@ -93,9 +92,9 @@ sudo nixos-rebuild boot  # Recreate boot menu
 
 NixOS containers are **not Docker containers**. They use `systemd-nspawn` under the hood and are more similar to LXC containers. Key characteristics:
 
-- Lightweight system containers (not application containers)
+- Lightweight *system* containers (not *application* containers)
 - Share the Nix store with the host
-- Managed declaratively through NixOS configuration
+- Managed declaratively through standard NixOS configuration
 - Perfect for development and testing
 - Share the host's Linux kernel
 
@@ -109,25 +108,23 @@ NixOS containers are **not Docker containers**. They use `systemd-nspawn` under 
 - You're running NixOS as the host
 
 **Use QEMU VMs when:**
-- Running on cloud/shared servers (like Hetzner)
+- Running on cloud/shared servers (e.g. Hetzner)
+- Your host is already virtualized
 - You need complete isolation
 - Testing different kernel versions
-- Your host is already virtualized
 - Running on non-NixOS systems
-
-**Important caveat**: NixOS containers typically don't work well on cloud VPS providers where your machine is already virtualized. In these cases, use QEMU or just run NixOS directly.
 
 ---
 
 ## Getting Started
 
-We'll create a minimal NixOS system with just enough configuration to:
+We'll create a minimal NixOS system:
 - Set a hostname
 - Enable SSH access
 - Add your SSH public key
 - Include basic command-line tools
 
-This involves configuring just two files:
+This involves configuring only two files:
 - `flake.nix` - Defines inputs and outputs for our system
 - `configuration.nix` - The actual system configuration
 
@@ -135,8 +132,8 @@ This involves configuring just two files:
 
 ```bash
 # Clone the repository with example configurations
-git clone https://github.com/YOUR_USERNAME/nixos-vm-workshop.git
-cd nixos-vm-workshop
+git clone git@github.com:mybonk/mybonk-wiki.git
+cd mybonk-wiki/workshop-1
 ```
 
 ---
@@ -179,6 +176,12 @@ NixOS containers:
 { config, pkgs, ... }:
 
 {
+  # Required for containers
+  boot.isContainer = true;
+
+  # Allow container to access the internet
+  networking.useHostResolvConf = true;
+
   # Basic system settings
   networking.hostName = "demo-container";
   
@@ -196,17 +199,10 @@ NixOS containers:
   # Essential packages
   environment.systemPackages = with pkgs; [
     vim
-    htop
+    btop
     curl
     git
   ];
-
-  # Required for containers
-  boot.isContainer = true;
-
-  # Allow container to access the internet
-  networking.useHostResolvConf = true;
-
   system.stateVersion = "24.05";
 }
 ```
@@ -321,6 +317,18 @@ QEMU VMs:
   # Basic system settings
   networking.hostName = "demo-vm";
   
+  # VM-specific settings, do not change
+  boot.loader.grub.device = "/dev/vda";
+  
+  fileSystems."/" = {
+    device = "/dev/vda1";
+    fsType = "ext4";
+  };
+
+
+  # Allow empty password for easy testing (NOT for production!)
+  users.users.root.initialPassword = "root";
+
   # Enable SSH
   services.openssh = {
     enable = true;
@@ -335,21 +343,10 @@ QEMU VMs:
   # Essential packages
   environment.systemPackages = with pkgs; [
     vim
-    htop
+    btop
     curl
     git
   ];
-
-  # VM-specific settings
-  boot.loader.grub.device = "/dev/vda";
-  
-  fileSystems."/" = {
-    device = "/dev/vda1";
-    fsType = "ext4";
-  };
-
-  # Allow empty password for easy testing (NOT for production!)
-  users.users.root.initialPassword = "root";
 
   system.stateVersion = "24.05";
 }
@@ -609,10 +606,7 @@ du -sh /nix/store
 ### 📚 Additional Resources
 
 - [NixOS Manual](https://nixos.org/manual/nixos/stable/)
-- [Nix Pills](https://nixos.org/guides/nix-pills/) - Deep dive into Nix
-- [NixOS Wiki](https://nixos.wiki/)
-- [NixOS Discourse](https://discourse.nixos.org/)
-- [NixOS Search](https://search.nixos.org/) - Find packages and options
+
 
 ---
 
