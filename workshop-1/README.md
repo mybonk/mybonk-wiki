@@ -615,7 +615,7 @@ du -sh /nix/store
 
 ---
 
-## Summary
+## What We Learned
 
 You've learned how to:
 - ✅ Understand the difference between Nix, Nix package manager, and NixOS
@@ -626,12 +626,25 @@ You've learned how to:
 - ✅ Manage disk space effectively
 - ✅ Understand when to use each approach
 
-**Next steps:**
+
+---
+
+## Next Steps
+
 1. Experiment with different services
 2. Try building your own configurations
 3. Explore NixOS modules and options
 4. Join the NixOS community
 5. Consider deploying NixOS for real workloads
 
-Happy hacking with NixOS! �
+Happy hacking! �
+
+---
+**Coming up:**
+
+**Workshop 2 - "[Installing Bitcoin as a service on NixOS in 2 Minutes](../workshop-2/)"**
+## Notes
+
+**Workshop Duration:** 45 minutes 
+**Difficulty:** Beginner  
 
