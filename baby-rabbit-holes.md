@@ -99,7 +99,7 @@ The most important command is `man` which stands for "manual". It explains what 
   - `apropos`: Search all the man pages using keywords to find commands and their functions (read [this](https://www.geeksforgeeks.org/apropos-command-in-linux-with-examples/)).
   - `whatis`: Display manual documentation pages in various ways.
   - `pwd` (print working directory), `ls` (list), `cd` (change directory), `type` (determine the type of a command), `mkdir` (make directory), `mv` (move), `rm` (remove), `ln` (and know the difference between a "soft" and a "hard" link), `which` (identifies "which" executable will be run when a command is issued), `stat` (provides detailed status information or metadata about a file or directory), `whereis` (used to locate the binary, source, and manual files associated with a command), `cat` (concatenate files and display their combined content), `head`, `tail`, `more`, `tee` …
-  - `uname -a`, `hostname`, `whoami`, `passwd`, `chown`, `chgrp`, `chmod`, `adduser`, `usermod`, …
+  - `uname -a`, `hostname`, `whoami`, `passwd`, `chown`, `chgrp`, `chmod`, `adduser`, `userdel`, `usermod`, …
   - `uptime`:  Tell how long the system has been running.
   - `ip a`: Tells you the IP address of your system.
   - `su`/`sudo`, `doas`: Used to assume the identity of another user on the system (they are both similar tools, `doas` has been ported from the OpenBSD project and could be assumed "safer" than `sudo` as it is less error-prone e.g. when setting up somewhat complicated patterns in `/etc/sudoers`).
@@ -236,6 +236,32 @@ The most important command is `man` which stands for "manual". It explains what 
   `git stash push` / `git stash list` / `git stash pop` / `git stash apply`
 
 
+### Make it simpler to deal with the key to connect to git hub?
+
+The interactions with git are now exclusively through "deployment keys". 
+These "deployment keys" is basically GitHub managing a list of authorized public keys to decide who can do what. So you need one of your public keys copied within in the "deployment key" properties section in your repo on GitHub.
+
+Now to interact with github you'll need to authenticate using your private key. "juggling" with keys is not ideal. A key can be passed in different ways (by argument, by using ssh-agent) but we recommend is the following effective approach: Define a host named `gh` in `~/.ssh/ssh.config`:
+
+```
+Host gh
+  Hostname github.com
+  User git
+  IdentityFile ~/.ssh/myprivatekey
+```
+Test the connection works (`-T` to disable pseudo-terminal allocation and `-v` for verbose so you actually see what's going on at connection time, the last output message should be along the line of `You've successfully authenticated, but GitHub does not provide shell access.`):
+```bash
+$ ssh -Tv gh
+```
+
+And your command becomes:
+
+```bash
+$ git clone gh:me/myRepo
+```
+
+No more `git@...` since the config file includes `User git`.
+
 ### How to fork after cloning?
 
 I cloned a git repo to my local machine, played around with it a bit and found it cool.
@@ -301,6 +327,7 @@ Authenticate with your GitHub account:
 
 - `vi` (cheat-sheet [HERE](https://www.thegeekdiary.com/basic-vi-commands-cheat-sheet/))
   - `$ vi +132 myfile`: Open myfile on line 132
+  - `:%d`: Delete all lines (`%` meaning all lines and `d`delete).
 - `sed` ([https://www.gnu.org/software/sed/manual/sed.html](https://www.gnu.org/software/sed/manual/sed.html)): "stream editor" for editing streams of text too large to edit as a single file, or that might be generated on the fly as part of a larger data processing step: Substitution, replacing one block of text with another.
 - `awk` ([https://github.com/onetrueawk/awk/blob/master/README.md](https://github.com/onetrueawk/awk/blob/master/README.md)): Programming language. Unlike many conventional languages, awk is "data driven": you specify what kind of data you are interested in and the operations to be performed when that data is found.
 - [jq](https://stedolan.github.io/jq/): Lightweight and flexible command-line JSON parser/processor. [reference](https://stedolan.github.io/jq/tutorial/)
@@ -401,23 +428,23 @@ Use ssh auto login (auto login *using public and private keys pair* to be specif
 
 For reference:
 
-````bash
+```bash
 $ssh root@192.168.0.155
 #
-````
+```
 
 IP addresses (here ```192.168.0.155```) are not "human friendly". You can associate an IP address to an arbitrary name, easier to remember. This can be configured in your ssh configuration file ```~/.ssh/config```. Here is an example in its simplest form:
 
-````
+```
 Host console_jay
   HostName 192.168.0.155
   User root
-````
+```
 
 You can now use the following simple syntax instead to connect:
-````bash
-$ssh console_jay
-````
+```bash
+$ ssh console_jay
+```
 
 ### Tailscale
 
@@ -434,15 +461,15 @@ To enable Tailscale:
 
 With tailscale on you can now refer to your remote machine anytime anywhere through its Tailscale "Magic DNS" name:
 
-````bash
+```bash
 $ tailscale ssh console_jay@dab-dominant.ts.net
-````
+```
 
 Or even just:
 
-````bash
+```bash
 $ tailscale ssh console_jay
-````
+```
 
 Note that Tailscale's "Magic DNS" and ssh commands are transparently wrapped through the Tailscale VPN. So `$ ssh console_jay` will work as well as `$ tailscale ssh console_jay`.
 
@@ -686,6 +713,7 @@ In NixOS the following commands are replaced by parameters in the configuration 
 - [NymVPN](https://github.com/nymtech): NymVPN deploys noise to make traffic patterns untraceable. It runs on a decentralized, permissionless mixnet, ensuring that even Nym cannot log any data by design. It employs open-source cryptographic protocols to enable secure and anonymous packet transmission.
 - [DnsLeakTest](https://dnsleaktest.com/): A DNS leak occurs when using a VPN or similar privacy-focused network, where DNS requests still go to your ISP's server instead of through the privacy-focus network. This exposes your online activity and IP address, undermining the privacy goals of using a VPN. DnsLeakTest is a Web-based tool that tests for such leaks.
 - [BrowserLeaks](https://browserleaks.com/dns): Tool similar to DnsLeakTest.
+- [OpenSnitch](https://github.com/evilsocket/opensnitch): Open-source application firewall for Linux, inspired by the popular Little Snitch firewall on macOS. It monitors outgoing network connections on a per-application basis and alerts the user whenever a program attempts to access the internet. The user can then decide to allow or block the connection either once, always, or never.
 
 ## Other tools / resources
 - [SSHFS](https://phoenixnap.com/kb/sshfs): Tool to safely mount a remote folder from a server to a local machine. The client extends the SSH file transfer protocol, which helps locally mount a remote file system as a disk image securely.
