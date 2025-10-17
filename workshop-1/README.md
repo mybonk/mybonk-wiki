@@ -17,9 +17,9 @@ Understanding these distinctions is crucial. You can use the Nix package manager
 If you're new to the Nix ecosystem, these resources will help:
 
 
-- [Nix Pills](https://nixos.org/guides/nix-pills/) - Deep dive 💊 into Nix (the *language*)
-- [NixOS & Nix Flakes Book](https://nixos-and-flakes.thiscute.world/introduction/) - 🛠️ ❤️ The unofficial & opinionated 📖 for beginners! Check it out!
-- [Basic Linux Commands Cheat Sheet](../baby-rabbit-holes.md) - Our own cheat sheet you can copy/past commands from 🙋
+- [Nix Pills](https://nixos.org/guides/nix-pills/) - Deep dive � into Nix (the *language*)
+- [NixOS & Nix Flakes Book](https://nixos-and-flakes.thiscute.world/introduction/) - �️ ❤️ The unofficial & opinionated � for beginners! Check it out!
+- [Basic Linux Commands Cheat Sheet](../baby-rabbit-holes.md) - Our own cheat sheet you can copy/past commands from �
 
 ### Prerequisites
 
@@ -40,7 +40,7 @@ Nix keeps multiple generations of your system, cached packages, and build artifa
 - Multiple versions of packages can coexist
 - Garbage collection doesn't happen automatically *by design*
 
-**If you need to manage disk space:**
+**How to manage disk space:**
 
 ```bash
 # View what's using space
@@ -106,13 +106,16 @@ NixOS containers are **not Docker containers**. They use `systemd-nspawn` under 
 - Testing system configurations
 - Disk space is limited
 - You're running NixOS as the host
+- On VPS where nested virtualization is unavailable or limited
 
 **Use QEMU VMs when:**
-- Running on cloud/shared servers (e.g. Hetzner)
-- Your host is already virtualized
 - You need complete isolation
 - Testing different kernel versions
 - Running on non-NixOS systems
+- Nested virtualization is available and well-supported
+- You need to test different kernels or boot configurations
+
+**Important note about VPS**: NixOS containers may work on cloud VPS (e.x. Hetzner) but require careful network configuration (bridging, routing). On the other hand QEMU may not work on VPS as they usually disable nested virtualization.
 
 ---
 
@@ -124,7 +127,7 @@ We'll create a minimal NixOS system:
 - Add your SSH public key
 - Include basic command-line tools
 
-This involves configuring only two files:
+This involves configuring just two files:
 - `flake.nix` - Defines inputs and outputs for our system
 - `configuration.nix` - The actual system configuration
 
@@ -525,15 +528,17 @@ nixos-rebuild build-vm --flake .#demo-vm
 - ✅ Excellent for multi-tenant systems on bare metal
 - ✅ Great for microservices on a single host
 - ✅ Perfect for isolating different applications
-- ❌ Not suitable on cloud VPS (already virtualized)
-- ❌ Less isolation than VMs (shared kernel vulnerabilities)
+- ✅ Work on cloud VPS (but need network configuration)
+- ⚠️ Less isolation than VMs (shared kernel vulnerabilities)
+- ⚠️ Require more networking setup on VPS
 
 **QEMU VMs in production:**
-- ✅ Standard choice for cloud deployments
 - ✅ Strong isolation guarantees
-- ✅ Can run on any host (virtualized or not)
+- ✅ Standard for traditional virtualization
+- ⚠️ May not work on VPS without nested virtualization
 - ❌ Higher resource overhead
 - ❌ Slower to start/stop
+- ❌ Not available on all cloud providers
 
 **What's commonly done:**
 - Most NixOS production deployments run directly on hardware or cloud VMs
@@ -563,7 +568,7 @@ The configurations provided in this workshop are for learning purposes only. **D
 - Implementing monitoring
 - Following security hardening guides
 
-### 🗑️ Managing Disk Space
+### �️ Managing Disk Space
 
 Nix's approach to reproducibility means it keeps everything, which can quickly consume disk space.
 
@@ -603,7 +608,7 @@ du -sh /nix/store
 - Monitor `/nix/store` size regularly
 - Consider a larger disk for active development
 
-### 📚 Additional Resources
+### � Additional Resources
 
 - [NixOS Manual](https://nixos.org/manual/nixos/stable/)
 
@@ -628,5 +633,5 @@ You've learned how to:
 4. Join the NixOS community
 5. Consider deploying NixOS for real workloads
 
-Happy hacking with NixOS! 🚀
+Happy hacking with NixOS! �
 
