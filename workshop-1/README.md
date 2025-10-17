@@ -634,4 +634,5 @@ You've learned how to:
 4. Join the NixOS community
 5. Consider deploying NixOS for real workloads
 
-Happy hacking! 🚀
+Happy hacking with NixOS! 🚀
+
