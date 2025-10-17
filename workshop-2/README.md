@@ -1,8 +1,9 @@
-# Workshop 2: Installing Bitcoin as a service on NixOS in 2 Minutes
+# Run Bitcoin as a service on NixOS in 2 Minutes
 
 ## Overview
 
-This workshop demonstrates how to install and run Bitcoin Core on NixOS using declarative configuration. We'll use a NixOS container to show the "Nix way" of service deployment - the same approach works on full NixOS systems and VMs (see [workshop-1](../workshop-1/README.md) for VM setup).
+This workshop demonstrates how to configure a service, here Bitcoin Core, on a NixOS system. This requires editing the `.nix` files (declarative configuration of the system) and the deployment of the configuration.
+We'll use a NixOS container to efficiently demonstrate how this works - the same approach would work on full NixOS systems and VMs (see [workshop-1](../workshop-1/README.md) to see how a VM is set up and interacted with).
 
 **Why testnet for this workshop?**
 
@@ -314,7 +315,7 @@ Configuring all these components manually is **tedious and error-prone**:
 - Ports, authentication, and permissions need careful coordination
 - Updates and maintenance become complex
 
-**This is where nix-bitcoin comes in.** It's a collection of NixOS modules specifically designed to deploy complete Bitcoin stacks with minimal configuration. Instead of manually setting up 5-10 different services, nix-bitcoin provides pre-integrated, battle-tested configurations that work together seamlessly.
+**This is where nix-bitcoin comes in.** It's a collection of NixOS modules specifically designed to deploy complete Bitcoin stacks with minimal configuration. Instead of manually setting up 5-10 different services, nix-bitcoin provides pre-integrated, battle-tested configurations that work together seamlessly. We will look at nix-bitcoin in [workshop-4](../workshop-4/) "How to run a Bitcoin stack on NixOS in 5 minutes".
 
 ---
 

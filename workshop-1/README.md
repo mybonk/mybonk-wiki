@@ -25,10 +25,12 @@ If you're new to the Nix ecosystem, these resources will help:
 
 To follow this workshop, you'll need:
 
-- A laptop with the Nix package manager installed, or running NixOS
+- A laptop running NixOS
 - Basic command line knowledge
 - Basic Git knowledge
 - To at least have heard of Nix or NixOS before
+
+The commands used herein `nixos-container` and `nixos-rebuild` (for containers and VMs respectively as we'll see later) are NixOS-specific commands: They use NixOS' systemd-nspawn for containerization, depend on NixOS's system configuration model and require NixOS's container management infrastructure that's part of the base system. Thus these steps must be executed on a machine with NixOS installed on it or a machine running an image of a NixOS system.
 
 ### Important: Disk Space Considerations
 
@@ -97,6 +99,7 @@ NixOS containers are **not Docker containers**. They use `systemd-nspawn` under 
 - Managed declaratively through standard NixOS configuration
 - Perfect for development and testing
 - Share the host's Linux kernel
+- Tools exist to convert Docker containers into NixOS containers and the other way around.
 
 ### When to Use Each Approach
 
