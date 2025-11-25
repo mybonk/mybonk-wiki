@@ -2,7 +2,7 @@
   description = "Bitcoin NixOS Container - Workshop 3 (Mutinynet)";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
   };
 
   outputs = { self, nixpkgs }: 
@@ -30,7 +30,7 @@
         ];
       };
     in {
-      nixosConfigurations.bitcoin-container = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.demo-container = nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [
           { nixpkgs.overlays = [ (final: prev: { inherit (pkgs) bitcoin; }) ]; }

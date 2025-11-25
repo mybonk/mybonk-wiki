@@ -2,7 +2,7 @@
 
 {
   boot.isContainer = true;
-  networking.hostName = "bitcoin-container";
+  networking.hostName = "demo-container";
   
   # Enable Bitcoin service with Mutinynet configuration
   services.bitcoind = {
@@ -52,7 +52,7 @@
 
   # Useful utilities
   environment.systemPackages = with pkgs; [
-    bitcoin
+    bitcoind
     vim
     btop
   ];

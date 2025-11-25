@@ -40,12 +40,12 @@ This Bitcoin fork doesn't appear to provide pre-built binaries, so we'll have to
 
 ---
 
-## Step 1: Check Current Bitcoin Configuration
+## Step 1: Check Your Current Bitcoin Configuration
 
 Before making changes, let's verify what we're currently running. Make sure your bitcoin-container from [workshop-2](../workshop-2/) is running:
 
 ```bash
-sudo nixos-container status bitcoin-container
+sudo nixos-container status demo-container
 ```
 
 Get a root shell in the container:
@@ -79,7 +79,7 @@ exit
 
 ## Chapter A: Source Override with `fetchFromGitHub`
 
-This is the **simplest approach** for using a custom Bitcoin fork. We fetch the source code from GitHub and override just the source of the existing bitcoin package, keeping all the build configuration from nixpkgs.
+This is the **simplest approach** for using a custom fork. We fetch the source code from GitHub and override only the source of the existing package, keeping all the build configuration from nixpkgs.
 
 ### Understanding the Approach
 
@@ -106,14 +106,14 @@ This is the **simplest approach** for using a custom Bitcoin fork. We fetch the 
 Navigate to your workshop repository:
 
 ```bash
-cd ~/nixos-workshops/workshop-2-bitcoin  # Or wherever you cloned it
+cd ~/workshops/workshop-3  # Or wherever you cloned it
 ```
 
-Edit your `flake.nix` to override the bitcoin package with Mutinynet:
+Edit your `flake.nix` to override the bitcoin package with Mutinynet's:
 
 ```nix
 {
-  description = "Bitcoin Core NixOS Container - Workshop 3 (Mutinynet)";
+  description = "Bitcoin NixOS Container - Workshop 3 (Mutinynet)";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
@@ -203,14 +203,14 @@ The hash is calculated from the entire contents of the fetched source code. If e
 
 Edit `container-configuration.nix` to configure Mutinynet's signet.
 
-**Important note:** These configuration parameters are **required** - they are not built into the fork by default. The fork only adds *support* for custom signet parameters like `signetblocktime`, but you must explicitly configure which signet to join (Mutinynet) and how to connect to it.
+**Important note:** These configuration parameters are **required** - they are not built into the fork by default. The fork only adds *support* for the custom signet parameters (e.x `signetblocktime`), but you must explicitly configure which signet to join (Mutinynet's) and how to connect to it.
 
 ```nix
 { config, pkgs, lib, ... }:
 
 {
   boot.isContainer = true;
-  networking.hostName = "bitcoin-container";
+  networking.hostName = "demo-container";
   
   # Enable Bitcoin service with Mutinynet configuration
   services.bitcoind = {
@@ -231,8 +231,8 @@ Edit `container-configuration.nix` to configure Mutinynet's signet.
       # Disable DNS seeding (use manual addnode instead)
       dnsseed=0
       
-      # 30-second block time (Mutinynet's special feature)
-      # This parameter only works because we're using benthecarman's fork
+      # 30-second block time 
+      # This parameter only works because we're using benthecarman's Mutinynet fork of bitcoin core
       signetblocktime=30
       
       # RPC settings
@@ -262,7 +262,7 @@ Edit `container-configuration.nix` to configure Mutinynet's signet.
   environment.systemPackages = with pkgs; [
     bitcoin
     vim
-    htop
+    btop
   ];
 
   # Allow container to access the internet
@@ -290,7 +290,7 @@ Now update the running container with our new configuration:
 
 ```bash
 # Update the container with new Mutinynet configuration
-sudo nixos-container update bitcoin-container --flake .#bitcoin-container
+sudo nixos-container update demo --flake .#demo-container
 ```
 
 This will:
@@ -300,7 +300,7 @@ This will:
 4. Update the container configuration
 5. Restart the bitcoind service
 
-Watch the build process - you'll see Nix compiling Bitcoin from source. First-time builds take longer, but subsequent builds use Nix's cache.
+Watch the build process - you'll see Nix compiling the fork of Bitcoin from source. First-time builds take longer, but subsequent builds use Nix's cache.
 
 ---
 
@@ -309,7 +309,7 @@ Watch the build process - you'll see Nix compiling Bitcoin from source. First-ti
 Get a shell in the updated container:
 
 ```bash
-sudo nixos-container root-login bitcoin-container
+sudo nixos-container root-login demo
 ```
 
 Check the Bitcoin version - should now show Mutinynet:
@@ -382,31 +382,31 @@ Use overlays when you need to:
 - Change the entire build process
 - Override multiple related packages at once
 
-For our Mutinynet example, the simple override is sufficient, but let's see how an overlay would work for educational purposes.
+For our Mutinynet example, the simple override is sufficient, but let's see what an overlay would look like.
 
 ### Understanding Overlays
 
 **Overlays** are functions that take two arguments (`final` and `prev`) and return a set of package modifications:
 
 - **`prev`**: The original package set before your changes
-- **`final`**: The final package set after all overlays (useful for package dependencies)
+- **`final`**: The final package set after all overlays
 
 Overlays give you access to the entire package definition, not just individual attributes.
 
 ### Alternative flake.nix with Full Overlay
 
-Here's how you'd write the same thing using a more powerful overlay approach:
+Here is how you would write the same thing using a more powerful overlay approach:
 
 ```nix
 {
-  description = "Bitcoin Core NixOS Container - Workshop 3 (Mutinynet - Overlay)";
+  description = "Bitcoin NixOS Container - Workshop 3 (Mutinynet - Overlay)";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
   };
 
   outputs = { self, nixpkgs }: {
-    nixosConfigurations.bitcoin-container = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.demo-container = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         {
@@ -452,7 +452,7 @@ Here's how you'd write the same thing using a more powerful overlay approach:
 | `fetchFromGitHub` + `overrideAttrs` | Simple source swap | Quick, clear, minimal changes |
 | Full Overlay | Need build customization | Complete control, can modify everything |
 
-For most Bitcoin forks (including Mutinynet), the simple `fetchFromGitHub` approach from Chapter A is sufficient and recommended.
+Most of the time the simple `fetchFromGitHub` approach is sufficient.
 
 ---
 
@@ -475,14 +475,13 @@ Let's summarize what we've learned:
 
 ## What We Learned
 
-✅ Used `fetchFromGitHub` to pin a specific Bitcoin fork  
-✅ Understood Nix's hash verification system for security and reproducibility  
+✅ Used `fetchFromGitHub` to pin a specific version from a specific location
+✅ Nix's hash verification system for security and reproducibility  
 ✅ Overrode a NixOS service package with a custom build  
-✅ Updated an existing container configuration (not destroy/rebuild)  
-✅ Configured a custom signet (Mutinynet) with required parameters  
+✅ Updated an existing container configuration
+✅ Configured a custom signet (Mutinynet) with required parameters
 ✅ Witnessed dramatically faster block production (30s vs 10min)  
-✅ Learned the difference between simple overrides and full overlays  
-✅ Understood that fork configurations are not built-in by default
+✅ Learned the difference between simple overrides and full overlays
 
 **The power of Nix:**
 
@@ -501,20 +500,20 @@ If you want to go back to standard testnet or clean up:
 
 ```bash
 # Stop the container
-sudo nixos-container stop bitcoin-container
+sudo nixos-container stop demo
 
 # Destroy it
-sudo nixos-container destroy bitcoin-container
+sudo nixos-container destroy demo
 
 # Remove data
-sudo rm -rf /var/lib/nixos-containers/bitcoin-container
+sudo rm -rf /var/lib/nixos-containers/demo-container
 ```
 
 ---
 
 ## Next Steps
 
-You've now mastered running custom Bitcoin forks on NixOS! This skill applies to any Bitcoin fork or custom build.
+You've learned how to run a custom build on NixOS! 
 
 **Advanced techniques (not covered in this workshop):**
 
@@ -526,9 +525,9 @@ If you need even more control over package building, consider:
 - **Nix flake inputs**: Pin multiple repositories and coordinate versions across projects
 
 These advanced techniques are useful for:
-- Testing experimental features requiring multiple coordinated package changes
-- Building complex Bitcoin infrastructure with interdependent components
+- Building complex infrastructures with interdependent components
 - Creating reproducible research or development environments
+- Testing experimental features requiring multiple coordinated package changes
 
 **Coming next: Workshop 4 - "How to run a Bitcoin stack on NixOS in 5 minutes"**
 
@@ -553,8 +552,8 @@ Learn about nix-bitcoin - a complete solution for deploying production Bitcoin i
 - **Build time:** First build from source takes 5-10 minutes, subsequent builds use Nix cache
 - **Soft forks:** Mutinynet v29.0 includes Anyprevout, CTV, OP_CAT, CSFS, and OP_INTERNALKEY
 - **Network differences:** Mutinynet uses different ports and addresses than mainnet/testnet
-- **Storage:** Mutinynet's blockchain is much smaller due to recent network creation
-- **Configuration required:** All signet parameters must be explicitly configured - they're not built into the fork
+- **Storage:** Mutinynet's blockchain is much smaller than mainnet and even testnet
+- **Configuration required:** In the Mutinynet fork the signet parameters must be explicitly configured as in the example - they are re not built into the fork.
 
 ---
 
