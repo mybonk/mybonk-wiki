@@ -10,5 +10,11 @@
       system = "x86_64-linux";
       modules = [ ./container-configuration.nix ];
     };
+
+    nixosConfigurations.demo-vm = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [ ./vm-configuration.nix ];
+    };
   };
 }
+

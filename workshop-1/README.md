@@ -131,8 +131,8 @@ We'll create a minimal NixOS system with:
 - Basic command-line tools
 
 All this by just adjusting two files:
-- `flake.nix` - Defines inputs and outputs for our system
-- `configuration.nix` - The actual system configuration
+- `flake.nix` that Defines inputs (e.x. which nixOS version) and outputs (e.x. a system built based in the inputs)
+- A nixos system configuration, typically stored in some file that can be named `configuration.nix` (but name is arbitrary, could also be `vm-configuration.nix` or `container-configuration` as we'll see later).
 
 Follow the simple steps in the following sub-sections!
 ### Clone the Workshop Repository
@@ -229,21 +229,21 @@ sudo nixos-container create demo --flake .#demo-container
 
 ```bash
 # Start it
-sudo nixos-container start demo-container
+sudo nixos-container start demo
 
 # Check status
-sudo nixos-container status demo-container
+sudo nixos-container status demo
 ```
 
 **Step 3: Connect to the container**
 
 ```bash
 # Option 1: Direct root shell
-sudo nixos-container root-login demo-container
+sudo nixos-container root-login demo
 
 # Option 2: SSH (if you configured keys)
 # First, get the container's IP
-sudo nixos-container show-ip demo-container
+sudo nixos-container show-ip demo
 # Then SSH to it
 ssh root@<container-ip>
 ```
@@ -252,20 +252,20 @@ ssh root@<container-ip>
 
 ```bash
 # Stop the container
-sudo nixos-container stop demo-container
+sudo nixos-container stop demo
 
 # Restart it
-sudo nixos-container start demo-container
+sudo nixos-container start demo
 
 # Destroy the container completely
-sudo nixos-container destroy demo-container
+sudo nixos-container destroy demo
 ```
 
 ### What Persists and What Doesn't
 
 **Persists after stopping:**
-- Container configuration in `/etc/nixos-containers/demo-container`
-- Container filesystem in `/var/lib/nixos-containers/demo-container/`
+- Container configuration in `/etc/nixos-containers/demo`
+- Container filesystem in `/var/lib/nixos-containers/demo/`
 - Any files you created inside
 
 **Shared with host:**
@@ -456,7 +456,7 @@ Add the following to `container-configuration.nix`:
   # Enable nginx web server
   services.nginx = {
     enable = true;
-    virtualHosts."demo-container" = {
+    virtualHosts."demo" = {
       root = "/var/www";
       locations."/" = {
         index = "index.html";
@@ -503,12 +503,12 @@ rm demo-vm.qcow2
 **For Containers (fast iteration):**
 ```bash
 # Quick changes: update in place
-sudo nixos-container update demo-container --flake .#demo-container
+sudo nixos-container update demo --flake .#demo-container
 
 # Major changes: destroy and recreate
-sudo nixos-container destroy demo-container
-sudo nixos-container create demo-container --flake .#demo-container
-sudo nixos-container start demo-container
+sudo nixos-container destroy demo
+sudo nixos-container create demo --flake .#demo-container
+sudo nixos-container start demo
 ```
 
 **For QEMU VMs (testing):**
