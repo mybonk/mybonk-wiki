@@ -124,17 +124,20 @@ NixOS containers are **not Docker containers**. They use `systemd-nspawn` under 
 
 ## Getting Started
 
-We'll create a minimal NixOS system:
-- Set a hostname
-- Enable SSH access
-- Add your SSH public key
-- Include basic command-line tools
+We'll create a minimal NixOS system with:
+- A hostname of our choice
+- SSH access configured
+- Your SSH public key added
+- Basic command-line tools
 
-This involves configuring just two files:
+All this by just adjusting two files:
 - `flake.nix` - Defines inputs and outputs for our system
 - `configuration.nix` - The actual system configuration
 
+Follow the simple steps in the following sub-sections!
 ### Clone the Workshop Repository
+
+Start by cloning the repository to start with the default files that you will need to tune:
 
 ```bash
 # Clone the repository with example configurations
@@ -226,21 +229,21 @@ sudo nixos-container create demo --flake .#demo-container
 
 ```bash
 # Start it
-sudo nixos-container start demo
+sudo nixos-container start demo-container
 
 # Check status
-sudo nixos-container status demo
+sudo nixos-container status demo-container
 ```
 
 **Step 3: Connect to the container**
 
 ```bash
 # Option 1: Direct root shell
-sudo nixos-container root-login demo
+sudo nixos-container root-login demo-container
 
 # Option 2: SSH (if you configured keys)
 # First, get the container's IP
-sudo nixos-container show-ip demo
+sudo nixos-container show-ip demo-container
 # Then SSH to it
 ssh root@<container-ip>
 ```
@@ -249,20 +252,20 @@ ssh root@<container-ip>
 
 ```bash
 # Stop the container
-sudo nixos-container stop demo
+sudo nixos-container stop demo-container
 
 # Restart it
-sudo nixos-container start demo
+sudo nixos-container start demo-container
 
 # Destroy the container completely
-sudo nixos-container destroy demo
+sudo nixos-container destroy demo-container
 ```
 
 ### What Persists and What Doesn't
 
 **Persists after stopping:**
-- Container configuration in `/etc/nixos-containers/demo/`
-- Container filesystem in `/var/lib/nixos-containers/demo/`
+- Container configuration in `/etc/nixos-containers/demo-container`
+- Container filesystem in `/var/lib/nixos-containers/demo-container/`
 - Any files you created inside
 
 **Shared with host:**
@@ -440,13 +443,14 @@ The disk image can quickly grow to 2-5GB for a working system.
 
 ---
 
-## Going Further: Adding a Web Server
+## Going Further: Adding a Service
 
-Let's add a simple web server to demonstrate system configuration changes.
+Let's add a simple web server to demonstrate hot system configuration changes.
+As seen earlier the same configuration can be used to deploy either in a container or in a VM. The following sections explains how this is done in each instance.
 
-### For Container
+### On a Container
 
-Add this to `container-configuration.nix`:
+Add the following to `container-configuration.nix`:
 
 ```nix
   # Enable nginx web server
@@ -481,9 +485,9 @@ CONTAINER_IP=$(sudo nixos-container show-ip demo)
 curl http://$CONTAINER_IP
 ```
 
-### For QEMU VM
+### On a QEMU VM
 
-Add the same nginx configuration to `vm-configuration.nix`, then:
+Apply the same additions to the `vm-configuration.nix` as in `container-configuration.nix` in the previous section, then:
 
 ```bash
 # Rebuild the VM
@@ -499,12 +503,12 @@ rm demo-vm.qcow2
 **For Containers (fast iteration):**
 ```bash
 # Quick changes: update in place
-sudo nixos-container update demo --flake .#demo-container
+sudo nixos-container update demo-container --flake .#demo-container
 
 # Major changes: destroy and recreate
-sudo nixos-container destroy demo
-sudo nixos-container create demo --flake .#demo-container
-sudo nixos-container start demo
+sudo nixos-container destroy demo-container
+sudo nixos-container create demo-container --flake .#demo-container
+sudo nixos-container start demo-container
 ```
 
 **For QEMU VMs (testing):**
@@ -597,7 +601,7 @@ df -h /nix/store
 du -sh /nix/store
 
 # 5. For NixOS: limit generations
-# Add to configuration.nix:
+Add to configuration.nix:
 # boot.loader.grub.configurationLimit = 10;
 # nix.gc.automatic = true;
 # nix.gc.dates = "weekly";
@@ -605,10 +609,10 @@ du -sh /nix/store
 ```
 
 **Space-saving tips:**
-- Don't keep unnecessary build results
-- Use `nix-collect-garbage` after experiments
-- Enable automatic garbage collection
 - Monitor `/nix/store` size regularly
+- Use `nix-collect-garbage` after experiments
+- Don't keep unnecessary build results
+- Enable automatic garbage collection
 - Consider a larger disk for active development
 
 ### � Additional Resources
@@ -620,21 +624,19 @@ du -sh /nix/store
 
 ## What We Learned
 
-You've learned how to:
-- ✅ Understand the difference between Nix, Nix package manager, and NixOS
+You have:
+- ✅ Learned the difference between Nix, Nix package manager, and NixOS
 - ✅ Distinguish between VMs and containers
-- ✅ Run NixOS in a lightweight container
-- ✅ Run NixOS in a full QEMU virtual machine
-- ✅ Add services to your systems
-- ✅ Manage disk space effectively
-- ✅ Understand when to use each approach
-
+- ✅ Run NixOS in a VM
+- ✅ Run NixOS in a container
+- ✅ Seen how to add a service to a NixOS system
+- ✅ Learned why disk space typically needs to be monitored and controlled.
 
 ---
 
 ## Next Steps
 
-1. Experiment with different services
+1. Experiment with enabling additional services
 2. Try building your own configurations
 3. Explore NixOS modules and options
 4. Join the NixOS community
