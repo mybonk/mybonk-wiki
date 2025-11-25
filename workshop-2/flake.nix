@@ -1,16 +1,14 @@
 {
-  description = "Bitcoin Core NixOS Container - Workshop 2";
+  description = "Bitcoin Core NixOS Container";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
   };
 
   outputs = { self, nixpkgs }: {
-    nixosConfigurations.bitcoin-container = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.demo-container = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      modules = [
-        ./container-configuration.nix
-      ];
+      modules = [ ./container-configuration.nix ];
     };
   };
 }

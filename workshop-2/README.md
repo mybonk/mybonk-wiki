@@ -77,7 +77,7 @@ Create `container-configuration.nix`:
 
 {
   boot.isContainer = true;
-  networking.hostName = "bitcoin-container";
+  networking.hostName = "demo-container";
   
   # Enable Bitcoin service
   services.bitcoind = {
@@ -134,19 +134,19 @@ Create `container-configuration.nix`:
 Build the container configuration:
 
 ```bash
-sudo nixos-container create bitcoin-container --flake .#bitcoin-container
+sudo nixos-container create demo --flake .#demo-container
 ```
 
 Start the container:
 
 ```bash
-sudo nixos-container start bitcoin-container
+sudo nixos-container start demo
 ```
 
 Check container status:
 
 ```bash
-sudo nixos-container status bitcoin-container
+sudo nixos-container status demo
 ```
 
 ---
@@ -156,7 +156,7 @@ sudo nixos-container status bitcoin-container
 Get a root shell in the container:
 
 ```bash
-sudo nixos-container root-login bitcoin-container
+sudo nixos-container root-login demo
 ```
 
 Inside the container, verify the system:
@@ -166,10 +166,11 @@ Inside the container, verify the system:
 nixos-version
 
 # Check running services
-systemctl status bitcoind
+systemctl --type=service --state=running
+systemctl status bitcoin*
 
 # View Bitcoin logs
-journalctl -u bitcoind -f
+journalctl -f -u bitcoin*
 ```
 
 Press `Ctrl+C` to stop following logs.
@@ -182,10 +183,10 @@ Still inside the container, watch Bitcoin connect to the testnet and start downl
 
 ```bash
 # Watch the live sync logs - you'll see Bitcoin discovering peers and downloading blocks
-journalctl -u bitcoind -f
+journalctl -f -u bitcoin*
 ```
 
-You should see logs like:
+After a while you should start seeing many logs like:
 ```
 UpdateTip: new best=000000000000000000... height=2500000...
 Synchronizing blockheaders, height: 123456...
@@ -234,10 +235,10 @@ From your host system, watch the Bitcoin data directory grow:
 
 ```bash
 # Check initial size
-sudo du -sh /var/lib/nixos-containers/bitcoin-container/var/lib/bitcoind/
+sudo du -sh /var/lib/nixos-containers/demo-container/var/lib/bitcoind/
 
 # Watch it grow in real-time (updates every 5 seconds)
-watch -n 5 'sudo du -sh /var/lib/nixos-containers/bitcoin-container/var/lib/bitcoind/'
+watch -n 5 'sudo du -sh /var/lib/nixos-containers/demo-container/var/lib/bitcoind/'
 ```
 
 **You'll see the directory growing** as Bitcoin downloads testnet blocks.
@@ -246,10 +247,10 @@ After some time, check the detailed breakdown:
 
 ```bash
 # See what's taking up space
-sudo du -h --max-depth=2 /var/lib/nixos-containers/bitcoin-container/var/lib/bitcoind/
+sudo du -h --max-depth=2 /var/lib/nixos-containers/demo-container/var/lib/bitcoind/
 
 # Check testnet3 directory specifically
-sudo du -sh /var/lib/nixos-containers/bitcoin-container/var/lib/bitcoind/testnet3/
+sudo du -sh /var/lib/nixos-containers/demo-container/var/lib/bitcoind/testnet3/
 ```
 
 Even testnet will grow to **~30GB for the blockchain** and **~50GB+ with indexes enabled**.
@@ -285,7 +286,7 @@ As you've witnessed, the Bitcoin data directory grows continuously. Running Bitc
 **The problem:**
 ```bash
 # Even testnet grows significantly:
-/var/lib/nixos-containers/bitcoin-container/var/lib/bitcoind/testnet3/
+/var/lib/nixos-containers/demo-container/var/lib/bitcoind/testnet3/
 
 # Mainnet would be 20x larger
 ```
@@ -324,8 +325,8 @@ Configuring all these components manually is **tedious and error-prone**:
 Stop and remove the container:
 
 ```bash
-sudo nixos-container stop bitcoin-container
-sudo nixos-container destroy bitcoin-container
+sudo nixos-container stop demo
+sudo nixos-container destroy demo
 ```
 
 Remove the data directory:
@@ -367,7 +368,7 @@ Happy hacking! �
 
 - **VM deployment:** The same configuration works on NixOS VMs - just use the configuration in your VM's `configuration.nix` (see [workshop-1](../workshop-1))
 - **Sync time:** Testnet initial blockchain download takes several hours depending on your hardware and connection
-- **Stopping early:** You can stop the container anytime with `sudo nixos-container stop bitcoin-container` - progress is saved
+- **Stopping early:** You can stop the container anytime with `sudo nixos-container stop demo` - progress is saved
 - **Security:** The RPC password in this workshop is for demo only - use strong passwords in production
 
 ---

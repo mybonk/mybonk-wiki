@@ -2,17 +2,16 @@
 
 {
   boot.isContainer = true;
-  networking.hostName = "bitcoin-container";
+  networking.hostName = "demo-container";
   
   # Enable Bitcoin service
   services.bitcoind = {
-    enable = true;
-    
+    enabled = true;
+    testnet = true; # Run in testnet mode (for workshop purposes)
+
     # Bitcoin Core configuration
     extraConfig = ''
-      # Run in testnet mode (for workshop purposes)
-      testnet=1
-      
+    
       # RPC settings
       rpcuser=nixos
       rpcpassword=workshop2demo
@@ -38,7 +37,7 @@
 
   # Useful utilities
   environment.systemPackages = with pkgs; [
-    bitcoin
+    bitcoind
     vim
     btop
   ];
