@@ -170,11 +170,9 @@ sudo iptables -t nat -L -n -v | grep MASQUERADE
 
 ---
 
-## Step 3: Create Containers via CLI
+## Step 3: Create Containers Using the Helper Script
 
 Now we'll create containers using the nixos-container command-line tool.
-
-### Option A: Using the Helper Script (Recommended)
 
 Make the script executable:
 
@@ -192,58 +190,6 @@ Create container2:
 
 ```bash
 sudo ./create-container.sh container2 10.100.0.20
-```
-
-The script automates all four steps below and provides helpful output.
-
-### Option B: Manual Creation
-
-If you prefer to understand what's happening, create containers manually:
-
-**Create container1:**
-
-```bash
-# Step 1: Create container from flake
-sudo nixos-container create container1 \
-  --flake .#container1 \
-  --config-file /dev/null
-
-# Step 2: Configure networking
-sudo mkdir -p /etc/nixos-containers/container1
-sudo tee /etc/nixos-containers/container1.conf << 'EOF'
-PRIVATE_NETWORK=yes
-HOST_BRIDGE=br-containers
-LOCAL_ADDRESS=10.100.0.10/24
-EOF
-
-# Step 3: Start container
-sudo nixos-container start container1
-
-# Step 4: Enable auto-start on boot
-sudo systemctl enable container@container1
-```
-
-**Create container2:**
-
-```bash
-# Step 1: Create container from flake
-sudo nixos-container create container2 \
-  --flake .#container2 \
-  --config-file /dev/null
-
-# Step 2: Configure networking
-sudo mkdir -p /etc/nixos-containers/container2
-sudo tee /etc/nixos-containers/container2.conf << 'EOF'
-PRIVATE_NETWORK=yes
-HOST_BRIDGE=br-containers
-LOCAL_ADDRESS=10.100.0.20/24
-EOF
-
-# Step 3: Start container
-sudo nixos-container start container2
-
-# Step 4: Enable auto-start on boot
-sudo systemctl enable container@container2
 ```
 
 ### Verify Container Creation

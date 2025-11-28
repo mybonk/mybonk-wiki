@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # NixOS Container Creation Helper Script
-# Usage: sudo ./create-container.sh <container-name> <ip-address>
-# Example: sudo ./create-container.sh container1 10.100.0.10
+# Usage: sudo ./create-container.sh <container-name>
+# Example: sudo ./create-container.sh container1
+#
+# Note: Container configuration (IP address, hostname, etc.) is defined in flake.nix
 
 set -e
 
@@ -12,16 +14,17 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # Check arguments
-if [ $# -ne 2 ]; then
-    echo "Usage: $0 <container-name> <ip-address>"
-    echo "Example: $0 container1 10.100.0.10"
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <container-name>"
+    echo "Example: $0 container1"
+    echo ""
+    echo "Available containers defined in flake.nix:"
+    echo "  - container1 (10.100.0.10)"
+    echo "  - container2 (10.100.0.20)"
     exit 1
 fi
 
 CONTAINER_NAME="$1"
-IP_ADDRESS="$2"
-BRIDGE="br-containers"
-SUBNET_PREFIX="24"
 
 # Get script directory (where flake.nix is located)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -30,14 +33,13 @@ echo "================================"
 echo "NixOS Container Creation"
 echo "================================"
 echo "Container Name: $CONTAINER_NAME"
-echo "IP Address:     $IP_ADDRESS/$SUBNET_PREFIX"
-echo "Bridge:         $BRIDGE"
 echo "Flake Path:     $SCRIPT_DIR"
+echo "Configuration:  Defined in flake.nix"
 echo "================================"
 echo
 
 # Step 1: Create container with network configuration
-echo "[1/3] Creating container from flake with network configuration..."
+echo "[1/2] Creating container from flake with network configuration..."
 nixos-container create "$CONTAINER_NAME" \
     --flake "$SCRIPT_DIR#$CONTAINER_NAME"
 
@@ -45,18 +47,12 @@ echo "✓ Container created"
 echo
 
 # Step 2: Start container
-echo "[2/3] Starting container..."
+echo "[2/2] Starting container..."
 nixos-container start "$CONTAINER_NAME"
 
 echo "✓ Container started"
 echo
 
-# Step 3: Enable auto-start
-echo "[3/3] Enabling auto-start on boot..."
-systemctl enable "container@$CONTAINER_NAME"
-
-echo "✓ Auto-start enabled"
-echo
 
 # Final status
 echo "================================"
