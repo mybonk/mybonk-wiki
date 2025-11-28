@@ -30,6 +30,9 @@
     "8.8.4.4"
   ];
 
+  # Don't use host's resolv.conf (required when host uses systemd-resolved)
+  networking.useHostResolvConf = lib.mkForce false;
+
   # Disable firewall for maximum openness
   networking.firewall.enable = false;
 
