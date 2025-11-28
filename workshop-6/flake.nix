@@ -8,13 +8,23 @@
   outputs = { self, nixpkgs }:
   let
     # Helper function to create container configuration
-    mkContainerConfig = { hostname, ipAddress, gateway ? "10.100.0.1", prefixLength ? 24 }: {
+    mkContainerConfig = { hostname, ipAddress, gateway ? "10.100.0.1", prefixLength ? 24, hostBridge ? "br-containers" }: {
       imports = [ ./configuration.nix ];
 
       # Pass containerConfig to the imported module
       _module.args.containerConfig = {
         inherit hostname ipAddress gateway prefixLength;
       };
+
+      # DECLARATIVE CONTAINER-LEVEL NETWORKING
+      # This replaces the imperative .conf file approach
+      networking.hostName = hostname;
+
+      # Container-specific settings
+      boot.isContainer = true;
+
+      # Private network configuration (declarative)
+      systemd.network.enable = true;
     };
   in
   {

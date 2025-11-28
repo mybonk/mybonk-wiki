@@ -14,10 +14,10 @@
   # Configure static IP address and gateway
   networking.defaultGateway = {
     address = containerConfig.gateway;
-    interface = "eth0";
+    interface = "enp1s0";
   };
 
-  networking.interfaces.eth0 = {
+  networking.interfaces.enp1s0 = {
     ipv4.addresses = [{
       address = containerConfig.ipAddress;
       prefixLength = containerConfig.prefixLength;
@@ -59,6 +59,22 @@
 
   # Set a simple root password (change this in production!)
   users.users.root.password = "nixos";
+
+  # DECLARATIVE NETWORKING CONFIGURATION
+  # This is the key difference - configure privateNetwork directly
+  boot.isContainer = true;
+
+  systemd.network = {
+    enable = true;
+    networks."enp1s0" = {
+      matchConfig.Name = "enp1s0";
+      networkConfig = {
+        Address = "${containerConfig.ipAddress}/${toString containerConfig.prefixLength}";
+        Gateway = containerConfig.gateway;
+        DNS = [ "8.8.8.8" "8.8.4.4" ];
+      };
+    };
+  };
 
   # System state version
   system.stateVersion = "25.05";

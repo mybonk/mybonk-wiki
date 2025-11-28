@@ -36,37 +36,23 @@ echo "Flake Path:     $SCRIPT_DIR"
 echo "================================"
 echo
 
-# Step 1: Create container
-echo "[1/4] Creating container from flake..."
+# Step 1: Create container with network configuration
+echo "[1/3] Creating container from flake with network configuration..."
 nixos-container create "$CONTAINER_NAME" \
-    --flake "$SCRIPT_DIR#$CONTAINER_NAME" \
-    --config-file /dev/null
+    --flake "$SCRIPT_DIR#$CONTAINER_NAME"
 
 echo "✓ Container created"
 echo
 
-# Step 2: Configure networking
-echo "[2/4] Configuring container networking..."
-mkdir -p "/etc/nixos-containers/$CONTAINER_NAME"
-
-cat > "/etc/nixos-containers/$CONTAINER_NAME.conf" <<EOF
-PRIVATE_NETWORK=yes
-HOST_BRIDGE=$BRIDGE
-LOCAL_ADDRESS=$IP_ADDRESS/$SUBNET_PREFIX
-EOF
-
-echo "✓ Network configuration written"
-echo
-
-# Step 3: Start container
-echo "[3/4] Starting container..."
+# Step 2: Start container
+echo "[2/3] Starting container..."
 nixos-container start "$CONTAINER_NAME"
 
 echo "✓ Container started"
 echo
 
-# Step 4: Enable auto-start
-echo "[4/4] Enabling auto-start on boot..."
+# Step 3: Enable auto-start
+echo "[3/3] Enabling auto-start on boot..."
 systemctl enable "container@$CONTAINER_NAME"
 
 echo "✓ Auto-start enabled"
@@ -81,7 +67,7 @@ echo "Container Status:"
 nixos-container status "$CONTAINER_NAME"
 echo
 echo "Container IP:"
-nixos-container run "$CONTAINER_NAME" -- ip -4 addr show eth0 2>/dev/null | grep inet || echo "Network not yet configured"
+nixos-container run "$CONTAINER_NAME" -- ip -4 addr show enp1s0 2>/dev/null | grep inet || echo "Network not yet configured"
 echo
 
 echo "Quick Commands:"

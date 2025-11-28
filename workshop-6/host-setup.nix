@@ -26,7 +26,7 @@
   networking.nat = {
     enable = true;
     internalInterfaces = [ "br-containers" ];
-    externalInterface = "eth0"; # Change this to your actual internet interface (e.g., "wlan0", "enp0s3")
+    externalInterface = "enp1s0"; # Change this to your actual internet interface (e.g., "wlan0", "enp0s3")
   };
 
   # Enable IP forwarding
