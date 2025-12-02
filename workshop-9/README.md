@@ -31,7 +31,9 @@ For this workshop, we use it to easily spin up Bitcoin Core (bitcoind) and Core 
 - **Must have completed [workshop-8](../workshop-8)** - This workshop builds directly on workshop-8's infrastructure
 - The host system must already have:
   - Bridge network (br-containers) configured
-  - DHCP server (dnsmasq) running
+  - DHCP server (dnsmasq) running with DNS configured to point containers to itself (10.233.0.1)
+    - **Important**: This DNS configuration allows containers to resolve each other's hostnames (e.g., `ping demo`)
+    - See [workshop-8's DNS section](../workshop-8/README.md#key-networking-concepts) for details on how dnsmasq enables container-to-container hostname resolution
   - NAT and IP forwarding enabled
 - Basic understanding of Bitcoin and Lightning concepts (helpful but not required)
 

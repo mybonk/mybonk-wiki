@@ -51,6 +51,12 @@
   # Having both enabled causes conflicts in network management
   networking.useDHCP = lib.mkForce false;
 
+  # CRITICAL: Disable systemd-resolved in containers
+  # systemd-resolved intercepts DNS and uses 127.0.0.53 as nameserver
+  # This breaks container-to-container hostname resolution
+  # We want containers to use DNS from DHCP (dnsmasq at 10.233.0.1)
+  services.resolved.enable = false;
+
   # Lab environment: Disable firewall for maximum connectivity
   # NOTE: In production, configure firewall rules appropriately
   networking.firewall.enable = false;
