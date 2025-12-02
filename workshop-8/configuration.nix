@@ -1,7 +1,7 @@
-# Generic NixOS container configuration with parameterized hostname
+# Generic NixOS container configuration
 # This module is shared by all containers created from this workshop
-# It accepts a containerConfig parameter with: { hostname }
 # IP addresses are assigned automatically via DHCP from the host
+# Hostname is automatically set by nixos-container to match the container name
 #
 # IMPORTANT: This configuration is for IMPERATIVE containers
 # (created with nixos-container create --bridge br-containers)
@@ -9,17 +9,9 @@
 #   - matchConfig.Name from "eth0" to "host0"
 #   - No --bridge flag needed (configured in host container definition)
 
-{ config, pkgs, lib, containerConfig, ... }:
+{ config, pkgs, lib, ... }:
 
 {
-  # ============================================================================
-  # HOSTNAME CONFIGURATION
-  # ============================================================================
-
-  # Use the hostname passed as a parameter from flake.nix
-  # This allows one configuration file to serve multiple containers
-  networking.hostName = containerConfig.hostname;
-
   # ============================================================================
   # CONTAINER-SPECIFIC SETTINGS
   # ============================================================================
@@ -54,15 +46,15 @@
     networks."10-container-dhcp" = {
       # Match the container's virtual ethernet interface
       #
-      # WHY "eth0"?
+      # WHY "eth0*"?
       #   - IMPERATIVE containers (nixos-container create) use "eth0"
       #   - DECLARATIVE containers (in host config) use "host0"
       #   - This is hardcoded in NixOS - not configurable
-      #   - Since we create containers imperatively, we match "eth0"
-      #   - The @ifXX suffix (like eth0@if40) indicates a veth pair - the number is the
-      #     host-side interface index. This is normal and doesn't affect matching.
-      #   - On the host side, the interface is named "vb-<container-name>" or "ve-<container-name>"
-      matchConfig.Name = "eth0";
+      #   - Since we create containers imperatively, we match "eth0*"
+      #   - The wildcard (*) matches eth0 and variations like "eth0@if40"
+      #   - The @ifXX suffix indicates a veth pair - the number is the host-side interface index
+      #   - On the host side, the interface is named something like "vb-<container-name>" or "ve-<container-name>"
+      matchConfig.Name = "eth0*";
 
       # ENABLES: Container-to-Container, Container-to-Host, Internet Access
       # Request IP address, gateway, and DNS via DHCP from host
@@ -92,9 +84,11 @@
   # Instead, use the DNS servers provided by DHCP (configured above)
   networking.useHostResolvConf = lib.mkForce false;
 
-  # CONTAINER-TO-CONTAINER + CONTAINER-TO-HOST: Enable DHCP by default
-  # This works in conjunction with systemd.network configuration above
-  networking.useDHCP = lib.mkDefault true;
+  # IMPORTANT: Disable old-style DHCP when using systemd-networkd
+  # systemd-networkd (configured above) handles DHCP - don't use both!
+  # Having both enabled causes conflicts in network management
+  networking.useDHCP = lib.mkForce false;
+
 
   # Lab environment: Disable firewall for maximum connectivity
   # In a lab, we want unrestricted access for testing
@@ -188,5 +182,5 @@
   # NixOS state version - should match the NixOS release being used
   # This ensures system compatibility and stable behavior
   # DO NOT change this unless upgrading to a new NixOS release
-  system.stateVersion = "25.05";
+  system.stateVersion = "24.11";
 }

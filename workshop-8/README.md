@@ -2,13 +2,13 @@
 
 ## Introduction
 
-This workshop teaches you how to create and manage NixOS containers dynamically from the command line. Instead of defining containers in your host configuration, you'll use flexible CLI tools to create containers on-demand with automatic or custom naming.
+This workshop teaches you how to create and manage NixOS containers dynamically from the command line. Instead of defining containers in your host configuration, you'll create and interact with the containers simply from the command line.
 
 ### What Makes This Workshop Different?
 
-- **Dynamic Container Creation**: Create containers by name, or let the system auto-generate random names (4-digit hex)
-- **Shared Configuration**: One parameterizable configuration.nix serves all containers
-- **Private Network**: All containers communicate on a shared private network (10.233.0.0/24)
+- **Dynamic Container Creation**: Create containers by name (auto-generated name if not specified)
+- **Shared Configuration**: A single configuration.nix file serves all containers
+- **Private Network**: All containers communicate on a shared network (10.233.0.0/24)
 - **Full Connectivity**: Containers can ping each other, the host, and the internet
 - **CLI Management**: Create, start, stop, and destroy containers on the fly without having to edit a config file for each one.
 
@@ -23,16 +23,18 @@ This workshop teaches you how to create and manage NixOS containers dynamically 
 
 If you're new to NixOS or networking:
 
+- [Workshop-1](../workshop-1) - Introduction to NixOS VMs and containers
+- [MYBONK wiki's Baby Rabbit Holes](../baby-rabbit-holes.md) useful cheat sheet
 - [The NixOS and Flakes book](https://nixos-and-flakes.thiscute.world/introduction/) - Comprehensive beginner-friendly guide
 - [NixOS Manual - Containers](https://nixos.org/manual/nixos/stable/#ch-containers) - Official container documentation
 - [IP Subnetting Basics](https://www.subnet-calculator.com/) - Understanding CIDR notation
-- [Workshop-1](../workshop-1) - Introduction to NixOS VMs and containers
+
 
 ---
 
 ## Understanding Container Networking
 
-Before diving in, let's clarify how container networking works in this setup.
+Let's clarify how container networking works in this setup.
 
 ### Network Architecture
 
@@ -80,7 +82,7 @@ Before diving in, let's clarify how container networking works in this setup.
 - Required for containers to access the internet through NAT
 - Enabled via sysctl setting: net.ipv4.ip_forward = 1
 
-**⚠️ Imperative vs Declarative Containers - Critical Differences**:
+**⚠️ Imperative vs Declarative Containers - MUST KNOWS**:
 
 This workshop uses **imperative containers** (created with `nixos-container create` command). This approach differs from **declarative containers** (defined in host's `/etc/nixos/configuration.nix`) in TWO critical ways:
 
@@ -94,7 +96,7 @@ This workshop uses **imperative containers** (created with `nixos-container crea
 1. **Interface naming (`eth0` vs `host0`):**
    - Our `configuration.nix` matches `eth0` because we create imperative containers
    - If you were using declarative containers, you'd need to match `host0` instead
-   - This is hardcoded in NixOS container infrastructure - not configurable
+   - This is hardcoded in NixOS container infrastructure
 
 2. **Bridge connection requirement:**
    - **Imperative**: MUST use `--bridge br-containers` when creating
@@ -130,13 +132,24 @@ This workshop uses **imperative containers** (created with `nixos-container crea
 
 ## Step 0: Verify Host Prerequisites
 
-Before creating containers, verify your NixOS host is properly configured to host and serve NixOS containers.
+Before creating containers, verify your NixOS host is properly configured to host and serve containers.
 
 ### Clone the Workshop Repository
 
 ```bash
 git clone git@github.com:mybonk/mybonk-wiki.git
 cd mybonk-wiki/workshop-8
+```
+
+### Verify Nix Flakes Are Enabled
+
+```bash
+# This should work without error:
+nix flake show
+
+# If you get "experimental feature 'flakes' not enabled":
+# Add to /etc/nixos/configuration.nix:
+# nix.settings.experimental-features = [ "nix-command" "flakes" ];
 ```
 
 ### Check IP Forwarding on the Host
@@ -148,7 +161,7 @@ IP forwarding must be enabled at the kernel level of the Host for NAT to work:
 cat /proc/sys/net/ipv4/ip_forward
 
 # If it outputs 0, the host won't be able to serve the containers with access to 
-# the internet. You can fix this by integrating the configuration within host-setup.nix into the host's configuration (and don't forget to nixos-rebuild the system after the configuration change - might even be better to rebuild and reboot the host because NAT is so deep into the code of the kernel that it might be required to reboot for the change to take effect).
+# the internet. You need to integrate the configuration from host-setup.nix into the host's configuration (and don't forget to nixos-rebuild the system after the configuration change - might even be better to rebuild and reboot the host because it's deep into the kernel and rebooting might be a good idea).
 ```
 
 **What this checks**: Whether the kernel allows packets routing between network interfaces (required for NAT and the containers to access the internet through the host connectivity).
@@ -156,12 +169,11 @@ cat /proc/sys/net/ipv4/ip_forward
 ### Check NAT Kernel Module
 
 ```bash
-# Verify iptable_nat module is available
-lsmod | grep iptable_nat
-
-# If this returns nothing, check if the module exists:
+# Check that the module exists:
 modinfo iptable_nat
 
+# Verify iptable_nat module is available
+lsmod | grep iptable_nat
 # If module exists but isn't loaded, it will load when NAT is enabled
 ```
 
@@ -180,45 +192,63 @@ ip route | grep default
 #                         This is your interface name
 ```
 
-Common interface names:
+Common interface names (here `eth0`):
 - `eth0`, `enp0s3`, `enp1s0` - Ethernet
 - `wlan0`, `wlp2s0` - WiFi
 - `br0` - Bridge (if already using one)
 
 **What this checks**: Which network interface provides internet access (needed for NAT configuration).
 
-### Verify Nix Flakes Are Enabled
 
-```bash
-# This should work without error:
-nix flake show
-
-# If you get "experimental feature 'flakes' not enabled":
-# Add to /etc/nixos/configuration.nix:
-# nix.settings.experimental-features = [ "nix-command" "flakes" ];
-```
-
-**What this checks**: Whether your NixOS system supports flake-based configurations.
+**What this checks**: Whether your NixOS system is configured to supports flake-based configurations.
 
 ---
 
-## Step 1: Configure the Host System
+## Step 1: Configuration of the Host System
 
-The host system needs to provide bridge networking, DHCP, NAT, and IP forwarding to the containers.
+The host system needs to provide 4 things to all the containers: 
+
+- bridge networking
+- DHCP
+- NAT
+- IP forwarding
+
+IMPORTANT: If any of these is not working the workshop may not continue.
 
 ### Edit host-setup.nix
 
 Open `host-setup.nix` and update the external interface on line 29:
 
 ```nix
-networking.nat.externalInterface = "eth0";  # Change to YOUR interface
+networking.nat.externalInterface = "eth0";  # Change to YOUR interface (as seen earlier, using `ip route | grep default`)
 ```
 
 Replace `"eth0"` with the interface name you found in the prerequisites step.
 
 ### Apply Host Configuration
 
-Add `host-setup.nix` to your system flake configuration:
+**Option A - Add to existing configuration:**
+
+Edit `/etc/nixos/configuration.nix` and add:
+
+```nix
+{
+  imports = [
+    /absolute/path/to/mybonk-wiki/workshop-8/host-setup.nix
+    # ... your other imports
+  ];
+}
+```
+
+Then rebuild:
+
+```bash
+sudo nixos-rebuild switch
+```
+
+**Option B - Flake-based system:**
+
+If your system uses flakes, add to your system flake:
 
 ```nix
 nixosConfigurations.yourhostname = nixpkgs.lib.nixosSystem {
@@ -229,7 +259,7 @@ nixosConfigurations.yourhostname = nixpkgs.lib.nixosSystem {
 };
 ```
 
-Then rebuild your system:
+Then rebuild:
 
 ```bash
 sudo nixos-rebuild switch --flake .#yourhostname
@@ -256,22 +286,15 @@ sudo iptables -t nat -L -n -v | grep MASQUERADE
 systemctl status dnsmasq.service
 # Should show: active (running)
 
-# 5. Test bridge connectivity (should work)
+# 5. Test bridge is reachable (should work)
 ping 10.233.0.1
 ```
-
-**Understanding the verification**:
-- Bridge interface = Container network exists
-- IP forwarding = Containers can route to internet
-- NAT rules = Container traffic will be translated
-- DHCP server = Containers will get IP addresses automatically
-- Bridge ping = Network interface is operational
 
 ---
 
 ## Step 2: Understanding the Configuration Files
 
-Before creating containers, let's understand the configuration structure.
+Let's understand the configuration structure.
 
 ### File: flake.nix
 
@@ -381,24 +404,7 @@ sudo ./manage-containers.sh --help
 
 Now let's create some containers using the management script (don't forget to run `chmod +x manage-containers.sh` to make it executable).
 
-**⚠️ Important:** The `manage-containers.sh` script automatically uses `--bridge br-containers` when creating containers. This is **crucial** - without it, containers won't connect to the bridge network and won't get DHCP IPs. If you create containers manually with `nixos-container create`, you MUST include `--bridge br-containers`.
-
-### Git Tracking Required
-
-Nix flakes require files to be tracked by git. Before creating containers, ensure files are staged:
-
-```bash
-# Initialize git if not already done
-git init
-
-# Stage the workshop files
-git add flake.nix configuration.nix manage-containers.sh host-setup.nix
-
-# Or stage everything
-git add .
-```
-
-You don't need to commit, just stage the files with `git add`.
+**⚠️ Important:** The `manage-containers.sh` script automatically uses `--bridge br-containers` when creating containers. This is **crucial** - without it, containers wouldn't be able to connect to the bridge network nor get DHCP IPs. If you create containers manually with `nixos-container create`, you MUST include `--bridge br-containers`.
 
 **Quick examples** (copy and paste to try):
 
@@ -424,11 +430,11 @@ NixOS Containers
 
 Name            Status    IP Address         Created
 ----            ------    ----------         -------
-mycont          up        10.233.0.50        2025-01-11 14:01
-web             up        10.233.0.72        2025-01-11 14:21
-db              up        10.233.0.82        2025-01-12 14:22
-a3f2            up        10.233.0.78        2025-01-11 14:14
-7d91            up        10.233.0.67        2025-01-25 14:24
+mycont          up        10.233.0.50        2025-02-11 14:01
+web             up        10.233.0.72        2025-02-11 14:21
+db              up        10.233.0.82        2025-02-12 14:22
+a3f2            up        10.233.0.78        2025-02-11 14:14
+7d91            up        10.233.0.67        2025-02-24 14:24
 
 Total containers: 5
 ```
@@ -467,9 +473,14 @@ From inside one container:
 # Get IP of another container first (from host): sudo ./manage-containers.sh ip web
 
 ping 10.233.0.51  # Replace with actual IP from "list" command
+
+
+# You can even ping by container host name because the DNS is also resolved by the bridge
+
+ping mycont
 ```
 
-**Why this works**: The bridge network connects all containers like a virtual switch.
+**Why this works**: The bridge network connects all containers like a virtual switch. It also benefits from DNS resolution.
 
 ### Test Internet Access
 
@@ -491,7 +502,7 @@ curl -I https://www.gnu.org/
 
 ### Troubleshooting Connectivity
 
-**Container has no IP address (shows "No IP assigned")**:
+**Container has no IP address**:
 - **MOST COMMON**: Container not connected to bridge
   - Check: `bridge link show | grep vb-mycont` (should show something)
   - If nothing shows, the container wasn't created with `--bridge` flag
@@ -516,7 +527,7 @@ curl -I https://www.gnu.org/
 
 ---
 
-## Step 5: Manage Container Lifecycle
+## Step 5: Container Lifecycle
 
 ### Stop a Container
 
@@ -584,59 +595,17 @@ sudo ./manage-containers.sh shell test
 
 ---
 
-## Step 6: Access Containers
+## Step 6: Access Containers via SSH
 
-### Direct Access (No SSH Required)
+Containers are configured with SSH access for both `root` and `operator` users. You can connect from and to any of the containers and the host.
 
-The simplest way to access a container is using `nixos-container`'s built-in root-login command:
+### SSH Keys
 
-```bash
-# Get a root shell in the container
-sudo nixos-container root-login mycont
+The configuration includes SSH public keys for:
+- `root` user
+- `operator` user (password: "operator")
 
-# Or use the management script
-sudo ./manage-containers.sh shell mycont
-```
-
-This gives you direct root access without needing SSH configured. Type `exit` to return to the host.
-
-### SSH Access (Optional)
-
-All containers are also configured with an SSH server for remote access. This is useful for:
-- Accessing containers from other machines on your network
-- Scripting and automation
-- Container-to-container communication
-
-**SSH is configured for both users:**
-- `root` (password: "nixos")
-- `operator` (password: "operator", has sudo access)
-
-**From the Host:**
-
-```bash
-# Get container's IP
-CONTAINER_IP=$(sudo nixos-container run mycont -- ip -4 addr show eth0 | grep inet | awk '{print $2}' | cut -d'/' -f1)
-
-# SSH using IP address
-ssh root@$CONTAINER_IP
-
-# Or SSH using hostname (if DNS is configured)
-ssh root@mycont
-```
-
-**From Another Container:**
-
-Containers can SSH to each other using IP addresses or hostnames:
-
-```bash
-# From inside container "web":
-ssh root@10.233.0.72  # SSH to container "db" using IP
-ssh root@db           # SSH using hostname (if DNS works)
-```
-
-**SSH Keys:**
-
-The configuration includes pre-configured SSH keys from workshop-1. For your own lab, replace these in `configuration.nix`:
+**For your own lab**: Replace these keys in `configuration.nix` with your own:
 
 ```nix
 users.users.root.openssh.authorizedKeys.keys = [
@@ -644,7 +613,7 @@ users.users.root.openssh.authorizedKeys.keys = [
 ];
 ```
 
-Generate your own key:
+Generate your own key if needed:
 
 ```bash
 ssh-keygen -t ed25519 -C "your-email@example.com"
@@ -841,19 +810,6 @@ sudo nixos-container run container-name -- systemctl status sshd
 # Check: Correct SSH key is configured
 sudo nixos-container run container-name -- cat /root/.ssh/authorized_keys
 ```
-
-### Performance Issues
-
-```bash
-# Too many containers running
-# Check: System resources
-htop
-
-# Stop or destroy unused containers
-sudo ./manage-containers.sh stop unused-container
-```
-
----
 
 ## Additional Resources
 

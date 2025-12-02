@@ -19,7 +19,12 @@ set -e  # Exit on any error
 
 # Generate a random container name using 4-digit hexadecimal
 generate_container_name() {
-    printf '%04x' $RANDOM
+    # Generate 8 random hex characters, ensuring first char is a letter (a-f)
+    # First char: random letter from a-f
+    local first_char=$(printf '%x' $((10 + RANDOM % 6)))
+    # Remaining 7 chars: random hex
+    local rest=$(head -c 4 /dev/urandom | xxd -p | head -c 7)
+    echo "${first_char}${rest}"
 }
 
 # ============================================================================
@@ -121,29 +126,58 @@ cmd_create_single() {
     echo "================================"
     echo
 
-    # Check if container name exists in flake, otherwise use first available config
-    echo "[1/3] Checking flake configuration..."
+    # Ensure flake has a configuration for this container name with proper hostname
+    echo "[1/3] Ensuring flake configuration exists for '$container_name'..."
 
-    local flake_ref="$container_name"
-    if ! nix flake show . 2>/dev/null | grep -q "nixosConfigurations.$container_name"; then
-        # Container not defined, use first available config as template
-        local first_config=$(nix flake show . 2>/dev/null | grep "nixosConfigurations" -A 1 | tail -1 | awk '{print $2}' | tr -d ':')
-        if [ -n "$first_config" ]; then
-            echo "Container '$container_name' not in flake, using '$first_config' as template..."
-            flake_ref="$first_config"
-        else
-            echo "Error: No configurations found in flake.nix"
-            exit 1
-        fi
+    # Check if a configuration with the correct hostname already exists
+    if grep -q "^      $container_name = nixpkgs.lib.nixosSystem" flake.nix && \
+       grep -A 5 "^      $container_name = nixpkgs.lib.nixosSystem" flake.nix | grep -q "networking.hostName = \"$container_name\""; then
+        echo "✓ Configuration already exists with correct hostname"
     else
-        echo "Using flake configuration: $container_name"
+        # Check if config exists but without hostname
+        if grep -q "^      $container_name = nixpkgs.lib.nixosSystem" flake.nix; then
+            echo "Configuration exists but missing hostname - updating..."
+            # Remove the old configuration first
+            awk -v name="$container_name" '
+            BEGIN { skip=0 }
+            $0 ~ "^      " name " = nixpkgs.lib.nixosSystem" { skip=1; next }
+            skip && /^      \};$/ { skip=0; next }
+            !skip { print }
+            ' flake.nix > flake.nix.tmp && mv flake.nix.tmp flake.nix
+        fi
+
+        # Add new configuration with hostname
+        echo "Adding nixosConfiguration for '$container_name' to flake.nix..."
+        awk -v name="$container_name" '
+        /nixosConfigurations = \{/ { in_configs=1 }
+        in_configs && /^    \};$/ && !done {
+            print "      " name " = nixpkgs.lib.nixosSystem {"
+            print "        system = \"x86_64-linux\";"
+            print "        modules = ["
+            print "          (mkContainerConfig { })"
+            print "          { networking.hostName = \"" name "\"; }"
+            print "        ];"
+            print "      };"
+            print ""
+            done=1
+        }
+        { print }
+        ' flake.nix > flake.nix.tmp && mv flake.nix.tmp flake.nix
+        echo "✓ Configuration added with hostname"
     fi
+    echo
 
     # Create container from flake
     echo "[2/3] Creating container from flake..."
+    # Set --local-address and --host-address to empty strings to prevent
+    # nixos-container from auto-assigning static IPs (e.g., 10.233.1.x).
+    # We want the container to obtain its IP dynamically via DHCP from dnsmasq
+    # running on the br-containers bridge (10.233.0.x range).
     nixos-container create "$container_name" \
-        --flake ".#$flake_ref" \
-        --bridge br-containers
+        --flake ".#$container_name" \
+        --bridge br-containers \
+        --local-address "" \
+        --host-address ""
 
     echo "✓ Container created"
     echo
@@ -278,16 +312,37 @@ cmd_stop() {
 # ============================================================================
 
 cmd_destroy() {
-    local name=$1
+    local name=""
+    local force=false
+
+    # Parse options
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -f|--force)
+                force=true
+                shift
+                ;;
+            -*)
+                echo "Error: Unknown option: $1"
+                exit 1
+                ;;
+            *)
+                name="$1"
+                shift
+                ;;
+        esac
+    done
 
     # If no name provided, destroy all containers
     if [ -z "$name" ]; then
-        echo "WARNING: This will permanently delete ALL containers and their data"
-        read -p "Are you sure? (yes/no): " confirm
+        if [ "$force" = false ]; then
+            echo "WARNING: This will permanently delete ALL containers and their data"
+            read -p "Are you sure? (yes/no): " confirm
 
-        if [ "$confirm" != "yes" ]; then
-            echo "Cancelled"
-            exit 0
+            if [ "$confirm" != "yes" ]; then
+                echo "Cancelled"
+                exit 0
+            fi
         fi
 
         echo "Destroying ALL containers..."
@@ -316,12 +371,14 @@ cmd_destroy() {
         exit 1
     fi
 
-    echo "WARNING: This will permanently delete container '$name' and all its data"
-    read -p "Are you sure? (yes/no): " confirm
+    if [ "$force" = false ]; then
+        echo "WARNING: This will permanently delete container '$name' and all its data"
+        read -p "Are you sure? (yes/no): " confirm
 
-    if [ "$confirm" != "yes" ]; then
-        echo "Cancelled"
-        exit 0
+        if [ "$confirm" != "yes" ]; then
+            echo "Cancelled"
+            exit 0
+        fi
     fi
 
     echo "Destroying container: $name"
@@ -477,6 +534,8 @@ COMMANDS:
   destroy [name]          Permanently delete container(s)
                           - With name: Delete specific container
                           - Without name: Delete ALL containers (with confirmation)
+                          - Options:
+                            -f, --force  Skip confirmation prompt
 
   list                    Show all containers with status, IP, and creation date
 
@@ -502,8 +561,10 @@ EXAMPLES:
   sudo $0 start                     # Start ALL containers
   sudo $0 stop mycont               # Stop specific container
   sudo $0 stop                      # Stop ALL containers
-  sudo $0 destroy mycont            # Delete specific container
+  sudo $0 destroy mycont            # Delete specific container (with confirmation)
+  sudo $0 destroy mycont -f         # Delete specific container (no confirmation)
   sudo $0 destroy                   # Delete ALL containers (with confirmation)
+  sudo $0 destroy -f                # Delete ALL containers (no confirmation)
 
 NETWORKING:
   All containers share a private network:
