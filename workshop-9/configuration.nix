@@ -1,22 +1,14 @@
 # Generic NixOS container configuration for Bitcoin and Lightning nodes
 # This module is shared by all Bitcoin node containers created from this workshop
-# It accepts a containerConfig parameter with: { hostname }
 # IP addresses are assigned automatically via DHCP from the host
+# Hostname is automatically set by nixos-container to match the container name
 #
 # IMPORTANT: This configuration is for IMPERATIVE containers
 # (created with ./manage-containers.sh create <name>)
 
-{ config, pkgs, lib, containerConfig, ... }:
+{ config, pkgs, lib, ... }:
 
 {
-  # ============================================================================
-  # HOSTNAME CONFIGURATION
-  # ============================================================================
-
-  # Use the hostname passed as a parameter from flake.nix
-  # This allows one configuration file to serve multiple Bitcoin node containers
-  networking.hostName = containerConfig.hostname;
-
   # ============================================================================
   # CONTAINER-SPECIFIC SETTINGS
   # ============================================================================
@@ -54,8 +46,10 @@
   # Don't inherit host's resolv.conf - use DHCP-provided DNS instead
   networking.useHostResolvConf = lib.mkForce false;
 
-  # Enable DHCP by default
-  networking.useDHCP = lib.mkDefault true;
+  # IMPORTANT: Disable old-style DHCP when using systemd-networkd
+  # systemd-networkd (configured above) handles DHCP - don't use both!
+  # Having both enabled causes conflicts in network management
+  networking.useDHCP = lib.mkForce false;
 
   # Lab environment: Disable firewall for maximum connectivity
   # NOTE: In production, configure firewall rules appropriately
@@ -252,5 +246,5 @@
   # ============================================================================
 
   # NixOS state version - should match the NixOS release being used
-  system.stateVersion = "25.05";
+  system.stateVersion = "24.11";
 }

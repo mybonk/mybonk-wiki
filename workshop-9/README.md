@@ -4,9 +4,11 @@
 
 This workshop teaches you how to run Bitcoin and Lightning Network nodes in NixOS containers using **nix-bitcoin**. You'll learn to create Bitcoin nodes on-demand, interact with them via CLI, and understand how blockchain data persists in containers.
 
+**IMPORTANT**: Workshop-8 is the **mandatory foundation** for this workshop. Workshop-9 builds directly on top of the container infrastructure established in workshop-8. You must complete workshop-8 first to understand the container management concepts and setup.
+
 ### What Makes This Workshop Special?
 
-- **Built on Workshop-8**: Uses the same dynamic container management approach
+- **Built on Workshop-8 Foundation**: Extends the dynamic container management with Bitcoin-specific services
 - **nix-bitcoin Integration**: Secure, pre-configured Bitcoin and Lightning services
 - **Testnet Only**: Safe experimentation without risking real Bitcoin
 - **Multiple Nodes**: Create and manage multiple Bitcoin nodes simultaneously

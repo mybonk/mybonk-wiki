@@ -2,8 +2,8 @@
   description = "NixOS container configurations with nix-bitcoin for Bitcoin and Lightning nodes";
 
   inputs = {
-    # Use NixOS 25.05 stable channel
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    # Use NixOS 24.11 stable channel
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
 
     # nix-bitcoin: Bitcoin and Lightning node configurations
     # Provides pre-configured services for Bitcoin, Lightning and many others
@@ -13,22 +13,15 @@
 
   outputs = { self, nixpkgs, nix-bitcoin }:
   let
-    # Helper function to create a parameterized container configuration
-    # This function takes a hostname and returns a complete NixOS configuration
-    # that can be used with: ./manage-containers.sh create <name>
-    mkContainerConfig = { hostname }: {
+    # Helper function to create a Bitcoin/Lightning container configuration
+    # Hostname is automatically set by nixos-container to match the container name
+    mkContainerConfig = { ... }: {
       imports = [
         # Import nix-bitcoin module to enable Bitcoin and Lightning services
         nix-bitcoin.nixosModules.default
         # Import the shared configuration file used by all containers
         ./configuration.nix
       ];
-
-      # Pass container-specific parameters to the imported configuration module
-      # This allows configuration.nix to access containerConfig.hostname
-      _module.args.containerConfig = {
-        inherit hostname;
-      };
 
       # Essential container-specific settings (required for all containers)
 
@@ -47,12 +40,13 @@
     #   sudo ./manage-containers.sh create <name>
     #
     # This pre-defined container is ready to use
+    # Hostname will automatically be set to match the container name
     nixosConfigurations = {
       default = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           (mkContainerConfig {
-            hostname = "default";
+            # hostname = "default";
           })
         ];
       };
