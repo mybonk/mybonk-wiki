@@ -37,6 +37,26 @@
   # Disable firewall for maximum openness
   networking.firewall.enable = false;
 
+  # DHCP server for containers (using dnsmasq)
+  services.dnsmasq = {
+    enable = true;
+    settings = {
+      # Only listen on the container bridge
+      interface = "br-containers";
+      # Don't listen on any other interfaces
+      bind-interfaces = true;
+      # DHCP range: 10.100.0.50 - 10.100.0.150 (12 hour lease)
+      dhcp-range = "10.100.0.50,10.100.0.150,12h";
+      # Local domain for containers
+      domain = "containers.local";
+      # Don't read /etc/resolv.conf or /etc/hosts
+      no-resolv = true;
+      no-hosts = true;
+      # Provide DNS for containers (forward to Google DNS)
+      server = [ "8.8.8.8" "8.8.4.4" ];
+    };
+  };
+
   # Enable nix flakes (required for container creation with flakes)
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 

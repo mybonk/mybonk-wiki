@@ -1,6 +1,6 @@
-# Parameterized container configuration
-# This module accepts a containerConfig parameter with: hostname, ipAddress, gateway, prefixLength
-# Used by ALL containers - only the parameters differ
+# Generic container configuration with DHCP
+# This module accepts a containerConfig parameter with: hostname
+# IP address is automatically assigned via DHCP from the host
 
 { config, pkgs, lib, containerConfig, ... }:
 
@@ -8,27 +8,8 @@
   # Use the passed hostname parameter
   networking.hostName = containerConfig.hostname;
 
-  # Disable DHCP since we're using static IP
-  networking.useDHCP = false;
-
-  # Configure static IP address and gateway
-  networking.defaultGateway = {
-    address = containerConfig.gateway;
-    interface = "enp1s0";
-  };
-
-  networking.interfaces.enp1s0 = {
-    ipv4.addresses = [{
-      address = containerConfig.ipAddress;
-      prefixLength = containerConfig.prefixLength;
-    }];
-  };
-
-  # DNS configuration for internet access
-  networking.nameservers = [
-    "8.8.8.8"
-    "8.8.4.4"
-  ];
+  # Enable DHCP to get IP automatically
+  networking.useDHCP = lib.mkDefault true;
 
   # Don't use host's resolv.conf (required when host uses systemd-resolved)
   networking.useHostResolvConf = lib.mkForce false;
@@ -64,17 +45,19 @@
   users.users.root.password = "nixos";
 
   # DECLARATIVE NETWORKING CONFIGURATION
-  # This is the key difference - configure privateNetwork directly
+  # Configure container to use DHCP
   boot.isContainer = true;
 
   systemd.network = {
     enable = true;
-    networks."enp1s0" = {
-      matchConfig.Name = "enp1s0";
+    networks."10-container-dhcp" = {
+      matchConfig.Name = "host0";
       networkConfig = {
-        Address = "${containerConfig.ipAddress}/${toString containerConfig.prefixLength}";
-        Gateway = containerConfig.gateway;
-        DNS = [ "8.8.8.8" "8.8.4.4" ];
+        DHCP = "yes";
+      };
+      dhcpV4Config = {
+        UseDNS = true;
+        UseRoutes = true;
       };
     };
   };

@@ -2,7 +2,7 @@
   description = "Bitcoin Core NixOS Container";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
   };
 
   outputs = { self, nixpkgs }: {

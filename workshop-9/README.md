@@ -209,6 +209,23 @@ bitcoin-cli -testnet getnewaddress
 
 Now let's create a Bitcoin node container. The `manage-containers.sh` script (included in this workshop directory) picks up the flake configuration from the **current directory**. All commands in this workshop should be run from within the workshop-9 directory.
 
+### Important: Git Tracking Required
+
+Nix flakes require files to be tracked by git. Before creating containers, ensure files are staged:
+
+```bash
+# Initialize git if not already done
+git init
+
+# Stage the workshop files
+git add flake.nix configuration.nix manage-containers.sh
+
+# Or stage everything
+git add .
+```
+
+You don't need to commit, just stage the files with `git add`.
+
 ### Create Bitcoin Container
 
 ```bash

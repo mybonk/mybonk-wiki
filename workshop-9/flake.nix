@@ -5,9 +5,10 @@
     # Use NixOS 25.05 stable channel
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
 
-    # nix-bitcoin: Secure Bitcoin and Lightning node configurations
-    # Provides pre-configured, hardened services for Bitcoin and Lightning
-    nix-bitcoin.url = "github:fort-nix/nix-bitcoin/release";
+    # nix-bitcoin: Bitcoin and Lightning node configurations
+    # Provides pre-configured services for Bitcoin, Lightning and many others
+    nix-bitcoin.url = "github:fort-nix/nix-bitcoin/master";
+    #nix-bitcoin.follows = "nixpkgs";
   };
 
   outputs = { self, nixpkgs, nix-bitcoin }:
@@ -16,11 +17,11 @@
     # This function takes a hostname and returns a complete NixOS configuration
     # that can be used with: ./manage-containers.sh create <name>
     mkContainerConfig = { hostname }: {
-      # Import the shared configuration file used by all containers
       imports = [
-        ./configuration.nix
         # Import nix-bitcoin module to enable Bitcoin and Lightning services
         nix-bitcoin.nixosModules.default
+        # Import the shared configuration file used by all containers
+        ./configuration.nix
       ];
 
       # Pass container-specific parameters to the imported configuration module
@@ -42,43 +43,19 @@
   in
   {
     # Define container configurations that can be created from the CLI
-    # Each configuration here can be instantiated with:
-    #   cd /path/to/mybonk-wiki/workshop-9 && sudo ./manage-containers.sh create <name>
+    # Can be instantiated with:
+    #   sudo ./manage-containers.sh create <name>
     #
-    # These pre-defined Bitcoin node containers are ready to use
+    # This pre-defined container is ready to use
     nixosConfigurations = {
-      # Example Bitcoin node container
-      # Create with: sudo ./manage-containers.sh create btc1
-      btc1 = nixpkgs.lib.nixosSystem {
+      default = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           (mkContainerConfig {
-            hostname = "btc1";
+            hostname = "default";
           })
         ];
       };
-
-      # Example second Bitcoin node for testing multi-node setups
-      # Create with: sudo ./manage-containers.sh create btc2
-      btc2 = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          (mkContainerConfig {
-            hostname = "btc2";
-          })
-        ];
-      };
-
-      # You can add more pre-defined containers here by copying the pattern:
-      #
-      # lightning1 = nixpkgs.lib.nixosSystem {
-      #   system = "x86_64-linux";
-      #   modules = [
-      #     (mkContainerConfig {
-      #       hostname = "lightning1";
-      #     })
-      #   ];
-      # };
     };
   };
 }

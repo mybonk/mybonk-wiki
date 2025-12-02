@@ -28,7 +28,7 @@ For learning and testing, testnet provides the same functionality without the ma
 **Prerequisites:**
 - NixOS system (host machine)
 - Basic understanding of Nix flakes
-- Familiarity with NixOS containers (See [workshop-1](../workshop-1)
+- Familiarity with NixOS containers (See [workshop-1](../workshop-1))
 
 **Time:** ~2 minutes (setup) + hours (testnet sync)
 
@@ -36,11 +36,11 @@ For learning and testing, testnet provides the same functionality without the ma
 
 ## Step 1: Clone the Workshop Repository
 
-Clone the workshop repository containing the Bitcoin container configuration:
+Clone the workshop repository containing the configuration we prepared for you:
 
 ```bash
 git clone git@github.com:mybonk/mybonk-wiki.git
-cd mybonk-wiki/workshop-1
+cd mybonk-wiki/workshop-2
 ```
 
 The repository contains two files:
@@ -241,7 +241,7 @@ sudo du -sh /var/lib/nixos-containers/demo-container/var/lib/bitcoind/
 watch -n 5 'sudo du -sh /var/lib/nixos-containers/demo-container/var/lib/bitcoind/'
 ```
 
-**You'll see the directory growing** as Bitcoin downloads testnet blocks.
+**You'll see the directory grow** as Bitcoin downloads the testnet blocks.
 
 After some time, check the detailed breakdown:
 
@@ -272,24 +272,17 @@ Even testnet will grow to **~30GB for the blockchain** and **~50GB+ with indexes
 
 ## Storage Reality Check
 
-As you've witnessed, the Bitcoin data directory grows continuously. Running Bitcoin in a container is **not practical** for long-term use.
+As you've seen, the Bitcoin data directory grows continuously and possibly considerably, hence the use of TESTNET instead of MAINNET:
 
-**Testnet storage requirements (what we're using):**
-- Testnet blockchain: ~30GB
-- With txindex: ~50GB+
+- **TESTNET storage requirements:**
+  - Testnet blockchain: ~30GB
+  - With txindex: ~50GB+
 
-**Mainnet storage requirements (if we were running production):**
-- Blockchain only: ~600GB (and growing every day)
-- With txindex: ~750GB
-- With full indexes: **>1TB**
+- **MAINNET storage requirements:**
+  - Blockchain only: ~600GB (and growing every day)
+  - With txindex: ~750GB
+  - With full indexes: **>1TB**
 
-**The problem:**
-```bash
-# Even testnet grows significantly:
-/var/lib/nixos-containers/demo-container/var/lib/bitcoind/testnet3/
-
-# Mainnet would be 20x larger
-```
 
 Container storage is typically not ideal for:
 - Large, persistent datasets
@@ -316,7 +309,7 @@ Configuring all these components manually is **tedious and error-prone**:
 - Ports, authentication, and permissions need careful coordination
 - Updates and maintenance become complex
 
-**This is where nix-bitcoin comes in.** It's a collection of NixOS modules specifically designed to deploy complete Bitcoin stacks with minimal configuration. Instead of manually setting up 5-10 different services, nix-bitcoin provides pre-integrated, battle-tested configurations that work together seamlessly. We will look at nix-bitcoin in [workshop-4](../workshop-4/) "How to run a Bitcoin stack on NixOS in 5 minutes".
+**This is where nix-bitcoin comes in.**: It is a collection of NixOS modules designed to help to the deployment of Bitcoin stacks with minimal configuration. Instead of manually setting up 5-10 different services, nix-bitcoin provides pre-integrated, battle-tested configurations that work together. We will look at nix-bitcoin in [workshop-4](../workshop-4/) "How to run a Bitcoin stack on NixOS in 5 minutes".
 
 ---
 

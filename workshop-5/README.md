@@ -145,16 +145,6 @@ Output:
 
 **Never share your private key!** Only the public key (`.pub` file) should be placed on servers.
 
-### Alternative: RSA Keys
-
-If you need compatibility with older systems, generate an RSA key:
-
-```bash
-# Generate a 4096-bit RSA key (more compatible but larger)
-ssh-keygen -t rsa -b 4096 -C "your-email@example.com"
-```
-
-This creates `~/.ssh/id_rsa` (private) and `~/.ssh/id_rsa.pub` (public).
 
 ---
 
@@ -178,19 +168,6 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG7x9K2vZ3qX4Jh8... your-email@example.com
 - `ssh-ed25519`: Algorithm identifier
 - `AAAAC3Nz...`: The actual public key data (base64 encoded)
 - `your-email@example.com`: Comment (helps identify which key)
-
-### If Using RSA
-
-For RSA keys:
-
-```bash
-cat ~/.ssh/id_rsa.pub
-```
-
-Output:
-```
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQD... your-email@example.com
-```
 
 ---
 
@@ -267,6 +244,9 @@ This file customizes the installer environment:
     };
   };
 
+  # Enable Tailscale for remote access from anywhere
+  services.tailscale.enable = true;
+
   # Add your SSH public key here
   users.users.root.openssh.authorizedKeys.keys = [
     # Example: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG... your-email@example.com"
@@ -297,10 +277,14 @@ This file customizes the installer environment:
     # Use systemd-resolved for DNS
     useNetworkd = false;
     useDHCP = lib.mkDefault true;
-    # Enable firewall but allow SSH
+    # Enable firewall but allow SSH and Tailscale
     firewall = {
       enable = true;
       allowedTCPPorts = [ 22 ];
+      # Tailscale uses UDP port 41641 for DERP relay connections
+      allowedUDPPorts = [ config.services.tailscale.port ];
+      # Allow Tailscale's network interfaces
+      trustedInterfaces = [ "tailscale0" ];
     };
   };
 
@@ -325,12 +309,15 @@ This file customizes the installer environment:
 1. **`services.openssh`**: Enables SSH server on boot
 2. **`PermitRootLogin = "prohibit-password"`**: Root can log in, but ONLY with SSH keys (not passwords)
 3. **`PasswordAuthentication = false`**: Disables password auth completely (more secure)
-4. **`authorizedKeys.keys`**: Where we'll add your public key
-5. **`environment.systemPackages`**: Essential tools for installation
-6. **`wireless.enable = lib.mkForce false`**: Disables wpa_supplicant (conflicts with NetworkManager)
-7. **`networkmanager.enable = true`**: Enables NetworkManager for easy WiFi/Ethernet configuration
-8. **`networking.firewall.allowedTCPPorts = [ 22 ]`**: Opens SSH port
-9. **`initialPassword = "nixos"`**: Temporary password for console access (if needed)
+4. **`services.tailscale.enable = true`**: Enables Tailscale VPN service for remote access from anywhere. This allows you to connect to your installer from any network without port forwarding or NAT traversal - you just run `tailscale up` after boot and you can SSH in from anywhere on your Tailnet.
+5. **`authorizedKeys.keys`**: Where we'll add your public key
+6. **`environment.systemPackages`**: Essential tools for installation
+7. **`wireless.enable = lib.mkForce false`**: Disables wpa_supplicant (conflicts with NetworkManager)
+8. **`networkmanager.enable = true`**: Enables NetworkManager for easy WiFi/Ethernet configuration
+9. **`networking.firewall.allowedTCPPorts = [ 22 ]`**: Opens SSH port for remote connections
+10. **`allowedUDPPorts = [ config.services.tailscale.port ]`**: Opens Tailscale's UDP port (41641 by default) for DERP relay connections
+11. **`trustedInterfaces = [ "tailscale0" ]`**: Allows all traffic through the Tailscale network interface (bypasses firewall for your private Tailnet)
+12. **`initialPassword = "nixos"`**: Temporary password for console access (if needed)
 
 **Security note:** The temporary password `nixos` is only for emergency console access. SSH still requires your key.
 
@@ -346,16 +333,7 @@ Edit `configuration.nix`:
 vim configuration.nix
 ```
 
-Find the section with `authorizedKeys.keys`:
-
-```nix
-  users.users.root.openssh.authorizedKeys.keys = [
-    # Example: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG... your-email@example.com"
-    # Add your public key here after running: ssh-keygen -t ed25519
-  ];
-```
-
-Replace it with your actual public key:
+Find the section with `authorizedKeys.keys` and replace it with your actual public key:
 
 ```nix
   users.users.root.openssh.authorizedKeys.keys = [
@@ -367,16 +345,6 @@ Replace it with your actual public key:
 - Paste the **entire line** from your `id_ed25519.pub` file
 - Keep the quotes around the key
 - You can add multiple keys (one per line)
-
-**Example with multiple keys:**
-
-```nix
-  users.users.root.openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG7x9K2vZ3qX4Jh8... laptop@example.com"
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF8p2Y3mW1nK5Lk9... desktop@example.com"
-    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQD... oldmachine@example.com"
-  ];
-```
 
 Save and exit (`:wq` in vim).
 
@@ -642,9 +610,9 @@ When your custom installer boots:
 nixos login:
 ```
 
-You can log in at the console with:
+You could log in at the console with (if we authorized it in the configuration):
 - Username: `root`
-- Password: `nixos` (the temporary password we set)
+- Password: `nixos` (the temporary password we set - change it)
 
 But we want to connect via SSH instead!
 
@@ -652,20 +620,11 @@ But we want to connect via SSH instead!
 
 ## Step 11: Find the Target Machine's IP Address
 
-To connect via SSH, we need to know the target machine's IP address on your local network.
+To connect to your installer, you have several options depending on your needs and network setup.
 
-### Method 1: Check Router/DHCP Server
+### Method 1: Console Login and Check Local IP
 
-Most home routers show connected devices:
-
-1. **Access your router's admin interface** (usually `http://192.168.1.1` or `http://192.168.0.1`)
-2. **Navigate to DHCP clients** or "Connected Devices"
-3. **Look for a new device** named "nixos" or showing NixOS in hostname
-4. **Note the IP address** (e.g., `192.168.1.150`)
-
-### Method 2: Console Login and Check
-
-If you have physical access, log in at the console:
+The most straightforward method is to log in at the console and check the IP address directly:
 
 ```bash
 # At the NixOS installer console
@@ -683,18 +642,27 @@ Look for the `inet` line under your network interface (usually `eth0` for wired 
     inet 192.168.1.150/24 brd 192.168.1.255 scope global dynamic eth0
 ```
 
-The IP is `192.168.1.150` in this example.
+The local IP is `192.168.1.150` in this example.
 
-Alternative command:
+Alternative command for simpler output:
 
 ```bash
-# Simpler output
+# Just show IP addresses
 hostname -I
 ```
 
-### Method 3: Network Scan from Your Workstation
+Output:
+```
+192.168.1.150 100.64.0.1
+```
 
-From your main machine, scan the local network:
+This shows the local network IP (`192.168.1.150`) and your Tailscale IP (`100.64.0.1`).
+
+### Method 2: Network Scan from Your Workstation
+
+If you don't have physical access to the console but are on the same local network, you can scan to find the machine.
+
+**Using nmap:**
 
 ```bash
 # Install nmap if needed
@@ -704,9 +672,25 @@ nix-shell -p nmap
 sudo nmap -sn 192.168.1.0/24
 ```
 
-Look for a host with port 22 (SSH) open that recently appeared.
+This performs a ping scan of your network. Look for a host that recently appeared.
 
-Or use `arp-scan`:
+For more detail, scan for SSH:
+
+```bash
+# Scan for machines with SSH open
+sudo nmap -p 22 192.168.1.0/24
+```
+
+Output will show:
+
+```
+Nmap scan report for 192.168.1.150
+Host is up (0.0012s latency).
+PORT   STATE SERVICE
+22/tcp open  ssh
+```
+
+**Using arp-scan:**
 
 ```bash
 # Install arp-scan
@@ -716,59 +700,121 @@ nix-shell -p arp-scan
 sudo arp-scan --localnet
 ```
 
-Look for a new MAC address or hostname.
+This shows all devices on your local network with their MAC addresses:
 
-### Method 4: Check DHCP Logs (Advanced)
+```
+192.168.1.1     00:11:22:33:44:55    Router Manufacturer
+192.168.1.150   aa:bb:cc:dd:ee:ff    (Unknown)
+```
 
-If running your own DHCP server:
+Look for a new MAC address that appeared after booting the installer.
+
+### Method 3: Using Tailscale
+
+The most flexible method is to use Tailscale, which allows you to connect to your installer from anywhere - not just your local network. This is especially useful when:
+- Installing a machine at a remote location
+- Working from a different network (coffee shop, office, etc.)
+- You don't want to deal with NAT traversal or port forwarding
+- You need secure access without exposing SSH to the internet
+
+Our installer already includes Tailscale (enabled in `configuration.nix`), so you just need to connect it to your Tailnet.
+
+**Step 1: Log in at the console and start Tailscale:**
 
 ```bash
-# Check systemd journal for DHCP leases
-sudo journalctl -u dhcpd -n 50
+# At the NixOS installer console
+# Login: root
+# Password: nixos
+
+# Connect to your Tailnet
+tailscale up
 ```
+
+You'll see output like:
+
+```
+To authenticate, visit:
+
+    https://login.tailscale.com/a/1234567890abcdef
+
+```
+
+**Step 2: Authenticate from any device:**
+
+Visit the URL shown in the output using any web browser (on your phone, laptop, etc.). Log in to your Tailscale account and approve the new device.
+
+**Step 3: Check your Tailscale status:**
+
+```bash
+# On the installer, verify connection
+tailscale status
+```
+
+Output:
+```
+100.64.0.1   nixos               your-email@  linux   -
+100.64.0.2   your-laptop         your-email@  macOS   active; direct
+```
+
+Your installer is now accessible via its Tailscale IP (`100.64.0.1` in this example) from any device on your Tailnet.
+
+**Step 4: Find the IP from your workstation:**
+
+On your main machine (if you have Tailscale installed there):
+
+```bash
+# See all devices on your Tailnet
+tailscale status
+```
+
+Look for the `nixos` device - its IP is what you'll use to connect.
+
+**Benefits of Tailscale:**
+- Connect from anywhere (different networks, remote locations)
+- No NAT traversal or port forwarding needed
+- Encrypted peer-to-peer connections
+- Works through firewalls
+- Persists across network changes
+- Free for personal use (up to 100 devices)
 
 ---
 
 ## Step 12: Connect via SSH
 
-Now that you have the IP address, connect from your main workstation!
+Now that you've found your installer (via Tailscale or local network IP), connect from your main workstation!
 
 ### SSH Connection
 
 From your main machine (the one with the private key):
 
+**Using Tailscale (from anywhere):**
+
 ```bash
-# Connect to the installer (replace IP with actual address)
+# Connect via Tailscale IP
+ssh root@100.64.0.1
+
+# Or use the machine name
+ssh root@nixos
+```
+
+**Using local network IP (from same network):**
+
+```bash
+# Connect via local IP (replace with actual address)
 ssh root@192.168.1.150
 ```
-
-**First connection prompt:**
-
-The first time you connect, you'll see:
-
-```
-The authenticity of host '192.168.1.150 (192.168.1.150)' can't be established.
-ED25519 key fingerprint is SHA256:abc123...xyz789.
-Are you sure you want to continue connecting (yes/no/[fingerprint])?
-```
-
-Type `yes` and press Enter.
-
-**This is normal** - SSH is confirming you trust this host. The fingerprint will be saved in `~/.ssh/known_hosts`.
 
 ### Successful Connection
 
 If everything is configured correctly, you'll connect without a password:
 
 ```
-Warning: Permanently added '192.168.1.150' (ED25519) to the list of known hosts.
+Warning: Permanently added '100.64.0.1' (ED25519) to the list of known hosts.
 
 <<< Welcome to NixOS 25.05 (x86_64) - pts/0 >>>
 
 [root@nixos:~]#
 ```
-
-Congratulations! You're now remotely connected to your NixOS installer.
 
 ### Troubleshooting Connection Issues
 
@@ -805,6 +851,46 @@ Possible causes:
 - Wrong IP address
 - Network routing issues
 - Machine not booted from USB
+
+**Tailscale-specific issues:**
+
+If you can't connect via Tailscale:
+
+1. **Check Tailscale is running on both machines:**
+   ```bash
+   # On your workstation
+   tailscale status
+
+   # On the installer (console login)
+   systemctl status tailscaled
+   tailscale status
+   ```
+
+2. **Verify the installer appears in your network:**
+   ```bash
+   # On your workstation
+   tailscale status | grep nixos
+   ```
+
+3. **Check if authentication completed:**
+   - Did you visit the authentication URL?
+   - Did you approve the device in your Tailscale admin panel?
+
+4. **Verify SSH is accessible via Tailscale:**
+   ```bash
+   # On your workstation, test the connection
+   nc -zv 100.64.0.1 22
+   ```
+
+   Should show: `Connection to 100.64.0.1 22 port [tcp/ssh] succeeded!`
+
+5. **Check firewall rules:**
+   ```bash
+   # On installer console
+   nft list ruleset | grep tailscale
+   ```
+
+   The `tailscale0` interface should be in the trusted interfaces list.
 
 ---
 
@@ -1027,6 +1113,50 @@ Add your own installation scripts:
 ```
 
 After rebuilding the ISO, `auto-install` will be available as a command.
+
+### Auto Login to Tailscale
+
+By default, Tailscale requires manual authentication each time you boot the installer (visiting a URL in your browser). For truly unattended installations, you can use an auth key to automatically connect.
+
+**Generate an auth key:**
+
+1. Go to your [Tailscale admin console](https://login.tailscale.com/admin/settings/keys)
+2. Generate a new auth key
+3. Enable "Reusable" and "Ephemeral" options (recommended for installers)
+4. Copy the generated key
+
+**Add to configuration.nix:**
+
+```nix
+  services.tailscale = {
+    enable = true;
+    authKeyFile = pkgs.writeText "tailscale-auth-key" "tskey-auth-xxxxx-yyyyyyy";
+  };
+```
+
+**Better approach using environment variable:**
+
+For security, avoid hardcoding the key. Instead, use an environment variable during build:
+
+```nix
+  services.tailscale = {
+    enable = true;
+    authKeyFile = "/etc/tailscale/auth-key";
+  };
+
+  environment.etc."tailscale/auth-key".text = builtins.getEnv "TAILSCALE_AUTH_KEY";
+```
+
+Then build with:
+
+```bash
+export TAILSCALE_AUTH_KEY="tskey-auth-xxxxx-yyyyyyy"
+nix build .#nixosConfigurations.installer-iso.config.system.build.isoImage
+```
+
+Now when the installer boots, Tailscale will automatically connect to your Tailnet without manual authentication.
+
+**Note:** Keep auth keys secure. Ephemeral keys are automatically removed when the device disconnects, making them ideal for temporary installers.
 
 ---
 

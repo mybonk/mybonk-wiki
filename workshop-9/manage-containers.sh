@@ -11,8 +11,7 @@ set -e  # Exit on any error
 # CONFIGURATION
 # ============================================================================
 
-# Get the directory where this script is located (where flake.nix lives)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Script assumes it's run from the directory containing flake.nix
 
 # ============================================================================
 # RANDOM NAME GENERATOR
@@ -119,69 +118,32 @@ cmd_create_single() {
     echo "Creating NixOS Container"
     echo "================================"
     echo "Container Name: $container_name"
-    echo "Flake Path:     $SCRIPT_DIR"
     echo "================================"
     echo
 
-    # Step 1: Check if we can use flake-based creation
-    echo "[1/3] Determining configuration method..."
+    # Check if container name exists in flake, otherwise use first available config
+    echo "[1/3] Checking flake configuration..."
 
-    # Try to use flake if this container is defined in flake.nix
-    if [ -f "$SCRIPT_DIR/flake.nix" ]; then
-        echo "Flake detected - attempting flake-based creation..."
-
-        # Check if container name exists in flake
-        if nix flake show "$SCRIPT_DIR" 2>/dev/null | grep -q "nixosConfigurations.$container_name"; then
-            echo "Using flake configuration: $container_name"
-            USE_FLAKE=true
+    local flake_ref="$container_name"
+    if ! nix flake show . 2>/dev/null | grep -q "nixosConfigurations.$container_name"; then
+        # Container not defined, use first available config as template
+        local first_config=$(nix flake show . 2>/dev/null | grep "nixosConfigurations" -A 1 | tail -1 | awk '{print $2}' | tr -d ':,├,─')
+        if [ -n "$first_config" ]; then
+            echo "Container '$container_name' not in flake, using '$first_config' as template..."
+            flake_ref="$first_config"
         else
-            # Try to find a suitable template configuration
-            # Priority: btc2 (workshop-9), demo (workshop-8), or first available
-            for template in btc2 demo; do
-                if nix flake show "$SCRIPT_DIR" 2>/dev/null | grep -q "nixosConfigurations.$template"; then
-                    echo "Container '$container_name' not in flake, using $template as template..."
-                    USE_FLAKE=true
-                    FLAKE_CONFIG="$template"
-                    break
-                fi
-            done
-
-            # If no template found, fall back to config-file method
-            if [ -z "$FLAKE_CONFIG" ]; then
-                echo "No suitable template found in flake - using direct configuration"
-                USE_FLAKE=false
-            fi
+            echo "Error: No configurations found in flake.nix"
+            exit 1
         fi
     else
-        echo "No flake.nix found - using direct configuration"
-        USE_FLAKE=false
+        echo "Using flake configuration: $container_name"
     fi
 
-    if [ "$USE_FLAKE" = true ]; then
-        # Use flake-based creation
-        echo "[2/3] Creating container from flake..."
-        local flake_ref="${FLAKE_CONFIG:-$container_name}"
-        nixos-container create "$container_name" --flake "$SCRIPT_DIR#$flake_ref" --bridge br-containers
-    else
-        # Fallback: Use config-file method
-        echo "[2/3] Generating temporary configuration..."
-        local temp_config=$(mktemp --suffix=.nix)
-        cat > "$temp_config" << EOF
-{ config, pkgs, lib, ... }:
-{
-  imports = [ $SCRIPT_DIR/configuration.nix ];
-
-  _module.args.containerConfig = {
-    hostname = "$container_name";
-  };
-
-  boot.isContainer = true;
-  systemd.network.enable = true;
-}
-EOF
-        nixos-container create "$container_name" --config-file "$temp_config" --bridge br-containers
-        rm -f "$temp_config"
-    fi
+    # Create container from flake
+    echo "[2/3] Creating container from flake..."
+    nixos-container create "$container_name" \
+        --flake .#$flake_ref \
+        --bridge br-containers
 
     echo "✓ Container created"
     echo

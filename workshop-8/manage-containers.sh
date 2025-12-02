@@ -11,8 +11,7 @@ set -e  # Exit on any error
 # CONFIGURATION
 # ============================================================================
 
-# Get the directory where this script is located (where flake.nix lives)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Script assumes it's run from the directory containing flake.nix
 
 # ============================================================================
 # RANDOM NAME GENERATOR
@@ -119,38 +118,32 @@ cmd_create_single() {
     echo "Creating NixOS Container"
     echo "================================"
     echo "Container Name: $container_name"
-    echo "Flake Path:     $SCRIPT_DIR"
     echo "================================"
     echo
 
-    # Step 1: Create temporary configuration file
-    echo "[1/3] Generating container configuration..."
+    # Check if container name exists in flake, otherwise use first available config
+    echo "[1/3] Checking flake configuration..."
 
-    local temp_config=$(mktemp --suffix=.nix)
-    cat > "$temp_config" << EOF
-{ config, pkgs, lib, ... }:
-{
-  imports = [ $SCRIPT_DIR/configuration.nix ];
+    local flake_ref="$container_name"
+    if ! nix flake show . 2>/dev/null | grep -q "nixosConfigurations.$container_name"; then
+        # Container not defined, use first available config as template
+        local first_config=$(nix flake show . 2>/dev/null | grep "nixosConfigurations" -A 1 | tail -1 | awk '{print $2}' | tr -d ':')
+        if [ -n "$first_config" ]; then
+            echo "Container '$container_name' not in flake, using '$first_config' as template..."
+            flake_ref="$first_config"
+        else
+            echo "Error: No configurations found in flake.nix"
+            exit 1
+        fi
+    else
+        echo "Using flake configuration: $container_name"
+    fi
 
-  _module.args.containerConfig = {
-    hostname = "$container_name";
-  };
-
-  boot.isContainer = true;
-  systemd.network.enable = true;
-}
-EOF
-
-    # Step 2: Create container using nixos-container command
-    # CRITICAL: --bridge br-containers connects the container to our bridge network
-    # Without this flag, the container gets isolated networking and cannot:
-    #   - Reach other containers
-    #   - Reach the DHCP server (dnsmasq)
-    #   - Get an IP from our DHCP range (10.233.0.50-150)
-    echo "[2/3] Creating container from configuration..."
-    nixos-container create "$container_name" --config-file "$temp_config" --bridge br-containers
-
-    rm -f "$temp_config"
+    # Create container from flake
+    echo "[2/3] Creating container from flake..."
+    nixos-container create "$container_name" \
+        --flake ".#$flake_ref" \
+        --bridge br-containers
 
     echo "✓ Container created"
     echo

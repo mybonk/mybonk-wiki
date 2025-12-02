@@ -36,7 +36,7 @@
     # Configure the container's network interface with DHCP
     networks."10-container-dhcp" = {
       # Match the container's virtual ethernet interface (eth0 for imperative containers)
-      matchConfig.Name = "eth0";
+      matchConfig.Name = "eth0*";
 
       # Request IP address, gateway, and DNS via DHCP from host
       networkConfig = {
@@ -136,39 +136,23 @@
   # Testnet is a separate blockchain used for testing without risking real bitcoins
   # To switch to mainnet, change 'testnet = true' to 'testnet = false' (NOT RECOMMENDED for labs)
 
+  nix-bitcoin.generateSecrets = true;
   # Enable bitcoind service
   # Bitcoin Core is the reference implementation of the Bitcoin protocol
   services.bitcoind = {
     enable = true;
 
-    # TESTNET MODE: Run on testnet instead of mainnet
-    # Why testnet?
-    #   - No real money at risk
-    #   - Faster blockchain sync (smaller chain)
-    #   - Free testnet coins available from faucets
-    #   - Same functionality as mainnet
-    testnet = true;
-
-    # RPC (Remote Procedure Call) configuration
-    # Allows you to interact with bitcoind using bitcoin-cli
-    rpc = {
-      # Allow RPC connections from any interface
-      # In production, restrict this to specific IPs
-      address = "0.0.0.0";
-
-      # Use the default testnet RPC port (18332)
-      # Mainnet would use 8332
-      # port = 18332;  # Default, no need to specify
-    };
-
-    # Data directory where blockchain data is stored
-    # This is inside the container's filesystem at /var/lib/bitcoind
-    # On the host, it's located at: /var/lib/nixos-containers/<container-name>/var/lib/bitcoind
-    # dataDir = "/var/lib/bitcoind";  # Default, no need to specify
-
     # Additional bitcoind configuration options
     # These are passed directly to bitcoin.conf
     extraConfig = ''
+      # TESTNET MODE: Run on testnet instead of mainnet
+      # Why testnet?
+      #   - No real money at risk
+      #   - Faster blockchain sync (smaller chain)
+      #   - Free testnet coins available from faucets
+      #   - Same functionality as mainnet
+      testnet=1
+
       # Enable transaction index (allows querying any transaction)
       # Required for Lightning Network and some applications
       txindex=1
@@ -190,11 +174,8 @@
   services.clightning = {
     enable = true;
 
-    # TESTNET MODE: Must match bitcoind's network
-    # Lightning nodes must run on the same network as their Bitcoin node
-    testnet = true;
-
-    # Core Lightning will automatically connect to the local bitcoind
+    # Core Lightning automatically connects to the local bitcoind
+    # and follows its network configuration (testnet in our case)
     # nix-bitcoin handles the integration between bitcoind and clightning
 
     # Additional clightning configuration options

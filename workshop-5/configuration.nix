@@ -14,6 +14,9 @@
     };
   };
 
+  # Enable Tailscale for remote access from anywhere
+  services.tailscale.enable = true;
+
   # Add your SSH public key here
   # Replace this with your actual public key generated from ssh-keygen
   users.users.root.openssh.authorizedKeys.keys = [
@@ -45,10 +48,14 @@
     # Use systemd-resolved for DNS
     useNetworkd = false;
     useDHCP = lib.mkDefault true;
-    # Enable firewall but allow SSH
+    # Enable firewall but allow SSH and Tailscale
     firewall = {
       enable = true;
       allowedTCPPorts = [ 22 ];
+      # Tailscale uses UDP port 41641 for DERP relay connections
+      allowedUDPPorts = [ config.services.tailscale.port ];
+      # Allow Tailscale's network interfaces
+      trustedInterfaces = [ "tailscale0" ];
     };
   };
 

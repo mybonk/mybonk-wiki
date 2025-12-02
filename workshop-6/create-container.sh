@@ -19,8 +19,8 @@ if [ $# -ne 1 ]; then
     echo "Example: $0 container1"
     echo ""
     echo "Available containers defined in flake.nix:"
-    echo "  - container1 (10.100.0.10)"
-    echo "  - container2 (10.100.0.20)"
+    echo "  - container1 (IP assigned via DHCP)"
+    echo "  - container2 (IP assigned via DHCP)"
     exit 1
 fi
 
@@ -62,8 +62,8 @@ echo
 echo "Container Status:"
 nixos-container status "$CONTAINER_NAME"
 echo
-echo "Container IP:"
-nixos-container run "$CONTAINER_NAME" -- ip -4 addr show enp1s0 2>/dev/null | grep inet || echo "Network not yet configured"
+echo "Container Network:"
+nixos-container run "$CONTAINER_NAME" -- ip -4 addr show host0 2>/dev/null | grep inet || echo "DHCP address not yet assigned"
 echo
 
 echo "Quick Commands:"
@@ -75,4 +75,7 @@ echo "  Destroy container: sudo nixos-container destroy $CONTAINER_NAME"
 echo
 echo "Test connectivity:"
 echo "  sudo nixos-container run $CONTAINER_NAME -- ping -c 4 google.com"
+echo
+echo "Note: Container gets IP automatically via DHCP (10.100.0.50-150 range)"
+echo "      To view assigned IP: sudo nixos-container run $CONTAINER_NAME -- ip addr"
 echo

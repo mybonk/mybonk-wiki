@@ -2,7 +2,8 @@
 
 {
   boot.isContainer = true;
-  networking.hostName = "demo-container";
+  networking.hostName = "democont";
+  networking.nat.enable = true;
   
   # Enable Bitcoin service
   services.bitcoind = {
@@ -47,5 +48,5 @@
   
   services.resolved.enable = true;
 
-  system.stateVersion = "24.11";
+  system.stateVersion = "25.11";
 }

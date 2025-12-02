@@ -383,6 +383,23 @@ Now let's create some containers using the management script (don't forget to ru
 
 **⚠️ Important:** The `manage-containers.sh` script automatically uses `--bridge br-containers` when creating containers. This is **crucial** - without it, containers won't connect to the bridge network and won't get DHCP IPs. If you create containers manually with `nixos-container create`, you MUST include `--bridge br-containers`.
 
+### Git Tracking Required
+
+Nix flakes require files to be tracked by git. Before creating containers, ensure files are staged:
+
+```bash
+# Initialize git if not already done
+git init
+
+# Stage the workshop files
+git add flake.nix configuration.nix manage-containers.sh host-setup.nix
+
+# Or stage everything
+git add .
+```
+
+You don't need to commit, just stage the files with `git add`.
+
 **Quick examples** (copy and paste to try):
 
 ```bash
