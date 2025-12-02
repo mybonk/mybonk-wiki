@@ -9,7 +9,7 @@ This workshop teaches you how to create and manage NixOS containers dynamically 
 - **Dynamic Container Creation**: Create containers by name (auto-generated name if not specified)
 - **Shared Configuration**: A single configuration.nix file serves all containers
 - **Private Network**: All containers communicate on a shared network (10.233.0.0/24)
-- **Full Connectivity**: Containers can ping each other, the host, and the internet
+- **Full Connectivity**: Containers can ping each other by hostname, reach the host, and access the internet
 - **CLI Management**: Create, start, stop, and destroy containers on the fly without having to edit a config file for each one.
 
 ### Prerequisites
@@ -76,6 +76,20 @@ Let's clarify how container networking works in this setup.
 - Also provides DNS and gateway information to containers
 - We use **dnsmasq** as the DHCP server - it's a lightweight, easy-to-configure service that provides both DHCP and DNS forwarding in one package
 - dnsmasq is the simplest way to set up DHCP for container networks without complex configuration
+
+**DNS (Domain Name System) for Container-to-Container Communication**:
+- Containers receive 10.233.0.1 (the host's dnsmasq) as their DNS server via DHCP
+- This is **critical** for containers to resolve each other's hostnames
+- **How it works:**
+  1. When a container queries another container's hostname (e.g., `ping demo`), the query goes to dnsmasq at 10.233.0.1
+  2. dnsmasq knows about container hostnames because it learns them from DHCP assignments
+  3. dnsmasq returns the container's IP address (e.g., 10.233.0.52)
+  4. When a container queries an internet hostname (e.g., `ping google.com`), dnsmasq forwards the query to upstream DNS servers (8.8.8.8, 8.8.4.4)
+- **Why this configuration is essential:**
+  - Without pointing containers to dnsmasq (10.233.0.1), containers would use external DNS (8.8.8.8) directly
+  - External DNS servers don't know about your local container hostnames
+  - Result: containers could reach the internet but couldn't ping each other by hostname
+- Configured in `host-setup.nix` with: `dhcp-option = "option:dns-server,10.233.0.1";`
 
 **IP Forwarding**:
 - Kernel feature that allows the host to route packets between networks

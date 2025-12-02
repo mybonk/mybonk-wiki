@@ -126,6 +126,11 @@
       # This gives us 101 available IP addresses for containers
       dhcp-range = "10.233.0.50,10.233.0.150,12h";
 
+      # Provide dnsmasq itself (10.233.0.1) as DNS server to containers
+      # This allows containers to resolve each other's hostnames
+      # dnsmasq will then forward external queries to upstream servers
+      dhcp-option = "option:dns-server,10.233.0.1";
+
       # Local domain name for containers
       # Containers can use fully qualified names like: container1.containers.local
       domain = "containers.local";
@@ -135,11 +140,11 @@
       no-resolv = true;
 
       # Don't read /etc/hosts from host
-      # Containers will use DHCP-provided DNS instead
+      # We want dnsmasq to learn hostnames from DHCP
       no-hosts = true;
 
       # Upstream DNS servers for internet name resolution
-      # These are provided to containers via DHCP
+      # dnsmasq will forward external queries to these servers
       # Using Google's public DNS servers (reliable and fast)
       # Alternative: [ "1.1.1.1" "1.0.0.1" ] for Cloudflare DNS
       server = [ "8.8.8.8" "8.8.4.4" ];
