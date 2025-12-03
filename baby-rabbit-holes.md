@@ -961,12 +961,21 @@ Similarly to the bitcoin JSON-RPC, the clightning JSON-RPC API allows to interac
   - [asciinema](https://asciinema.org/): Record and share your terminal sessions, the simple way.
 
 ## Books
+- **Déclaration des Droits de l'Homme et du Citoyen de 1789** [https://www.conseil-constitutionnel.fr](https://www.conseil-constitutionnel.fr/node/3850/pdf) 
+  - Document (site of Conseil Constitutionnel of France): [https://www.conseil-constitutionnel.fr/node/3850/pdf](https://www.conseil-constitutionnel.fr/node/3850/pdf)
+- **The Declaration of Independence of Cyberspace (John Perry Barlow)**
+  - Document: [https://cryptoanarchy.wiki/people/john-perry-barlow](https://cryptoanarchy.wiki/people/john-perry-barlow)
+  - Audio, red by the author: [https://www.youtube.com/watch?v=3WS9DhSIWR0](https://www.youtube.com/watch?v=3WS9DhSIWR0)
+- **Users Manual for The Human Experience (Michael W. Dean)** 
+  - pdf book: [https://michaelwdean.com/UMFTHE/Users_Manual_for_The_Human_Experience-eBook.pdf](https://michaelwdean.com/UMFTHE/Users_Manual_for_The_Human_Experience-eBook.pdf)
+  - audiobook on YouTube: https://www.youtube.com/watch?v=xpJMFBpGR2s
+- **How Learning Works (Published by Jossey-Bass)**
+  - Document: [https://firstliteracy.org/wp-content/uploads/2015/07/How-Learning-Works.pdf](https://firstliteracy.org/wp-content/uploads/2015/07/How-Learning-Works.pdf)
 - [Introduction to the Mac command line](https://github.com/ChristopherA/intro-mac-command-line) (on GitHub).
 - [Learn Bitcoin from the command line](https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line#readme) (on GitHub)
+- [Mastering Bitcoin](https://github.com/bitcoinbook/bitcoinbook#readme) (on GitHub).
 - [Mastering the Lightning Network](https://github.com/lnbook/lnbook#readme) (on GitHub).
 - [The NixOS and Flakes book](https://nixos-and-flakes.thiscute.world/introduction/): The NixOS and Flakes book.
-
-
 ## NixOS/Nix specific
 
 If you are actualy running NixOS operating system (as opposed to just Nix which is the package manager), you can lookup the currently active NixOS configuration. For example:
@@ -1207,13 +1216,4 @@ fileSystems."/".options = [ "noatime" "nodiratime" "discard" ];
 
 - **Crypto Pals**
   - Page: [www.cryptopals.com](https://www.cryptopals.com/). Be scared of the emerged part of the iceberg in cryptography. Take this challenge!
-- **Déclaration des Droits de l'Homme et du Citoyen de 1789** [https://www.conseil-constitutionnel.fr](https://www.conseil-constitutionnel.fr/node/3850/pdf) 
-  - Document (site of Conseil Constitutionnel of France): [https://www.conseil-constitutionnel.fr/node/3850/pdf](https://www.conseil-constitutionnel.fr/node/3850/pdf)
-- **The Declaration of Independence of Cyberspace (John Perry Barlow)**
-  - Document: [https://cryptoanarchy.wiki/people/john-perry-barlow](https://cryptoanarchy.wiki/people/john-perry-barlow)
-  - Audio, red by the author: [https://www.youtube.com/watch?v=3WS9DhSIWR0](https://www.youtube.com/watch?v=3WS9DhSIWR0)
-- **Users Manual for The Human Experience (Michael W. Dean)** 
-  - pdf book: [https://michaelwdean.com/UMFTHE/Users_Manual_for_The_Human_Experience-eBook.pdf](https://michaelwdean.com/UMFTHE/Users_Manual_for_The_Human_Experience-eBook.pdf)
-  - audiobook on YouTube: https://www.youtube.com/watch?v=xpJMFBpGR2s
-- **How Learning Works (Published by Jossey-Bass)**
-  - Document: [https://firstliteracy.org/wp-content/uploads/2015/07/How-Learning-Works.pdf](https://firstliteracy.org/wp-content/uploads/2015/07/How-Learning-Works.pdf)
+
