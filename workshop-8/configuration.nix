@@ -33,6 +33,9 @@
   systemd.network = {
     enable = true;
 
+    # Wait for network to be fully configured before considering boot complete
+    wait-online.enable = true;
+
     # Configure the container's network interface
     # This configuration:
     #   1. Requests an IP address via DHCP from the host
@@ -62,13 +65,11 @@
         DHCP = "yes";  # Automatically obtain network configuration
       };
 
-      # ENABLES: Internet Access (DNS resolution and routing)
+      # ENABLES: Internet Access (routing)
       # Configure how DHCP information is used
       dhcpV4Config = {
-        # INTERNET ACCESS: Accept DNS servers from DHCP
-        # Without this, container can't resolve domain names (e.g., google.com)
-        # Host provides DNS servers (typically 8.8.8.8, 8.8.4.4) via DHCP
-        UseDNS = true;
+        # Don't use DNS from DHCP - we configure it statically below
+        UseDNS = false;
 
         # INTERNET ACCESS: Accept default gateway from DHCP
         # Without this, container can't route packets to the internet
@@ -94,6 +95,11 @@
   # This breaks container-to-container hostname resolution
   # We want containers to use DNS from DHCP (dnsmasq at 10.233.0.1)
   services.resolved.enable = false;
+
+  # Statically configure DNS in /etc/resolv.conf
+  # Point directly to dnsmasq on the host for container hostname resolution
+  networking.nameservers = [ "10.233.0.1" ];
+  networking.search = [ "containers.local" ];
 
 
   # Lab environment: Disable firewall for maximum connectivity
