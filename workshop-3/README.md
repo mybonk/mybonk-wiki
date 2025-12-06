@@ -1,562 +1,377 @@
-# How to Run a Forked Version of Bitcoin on NixOS in 5 Minutes
+---
+layout: default
+title: Workshop 3
+nav_order: 4
+---
+
+# How to Override Package Versions in NixOS (Fast, No Compilation)
 
 ## Overview
 
-This workshop demonstrates how to run a custom Bitcoin fork on NixOS using Nix's powerful package override capabilities. We'll replace the standard Bitcoin Core with **Mutinynet** - a Bitcoin fork designed for faster, more practical testing.
+This workshop demonstrates how to use **different package versions** in NixOS without compiling anything from source. We'll override nginx to use a different version by pulling from different nixpkgs releases.
 
-**What is Mutinynet?**
+**Why this approach?**
 
-Mutinynet is a custom signet (Bitcoin test network) with 30-second block times instead of the default 10 minutes, making it perfect for development and testing. Unlike testnet, which has irregular block production and a "graveyard of unkempt test nodes," Mutinynet provides a realistic network environment with consistent block production.
-
-**Why Mutinynet over standard testnet?**
-
-- **Faster feedback:** 30-second blocks vs 10-minute blocks means 20x faster confirmations
-- **Active network:** Includes working mempool.space explorer, esplora instance, rapid gossip sync server, lightning nodes, and LSP infrastructure
-- **Real activity:** Unlike testnet where there is little to no activity, Mutinynet is fun to interact with and test on.
-- **Advanced features:** Includes experimental soft forks (CTV, Anyprevout, OP_CAT, CSFS, OP_INTERNALKEY)
-- **Free coins:** Get testnet-like coins from the [Mutinynet faucet](https://faucet.mutinynet.com/)
-- **Maintained infrastructure:** Block explorer at https://mutinynet.com/
-
-**About pre-built binaries:**
-
-This Bitcoin fork doesn't appear to provide pre-built binaries, so we'll have to build it ourselves from source. This is where Nix shines - it handles the entire build process reproducibly, ensuring everyone gets the same result.
+- ✅ **No compilation** - Uses pre-built binaries from cache.nixos.org
+- ✅ **Instant updates** - Downloads in seconds, not minutes
+- ✅ **Real-world pattern** - Common technique in production NixOS systems
+- ✅ **Multiple versions** - Run different versions side-by-side
 
 **What you'll learn:**
 
-- Pin a specific Bitcoin version using Nix's `fetchFromGitHub`
-- Override NixOS service packages with custom builds
-- Understand Nix's hash-based verification system
-- Update existing container configurations
-- Compare standard testnet vs custom signet behavior
-- (Advanced) Use overlays for full package control
+- Use multiple nixpkgs inputs in a single flake
+- Override service packages using different nixpkgs versions
+- Understand binary caches vs local compilation
+- Verify package versions after override
+- Test that overridden services work correctly
 
 **Prerequisites:**
 
-- Completed [workshop-2](../workshop-2/) (Bitcoin container running testnet)
-- Understanding of NixOS containers
+- Completed [workshop-2](../workshop-2/) (Understanding of NixOS containers)
 - Understanding of Nix flakes
+- Basic familiarity with web servers (nginx)
 
-**Time:** ~45 minutes including sync time (Mutinynet syncs fast!)
-
----
-
-## Step 1: Check Your Current Bitcoin Configuration
-
-Before making changes, let's verify what we're currently running. Make sure your bitcoin-container from [workshop-2](../workshop-2/) is running:
-
-```bash
-sudo nixos-container status demo-container
-```
-
-Get a root shell in the container:
-
-```bash
-sudo nixos-container root-login bitcoin-container
-```
-
-Inside the container, check the current setup:
-
-```bash
-# Check Bitcoin version
-bitcoind --version
-
-# Check network info - should show testnet
-bitcoin-cli -testnet getnetworkinfo
-
-# Check blockchain info
-bitcoin-cli -testnet getblockchaininfo | grep chain
-```
-
-You should see `"chain": "test"` indicating testnet.
-
-Exit the container for now:
-
-```bash
-exit
-```
+**Time:** ~15 minutes
 
 ---
 
-## Chapter A: Source Override with `fetchFromGitHub`
+## The Concept: Multiple nixpkgs Inputs
 
-This is the **simplest approach** for using a custom fork. We fetch the source code from GitHub and override only the source of the existing package, keeping all the build configuration from nixpkgs.
+Instead of compiling from source (which takes time), we use **different nixpkgs releases** that already have the versions we want **pre-compiled**.
 
-### Understanding the Approach
+**Example:**
+- `nixos-23.05` has nginx 1.24.0
+- `nixos-24.11` has nginx 1.26.2
 
-**What `fetchFromGitHub` does:**
-- Downloads source code from a specific GitHub repository and commit
-- Verifies the download with a cryptographic hash
-- Returns a Nix derivation that can be used as a package source
+By using multiple nixpkgs inputs, we can choose which version to use **without any compilation**.
 
-**What we're doing:**
-- Fetching Mutinynet source from benthecarman's fork
-- Using `overrideAttrs` to replace the `src` attribute of nixpkgs' bitcoin package
-- Keeping the existing build recipe (dependencies, compilation flags, etc.)
+**Comparison to Workshop 11:**
 
-**Why this approach:**
-- Simple and straightforward
-- Reuses existing nixpkgs build infrastructure
-- Perfect for testing forks that don't need build changes
-- Easy to understand for beginners
+| Approach | Workshop 3 (This) | Workshop 11 |
+|----------|-------------------|-------------|
+| Method | Multiple nixpkgs inputs | fetchFromGitHub + compile |
+| Speed | ✅ Instant (binary cache) | ❌ Slow (compile from source) |
+| Versions | ❌ Limited to nixpkgs releases | ✅ Any version/commit/fork |
+| Use case | Quick version switches | Custom forks, unreleased code |
+
+See [Workshop 11](../workshop-11/) for the compile-from-source approach.
 
 ---
 
-### Step 2: Update flake.nix for Mutinynet
+## Step 1: Check Available nginx Versions
 
-Navigate to your workshop repository:
+Before we start, let's see what nginx versions are available in different nixpkgs releases:
 
 ```bash
-cd ~/workshops/workshop-3  # Or wherever you cloned it
+# Check nginx in nixos-23.05
+nix eval github:NixOS/nixpkgs/nixos-23.05#nginx.version
+
+# Check nginx in nixos-24.11
+nix eval github:NixOS/nixpkgs/nixos-24.11#nginx.version
 ```
 
-Edit your `flake.nix` to override the bitcoin package with Mutinynet's:
+You'll see different versions. We'll use this to demonstrate the override.
+
+---
+
+## Step 2: Create the Workshop Directory
+
+```bash
+cd ~/
+mkdir -p workshop-3-nginx
+cd workshop-3-nginx
+```
+
+---
+
+## Step 3: Create flake.nix with Multiple nixpkgs Inputs
+
+Create `flake.nix`:
 
 ```nix
 {
-  description = "Bitcoin NixOS Container - Workshop 3 (Mutinynet)";
+  description = "Nginx version override using multiple nixpkgs inputs";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    # Older stable release
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.05";
+
+    # Newer release
+    nixpkgs-latest.url = "github:NixOS/nixpkgs/nixos-24.11";
   };
 
-  outputs = { self, nixpkgs }: 
+  outputs = { self, nixpkgs-stable, nixpkgs-latest }:
     let
       system = "x86_64-linux";
-      
-      # Fetch Mutinynet source from benthecarman's fork
-      mutinynetSrc = nixpkgs.legacyPackages.${system}.fetchFromGitHub {
-        owner = "benthecarman";
-        repo = "bitcoin";
-        rev = "v29.0";  # Mutinynet v29.0 release
-        sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # We'll fix this
-      };
-      
-      # Create custom package set with overridden bitcoin
-      pkgs = import nixpkgs {
-        inherit system;
-        overlays = [
-          (final: prev: {
-            bitcoin = prev.bitcoin.overrideAttrs (oldAttrs: {
-              src = mutinynetSrc;
-              version = "29.0-mutinynet";
-            });
-          })
-        ];
-      };
     in {
-      nixosConfigurations.bitcoin-container = nixpkgs.lib.nixosSystem {
+      # Container using OLDER nginx from nixos-23.05
+      nixosConfigurations.nginx-old = nixpkgs-stable.lib.nixosSystem {
         inherit system;
-        modules = [
-          { nixpkgs.overlays = [ (final: prev: { inherit (pkgs) bitcoin; }) ]; }
-          ./container-configuration.nix
-        ];
+        modules = [ ./container-configuration.nix ];
+      };
+
+      # Container using NEWER nginx from nixos-24.11
+      nixosConfigurations.nginx-new = nixpkgs-latest.lib.nixosSystem {
+        inherit system;
+        modules = [ ./container-configuration.nix ];
       };
     };
 }
 ```
 
-**Code breakdown:**
+**What this does:**
 
-1. **`fetchFromGitHub`**: Downloads Mutinynet source from GitHub at specific commit `v29.0`
-2. **`sha256` hash**: Placeholder - Nix will tell us the correct hash when we try to build
-3. **`overrideAttrs`**: Replaces only the source and version of the standard bitcoin package
-4. **Overlay**: Applies our custom bitcoin package to the container's package set
-
----
-
-### Step 3: Get the Correct Hash
-
-The `sha256` hash in step 2 is a placeholder. Nix needs the correct hash to verify the download. Let's get it:
-
-```bash
-# Try to build - it will fail but show us the correct hash
-sudo nixos-container update bitcoin-container --flake .#bitcoin-container
-```
-
-You'll see an error like:
-
-```
-error: hash mismatch in fixed-output derivation
-specified: sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-got:      sha256-XjkD8Fmn3h2Lk9P2mR5nQ8tY6vW4xA1bC2dE3fG4hJ5=
-```
-
-**This is expected!** Nix is telling us the real hash. Copy the "got:" hash and update your `flake.nix`:
-
-```nix
-sha256 = "sha256-XjkD8Fmn3h2Lk9P2mR5nQ8tY6vW4xA1bC2dE3fG4hJ5=";  # Use the real hash
-```
-
-**Why does Nix use hashes?**
-
-Nix's hash verification ensures:
-- **Reproducibility**: Same input hash = same output every time
-- **Security**: Detects tampering or corrupted downloads
-- **Caching**: Nix can cache builds based on input hashes
-- **Determinism**: Your build matches everyone else's build exactly
-
-The hash is calculated from the entire contents of the fetched source code. If even one byte changes in the repository, the hash will be different, alerting you to the change.
+- Defines two nixpkgs inputs: `nixpkgs-stable` (23.05) and `nixpkgs-latest` (24.11)
+- Creates two container configurations: `nginx-old` and `nginx-new`
+- Each uses a different nixpkgs version, so they get different nginx versions
+- **No compilation needed** - both download pre-built binaries!
 
 ---
 
-### Step 4: Update container-configuration.nix for Mutinynet
+## Step 4: Create container-configuration.nix
 
-Edit `container-configuration.nix` to configure Mutinynet's signet.
-
-**Important note:** These configuration parameters are **required** - they are not built into the fork by default. The fork only adds *support* for the custom signet parameters (e.x `signetblocktime`), but you must explicitly configure which signet to join (Mutinynet's) and how to connect to it.
+Create `container-configuration.nix`:
 
 ```nix
 { config, pkgs, lib, ... }:
 
 {
   boot.isContainer = true;
-  networking.hostName = "demo-container";
-  
-  # Enable Bitcoin service with Mutinynet configuration
-  services.bitcoind = {
+  networking.hostName = "nginx-container";
+
+  # Enable nginx web server
+  services.nginx = {
     enable = true;
-    
-    # Mutinynet signet configuration
-    extraConfig = ''
-      # Enable signet mode (not testnet!)
-      signet=1
-      
-      # Mutinynet-specific signet challenge
-      # This identifies which signet network to join
-      signetchallenge=512102f7561d208dd9ae99bf497273e16f389bdbd6c4742ddb8e6b216e64fa2928ad8f51ae
-      
-      # Connect to Mutinynet infrastructure node
-      addnode=45.79.52.207:38333
-      
-      # Disable DNS seeding (use manual addnode instead)
-      dnsseed=0
-      
-      # 30-second block time 
-      # This parameter only works because we're using benthecarman's Mutinynet fork of bitcoin core
-      signetblocktime=30
-      
-      # RPC settings
-      rpcuser=nixos
-      rpcpassword=workshop3demo
-      
-      # Network settings
-      listen=1
-      server=1
-      
-      # Transaction index
-      txindex=1
-    '';
-    
-    # RPC access
-    rpc = {
-      users = {
-        nixos = {
-          name = "nixos";
-          passwordHMAC = "workshop3demo";
-        };
+    virtualHosts."localhost" = {
+      root = "/var/www";
+      locations."/" = {
+        index = "index.html";
       };
     };
   };
 
+  # Create a simple web page
+  system.activationScripts.setupWebRoot = ''
+    mkdir -p /var/www
+    cat > /var/www/index.html <<EOF
+    <!DOCTYPE html>
+    <html>
+    <head><title>NixOS nginx Test</title></head>
+    <body>
+      <h1>Welcome to nginx on NixOS!</h1>
+      <p>This is running nginx version: NGINX_VERSION</p>
+      <p>Workshop 3: Package version override demo</p>
+    </body>
+    </html>
+    EOF
+
+    # Replace NGINX_VERSION with actual version
+    ${pkgs.gnused}/bin/sed -i "s/NGINX_VERSION/$(${pkgs.nginx}/bin/nginx -v 2>&1 | cut -d'/' -f2)/" /var/www/index.html
+  '';
+
   # Useful utilities
   environment.systemPackages = with pkgs; [
-    bitcoin
+    nginx
+    curl
     vim
-    btop
   ];
 
   # Allow container to access the internet
   networking.useHostResolvConf = lib.mkForce false;
-  
   services.resolved.enable = true;
+
+  # Open firewall for nginx
+  networking.firewall.allowedTCPPorts = [ 80 ];
 
   system.stateVersion = "24.11";
 }
 ```
 
-**Configuration explained:**
+**What this does:**
 
-- **`signet=1`**: Enables signet mode (custom signet network)
-- **`signetchallenge`**: The cryptographic challenge that identifies Mutinynet specifically
-- **`addnode`**: Direct connection to Mutinynet's infrastructure
-- **`dnsseed=0`**: Disables automatic peer discovery (we use manual nodes)
-- **`signetblocktime=30`**: Sets 30-second blocks (only possible with this fork)
-
----
-
-### Step 5: Update the Container
-
-Now update the running container with our new configuration:
-
-```bash
-# Update the container with new Mutinynet configuration
-sudo nixos-container update demo --flake .#demo-container
-```
-
-This will:
-1. Fetch the Mutinynet source from GitHub
-2. Verify the hash matches
-3. Build the custom Bitcoin package from source (takes 5-10 minutes)
-4. Update the container configuration
-5. Restart the bitcoind service
-
-Watch the build process - you'll see Nix compiling the fork of Bitcoin from source. First-time builds take longer, but subsequent builds use Nix's cache.
+- Enables nginx web server
+- Creates a simple HTML page showing the nginx version
+- Opens port 80 for web traffic
+- Works with ANY nixpkgs version (no hardcoded dependencies)
 
 ---
 
-### Step 6: Verify Mutinynet is Running
-
-Get a shell in the updated container:
+## Step 5: Create the OLD nginx Container
 
 ```bash
-sudo nixos-container root-login demo
+sudo nixos-container create nginx-old --flake .#nginx-old
 ```
 
-Check the Bitcoin version - should now show Mutinynet:
-
-```bash
-bitcoind --version
-```
-
-Check network info - should now show signet:
-
-```bash
-bitcoin-cli -signet getnetworkinfo
-```
-
-Check blockchain info:
-
-```bash
-bitcoin-cli -signet getblockchaininfo
-```
-
-You should see `"chain": "signet"` instead of `"chain": "test"`.
+This creates a container using nginx from `nixos-23.05` (older version).
 
 ---
 
-### Step 7: Watch the Fast Block Production
-
-This is where Mutinynet shines! Watch the logs to see 30-second blocks:
+## Step 6: Start and Test the OLD Container
 
 ```bash
-journalctl -u bitcoind -f
+# Start the container
+sudo nixos-container start nginx-old
+
+# Check nginx version inside container
+sudo nixos-container run nginx-old -- nginx -v
+
+# Get container IP
+sudo nixos-container show-ip nginx-old
+
+# Test web server (replace with actual IP)
+curl http://$(sudo nixos-container show-ip nginx-old)
 ```
 
-You'll see blocks being downloaded much faster than testnet. Look for logs like:
+You should see the web page with the older nginx version!
 
-```
-UpdateTip: new best=00000... height=150000... log2_work=20.5
-UpdateTip: new best=00000... height=150001... log2_work=20.5
-```
+---
 
-Notice blocks are coming in every ~30 seconds instead of every 10 minutes!
+## Step 7: Create the NEW nginx Container
 
-Press `Ctrl+C` to stop.
-
-Check sync progress:
+Now let's create a second container with the newer nginx:
 
 ```bash
-bitcoin-cli -signet getblockchaininfo | grep -E "chain|blocks|headers"
-```
-
-The `blocks` count should be increasing rapidly.
-
-Exit the container:
-
-```bash
-exit
+sudo nixos-container create nginx-new --flake .#nginx-new
+sudo nixos-container start nginx-new
 ```
 
 ---
 
-## Chapter B: Full Overlay Approach (Advanced)
+## Step 8: Compare the Versions
 
-The `fetchFromGitHub` approach is simple and works well for most cases. However, sometimes you need **complete control** over how a package is built. This is where **overlays** shine.
+```bash
+# Check OLD container nginx version
+echo "=== OLD Container (nixos-23.05) ==="
+sudo nixos-container run nginx-old -- nginx -v
 
-### When to Use Overlays
+# Check NEW container nginx version
+echo "=== NEW Container (nixos-24.11) ==="
+sudo nixos-container run nginx-new -- nginx -v
+```
 
-Use overlays when you need to:
-- Modify compilation flags or build options
-- Add or change dependencies
-- Apply custom patches to the source code
-- Change the entire build process
-- Override multiple related packages at once
+You'll see different versions! **Both downloaded instantly from the binary cache - no compilation!**
 
-For our Mutinynet example, the simple override is sufficient, but let's see what an overlay would look like.
+---
 
-### Understanding Overlays
+## Step 9: Test Both Web Servers
 
-**Overlays** are functions that take two arguments (`final` and `prev`) and return a set of package modifications:
+```bash
+# Get IPs
+IP_OLD=$(sudo nixos-container show-ip nginx-old)
+IP_NEW=$(sudo nixos-container show-ip nginx-new)
 
-- **`prev`**: The original package set before your changes
-- **`final`**: The final package set after all overlays
+echo "OLD container: http://$IP_OLD"
+echo "NEW container: http://$IP_NEW"
 
-Overlays give you access to the entire package definition, not just individual attributes.
+# Test both
+curl http://$IP_OLD
+echo ""
+curl http://$IP_NEW
+```
 
-### Alternative flake.nix with Full Overlay
+Both serve web pages, but with different nginx versions!
 
-Here is how you would write the same thing using a more powerful overlay approach:
+---
+
+## Understanding What Happened
+
+### No Compilation Needed
+
+When you created the containers, Nix:
+
+1. **Checked the binary cache** (cache.nixos.org)
+2. **Found pre-built nginx** for both nixos-23.05 and nixos-24.11
+3. **Downloaded the binaries** (seconds, not minutes)
+4. **Started the containers** immediately
+
+**No source code compilation happened!**
+
+### Why This Works
+
+- NixOS builds **every package in every release** and puts them in the binary cache
+- When you reference `github:NixOS/nixpkgs/nixos-23.05`, you get access to all those pre-built packages
+- Switching versions = downloading a different pre-built binary
+- Fast, efficient, and reproducible!
+
+---
+
+## Cleanup
+
+```bash
+# Stop and destroy containers
+sudo nixos-container stop nginx-old
+sudo nixos-container stop nginx-new
+sudo nixos-container destroy nginx-old
+sudo nixos-container destroy nginx-new
+```
+
+---
+
+## Advanced: Mix and Match Packages
+
+You can even use different nixpkgs versions for different packages in the **same** container:
 
 ```nix
-{
-  description = "Bitcoin NixOS Container - Workshop 3 (Mutinynet - Overlay)";
-
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
-  };
-
-  outputs = { self, nixpkgs }: {
-    nixosConfigurations.demo-container = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        {
-          nixpkgs.overlays = [
-            (final: prev: {
-              bitcoin = prev.bitcoin.overrideAttrs (oldAttrs: {
-                # Fetch Mutinynet source
-                src = final.fetchFromGitHub {
-                  owner = "benthecarman";
-                  repo = "bitcoin";
-                  rev = "v29.0";
-                  sha256 = "sha256-REAL_HASH_HERE";
-                };
-                
-                version = "29.0-mutinynet";
-                
-                # You could add custom build modifications here:
-                # configureFlags = oldAttrs.configureFlags ++ [ "--enable-custom-feature" ];
-                # buildInputs = oldAttrs.buildInputs ++ [ final.someExtraLibrary ];
-                # patches = [ ./custom-patch.patch ];
-              });
-            })
-          ];
-        }
-        ./container-configuration.nix
+nixosConfigurations.mixed = nixpkgs-latest.lib.nixosSystem {
+  inherit system;
+  modules = [
+    {
+      # Use latest nixpkgs as base
+      nixpkgs.overlays = [
+        (final: prev: {
+          # But use nginx from stable
+          nginx = nixpkgs-stable.legacyPackages.${system}.nginx;
+        })
       ];
-    };
-  };
-}
+    }
+    ./container-configuration.nix
+  ];
+};
 ```
 
-**Key differences:**
-
-1. **Overlay defined inline**: The overlay is part of the NixOS module directly
-2. **Access to `final`**: Can reference other packages from the final package set
-3. **More flexibility**: Easy to add build flags, patches, or dependencies
-4. **Commented examples**: Shows how you could customize the build further
-
-### When Each Approach Makes Sense
-
-| Approach | Use When | Advantages |
-|----------|----------|------------|
-| `fetchFromGitHub` + `overrideAttrs` | Simple source swap | Quick, clear, minimal changes |
-| Full Overlay | Need build customization | Complete control, can modify everything |
-
-Most of the time the simple `fetchFromGitHub` approach is sufficient.
+This gives you:
+- System packages from nixos-24.11
+- nginx from nixos-23.05
 
 ---
 
-## Comparing Testnet vs Mutinynet
+## When to Use This Approach
 
-Let's summarize what we've learned:
+**Use this (Workshop 3) when:**
+- ✅ The version you need exists in some nixpkgs release
+- ✅ Speed matters (instant downloads)
+- ✅ You want official, tested builds
+- ✅ You're switching between stable releases
 
-| Feature | Testnet | Mutinynet (Signet) |
-|---------|---------|-------------------|
-| Block time | ~10 minutes | 30 seconds |
-| Confirmations | Slow, irregular | Fast, consistent |
-| Network activity | Sparse, dead nodes | Active infrastructure |
-| Explorer | Limited | Full mempool.space |
-| Lightning network | Graveyard | Active nodes + LSP |
-| Free coins | Faucets exist | https://faucet.mutinynet.com/ |
-| Use case | General testing | Active development |
-| Configuration | Built-in | Requires custom params |
-
----
-
-## What We Learned
-
-✅ Used `fetchFromGitHub` to pin a specific version from a specific location
-✅ Nix's hash verification system for security and reproducibility  
-✅ Overrode a NixOS service package with a custom build  
-✅ Updated an existing container configuration
-✅ Configured a custom signet (Mutinynet) with required parameters
-✅ Witnessed dramatically faster block production (30s vs 10min)  
-✅ Learned the difference between simple overrides and full overlays
-
-**The power of Nix:**
-
-- **Pinning versions:** Exact control over what gets built and deployed
-- **Hash verification:** Cryptographic guarantee of content integrity
-- **Reproducibility:** Same configuration = same result everywhere
-- **Easy updates:** Change a hash, rebuild, done
-- **No pollution:** Custom packages don't affect the rest of your system
-- **Build from source:** Even without pre-built binaries, Nix handles everything
+**Use Workshop 11 (compile from source) when:**
+- ✅ You need a version NOT in any nixpkgs release
+- ✅ You're using a fork or custom modifications
+- ✅ You need bleeding-edge unreleased code
+- ✅ You're patching the source
 
 ---
 
-## Cleanup (Optional)
+## Key Takeaways
 
-If you want to go back to standard testnet or clean up:
-
-```bash
-# Stop the container
-sudo nixos-container stop demo
-
-# Destroy it
-sudo nixos-container destroy demo
-
-# Remove data
-sudo rm -rf /var/lib/nixos-containers/demo-container
-```
+1. **Multiple nixpkgs inputs** let you access different package versions
+2. **Binary caches** make this instant - no compilation needed
+3. **Real-world pattern** - production systems use this technique
+4. **Flexible** - mix and match packages from different releases
 
 ---
 
 ## Next Steps
 
-You've learned how to run a custom build on NixOS! 
-
-**Advanced techniques (not covered in this workshop):**
-
-If you need even more control over package building, consider:
-
-- **Using pre-built binaries**: Use `fetchurl` to download pre-compiled binaries instead of building from source (faster but less common for forks)
-- **Complex overlays**: Override multiple packages at once, add custom patches, modify the entire dependency tree
-- **Custom derivations**: Write completely custom build logic for unique requirements
-- **Nix flake inputs**: Pin multiple repositories and coordinate versions across projects
-
-These advanced techniques are useful for:
-- Building complex infrastructures with interdependent components
-- Creating reproducible research or development environments
-- Testing experimental features requiring multiple coordinated package changes
-
-**Coming next: Workshop 4 - "How to run a Bitcoin stack on NixOS in 5 minutes"**
-
-Learn about nix-bitcoin - a complete solution for deploying production Bitcoin infrastructure with Lightning, web interfaces, and more, all configured declaratively.
+- Try overriding other packages (postgresql, redis, nodejs)
+- Explore [Workshop 11](../workshop-11/) for compile-from-source approach
+- Learn about overlays for more advanced package customization
 
 ---
 
-## Resources
+## Summary
 
-- [Mutinynet Blog Post](https://blog.mutinywallet.com/mutinynet/)
-- [Mutinynet Faucet](https://faucet.mutinynet.com/)
-- [Mutinynet Explorer](https://mutinynet.com/)
-- [Bitcoin Inquisition](https://github.com/bitcoin-inquisition/bitcoin)
-- [benthecarman's Bitcoin Fork](https://github.com/benthecarman/bitcoin)
-- [Nix Pills - Chapter 17: Nixpkgs Overriding Packages](https://nixos.org/guides/nix-pills/nixpkgs-overriding-packages.html)
+You learned how to override package versions in NixOS using multiple nixpkgs inputs. This gives you instant access to different versions without any compilation time!
 
----
-
-## Notes
-
-- **Hash updates:** When updating to a new Mutinynet version, you'll need to get a new hash
-- **Build time:** First build from source takes 5-10 minutes, subsequent builds use Nix cache
-- **Soft forks:** Mutinynet v29.0 includes Anyprevout, CTV, OP_CAT, CSFS, and OP_INTERNALKEY
-- **Network differences:** Mutinynet uses different ports and addresses than mainnet/testnet
-- **Storage:** Mutinynet's blockchain is much smaller than mainnet and even testnet
-- **Configuration required:** In the Mutinynet fork the signet parameters must be explicitly configured as in the example - they are re not built into the fork.
-
----
-
-**Workshop Duration:** 45 minutes (configuration, build and sync time)
-**Difficulty:** Intermediate  
-**Prerequisites:** [workshop-2](../workshop-2/) required
+- nginx-old: Downloaded from nixos-23.05 cache ⚡
+- nginx-new: Downloaded from nixos-24.11 cache ⚡
+- Both work perfectly with zero compilation! 🎉

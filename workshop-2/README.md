@@ -1,9 +1,15 @@
+---
+layout: default
+title: Workshop 2
+nav_order: 3
+---
+
 # Run Bitcoin as a service on NixOS in 2 Minutes
 
 ## Overview
 
 This workshop demonstrates how to configure a service, here Bitcoin Core, on a NixOS system. This requires editing the `.nix` files (declarative configuration of the system) and the deployment of the configuration.
-We'll use a NixOS container to efficiently demonstrate how this works - the same approach would work on full NixOS systems and VMs (see [workshop-1](../workshop-1/README.md) to see how a VM is set up and interacted with).
+We'll use a NixOS container to efficiently demonstrate how this works - the same approach would work on full NixOS systems and VMs ([workshop-1](../workshop-1/README.md) showed you how to setup and interact with such a VM).
 
 **Why testnet for this workshop?**
 
@@ -45,7 +51,7 @@ cd mybonk-wiki/workshop-2
 
 The repository contains two files:
 - `flake.nix` - Defines the NixOS configuration for the container
-- `container-configuration.nix` - Bitcoin service configuration
+- `container-configuration.nix` - Bitcoin system and services configuration
 
 ```nix
 {
@@ -70,7 +76,7 @@ The repository contains two files:
 
 ## Step 2: Configure Bitcoin Service
 
-Create `container-configuration.nix`:
+Edit `container-configuration.nix`:
 
 ```nix
 { config, pkgs, lib, ... }:
@@ -347,11 +353,11 @@ sudo rm -rf /var/lib/nixos-containers/bitcoin-container
 
 This workshop demonstrated how easy NixOS makes deploying Bitcoin. Even with testnet's smaller footprint, you saw how blockchain storage becomes significant over time. More importantly, you learned that a production Bitcoin setup requires many integrated services beyond just Bitcoin Core, a complete stack is required, which we cover in [workshop-4](../workshop-4/) "How to run a Bitcoin stack on NixOS in 5 minutes".
 
-Happy hacking! �
+Happy hacking!
 
 **Coming up:**
 
-**[workshop-4](../workshop-3/) - "How to run a forked version of Bitcoin on NixOS in 5 minutes"** - where we'll show you how to run the Mutinynet fork of Bitcoin (signet with 30s block production).
+**[workshop-3](../workshop-3/) - "How to run a forked version of Bitcoin on NixOS in 5 minutes"** - where we'll show you how to run the Mutinynet fork of Bitcoin (signet with 30s block production).
 
 **[workshop-4](../workshop-4/) - "How to run a Bitcoin stack on NixOS in 5 minutes"** - where we'll explore nix-bitcoin for managing complete Bitcoin infrastructure
 

@@ -1,3 +1,9 @@
+---
+layout: default
+title: Workshop 5
+nav_order: 6
+---
+
 # Build Your NixOS Installer ISO in 5 Minutes
 
 ## Overview
@@ -300,7 +306,7 @@ This file customizes the installer environment:
   time.timeZone = lib.mkDefault "UTC";
   i18n.defaultLocale = lib.mkDefault "en_US.UTF-8";
 
-  system.stateVersion = "25.05";
+  system.stateVersion = "24.11";
 }
 ```
 

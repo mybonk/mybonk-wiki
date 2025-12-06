@@ -1,41 +1,28 @@
 {
-  description = "Bitcoin NixOS Container - Workshop 3 (Mutinynet)";
+  description = "Nginx version override using multiple nixpkgs inputs";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
+    # Older stable release
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.05";
+
+    # Newer release
+    nixpkgs-latest.url = "github:NixOS/nixpkgs/nixos-24.11";
   };
 
-  outputs = { self, nixpkgs }: 
+  outputs = { self, nixpkgs-stable, nixpkgs-latest }:
     let
       system = "x86_64-linux";
-      
-      # Fetch Mutinynet source from benthecarman's fork
-      mutinynetSrc = nixpkgs.legacyPackages.${system}.fetchFromGitHub {
-        owner = "benthecarman";
-        repo = "bitcoin";
-        rev = "v29.0";  # Mutinynet v29.0 release
-        sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # We'll fix this
-      };
-      
-      # Create custom package set with overridden bitcoin
-      pkgs = import nixpkgs {
-        inherit system;
-        overlays = [
-          (final: prev: {
-            bitcoin = prev.bitcoin.overrideAttrs (oldAttrs: {
-              src = mutinynetSrc;
-              version = "29.0-mutinynet";
-            });
-          })
-        ];
-      };
     in {
-      nixosConfigurations.demo-container = nixpkgs.lib.nixosSystem {
+      # Container using OLDER nginx from nixos-23.05
+      nixosConfigurations.nginx-old = nixpkgs-stable.lib.nixosSystem {
         inherit system;
-        modules = [
-          { nixpkgs.overlays = [ (final: prev: { inherit (pkgs) bitcoin; }) ]; }
-          ./container-configuration.nix
-        ];
+        modules = [ ./container-configuration.nix ];
+      };
+
+      # Container using NEWER nginx from nixos-24.11
+      nixosConfigurations.nginx-new = nixpkgs-latest.lib.nixosSystem {
+        inherit system;
+        modules = [ ./container-configuration.nix ];
       };
     };
 }

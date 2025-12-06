@@ -23,9 +23,9 @@ Understanding these distinctions is crucial. You can use the Nix package manager
 If you're new to the Nix ecosystem, these resources will help:
 
 
-- [Nix Pills](https://nixos.org/guides/nix-pills/) - Deep dive � into Nix (the *language*)
-- [NixOS & Nix Flakes Book](https://nixos-and-flakes.thiscute.world/introduction/) - �️ ❤️ The unofficial & opinionated � for beginners! Check it out!
-- [Basic Linux Commands Cheat Sheet](../baby-rabbit-holes.md) - Our own cheat sheet you can copy/past commands from �
+- [Nix Pills](https://nixos.org/guides/nix-pills/) - Deep dive into Nix (the *language*)
+- [NixOS & Nix Flakes Book](https://nixos-and-flakes.thiscute.world/introduction/) - The unofficial & opinionated guide for beginners! Check it out!
+- [Basic Linux Commands Cheat Sheet](../baby-rabbit-holes.md) - Our own cheat sheet you can copy/paste commands from
 
 ### Prerequisites
 
@@ -581,7 +581,7 @@ The configurations provided in this workshop are for learning purposes only. **D
 - Implementing monitoring
 - Following security hardening guides
 
-### �️ Managing Disk Space
+### Managing Disk Space
 
 Nix's approach to reproducibility means it keeps everything, which can quickly consume disk space.
 
@@ -621,7 +621,7 @@ Add to configuration.nix:
 - Enable automatic garbage collection
 - Consider a larger disk for active development
 
-### � Additional Resources
+### Additional Resources
 
 - [NixOS Manual](https://nixos.org/manual/nixos/stable/)
 
@@ -648,7 +648,7 @@ You have:
 4. Join the NixOS community
 5. Consider deploying NixOS for real workloads
 
-Happy hacking! �
+Happy hacking!
 
 ---
 **Coming up:**

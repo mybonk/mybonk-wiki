@@ -1,3 +1,9 @@
+---
+layout: default
+title: Workshop 6
+nav_order: 7
+---
+
 # Manage NixOS Containers via CLI in 5 Minutes
 
 ## Overview
@@ -197,14 +203,9 @@ sudo ./create-container.sh container2 10.100.0.20
 Check container status:
 
 ```bash
+sudo nixos-container list
 sudo nixos-container status container1
 sudo nixos-container status container2
-```
-
-List all containers:
-
-```bash
-sudo nixos-container list
 ```
 
 ---
@@ -241,7 +242,7 @@ Test ping between containers:
 sudo nixos-container run container1 -- ping -c 4 10.100.0.20
 sudo nixos-container run container1 -- ping -c 4 container2
 
-# From host, test container2 to container1
+# And vice versa
 sudo nixos-container run container2 -- ping -c 4 10.100.0.10
 sudo nixos-container run container2 -- ping -c 4 container1
 ```

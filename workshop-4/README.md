@@ -1,3 +1,9 @@
+---
+layout: default
+title: Workshop 4
+nav_order: 5
+---
+
 # How to Run a Bitcoin Stack on NixOS in 5 Minutes
 
 ## Overview

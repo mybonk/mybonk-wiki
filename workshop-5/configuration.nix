@@ -77,5 +77,5 @@
   i18n.defaultLocale = lib.mkDefault "en_US.UTF-8";
 
   # NixOS version
-  system.stateVersion = "25.05";
+  system.stateVersion = "24.11";
 }

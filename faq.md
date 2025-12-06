@@ -1,7 +1,7 @@
 # FAQ - Frequently Asked Questions
 
   - [Can I install MYBONK stack on another hardware than MYBONK console?](#can-i-install-mybonk-stack-on-another-hardware-than-mybonk-console)
-  - [How to verify a file or image downloaded from the Internet?](#howto-verify-a-file-or-image-downloaded-from-the-internet)
+  - [How to verify a file or image downloaded from the Internet?](#how-to-verify-a-file-or-image-downloaded-from-the-internet)
   - [Tell us more about the BONK token](#tell-us-more-about-the-bonk-token)
   - [Tell us more about Raspiblitz, Nodle, Ubrell and others](#tell-us-more-about-raspiblitz-nodle-brell-and-others)
 
@@ -14,23 +14,23 @@ Although MY₿ONK console has been designed specifically as a bitcoin-only full 
 
 However we focus our efforts at maintaining the code base with MY₿ONK console as hardware reference (it would be impossible to support all the hardware forms and shapes available on the market at any given time).
 
-Running a MY₿ONK console allows you to be confident your system is identical to the one of the other MY₿ONK users, you won't be slow-down by common compatibility issues or missing drivers, you just don't have the required skills nor the time, you want it to work from the get go.
+Running a MY₿ONK console allows you to be confident your system is identical to the one of the other MY₿ONK users, you won't be slowed down by common compatibility issues or missing drivers, you just don't have the required skills nor the time, you want it to work from the get go.
 
 ![](img/various/potatoe_node.png)
 
 
 ## How to verify a file or image downloaded from the Internet?
 
-There are all sorts of risks and threats associated with files and images downloaded form the Internet. 
+There are all sorts of risks and threats associated with files and images downloaded from the Internet. 
 "Don't trust verify". This can be done by verifying files and images in two ways: verify its hash (proves integrity) or verify its signature (proves integrity and authenticity).
 
-You can use the command 'shasum' to verify a hash, it must return the same hash as the one provided my the originator (often mentioned next to the download link). Below an example on how to check hash-256 of THE-FILE-YOU-DOWNLOADED
+You can use the command 'shasum' to verify a hash, it must return the same hash as the one provided by the originator (often mentioned next to the download link). Below an example on how to check hash-256 of THE-FILE-YOU-DOWNLOADED
 
 ```
 $ shasum -a 256 [THE-FILE-YOU-DOWNLOADED]
 ```
 
-Verifying a hash hash proves integrity but not authenticity.
+Verifying a hash proves integrity but not authenticity.
 
 To verify authenticity (prove that the legitimate source signed it) you can use 'gpg'. 
 

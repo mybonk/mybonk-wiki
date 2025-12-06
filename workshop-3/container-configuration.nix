@@ -2,65 +2,51 @@
 
 {
   boot.isContainer = true;
-  networking.hostName = "demo-container";
-  
-  # Enable Bitcoin service with Mutinynet configuration
-  services.bitcoind = {
+  networking.hostName = "nginx-container";
+
+  # Enable nginx web server
+  services.nginx = {
     enable = true;
-    
-    # Mutinynet signet configuration
-    extraConfig = ''
-      # Enable signet mode (not testnet!)
-      signet=1
-      
-      # Mutinynet-specific signet challenge
-      # This identifies which signet network to join
-      signetchallenge=512102f7561d208dd9ae99bf497273e16f389bdbd6c4742ddb8e6b216e64fa2928ad8f51ae
-      
-      # Connect to Mutinynet infrastructure node
-      addnode=45.79.52.207:38333
-      
-      # Disable DNS seeding (use manual addnode instead)
-      dnsseed=0
-      
-      # 30-second block time 
-      # This parameter only works because we're using benthecarman's Mutinynet fork of bitcoin core
-      signetblocktime=30
-      
-      # RPC settings
-      rpcuser=nixos
-      rpcpassword=workshop3demo
-      
-      # Network settings
-      listen=1
-      server=1
-      
-      # Transaction index
-      txindex=1
-    '';
-    
-    # RPC access
-    rpc = {
-      users = {
-        nixos = {
-          name = "nixos";
-          passwordHMAC = "workshop3demo";
-        };
+    virtualHosts."localhost" = {
+      root = "/var/www";
+      locations."/" = {
+        index = "index.html";
       };
     };
   };
 
+  # Create a simple web page
+  system.activationScripts.setupWebRoot = ''
+    mkdir -p /var/www
+    cat > /var/www/index.html <<EOF
+    <!DOCTYPE html>
+    <html>
+    <head><title>NixOS nginx Test</title></head>
+    <body>
+      <h1>Welcome to nginx on NixOS!</h1>
+      <p>This is running nginx version: NGINX_VERSION</p>
+      <p>Workshop 3: Package version override demo</p>
+    </body>
+    </html>
+    EOF
+
+    # Replace NGINX_VERSION with actual version
+    ${pkgs.gnused}/bin/sed -i "s/NGINX_VERSION/$(${pkgs.nginx}/bin/nginx -v 2>&1 | cut -d'/' -f2)/" /var/www/index.html
+  '';
+
   # Useful utilities
   environment.systemPackages = with pkgs; [
-    bitcoind
+    nginx
+    curl
     vim
-    btop
   ];
 
   # Allow container to access the internet
   networking.useHostResolvConf = lib.mkForce false;
-  
   services.resolved.enable = true;
+
+  # Open firewall for nginx
+  networking.firewall.allowedTCPPorts = [ 80 ];
 
   system.stateVersion = "24.11";
 }
