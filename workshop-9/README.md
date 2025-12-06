@@ -1,4 +1,10 @@
-# Build and Destroy Bitcoin Nodes in NixOS Containers
+---
+layout: default
+title: Workshop 9
+nav_order: 9
+---
+
+# Bitcoin Regtest Containers in NixOS (nix-bitcoin)
 
 ## Introduction
 
@@ -10,8 +16,9 @@ This workshop teaches you how to run Bitcoin and Lightning Network nodes in NixO
 
 - **Built on Workshop-8 Foundation**: Extends the dynamic container management with Bitcoin-specific services
 - **nix-bitcoin Integration**: Secure, pre-configured Bitcoin and Lightning services
-- **Testnet Only**: Safe experimentation without risking real Bitcoin
+- **Regtest Mode**: Local testing environment with instant block generation
 - **Multiple Nodes**: Create and manage multiple Bitcoin nodes simultaneously
+- **Automated Testing**: Use the `test.sh` to run automatically all the commands in this document.
 - **Practical CLI Skills**: Real-world Bitcoin and Lightning commands
 
 ### Why nix-bitcoin?
@@ -126,18 +133,17 @@ The main additions are in the nix-bitcoin configuration section:
 # Enable Bitcoin Core daemon
 services.bitcoind = {
   enable = true;
-  testnet = true;  # Run on testnet (safe for learning)
-  
+  regtest = true;  # Run in regtest mode (perfect for learning)
+
   extraConfig = ''
-    txindex=1        # Enable transaction indexing
-    mempoolfullrbf=1 # Maintain full mempool
+    txindex=1  # Enable transaction indexing
   '';
 };
 
 # Enable Core Lightning
 services.clightning = {
   enable = true;
-  testnet = true;  # Must match bitcoind network
+  # CLN automatically follows bitcoind's network (regtest)
 };
 ```
 
@@ -159,37 +165,40 @@ environment.systemPackages = with pkgs; [
 
 ---
 
-## Step 3: Understanding Testnet vs Mainnet
+## Step 3: Understanding Regtest vs Mainnet
 
-Before creating containers, it's important to understand the difference between testnet and mainnet.
+Before creating containers, it's important to understand the difference between regtest and mainnet.
 
-### Testnet (What We Use)
+### Regtest (What We Use)
 
 **Characteristics:**
-- Separate blockchain for testing
+- Local testing environment (no external network)
+- No blockchain download required (starts empty)
+- Instant block generation - mine blocks on demand!
+- Works completely offline
+- Perfect control over the network
 - No real financial value
-- Smaller blockchain (~30-50GB as of 2025)
-- Faster initial sync (hours vs days)
-- Free testnet coins from faucets
-- Same functionality as mainnet
 
 **Ports:**
-- RPC: 18332
-- P2P: 18333
+- RPC: 18443
+- P2P: 18444
 
 **Use cases:**
-- Learning and experimentation
+- Learning and development
+- Instant testing (no waiting for blocks)
+- Workshop environments
 - Application development
-- Testing without financial risk
 
-**Getting testnet coins:**
+**Getting regtest coins:**
 ```bash
-# Inside container, generate address
-bitcoin-cli -testnet getnewaddress
+# Inside container, generate an address
+bitcoin-cli -regtest getnewaddress
 
-# Use a testnet faucet to send coins to this address:
-# https://testnet-faucet.mempool.co/
-# https://bitcoinfaucet.uo1.net/
+# Mine 101 blocks to that address (need 100 confirmations for coinbase)
+bitcoin-cli -regtest generatetoaddress 101 <your-address>
+
+# Check your balance - you now have 50 BTC per block!
+bitcoin-cli -regtest getbalance
 ```
 
 ### Mainnet (Production)
@@ -205,7 +214,7 @@ bitcoin-cli -testnet getnewaddress
 - RPC: 8332
 - P2P: 8333
 
-**Important:** We do NOT use mainnet in this workshop. Always use testnet for learning.
+**Important:** We do NOT use mainnet in this workshop. Always use regtest for learning.
 
 ---
 
@@ -301,23 +310,23 @@ Now for the main event - working with your Bitcoin node!
 sudo ./manage-containers.sh shell btc1
 ```
 
-### Understanding Bitcoin Core Startup
+### Understanding Bitcoin Core Startup in Regtest
 
-When the container first starts, bitcoind begins downloading and verifying the testnet blockchain. This takes time!
+When the container first starts in regtest mode, bitcoind creates an **empty blockchain** - no download required!
 
-**What happens during initial sync:**
-1. Connects to Bitcoin testnet peers
-2. Downloads block headers (~1-2 minutes)
-3. Downloads full blocks (~30-50GB)
-4. Verifies all blocks and transactions
-5. Builds transaction index (if txindex=1)
+**What happens during startup:**
+1. Creates regtest directory structure
+2. Starts with genesis block only (block 0)
+3. Waits for you to generate blocks on demand
+4. No network connections (regtest is local-only)
+5. Ready to use immediately!
 
-**Total time:** Several hours depending on your system and network.
+**Total time:** Seconds! No blockchain sync needed.
 
 ### Check Bitcoin Daemon Status
 
 ```bash
-# Check if bitcoind is running
+# Check that bitcoind is running
 systemctl status bitcoind.service
 
 # Expected output:
@@ -328,73 +337,79 @@ systemctl status bitcoind.service
 
 ### Monitor Blockchain Sync Progress
 
-The most important command for a new node:
 
 ```bash
 # Check blockchain sync status
-bitcoin-cli -testnet getblockchaininfo
+bitcoin-cli getblockchaininfo
 ```
 
 **Key fields in output:**
 
 ```json
 {
-  "chain": "test",                    # Confirms testnet
-  "blocks": 2615000,                  # Current block height
-  "headers": 2615432,                 # Total headers downloaded
-  "verificationprogress": 0.9998,     # 99.98% synced (1.0 = 100%)
-  "initialblockdownload": false,      # true = still syncing, false = synced
-  "size_on_disk": 45283934720,        # ~45GB blockchain data
+  "chain": "regtest",                 # Confirms regtest mode
+  "blocks": 0,                        # Starts at 0 (only genesis block)
+  "headers": 0,                       # No headers to download
+  "verificationprogress": 1.0,        # Always 100% (no sync needed in regtest)
+  "initialblockdownload": false,      # Already "synced" (empty chain)
+  "size_on_disk": 293,                # Tiny! Just genesis block
 }
 ```
 
-**Understanding sync progress:**
-- `blocks` < `headers`: Still downloading blocks
-- `verificationprogress` < 1.0: Still verifying
-- `initialblockdownload: true`: Initial sync in progress
-- `initialblockdownload: false`: Sync complete! Node is ready.
+### Generate Your Blocks On Demand
 
-### Monitor Sync in Real-Time
-
-Watch sync progress update every 10 seconds:
+Unlike on MAINET, in regtest YOU control the blocks generation. Let's create some blocks:
 
 ```bash
-# Watch blocks increase
-watch -n 10 'bitcoin-cli -testnet getblockchaininfo | jq ".blocks, .verificationprogress"'
+# 1. Generate a new address to receive mining rewards
+bitcoin-cli -regtest getnewaddress
 
-# Or more detailed view
-watch -n 10 'bitcoin-cli -testnet getblockchaininfo | jq "{ blocks, headers, progress: .verificationprogress, syncing: .initialblockdownload }"'
+# 2. Mine 101 blocks to that address
+# (Need 100 confirmations before spendable)
+bitcoin-cli -regtest generatetoaddress 101 <your-address-from-step-1>
+
+# 3. Check your balance - you should have 50 BTC per block!
+bitcoin-cli -regtest getbalance
+
+# 4. Verify block count increased
+bitcoin-cli -regtest getblockchaininfo | jq '.blocks'
+# Should show: 101
 ```
 
-Press Ctrl+C to stop watching.
+**What just happened:**
+- You created 101 blocks instantly (no waiting!)
+- Each block gave you 50 BTC mining reward
+- You now have ~5050 BTC to experiment with!
 
 ### Basic Bitcoin CLI Commands
 
-Once sync is complete (or even during sync), you can explore:
+Now you can explore with your regtest Bitcoin:
 
 ```bash
 # Get network information
-bitcoin-cli -testnet getnetworkinfo
+bitcoin-cli -regtest getnetworkinfo
 
-# See peer connections
-bitcoin-cli -testnet getpeerinfo | jq length
-# Shows how many peers you're connected to
+# See peer connections (will be 0 in regtest - local only)
+bitcoin-cli -regtest getpeerinfo | jq length
 
-# Get wallet info (if you have a wallet)
-bitcoin-cli -testnet getwalletinfo
+# Get wallet info
+bitcoin-cli -regtest getwalletinfo
 
 # Create a new receiving address
-bitcoin-cli -testnet getnewaddress
+bitcoin-cli -regtest getnewaddress
+
+# Mine more blocks anytime you need them!
+bitcoin-cli -regtest generatetoaddress 10 <address>
 
 # Get blockchain info (we saw this earlier)
-bitcoin-cli -testnet getblockchaininfo
+bitcoin-cli -regtest getblockchaininfo
 
 # Check mempool (unconfirmed transactions)
-bitcoin-cli -testnet getmempoolinfo
+bitcoin-cli -regtest getmempoolinfo
 
 # Get info about a specific block (example: block 0 = genesis)
-bitcoin-cli -testnet getblockhash 0
-bitcoin-cli -testnet getblock $(bitcoin-cli -testnet getblockhash 0)
+bitcoin-cli -regtest getblockhash 0
+bitcoin-cli -regtest getblock $(bitcoin-cli -regtest getblockhash 0)
 ```
 
 ### Understanding bitcoin-cli Output
@@ -403,46 +418,17 @@ Most bitcoin-cli commands return JSON. Use `jq` to parse it:
 
 ```bash
 # Get just the block count
-bitcoin-cli -testnet getblockchaininfo | jq '.blocks'
+bitcoin-cli -regtest getblockchaininfo | jq '.blocks'
 
 # Get verification progress as percentage
-bitcoin-cli -testnet getblockchaininfo | jq '.verificationprogress * 100'
+bitcoin-cli -regtest getblockchaininfo | jq '.verificationprogress * 100'
 
 # List peer IPs
-bitcoin-cli -testnet getpeerinfo | jq '.[].addr'
+bitcoin-cli -regtest getpeerinfo | jq '.[].addr'
 
 # Count connections
-bitcoin-cli -testnet getnetworkinfo | jq '.connections'
+bitcoin-cli -regtest getnetworkinfo | jq '.connections'
 ```
-
-### Wait for Initial Sync
-
-For the remaining steps in this workshop, you'll want bitcoind to be fully synced. You can:
-
-**Option 1:** Wait for sync to complete (several hours)
-
-```bash
-# Check periodically
-bitcoin-cli -testnet getblockchaininfo | jq '.initialblockdownload, .verificationprogress'
-```
-
-**Option 2:** Continue the workshop and return later
-
-The blockchain will sync in the background. You can still:
-- Create more containers
-- Test networking
-- Read ahead in the workshop
-- Check logs
-
-**Option 3:** Check logs to see what's happening
-
-```bash
-# View bitcoind logs
-journalctl -u bitcoind.service -f
-
-# Shows: Block download progress, peer connections, verification status
-```
-
 ---
 
 ## Step 7: Interact with Core Lightning
@@ -454,7 +440,7 @@ Core Lightning (CLN) is a Lightning Network implementation that runs on top of B
 Lightning requires a synced Bitcoin node. Check:
 
 ```bash
-bitcoin-cli -testnet getblockchaininfo | jq '.initialblockdownload'
+bitcoin-cli -regtest getblockchaininfo | jq '.initialblockdownload'
 # Must be: false
 ```
 
@@ -463,19 +449,16 @@ If still true, bitcoind is still syncing. Lightning will wait.
 ### Check Lightning Status
 
 ```bash
-# Check if clightning service is running
+# Check that clightning service is running
 systemctl status clightning.service
 
-# Expected output:
-# ● clightning.service - Core Lightning daemon
-#      Active: active (running)
 ```
 
 ### Basic Lightning CLI Commands
 
 ```bash
 # Get Lightning node information
-lightning-cli --testnet getinfo
+lightning-cli --network=regtest getinfo
 
 # Expected output includes:
 # {
@@ -486,8 +469,8 @@ lightning-cli --testnet getinfo
 #   "num_active_channels": 0,         # Open payment channels
 #   "num_inactive_channels": 0,
 #   "num_pending_channels": 0,
-#   "blockheight": 2615432,           # Bitcoin block height
-#   "network": "testnet"              # Confirms testnet
+#   "blockheight": 101,               # Bitcoin block height (regtest starts at 0)
+#   "network": "regtest"              # Confirms regtest mode
 # }
 ```
 
@@ -497,77 +480,79 @@ Core Lightning has its own on-chain wallet for managing channel funds:
 
 ```bash
 # Check Lightning wallet balance
-lightning-cli --testnet listfunds
+lightning-cli --network=regtest listfunds
 
 # Generate new Lightning wallet address
-lightning-cli --testnet newaddr
+lightning-cli --network=regtest newaddr
 
 # List all wallet addresses
-lightning-cli --testnet listfunds | jq '.outputs'
+lightning-cli --network=regtest listfunds | jq '.outputs'
 ```
 
 ### Funding Your Lightning Node
 
-To open Lightning channels, you need testnet Bitcoin in your Lightning wallet:
+To open Lightning channels, you need Bitcoin in your Lightning wallet. In regtest, send from your bitcoind wallet:
 
 ```bash
 # 1. Generate a Lightning wallet address
-LIGHTNING_ADDR=$(lightning-cli --testnet newaddr | jq -r '.bech32')
+LIGHTNING_ADDR=$(lightning-cli --network=regtest newaddr | jq -r '.bech32')
 echo "Lightning wallet address: $LIGHTNING_ADDR"
 
-# 2. Send testnet coins to this address
-#    Use a testnet faucet: https://testnet-faucet.mempool.co/
+# 2. Send Bitcoin from your bitcoind wallet to Lightning
+bitcoin-cli -regtest sendtoaddress "$LIGHTNING_ADDR" 1
 
-# 3. Wait for confirmation (1 block = ~10 minutes)
-#    Watch for incoming transaction:
-watch -n 10 'lightning-cli --testnet listfunds | jq ".outputs"'
+# 3. Mine a block to confirm the transaction
+bitcoin-cli -regtest generatetoaddress 1 $(bitcoin-cli -regtest getnewaddress)
 
-# 4. Once confirmed, you'll see funds available
-lightning-cli --testnet listfunds
+# 4. Check funds are now available in Lightning wallet
+lightning-cli --network=regtest listfunds
 ```
 
 ### Connect to Another Lightning Node
 
-To test Lightning, you need to connect to other Lightning nodes:
+To test Lightning in regtest, connect to another container's Lightning node:
 
 ```bash
-# Connect to a public testnet Lightning node
-# Format: lightning-cli --testnet connect <node_id>@<ip>:<port>
+# In regtest, connect to other containers on your local network
+# Format: lightning-cli --network=regtest connect <node_id>@<container_ip>:9735
 
-# Example (replace with actual testnet node):
-# lightning-cli --testnet connect 03a1b2c3d4...@testnet.lnode.example.com:9735
+# Example: Get node ID from second container first
+# On btc2 container: lightning-cli --network=regtest getinfo | jq -r '.id'
+
+# Then from btc1, connect to btc2:
+# lightning-cli --network=regtest connect <btc2_node_id>@<btc2_ip>:9735
 
 # List connected peers
-lightning-cli --testnet listpeers
+lightning-cli --network=regtest listpeers
 
 # Open a payment channel (requires funds)
-# lightning-cli --testnet fundchannel <node_id> <amount_in_satoshis>
+# lightning-cli --network=regtest fundchannel <node_id> <amount_in_satoshis>
 ```
 
 ### Lightning Commands Reference
 
 ```bash
 # Node information
-lightning-cli --testnet getinfo
+lightning-cli --network=regtest getinfo
 
 # Wallet management
-lightning-cli --testnet listfunds           # Show wallet balance
-lightning-cli --testnet newaddr             # Generate new address
+lightning-cli --network=regtest listfunds           # Show wallet balance
+lightning-cli --network=regtest newaddr             # Generate new address
 
 # Peer connections
-lightning-cli --testnet listpeers           # Show connected peers
-lightning-cli --testnet connect <id>@<ip>   # Connect to peer
+lightning-cli --network=regtest listpeers           # Show connected peers
+lightning-cli --network=regtest connect <id>@<ip>   # Connect to peer
 
 # Channel management
-lightning-cli --testnet listchannels        # List all channels
-lightning-cli --testnet fundchannel         # Open new channel
-lightning-cli --testnet close               # Close channel
+lightning-cli --network=regtest listchannels        # List all channels
+lightning-cli --network=regtest fundchannel         # Open new channel
+lightning-cli --network=regtest close               # Close channel
 
 # Payments
-lightning-cli --testnet invoice             # Create invoice
-lightning-cli --testnet pay                 # Pay invoice
-lightning-cli --testnet listinvoices        # List invoices
-lightning-cli --testnet listpays            # List payments
+lightning-cli --network=regtest invoice             # Create invoice
+lightning-cli --network=regtest pay                 # Pay invoice
+lightning-cli --network=regtest listinvoices        # List invoices
+lightning-cli --network=regtest listpays            # List payments
 ```
 
 ---
@@ -581,8 +566,8 @@ Understanding where blockchain data lives is crucial for managing Bitcoin nodes.
 **Inside Container:**
 ```
 /var/lib/bitcoind/              # Bitcoin data directory
-├── testnet3/                   # Testnet-specific data
-│   ├── blocks/                 # Block data (~45GB for testnet)
+├── regtest/                    # Regtest-specific data
+│   ├── blocks/                 # Block data (tiny - only blocks you generate)
 │   ├── chainstate/             # UTXO set (current state)
 │   ├── indexes/                # txindex if enabled
 │   └── debug.log               # Bitcoin debug logs
@@ -603,11 +588,11 @@ From inside the container:
 # Check Bitcoin data directory size
 du -sh /var/lib/bitcoind/
 
-# Expected during sync: 5GB -> 10GB -> 20GB -> 45GB (full testnet)
+# In regtest: starts tiny (<1MB), grows only as you generate blocks
 
 # Check specific subdirectories
-du -sh /var/lib/bitcoind/testnet3/blocks/
-du -sh /var/lib/bitcoind/testnet3/chainstate/
+du -sh /var/lib/bitcoind/regtest/blocks/
+du -sh /var/lib/bitcoind/regtest/chainstate/
 ```
 
 From the host:
@@ -627,7 +612,7 @@ Core Lightning data is stored separately:
 **Inside Container:**
 ```
 /var/lib/clightning/             # Lightning data directory
-├── testnet/                     # Testnet-specific data
+├── regtest/                     # Regtest-specific data
 │   ├── lightningd.sqlite3       # Lightning database
 │   ├── hsm_secret               # Node identity (KEEP SECRET!)
 │   └── bitcoin/                 # Bitcoin backend integration
@@ -643,20 +628,20 @@ Core Lightning data is stored separately:
 **Container stopped:**
 ```bash
 sudo ./manage-containers.sh stop btc1
-# Blockchain data remains in /var/lib/nixos-containers/btc1/
+# Data remains in /var/lib/nixos-containers/btc1/
 ```
 
 **Container started again:**
 ```bash
 sudo ./manage-containers.sh start btc1
-# bitcoind continues from where it left off (no re-sync needed)
+# bitcoind and clightning continue from where they left off
 ```
 
 **Container destroyed:**
 ```bash
 sudo ./manage-containers.sh destroy btc1
-# ALL DATA DELETED including blockchain sync!
-# You'll need to re-sync if you create a new container
+# ALL DATA DELETED including generated blocks and channels!
+# You'll start fresh if you create a new container
 ```
 
 ### Monitoring Logs
@@ -680,10 +665,10 @@ Verify paths from inside container:
 
 ```bash
 # Bitcoin files
-ls -lh /var/lib/bitcoind/testnet3/
+ls -lh /var/lib/bitcoind/regtest/
 
 # Lightning files
-ls -lh /var/lib/clightning/testnet/
+ls -lh /var/lib/clightning/regtest/
 
 # Check Bitcoin config
 cat /etc/bitcoin/bitcoin.conf
@@ -770,10 +755,10 @@ sudo ./manage-containers.sh shell btc1
 
 # Get btc2's IP first (from another terminal or remember from above)
 # Then add btc2 as a peer:
-bitcoin-cli -testnet addnode "$BTC2_IP:18333" "add"
+bitcoin-cli -regtest addnode "$BTC2_IP:18444" "add"
 
 # Verify connection
-bitcoin-cli -testnet getpeerinfo | jq '.[] | select(.addr | contains("10.233.0"))'
+bitcoin-cli -regtest getpeerinfo | jq '.[] | select(.addr | contains("10.233.0"))'
 
 # Shows btc2 in peer list!
 ```
@@ -784,7 +769,7 @@ bitcoin-cli -testnet getpeerinfo | jq '.[] | select(.addr | contains("10.233.0")
 # Check sync status of all nodes
 for container in btc1 btc2 btc3; do
   echo "=== $container ==="
-  sudo ./manage-containers.sh run $container -- bitcoin-cli -testnet getblockchaininfo | jq '{blocks, progress: .verificationprogress}'
+  sudo ./manage-containers.sh run $container -- bitcoin-cli -regtest getblockchaininfo | jq '{blocks, progress: .verificationprogress}'
 done
 
 # Stop all Bitcoin containers
@@ -811,20 +796,20 @@ Once btc1 and btc2 are synced and funded:
 ```bash
 # In btc1: Get btc1's Lightning node ID
 sudo ./manage-containers.sh shell btc1
-BTC1_ID=$(lightning-cli --testnet getinfo | jq -r '.id')
+BTC1_ID=$(lightning-cli --network=regtest getinfo | jq -r '.id')
 echo $BTC1_ID
 exit
 
 # In btc2: Connect to btc1 and open channel
 sudo ./manage-containers.sh shell btc2
 BTC1_IP=$(sudo ./manage-containers.sh ip btc1)
-lightning-cli --testnet connect $BTC1_ID@$BTC1_IP:9735
+lightning-cli --network=regtest connect $BTC1_ID@$BTC1_IP:9735
 
 # Open a channel (requires btc2 to have funds)
-# lightning-cli --testnet fundchannel $BTC1_ID 1000000  # 0.01 tBTC in satoshis
+# lightning-cli --network=regtest fundchannel $BTC1_ID 1000000  # 0.01 tBTC in satoshis
 
 # Check channel status
-lightning-cli --testnet listchannels
+lightning-cli --network=regtest listchannels
 ```
 
 This creates a payment channel between your two nodes!
@@ -839,10 +824,10 @@ This creates a payment channel between your two nodes!
 
 **Diagnosis:**
 ```bash
-# Check if container has IP
+# Check that container has IP
 sudo ./manage-containers.sh run btc1 -- ip addr show eth0
 
-# Check if bridge exists
+# Check that bridge exists
 ip addr show br-containers
 ```
 
@@ -887,18 +872,18 @@ sudo ./manage-containers.sh create btc1
 **Diagnosis:**
 ```bash
 # Check number of peers
-bitcoin-cli -testnet getnetworkinfo | jq '.connections'
+bitcoin-cli -regtest getnetworkinfo | jq '.connections'
 
 # Should have 8-10 peers minimum
 ```
 
 **Solution:**
 ```bash
-# Add more peers manually (find testnet peers online)
-bitcoin-cli -testnet addnode "testnet-seed.bitcoin.example.com" "add"
+# In regtest, there are no external peers
+# Only connect to other local containers
 
 # Check progress
-bitcoin-cli -testnet getblockchaininfo | jq '.verificationprogress'
+bitcoin-cli -regtest getblockchaininfo | jq '.verificationprogress'
 ```
 
 ### bitcoin-cli Returns "Connection Refused"
@@ -907,11 +892,11 @@ bitcoin-cli -testnet getblockchaininfo | jq '.verificationprogress'
 
 **Diagnosis:**
 ```bash
-# Check if bitcoind is running
+# Check that bitcoind is running
 systemctl status bitcoind
 
-# Check if RPC is listening
-ss -tlnp | grep 18332
+# Check that RPC is listening
+ss -tlnp | grep 18443
 ```
 
 **Solution:**
@@ -920,7 +905,7 @@ ss -tlnp | grep 18332
 systemctl start bitcoind
 
 # Wait a moment, then retry
-bitcoin-cli -testnet getblockchaininfo
+bitcoin-cli -regtest getblockchaininfo
 ```
 
 ### Lightning Won't Start
@@ -938,7 +923,7 @@ journalctl -u clightning.service -n 50
 **Solution:**
 ```bash
 # Verify Bitcoin is synced
-bitcoin-cli -testnet getblockchaininfo | jq '.initialblockdownload'
+bitcoin-cli -regtest getblockchaininfo | jq '.initialblockdownload'
 
 # Must be: false
 
@@ -986,7 +971,7 @@ Congratulations! You've gained practical experience with:
 
 ### Bitcoin Concepts
 
-- **Testnet vs Mainnet**: Why testnet is essential for learning and development
+- **Regtest vs Mainnet**: Why regtest is perfect for learning and development
 - **Blockchain Sync**: The initial block download process and how to monitor it
 - **RPC Interface**: How bitcoin-cli communicates with bitcoind
 - **Lightning Network**: How Lightning builds on Bitcoin for fast, cheap payments
@@ -1000,21 +985,23 @@ Congratulations! You've gained practical experience with:
 
 **Explore Bitcoin Transactions:**
 ```bash
-# Get testnet coins from faucet
-ADDR=$(bitcoin-cli -testnet getnewaddress)
-echo $ADDR
-# Visit: https://testnet-faucet.mempool.co/
+# Generate blocks to fund your wallet
+ADDR=$(bitcoin-cli -regtest getnewaddress)
+bitcoin-cli -regtest generatetoaddress 101 $ADDR
 
-# Watch for incoming transaction
-watch -n 10 'bitcoin-cli -testnet getbalance'
+# Watch balance grow as blocks mature
+watch -n 5 'bitcoin-cli -regtest getbalance'
 
-# Send coins
-bitcoin-cli -testnet sendtoaddress <address> 0.001
+# Send coins to another address
+bitcoin-cli -regtest sendtoaddress <address> 0.001
+
+# Mine a block to confirm the transaction
+bitcoin-cli -regtest generatetoaddress 1 $ADDR
 ```
 
 **Set Up a Private Bitcoin Network:**
 
-Create multiple nodes and connect them in a private network (regtest mode instead of testnet).
+Create multiple regtest nodes and connect them in a private local network.
 
 **Integrate with Applications:**
 
@@ -1028,6 +1015,144 @@ Create multiple nodes and connect them in a private network (regtest mode instea
 - Send payments over Lightning
 - Explore routing and multi-hop payments
 
+### Automated Testing
+
+This workshop includes an automated test suite (`test.sh`) that validates all configurations and commands using **actual NixOS containers** - the same infrastructure you use in the workshop!
+
+**Why use automated tests?**
+
+- **Validation**: Confirm the workshop configuration works before running manually
+- **Regression testing**: Catch breaking changes when updating dependencies
+- **Learning tool**: See all workshop commands executed automatically
+- **Authentic**: Uses real containers via `manage-containers.sh`, not VMs
+- **Fast**: Containers start in seconds, tests run quickly
+- **Documentation**: Tests serve as executable examples
+
+**Test coverage:**
+
+The `test.sh` script validates all key workshop scenarios:
+
+✅ Bitcoin Core starts in regtest mode
+✅ Initial blockchain state (0 blocks)
+✅ Block generation (101 blocks to reach coinbase maturity)
+✅ Wallet balance after mining
+✅ Core Lightning service starts and syncs
+✅ Lightning wallet operations (newaddr, listfunds)
+✅ Bitcoin transactions with fallbackfee enabled
+✅ Multi-node Bitcoin peer connections
+✅ Multi-node Lightning peer connections
+
+**Running the tests:**
+
+```bash
+# Run all tests (containers auto-cleanup after)
+cd /path/to/mybonk-wiki/workshop-9
+sudo ./test.sh
+
+# Expected output:
+# ========================================
+# Automated Test Suite
+# Using: Actual NixOS Containers
+# ========================================
+#
+# Test 1: Verify directory
+# ✅ All required files present
+#
+# Test 2: Create first Bitcoin container (tbtc1)
+# ✅ Container tbtc1 created successfully
+#
+# Test 3: Verify bitcoind service is running
+# ✅ bitcoind.service is running
+# [... tests continue ...]
+#
+# ========================================
+# 🎉 All Tests Passed!
+# ========================================
+
+# Keep containers after testing (for debugging)
+sudo ./test.sh --keep
+
+# This leaves tbtc1 and tbtc2 running so you can inspect them:
+# sudo ./manage-containers.sh shell tbtc1
+# sudo ./manage-containers.sh list
+```
+
+**What happens during tests:**
+
+1. **Container Creation**: Creates two containers (`tbtc1` and `tbtc2`) using `manage-containers.sh`
+2. **Service Startup**: Waits for bitcoind and clightning to start
+3. **Command Execution**: Runs all workshop commands (block generation, transactions, peer connections)
+4. **Validation**: Verifies expected outputs (block counts, balances, network connections)
+5. **Multi-node Testing**: Connects Bitcoin and Lightning nodes as peers
+6. **Cleanup**: Destroys test containers (unless `--keep` flag is used)
+
+**Understanding the test output:**
+
+Each test displays:
+- **Blue text**: Test number and description
+- **Green ✅**: Successful test with details
+- **Red ❌**: Failed test with error information
+- **Yellow ℹ️**: Informational messages
+
+Example:
+```
+Test 5: Generate 101 blocks (coinbase maturity)
+ℹ️  Generated address: bcrt1qxy7z8k9...
+✅ Generated 101 blocks
+
+Test 6: Verify blockchain updated
+✅ Block height: 101
+
+Test 7: Check wallet balance after mining
+✅ Wallet balance: 50.0 BTC
+```
+
+**When to run tests:**
+
+- **Before starting the workshop**: Verify your configuration is correct
+- **After modifying configuration.nix**: Ensure changes don't break functionality
+- **Before committing changes**: Validate workshop still works
+- **After system updates**: Ensure NixOS/nix-bitcoin updates don't break the workshop
+
+**Debugging failed tests:**
+
+If a test fails:
+
+1. **Run with --keep flag** to inspect containers:
+   ```bash
+   sudo ./test.sh --keep
+   ```
+
+2. **Access the test container**:
+   ```bash
+   sudo ./manage-containers.sh shell tbtc1
+   ```
+
+3. **Check service logs**:
+   ```bash
+   sudo ./manage-containers.sh run tbtc1 -- journalctl -u bitcoind.service -n 50
+   sudo ./manage-containers.sh run tbtc1 -- journalctl -u clightning.service -n 50
+   ```
+
+4. **Manually clean up** when done:
+   ```bash
+   sudo ./manage-containers.sh destroy tbtc1
+   sudo ./manage-containers.sh destroy tbtc2
+   ```
+
+**How it works:**
+
+The test script:
+- Uses bash with strict error checking (`set -e`, `set -u`)
+- Creates actual containers using the workshop's `manage-containers.sh` script
+- Runs commands using `./manage-containers.sh run <container> -- <command>`
+- Parses outputs using `grep`, `jq`, and other standard tools
+- Tracks passed/failed tests with counters
+- Returns exit code 0 on success, number of failures on error (for CI/CD)
+- Automatically cleans up test containers on exit
+
+This approach tests the **exact same infrastructure** students use in the workshop!
+
 ### Additional Resources
 
 **nix-bitcoin:**
@@ -1038,7 +1163,7 @@ Create multiple nodes and connect them in a private network (regtest mode instea
 **Bitcoin:**
 - [Bitcoin Core Documentation](https://bitcoin.org/en/bitcoin-core/)
 - [Bitcoin Developer Guide](https://developer.bitcoin.org/)
-- [Testnet Faucets](https://testnet-faucet.mempool.co/)
+- [Bitcoin Regtest Guide](https://developer.bitcoin.org/examples/testing.html)
 
 **Lightning:**
 - [Core Lightning Documentation](https://docs.corelightning.org/)
@@ -1072,9 +1197,9 @@ You now have the skills to experiment with Bitcoin and Lightning in a safe, repr
 
 ## Notes
 
-**Workshop Duration**: 2-4 hours (mostly waiting for blockchain sync)
+**Workshop Duration**: 1-2 hours (no blockchain sync required!)
 **Difficulty**: Intermediate
 **NixOS Version**: 25.05
 **Network Range**: 10.233.0.0/24 (from workshop-8)
-**Bitcoin Network**: Testnet
-**Data Storage**: ~45GB per testnet node (full sync)
+**Bitcoin Network**: Regtest
+**Data Storage**: <1MB per regtest node initially (grows as you generate blocks)

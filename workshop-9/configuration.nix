@@ -37,7 +37,7 @@
 
       # Configure how DHCP information is used
       dhcpV4Config = {
-        UseDNS = true;      # Accept DNS servers from DHCP (enables internet resolution)
+        UseDNS = false;     # Don't use DNS from DHCP - we configure it statically
         UseRoutes = true;   # Accept default gateway from DHCP (enables internet routing)
       };
     };
@@ -56,6 +56,11 @@
   # This breaks container-to-container hostname resolution
   # We want containers to use DNS from DHCP (dnsmasq at 10.233.0.1)
   services.resolved.enable = false;
+
+  # Statically configure DNS in /etc/resolv.conf
+  # Point directly to dnsmasq on the host for container hostname resolution
+  networking.nameservers = [ "10.233.0.1" ];
+  networking.search = [ "containers.local" ];
 
   # Lab environment: Disable firewall for maximum connectivity
   # NOTE: In production, configure firewall rules appropriately
@@ -132,39 +137,38 @@
   # nix-bitcoin provides secure, pre-configured Bitcoin and Lightning services
   # Documentation: https://github.com/fort-nix/nix-bitcoin
 
-  # TESTNET ONLY: This configuration runs on Bitcoin testnet
-  # Testnet is a separate blockchain used for testing without risking real bitcoins
-  # To switch to mainnet, change 'testnet = true' to 'testnet = false' (NOT RECOMMENDED for labs)
+  # REGTEST MODE: This configuration runs Bitcoin in regtest mode
+  # Regtest is a local testing environment for development and learning
+  # Perfect for workshops - no blockchain download, instant block generation
 
   nix-bitcoin.generateSecrets = true;
+
   # Enable bitcoind service
   # Bitcoin Core is the reference implementation of the Bitcoin protocol
   services.bitcoind = {
     enable = true;
 
-    # Additional bitcoind configuration options
-    # These are passed directly to bitcoin.conf
-    extraConfig = ''
-      # TESTNET MODE: Run on testnet instead of mainnet
-      # Why testnet?
-      #   - No real money at risk
-      #   - Faster blockchain sync (smaller chain)
-      #   - Free testnet coins available from faucets
-      #   - Same functionality as mainnet
-      testnet=1
+    # REGTEST MODE: Local testing environment
+    # nix-bitcoin officially supports regtest (not testnet)
+    # Why regtest for learning?
+    #   - No blockchain download (starts empty)
+    #   - Instant block generation (mine blocks on demand)
+    #   - Works completely offline
+    #   - Full control over the network
+    #   - Perfect for development and testing
+    #   - Default RPC port: 18443, P2P port: 18444
+    regtest = true;
 
+    # Additional bitcoind configuration options
+    extraConfig = ''
       # Enable transaction index (allows querying any transaction)
       # Required for Lightning Network and some applications
       txindex=1
 
-      # Maintain full mempool (memory pool of unconfirmed transactions)
-      # Useful for fee estimation and transaction monitoring
-      mempoolfullrbf=1
-
-      # Prune mode (optional): Reduce disk usage by discarding old blocks
-      # Uncomment to enable pruning (keeps only last ~5GB of blocks)
-      # NOTE: Pruning disables txindex, so these are mutually exclusive
-      # prune=5000
+      # Fallback fee rate (required for regtest transactions)
+      # In regtest, fee estimation doesn't work (no mempool activity)
+      # This sets a default fee of 0.00001 BTC/kB
+      fallbackfee=0.00001
     '';
   };
 
@@ -175,7 +179,7 @@
     enable = true;
 
     # Core Lightning automatically connects to the local bitcoind
-    # and follows its network configuration (testnet in our case)
+    # and follows its network configuration (regtest in our case)
     # nix-bitcoin handles the integration between bitcoind and clightning
 
     # Additional clightning configuration options
@@ -197,16 +201,17 @@
   # IMPORTANT NOTES
   # ============================================================================
 
-  # TESTNET vs MAINNET:
-  #   - TESTNET (testnet = true):
-  #     * Safe for experimentation and learning
-  #     * Uses separate blockchain (smaller, faster to sync)
-  #     * No real financial value
-  #     * Get free testnet coins from faucets
-  #     * Default RPC port: 18332
-  #     * Default P2P port: 18333
+  # REGTEST vs MAINNET:
+  #   - REGTEST (regtest = true):
+  #     * Perfect for learning and development
+  #     * No blockchain download required (starts empty)
+  #     * Instant block generation (mine blocks on demand)
+  #     * Works completely offline
+  #     * Full control over the network
+  #     * Default RPC port: 18443
+  #     * Default P2P port: 18444
   #
-  #   - MAINNET (testnet = false):
+  #   - MAINNET (default):
   #     * Real Bitcoin with real financial value
   #     * Full blockchain sync required (~500GB+)
   #     * Requires proper security hardening
@@ -214,15 +219,11 @@
   #     * Default P2P port: 8333
   #     * NOT RECOMMENDED for learning environments
 
-  # BLOCKCHAIN SYNC WARNING:
-  #   - Even testnet requires downloading the blockchain
-  #   - Testnet blockchain is ~30-50GB (as of 2025)
-  #   - Initial sync can take several hours depending on:
-  #     * Internet connection speed
-  #     * CPU performance
-  #     * Disk I/O speed
-  #   - You can check sync progress with:
-  #     bitcoin-cli -testnet getblockchaininfo
+  # NO BLOCKCHAIN SYNC NEEDED:
+  #   - Regtest starts with an empty blockchain
+  #   - You generate blocks instantly with:
+  #     bitcoin-cli -regtest generatetoaddress 101 <address>
+  #   - Perfect for workshops and testing!
 
   # DATA PERSISTENCE:
   #   - Blockchain data is stored in the container's filesystem
@@ -232,20 +233,20 @@
   #   - Data is deleted when container is destroyed
 
   # ACCESSING BITCOIN CLI:
-  #   - As root: bitcoin-cli -testnet <command>
-  #   - As operator: bitcoin-cli -testnet <command>
+  #   - As root: bitcoin-cli -regtest <command>
+  #   - As operator: bitcoin-cli -regtest <command>
   #   - Examples:
-  #     bitcoin-cli -testnet getblockchaininfo
-  #     bitcoin-cli -testnet getnetworkinfo
-  #     bitcoin-cli -testnet getnewaddress
+  #     bitcoin-cli -regtest getblockchaininfo
+  #     bitcoin-cli -regtest getnewaddress
+  #     bitcoin-cli -regtest generatetoaddress 101 <address>
 
   # ACCESSING LIGHTNING CLI:
-  #   - As root: lightning-cli --testnet <command>
-  #   - As operator: lightning-cli --testnet <command>
+  #   - As root: lightning-cli --network=regtest <command>
+  #   - As operator: lightning-cli --network=regtest <command>
   #   - Examples:
-  #     lightning-cli --testnet getinfo
-  #     lightning-cli --testnet listfunds
-  #     lightning-cli --testnet newaddr
+  #     lightning-cli --network=regtest getinfo
+  #     lightning-cli --network=regtest listfunds
+  #     lightning-cli --network=regtest newaddr
 
   # ============================================================================
   # SYSTEM VERSION

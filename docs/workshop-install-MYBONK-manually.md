@@ -8,8 +8,8 @@
 
 <p align="center">
 
-> [!WARNING]  
-> The following instructions are  **DEPREDICATED**, the standard and preferred way of installing MYBONK now is the automated script `mybonk-erase-and-install.sh` from MYBONK repository (see workshop [INSTALL MYBONK IN LESS THAN 10 MINS](https://github.com/mybonk/mybonk/blob/main/README.md).
+> [!WARNING]
+> The following instructions are  **DEPRECATED**, the standard and preferred way of installing MYBONK now is the automated script `mybonk-erase-and-install.sh` from MYBONK repository (see workshop [INSTALL MYBONK IN LESS THAN 10 MINS](https://github.com/mybonk/mybonk/blob/main/README.md).
 > Obviously we don't want to delete this page as it contains valuable information regarding the fuddling around the development of what is today the integrated and automated scripts `mybonk-erase-and-install.sh` and `mybonk-rebuild.sh`.
 </p>
 
@@ -163,7 +163,7 @@ Do your home work, this topic is now closed.
 
 ### 1.3 ssh and auto login
   
-  The configuration is built on the orchestrator then pushed onto of the MY₿ONK console(s) over ssh. 
+  The configuration is built on the orchestrator then pushed onto the MY₿ONK console(s) over ssh. 
   
   As addressed in section "[Remote access](#remote-access)" in "0. Before you start" you need to understand ssh and public-private key pair relay well.
 
@@ -633,7 +633,7 @@ The deployment mechanism we use to push MYBONK stack from the orchestrator to th
 
   What takes most time during a full node installation is copying the complete blockchain. This is done automatically by bitcoind when the service starts and realizes its data directory (`services.bitcoind.dataDir = "/data/bitcoind"` by default in a MY₿ONK console) is empty or partial so it starts downloading what it needs from another random bitcoin full node on the Internet. 
 
-  Bitcoind taking care of downloading the complete blockchain (nearly 500GB at the time of writting) from the Internet for you is great but can take days and weeks depending on your and the peer peer Internet connectivity, the maximum ateinable transfer rate being at most the worst of either.
+  Bitcoind taking care of downloading the complete blockchain (nearly 500GB at the time of writting) from the Internet for you is great but can take days and weeks depending on your and the peer peer Internet connectivity, the maximum attainable transfer rate being at most the worst of either.
 
   Copying the bitcoin blockchain from a local machine would take a fraction of this time.
   
@@ -678,7 +678,7 @@ The deployment mechanism we use to push MYBONK stack from the orchestrator to th
 
     The disks `sda` and `sdb` are internal to MY₿ONK console. Your external disk is `sdc` (depending on which USB port it has been plugged it could also be `sdd`).
 
-  - Create a temporary directory `/mnt/unmountme` and mount the disk `ssd` on it (most common filesystem types are automatically detected):
+  - Create a temporary directory `/mnt/unmountme` and mount the disk `sdc` on it (most common filesystem types are automatically detected):
 
     ```bash
     # mkdir /unmountme
@@ -797,7 +797,7 @@ Particularily interesting on this page is the "Zombie Channel Recovery Matcher" 
 
   **Federation**, *noun*, late Latin *foederatio(n- )*: "*An encompassing entity formed by uniting smaller or more localized entities.*"
   
-  Federation is a broad term meaning different thinks in different environments.
+  Federation is a broad term meaning different things in different environments.
   In the scope of MYBONK it my refer to a MYBONK federation, Fedimint federation and a Liquid federation.
   
   

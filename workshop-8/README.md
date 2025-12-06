@@ -1,3 +1,9 @@
+---
+layout: default
+title: Workshop 8
+nav_order: 8
+---
+
 # NixOS Container Management from the Command Line
 
 ## Introduction

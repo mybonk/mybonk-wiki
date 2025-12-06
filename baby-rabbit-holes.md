@@ -1,3 +1,9 @@
+---
+layout: default
+title: Baby Rabbit Holes
+nav_order: 10
+---
+
 # Baby rabbit holes
 
 Ordered list of "basic" skills that need to be acquired to enjoy the ride.
@@ -8,8 +14,8 @@ Go through this slowly. It is tempting to speed-read through a book, call it don
 
 To get the most out of this, take your time understanding each section. 
 
-For every 5 minutes you spend reading you should spend 15 minutes tinkering around with what you just read. 
-Play around, copy/past, break things, have fun.
+For every 5 minutes you spend reading you should spend 15 minutes tinkering around with what you just read.
+Play around, copy/paste, break things, have fun.
 
 A good *general* cheat sheet page:  [https://github.com/ruanbekker/cheatsheets#readme](https://github.com/ruanbekker/cheatsheets#readme)
 
@@ -26,7 +32,7 @@ A *terminal* is a program that opens a graphical window and lets you interact wi
 
 It is common that the keyboard layout the system is configured with is different from the keyboard you actually use (e.g. system keyboard configured US layout but you use a keyboard with a French layout), read this article "https://www.baeldung.com/linux/console-change-keyboard-layout" to fix this.
 
-A *CLI* (command-line interface) is what deal with when you interact with the shell. 
+A *CLI* (command-line interface) is what you deal with when you interact with the shell. 
 
 ### [RTFM!](https://en.wiktionary.org/wiki/RTFM)
 The most important command is `man` which stands for "manual". It explains what the command is and how to use it. Don't spend hours on youtube, read the manuals. e.g.
@@ -81,7 +87,7 @@ The most important command is `man` which stands for "manual". It explains what 
     - Recursive path expansion: e.x. “/u/lo/b” expands to “/usr/local/bin”.
     - Spelling correction and approximate completion: Minor typo mistakes in file or directory names are fixed automatically.
     - Plugin and theme support: This is the greatest feature of Zsh. Use [Oh My Zsh](https://github.com/ohmyzsh/ohmyzsh#readme) manage these effortlessly (list of plugins [HERE](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins)).
-  - [fzf (Fuzzy Finde](https://www.freecodecamp.org/news/fzf-a-command-line-fuzzy-finder-missing-demo-a7de312403ff/): A tool that can change your tech life into “before” and “after” parts.
+  - [fzf (Fuzzy Finder)](https://www.freecodecamp.org/news/fzf-a-command-line-fuzzy-finder-missing-demo-a7de312403ff/): A tool that can change your tech life into "before" and "after" parts.
 
 - Environment variables in Linux-based systems:
   
@@ -110,7 +116,7 @@ The most important command is `man` which stands for "manual". It explains what 
     - `history -d 1234`: Remove record number 1234.
     - `history -a` and `history -r`: Append or read entries to/from the history list. Very convenient to move commands history across from one of your terminals to another. You could automate this by defining the environment variable `PROMPT_COMMAND` (the `$PROMPT_COMMAND` is run before a prompt is shown on the terminal) e.g. `PROMPT_COMMAND="history -a; history -r"`.
     
-    > [!TIP]: [These options don't work in Zsh?](https://apple.stackexchange.com/questions/430640/history-d-does-not-remove-history-entry-but-shows-time-of-history-entry): Zsc relies on the command `fc` (e.g. `fc -W` and `fc -R` to write or read the history file). <[workaround](https://stackoverflow.com/questions/7243983/how-to-remove-an-entry-from-the-history-in-zsh/63494771#63494771)>
+    > [!TIP]: [These options don't work in Zsh?](https://apple.stackexchange.com/questions/430640/history-d-does-not-remove-history-entry-but-shows-time-of-history-entry): Zsh relies on the command `fc` (e.g. `fc -W` and `fc -R` to write or read the history file). <[workaround](https://stackoverflow.com/questions/7243983/how-to-remove-an-entry-from-the-history-in-zsh/63494771#63494771)>
     
     - Don't forget to explore 'i-search' and 'reverse-i-search' using ``Ctrl`` + ``s`` and ``Ctrl`` + ``r`` respectively; Read this [if 'i-search' using ``Ctrl`` + ``s`` does not work](https://stackoverflow.com/questions/791765/unable-to-forward-search-bash-history-similarly-as-with-ctrl-r).
   - `alias`
@@ -268,7 +274,7 @@ I cloned a git repo to my local machine, played around with it a bit and found i
 
 Now I would like to keep the result as I modified it in my own github space. How can I proceed?
 
-I suppose the regular way would have been to fork the repo on the first place to my space, clone it, modify and then push it to GitHub, but now I cloned the original's author repo, how can I commit that as a new thing in my personnal?
+I suppose the regular way would have been to fork the repo on the first place to my space, clone it, modify and then push it to GitHub, but now I cloned the original's author repo, how can I commit that as a new thing in my personal?
 
 **ANSWER:**
 
@@ -306,7 +312,7 @@ You don't really have to rename the origin to upstream - the remote names can be
   Using one of the following might saves you time by simplifying your interactions with Git.
   - [Lazygit](https://github.com/kdheepak/lazygit.nvim/): Nice command-line based Git front-end.
     ![Lazygit screenshot](docs/img/various/Lazygit_interactive_rebase.gif)
-  - [Source Tree](https://www.sourcetreeapp.com/): Graphical GUI desktop client. Here is are [good simple tutorials](https://confluence.atlassian.com/get-started-with-sourcetree) to get started.
+  - [Source Tree](https://www.sourcetreeapp.com/): Graphical GUI desktop client. Here are [good simple tutorials](https://confluence.atlassian.com/get-started-with-sourcetree) to get started.
     ![Source Tree screenshot](docs/img/various/source_tree_screenshot.png)
   - [Ungit](https://github.com/FredrikNoren/ungit/blob/master/README.md): "The easiest way to use git. On any platform. Anywhere."
     ![Ungit screenshot](docs/img/various/ungit_screenshot.gif)
@@ -327,7 +333,7 @@ Authenticate with your GitHub account:
 
 - `vi` (cheat-sheet [HERE](https://www.thegeekdiary.com/basic-vi-commands-cheat-sheet/))
   - `$ vi +132 myfile`: Open myfile on line 132
-  - `:%d`: Delete all lines (`%` meaning all lines and `d`delete).
+  - `:%d`: Delete all lines (`%` meaning all lines and `d` delete).
 - `sed` ([https://www.gnu.org/software/sed/manual/sed.html](https://www.gnu.org/software/sed/manual/sed.html)): "stream editor" for editing streams of text too large to edit as a single file, or that might be generated on the fly as part of a larger data processing step: Substitution, replacing one block of text with another.
 - `awk` ([https://github.com/onetrueawk/awk/blob/master/README.md](https://github.com/onetrueawk/awk/blob/master/README.md)): Programming language. Unlike many conventional languages, awk is "data driven": you specify what kind of data you are interested in and the operations to be performed when that data is found.
 - [jq](https://stedolan.github.io/jq/): Lightweight and flexible command-line JSON parser/processor. [reference](https://stedolan.github.io/jq/tutorial/)
@@ -527,6 +533,10 @@ scp somefile user@machine_A:~/
     $ rsync -avz --partial --inplace --append --stats --exclude '*/*.lock' /data/bitcoin/{blocks,chainstate,indexes} bitcoin@192.168.0.127:/data/bitcoin
     ```
 ## Network
+
+  ### Common tools
+  - ping: send ICMP ECHO_REQUEST to network hosts
+  - ss: Display various sockets information. Similar to netstat. e.x. `$ ss -tlnp | grep 8080`
   ### Speed test
   
   - [https://www.speedtest.net](https://www.speedtest.net)
@@ -827,7 +837,7 @@ For instance you could run `getnetworkinfo` using the following cURL:
 ```
 curl -u public:2S8PWBZ71wMXdrsAxL21 -d '{"jsonrpc": "1.0", "id": "curltest", "method": "getnetworkinfo", "params": [] }' -H 'content-type: text/plain;' http://mybonk-jay:8332/
 ```
-Most noticably you need to use the option `-u` (or `--user`) to pass valid credentials (here username `public` and password `2S8PWBZ71wMXdrsAxL21`) otherwize you will get an `401 Unauthorized` error. Username is either `public` or `priviledged`, their password in `/etc/nix-bitcoin-secrets/bitcoin-rpcpassword-{public|priviledged}`.
+Most noticably you need to use the option `-u` (or `--user`) to pass valid credentials (here username `public` and password `2S8PWBZ71wMXdrsAxL21`) otherwise you will get an `401 Unauthorized` error. Username is either `public` or `priviledged`, their password in `/etc/nix-bitcoin-secrets/bitcoin-rpcpassword-{public|priviledged}`.
 
 Also make sure that the method you call (`getnetworkinfo`, `getpeerinfo`, `listwallets`...) is defined in the RPC whitelist.
 
@@ -842,13 +852,13 @@ $ echo -n "username:password" | base64 -w0
 cHVibGljOjJTOFBXQlo3MXdNWGRyc0F4TDIx
 ```
 
-To test this end to end, you can remove `-u username:password` and substitute with `-H Authorization: Basic cHVibGljOjJTOFBXQlo3MXdNWGRyc0F4TDIx`, the authenticate will work too:
+To test this end to end, you can remove `-u username:password` and substitute with `-H Authorization: Basic cHVibGljOjJTOFBXQlo3MXdNWGRyc0F4TDIx`, the authentication will work too:
 
 ```bash
 $ curl -v -d '{"rpc": "1.0", "id": "curltest", "method": "getnetworkinfo", "params": [] }' -H 'content-type: text/plain;' -H 'Authorization: Basic cHVibGljOjJTOFBXQlo3MXdNWGRyc0F4TDIx' http://mybonk-jay:8332/
 ```
 
-In conculsion, you could even run these RPC commands without using cURL: You would just need to base64 encode the `username:password` combination and set the HTTP `Authorization` header with the type as `Basic` along with the base64 encoded string.
+In conclusion, you could even run these RPC commands without using cURL: You would just need to base64 encode the `username:password` combination and set the HTTP `Authorization` header with the type as `Basic` along with the base64 encoded string.
 
 ## Common clightning-related commands
 

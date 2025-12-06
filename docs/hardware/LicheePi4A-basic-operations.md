@@ -192,14 +192,14 @@
 
 
 - Benchmarking
-    - Install ```curl```, ```util-linux```, ```glaces``` and ```htop```
+    - Install ```curl```, ```util-linux```, ```glances``` and ```htop```
         ````
         $ sudo apt install curl glances htop
 
         ````
-    - You need ```make```installed to build Byte UNIX Bench tool next: 
+    - You need ```make``` installed to build Byte UNIX Bench tool next: 
         ````
-        $ sudo install build-essential
+        $ sudo apt install build-essential
         ````
     - Clone [Byte UNIX Bench](https://github.com/kdlucas/byte-unixbench/tree/master)
         ````
@@ -210,7 +210,7 @@
         $ cd byte-unixbench/UnixBench
         $ ./Run
         ````
-    - Now take some time to read ```byte-unixbench/UnixBench/README``` and ```byte-unixbench/UnixBench/USAGE``` the explains what tests and options are possible and how to run them. 
+    - Now take some time to read ```byte-unixbench/UnixBench/README``` and ```byte-unixbench/UnixBench/USAGE``` that explains what tests and options are possible and how to run them. 
 
 
 

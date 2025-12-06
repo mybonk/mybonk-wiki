@@ -1,3 +1,9 @@
+---
+layout: default
+title: Workshop 1
+nav_order: 2
+---
+
 # Run NixOS in a VM on Your Machine in 5 Minutes
 
 ## Introduction
