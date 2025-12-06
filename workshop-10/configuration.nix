@@ -24,7 +24,7 @@
 
   # Network configuration depends on whether this is a container or VM
   # For containers: systemd-networkd with DHCP (see workshop-9)
-  # For VMs: test framework handles networking automatically
+  # For VMs: simpler DHCP configuration (test framework handles the rest)
 
   systemd.network = lib.mkIf config.boot.isContainer {
     enable = true;
@@ -39,18 +39,21 @@
     };
   };
 
-  networking = lib.mkIf config.boot.isContainer {
-    useHostResolvConf = lib.mkForce false;
-    useDHCP = lib.mkForce false;
-    nameservers = [ "10.233.0.1" ];
-    search = [ "containers.local" ];
+  # Networking configuration
+  networking = {
+    # Container-specific network settings
+    useHostResolvConf = lib.mkIf config.boot.isContainer (lib.mkForce false);
+    useDHCP = lib.mkIf config.boot.isContainer (lib.mkForce false);
+    nameservers = lib.mkIf config.boot.isContainer [ "10.233.0.1" ];
+    search = lib.mkIf config.boot.isContainer [ "containers.local" ];
+
+    # Lab environment: Disable firewall for maximum connectivity
+    firewall.enable = false;
   };
 
   # Disable systemd-resolved in containers (breaks DNS resolution)
+  # For VMs, let it use default (enabled)
   services.resolved.enable = lib.mkIf config.boot.isContainer false;
-
-  # Lab environment: Disable firewall for maximum connectivity
-  networking.firewall.enable = false;
 
   # ============================================================================
   # USER CONFIGURATION
@@ -100,10 +103,12 @@
     btop
     git
     jq
+    bitcoin  # Add bitcoin-cli and other bitcoin utilities to PATH
+    asciinema # Used to record videos of workshops' terminals
   ];
 
   # ============================================================================
-  # NIX-BITCOIN CONFIGURATION - MUTINYNET SIGNET
+  # BITCOIN CONFIGURATION - MUTINYNET SIGNET
   # ============================================================================
 
   # MUTINYNET: Custom signet with 30-second blocks
@@ -116,55 +121,73 @@
   # - Requires blockchain sync (but fast! ~30s per block)
   # - Free coins from https://faucet.mutinynet.com/
 
-  nix-bitcoin.generateSecrets = true;
+  # Custom bitcoind systemd service (not using nix-bitcoin)
+  # Bitcoin Inquisition requires special signet configuration
+  # We manage credentials manually in bitcoin.conf
 
-  # Enable bitcoind service with Mutinynet configuration
-  services.bitcoind = {
-    enable = true;
+  # Create bitcoin.conf manually with proper signet configuration
+  environment.etc."bitcoin/bitcoin.conf".text = ''
+    # Signet mode MUST be declared first
+    signet=1
 
-    # SIGNET MODE (not regtest!)
-    # Mutinynet is a custom signet network
-    # For testnet vs regtest comparison, see workshop-9
-    # For Mutinynet details, see workshop-3
+    # ALL signet-specific settings must be in [signet] section for Bitcoin Inquisition
+    [signet]
+    # Mutinynet-specific signet challenge
+    signetchallenge=512102f7561d208dd9ae99bf497273e16f389bdbd6c4742ddb8e6b216e64fa2928ad8f51ae
 
-    # Additional bitcoind configuration for Mutinynet
-    extraConfig = ''
-      # Enable signet mode
-      signet=1
+    # Connect to Mutinynet infrastructure
+    addnode=45.79.52.207:38333
+    dnsseed=0
 
-      # Mutinynet-specific signet challenge
-      # This identifies which signet network to join (Mutinynet)
-      # Required - tells bitcoind to connect to Mutinynet signet
-      signetchallenge=512102f7561d208dd9ae99bf497273e16f389bdbd6c4742ddb8e6b216e64fa2928ad8f51ae
+    # Mutinynet fork features (30-second blocks)
+    signetblocktime=30
 
-      # Connect to Mutinynet infrastructure node
-      # Required for initial peer discovery
-      addnode=45.79.52.207:38333
+    # Enable transaction index
+    txindex=1
 
-      # Disable DNS seeding (use manual addnode instead)
-      dnsseed=0
+    # Fallback fee rate
+    fallbackfee=0.00001
 
-      # 30-second block time
-      # This parameter only works because we're using benthecarman's Mutinynet fork
-      # Standard Bitcoin doesn't have this parameter
-      signetblocktime=30
+    # RPC settings - bind to all interfaces for VM/container access
+    rpcbind=0.0.0.0
+    rpcport=38332
+    rpcallowip=127.0.0.0/8
+    rpcallowip=10.233.0.0/16
+    rpcuser=bitcoin
+    rpcpassword=bitcoin
+  '';
 
-      # Enable transaction index (allows querying any transaction)
-      # Required for Lightning Network and some applications
-      txindex=1
+  # Create custom bitcoind systemd service
+  systemd.services.bitcoind = {
+    description = "Bitcoin daemon (Mutinynet signet)";
+    after = [ "network.target" ];
+    wantedBy = [ "multi-user.target" ];
 
-      # Fallback fee rate (required for signet transactions)
-      # Sets a default fee of 0.00001 BTC/kB
-      fallbackfee=0.00001
-    '';
+    serviceConfig = {
+      Type = "simple";
+      User = "bitcoin";
+      Group = "bitcoin";
+      ExecStart = "${pkgs.bitcoin}/bin/bitcoind -conf=/etc/bitcoin/bitcoin.conf -datadir=/var/lib/bitcoind";
+      Restart = "on-failure";
+      RestartSec = "30s";
+
+      # Security hardening
+      NoNewPrivileges = true;
+      PrivateTmp = true;
+      ProtectSystem = "full";
+      ProtectHome = true;
+    };
   };
 
-  # Enable Core Lightning (CLN) service
-  # Core Lightning automatically connects to local bitcoind
-  # and follows its network configuration (signet in our case)
-  services.clightning = {
-    enable = true;
+  # Create bitcoin user and group
+  users.users.bitcoin = {
+    isSystemUser = true;
+    group = "bitcoin";
+    home = "/var/lib/bitcoind";
+    createHome = true;
   };
+
+  users.groups.bitcoin = {};
 
   # ============================================================================
   # IMPORTANT NOTES

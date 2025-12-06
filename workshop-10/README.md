@@ -1,63 +1,136 @@
-# Workshop 10: VM-Based Automated Testing with Mutinynet
+# Workshop 10: Bitcoin VM + Lightning Container with Mutinynet
 
 ## Overview
 
-This workshop combines concepts from workshop-9 (automated testing) and workshop-3 (Bitcoin fork override) to create **VM-based automated tests** using a **Mutinynet Bitcoin fork**.
+This workshop demonstrates a **two-tier architecture** for Bitcoin and Lightning infrastructure:
+1. **Bitcoin VM** - Runs Bitcoin Inquisition (Mutinynet signet) in a QEMU VM with bridge networking
+2. **Lightning Container** - Runs Core Lightning, connects to Bitcoin VM via RPC
 
-**Key Differences from Workshop-9:**
-- Uses NixOS VM test framework (not containers)
-- Tests run in isolated VMs with `boot.isContainer = false`
-- Uses Mutinynet signet (30-second blocks) instead of regtest
-- Bitcoin Core is overridden with benthecarman's fork
+**Key Learning Points:**
+- Real VM deployment with bridge networking (accessible on host network)
+- Automated VM testing with NixOS test framework (isolated testing)
+- Container-based Lightning deployment with nix-bitcoin
+- VM-to-container RPC communication across bridge network
+- Network architecture with DHCP/DNS/NAT
+- Two testing modes: test.nix (automated VM tests) vs test-container.sh (container integration tests)
 
 **Prerequisites:**
-- [workshop-9](../workshop-9/) - Container-based testing and configuration
-- [workshop-3](../workshop-3/) - Bitcoin fork override with Mutinynet
+- [workshop-9](../workshop-9/) - Container networking and testing
+- [workshop-3](../workshop-3/) - Package overrides
 
 ---
 
-## What's Different
+## 🚀 New Features
 
-### 1. VM Configuration vs Container Configuration
+### ⭐ Daemon Mode (`--daemon` flag)
+Run the Bitcoin VM in the background. VM survives terminal disconnect and Ctrl-C.
 
-The flake.nix provides two configurations:
+```bash
+# Start in background
+sudo ./run-bitcoin-vm.sh --daemon
 
-```nix
-nixosConfigurations = {
-  default = ...       # Container config (boot.isContainer = true)
-  default-vm = ...    # VM config (boot.isContainer = false)
-};
+# Stop cleanly
+sudo ./stop-bitcoin-vm.sh
 ```
 
-**Why this matters:**
-- NixOS tests require `boot.isContainer = false`
-- VMs need full boot configuration (kernel, bootloader, etc.)
-- Containers are lightweight, VMs are isolated
-- Tests use `default-vm` configuration
+**Why use daemon mode?**
+- ✅ VM keeps running after closing terminal
+- ✅ No accidental shutdowns from Ctrl-C
+- ✅ Production-ready deployment
+- ✅ Can manage VM remotely
 
-### 2. Mutinynet Fork Override
+### 💾 Persistent Storage
+Blockchain data automatically saved to disk. No need to re-sync after restarts!
 
-See [workshop-3](../workshop-3/) for detailed explanation.
+**What persists:**
+- ✅ Complete blockchain state (`vm-data/bitcoin-vm.qcow2`)
+- ✅ Wallet data
+- ✅ Mempool
+- ✅ All Bitcoin configuration
 
-**Quick summary:**
-- Uses `fetchFromGitHub` to get benthecarman's Bitcoin fork
-- Overrides Bitcoin package with Mutinynet source
-- Adds 30-second block support via `signetblocktime` parameter
-- Signet configuration requires specific challenge and infrastructure nodes
+**Location:** `workshop-10/vm-data/bitcoin-vm.qcow2` (50GB, auto-created)
 
-### 3. Test Framework: test.nix vs test.sh
+**Survives:**
+- ✅ VM restarts
+- ✅ VM stops (`./stop-bitcoin-vm.sh`)
+- ✅ System reboots
+- ✅ Ctrl-C exits (in foreground mode)
 
-**Workshop-9 approach (test.sh):**
-- Bash script creating actual containers
-- Uses `nixos-container` commands
-- Runs on host system
-- Manual cleanup with `--keep` flag
+---
 
-**Workshop-10 approach (test.nix):**
-- NixOS test framework with VMs
-- Declarative Python test script
-- Isolated VM environment
-- Automatic cleanup
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                         HOST MACHINE                         │
+│                          (NixOS)                             │
+│                                                              │
+│  ┌────────────────────────────┐                             │
+│  │   BITCOIN VM               │                             │
+│  │   (hostname: bitcoin)      │                             │
+│  │                            │                             │
+│  │  Bitcoin Inquisition       │                             │
+│  │  Mutinynet Signet          │                             │
+│  │                            │                             │
+│  │  Ports:                    │                             │
+│  │   - 38332 (RPC) ───────────┼─────────────┐              │
+│  │   - 38333 (P2P)            │             │              │
+│  │                            │             │              │
+│  │  Network: Isolated         │             │              │
+│  │  (NixOS test framework)    │             │              │
+│  │                            │             │              │
+│  │  For: Automated testing    │             │              │
+│  └────────────────────────────┘             │              │
+│                                              │              │
+│                                              │              │
+│                     ┌────────────────────────┼───────────┐  │
+│                     │ LIGHTNING CONTAINER    │           │  │
+│                     │ (hostname: lightning)  ▼           │  │
+│                     │                                    │  │
+│                     │  Core Lightning                    │  │
+│                     │  (nix-bitcoin)                     │  │
+│                     │                                    │  │
+│                     │  Ports:                            │  │
+│                     │   - 9735 (P2P)                     │  │
+│                     │                                    │  │
+│                     │  Network: Bridge                   │  │
+│                     │  (10.233.0.0/16)                   │  │
+│                     │  DHCP/DNS from host                │  │
+│                     │                                    │  │
+│                     │  Connects to:                      │  │
+│                     │  Bitcoin VM RPC ───────────────────┘  │
+│                     │  (bitcoin:38332)                      │
+│                     └────────────────────────────────────┘  │
+│                                                              │
+│  Host provides:                                              │
+│   - DHCP server (10.233.0.1)                                │
+│   - DNS resolution (containers can resolve each other)      │
+│   - NAT for internet access                                 │
+│   - Container bridge network (10.233.0.0/16)                │
+└─────────────────────────────────────────────────────────────┘
+
+Two Operating Modes:
+
+  A. TESTING MODE (test.nix):
+     - Bitcoin VM runs in isolated test framework (no network access)
+     - Used for automated validation only
+     - Command: nix build .#checks.x86_64-linux.bitcoin-lightning-mutinynet
+
+  B. DEPLOYMENT MODE (actual usage):
+     - Bitcoin VM: Built with bridge networking, gets IP on 10.233.0.x
+       * Command: nix build .#packages.x86_64-linux.bitcoin-vm
+       * Runs: sudo ./result/bin/run-bitcoin-vm
+       * Accessible from containers and host
+     - Lightning Container: Connects to Bitcoin VM via RPC
+       * Gets DHCP from host (10.233.0.0/16 network)
+       * Can ping Bitcoin VM, host, and internet
+
+Data Flow (Deployment Mode):
+  1. Bitcoin VM → Gets IP via DHCP from host (10.233.0.1)
+  2. Lightning Container → Gets IP via DHCP from host
+  3. Lightning → Bitcoin: RPC calls to bitcoin:38332
+  4. Both → Host Bridge (br-containers) → Internet via NAT
+```
 
 ---
 
@@ -65,311 +138,843 @@ See [workshop-3](../workshop-3/) for detailed explanation.
 
 ```
 workshop-10/
-├── flake.nix              # Defines default (container) and default-vm (VM) configs
-├── configuration.nix      # Shared config for Bitcoin/Lightning with Mutinynet
-├── test.nix              # VM-based automated tests
-└── README.md             # This file
+├── flake.nix                 # Defines bitcoin VM and lightning container configs
+├── configuration.nix         # Bitcoin VM/container configuration
+├── container-lightning.nix   # Core Lightning container configuration
+├── run-bitcoin-vm.sh         # Wrapper script to run VM with bridge networking
+├── test.nix                  # VM-based automated tests (Bitcoin only)
+├── test-container.sh         # Container-based tests (Lightning + Bitcoin integration)
+└── README.md                 # This file
 ```
 
 ---
 
-## Running the Tests
+## Part 1: Bitcoin VM Testing
 
-### Option 1: Build Test (recommended)
+The Bitcoin VM runs automated tests using NixOS's test framework. This validates the Bitcoin configuration without requiring live network access.
 
-```bash
-nix build .#checks.x86_64-linux.bitcoin-lightning-mutinynet
-```
-
-This builds and runs the test, showing output on success.
-
-### Option 2: Flake Check
+### Running VM Tests
 
 ```bash
+# Run all tests with output
+nix build .#checks.x86_64-linux.bitcoin-lightning-mutinynet -L
+
+# Or just check (silent if passing)
 nix flake check
 ```
 
-Runs all checks defined in the flake. Quieter output.
+### What the Tests Validate
 
-### Option 3: Interactive Test
+- ✅ Bitcoin Inquisition binary (Mutinynet fork) works
+- ✅ Signet mode configuration is correct
+- ✅ RPC interface responds
+- ✅ Wallet operations function
+- ✅ Multi-node P2P connectivity
+- ✅ 30-second block time (if connected to Mutinynet)
 
-```bash
-nix build .#checks.x86_64-linux.bitcoin-lightning-mutinynet.driverInteractive
-./result/bin/nixos-test-driver
-```
+### Test Output
 
-Opens an interactive test environment where you can:
-- Run tests manually
-- Inspect VM state
-- Debug failures
-- Explore the environment
-
----
-
-## What the Tests Validate
-
-The test suite validates the same scenarios as workshop-9:
-
-1. **System Setup**
-   - VMs boot successfully
-   - Root privileges available
-
-2. **Network Connectivity**
-   - VM-to-VM communication
-   - Internet access
-   - DNS resolution
-
-3. **Bitcoin Core**
-   - Service starts correctly
-   - RPC responds
-   - Wallet operations (create, generate address)
-   - Balance queries
-   - Peer connections between nodes
-
-4. **Core Lightning**
-   - Service starts correctly
-   - RPC responds and syncs
-   - Wallet operations (generate address)
-   - Fund queries
-   - Node information
-
-5. **Multi-Node Setup**
-   - Two nodes running simultaneously
-   - Bitcoin peer connections
-   - Lightning node discovery
-
-6. **Mutinynet Verification**
-   - Fork version check
-   - Signet mode confirmation
-   - 30-second block configuration
-
----
-
-## Configuration Details
-
-### Mutinynet Signet Configuration
-
-See `configuration.nix` for full details. Key settings:
-
-```nix
-services.bitcoind = {
-  enable = true;
-  extraConfig = ''
-    # Enable signet mode
-    signet=1
-
-    # Mutinynet-specific challenge
-    signetchallenge=512102f7561d208dd9ae99bf497273e16f389bdbd6c4742ddb8e6b216e64fa2928ad8f51ae
-
-    # Connect to Mutinynet infrastructure
-    addnode=45.79.52.207:38333
-
-    # 30-second blocks (fork feature)
-    signetblocktime=30
-
-    # Other settings...
-    txindex=1
-    fallbackfee=0.00001
-  '';
-};
-```
-
-**Important:** These parameters are required for Mutinynet. See [workshop-3](../workshop-3/) for explanation.
-
----
-
-## Mutinynet vs Regtest
-
-| Feature | Regtest (workshop-9) | Mutinynet (workshop-10) |
-|---------|---------------------|------------------------|
-| Network Type | Private local | Live signet |
-| Block Time | Instant (manual) | 30 seconds (automatic) |
-| Blockchain Sync | None needed | Required (but fast!) |
-| External Peers | No | Yes |
-| Free Coins | Generate locally | Faucet: https://faucet.mutinynet.com/ |
-| Best For | Isolated testing | Realistic testing |
-| RPC Port | 18443 | 38332 |
-| P2P Port | 18444 | 38333 |
-
----
-
-## Fork Hash Update
-
-On first build, you'll see:
+Note: The test framework uses "node1" and "node2" as VM names for automated testing. This is different from the deployment VM which uses hostname "bitcoin".
 
 ```
-error: hash mismatch in fixed-output derivation
-specified: sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-got:      sha256-<REAL_HASH>
-```
-
-**This is expected!** Copy the "got:" hash and update `flake.nix`:
-
-```nix
-mutinynetSrc = nixpkgs.legacyPackages.${system}.fetchFromGitHub {
-  owner = "benthecarman";
-  repo = "bitcoin";
-  rev = "v29.0";
-  sha256 = "sha256-<REAL_HASH>";  # Update this line
-};
-```
-
-See [workshop-3](../workshop-3/) for detailed explanation of hash verification.
-
----
-
-## Creating Containers (Optional)
-
-This workshop focuses on VM testing, but you can still create containers:
-
-```bash
-sudo nixos-container create mynode --flake .#default
-sudo nixos-container start mynode
-sudo nixos-container root-login mynode
-```
-
-Inside the container:
-
-```bash
-# Wait for sync (30-second blocks!)
-bitcoin-cli -signet getblockchaininfo
-
-# Get free coins from faucet
-bitcoin-cli -signet getnewaddress
-# Visit https://faucet.mutinynet.com/ and send coins to that address
-
-# Check Lightning
-lightning-cli --network=signet getinfo
-```
-
----
-
-## Debugging Test Failures
-
-### View test output:
-
-```bash
-nix build .#checks.x86_64-linux.bitcoin-lightning-mutinynet --show-trace
-```
-
-### Interactive debugging:
-
-```bash
-nix build .#checks.x86_64-linux.bitcoin-lightning-mutinynet.driverInteractive
-./result/bin/nixos-test-driver
-
-# Inside the interactive environment:
->>> start_all()
->>> node1.succeed("bitcoin-cli -signet getblockchaininfo")
->>> node1.shell_interact()  # Get a shell in the VM
-```
-
-### Check logs in test output:
-
-Test logs are saved to `result/` after build. Look for:
-- VM boot logs
-- Service journals
-- Test failure details
-
----
-
-## Test Output Example
-
-Successful test output:
-
-```
-test script started
-[INFO] VMs are running
-[INFO] Network connectivity - node1
-[INFO] Bitcoin service is running on node1
-[INFO] Bitcoin RPC responds on node1
+Test "Bitcoin service is running on node1" passed
+Test "Bitcoin RPC responds on node1" passed
+Test "Bitcoin wallet operations on node1" passed
+Test "Verify Mutinynet Bitcoin fork" passed
 ...
-[INFO] All tests passed!
-============================================================
-Configuration validated:
-  ✓ Mutinynet Bitcoin fork
-  ✓ Bitcoin Core (signet mode)
-  ✓ Core Lightning
-  ✓ Network connectivity
-  ✓ Multi-node setup
-============================================================
+All tests passed!
+
+Bitcoin VM Configuration validated:
+  ✓ Mutinynet Bitcoin Inquisition fork (pre-built binary)
+  ✓ Bitcoin Core (Mutinynet signet configuration)
+  ✓ Multi-node network connectivity
+  ✓ Service startup and RPC functionality
+  ✓ Bitcoin peer-to-peer connection
+  ✓ 30-second block time verification
 ```
 
 ---
 
-## Common Issues
+## Part 2: VM and Container Deployment
 
-### Issue: Hash mismatch on first build
+For actual deployment, Bitcoin runs in a VM (accessible on the network) and Lightning runs in a container.
 
-**Expected behavior.** Update the hash in flake.nix with the correct value from error message.
+### Step 1: Build and Start Bitcoin VM
 
-### Issue: Build takes a long time
+The Bitcoin VM connects to the host's bridge network (br-containers) and gets DHCP from the host.
 
-First build compiles Bitcoin from source (~5-10 minutes). Subsequent builds use Nix cache.
+**Important: The VM now uses PERSISTENT STORAGE for blockchain data!**
 
-### Issue: Tests fail with "connection refused"
-
-Lightning binds to localhost by default. This is documented in test output. To enable peer connections, configure CLN to bind to `0.0.0.0` in configuration.nix.
-
-### Issue: Signet sync is slow
-
-Mutinynet has 30-second blocks, so sync is much faster than mainnet but not instant like regtest. Wait for sync to complete.
-
----
-
-## Going Further
-
-### Add more test scenarios:
-
-Edit `test.nix` to add custom tests:
-
-```python
-with subtest("Custom test"):
-    node1.succeed("bitcoin-cli -signet <command>")
+```bash
+# Build the Bitcoin VM
+nix build .#packages.x86_64-linux.bitcoin-vm
 ```
 
-### Test Lightning channels:
+#### Persistent Storage Architecture
 
-Requires more advanced setup:
-1. Fund wallets from faucet
-2. Open channels between nodes
-3. Send payments
-4. Close channels
+The VM uses a **persistent qcow2 disk image** to store Bitcoin blockchain data:
 
-### Test with real Mutinynet:
+```
+VM Disks:
+  /dev/vda (8GB)   - System disk (ephemeral, recreated each start)
+  /dev/vdb (50GB)  - Data disk (PERSISTENT across restarts!)
+                     ↓
+                     Mounted at: /var/lib/bitcoind
+                     ↓
+                     Host location: vm-data/bitcoin-vm.qcow2
+```
 
-Containers can connect to live Mutinynet:
-- Sync full blockchain (fast with 30s blocks!)
-- Connect to other Mutinynet nodes
-- Get coins from faucet
-- Explore on https://mutinynet.com/
+**Key Benefits:**
+- ✅ Blockchain data survives VM restarts
+- ✅ No need to re-sync from scratch each time
+- ✅ Data persists even if you Ctrl-C the VM
+- ✅ Automatic creation on first run (50GB disk)
+- ✅ Can backup/restore the disk image
+
+#### Option A: Run in Foreground (Default)
+
+Interactive mode with console access. Good for testing and development.
+
+```bash
+# Run the VM with the wrapper script (handles tap device setup)
+# Requires sudo for bridge networking
+sudo ./run-bitcoin-vm.sh
+
+# First run automatically creates persistent disk:
+# Creating persistent data disk: vm-data/bitcoin-vm.qcow2 (50G)
+# ✓ Created persistent disk at vm-data/bitcoin-vm.qcow2
+#   This disk will store Bitcoin blockchain data
+#   Data persists across VM restarts
+
+# VM will start and display console
+# Wait for boot to complete (auto-login as root)
+# Press Ctrl-A then X to quit QEMU console
+
+# NOTE: Even if you exit with Ctrl-C, blockchain data is preserved!
+```
+
+#### Option B: Run in Background (Daemon Mode) ⭐ RECOMMENDED
+
+Best for long-running deployments. VM continues running after terminal disconnect.
+
+```bash
+# Start VM in background
+sudo ./run-bitcoin-vm.sh --daemon
+
+# First run creates persistent disk automatically:
+# Creating persistent data disk: vm-data/bitcoin-vm.qcow2 (50G)
+# ✓ Created persistent disk at vm-data/bitcoin-vm.qcow2
+
+# VM starts in background and outputs:
+# ✓ Bitcoin VM started in background
+#   PID: 12345
+#   PID file: /var/run/bitcoin-vm.pid
+#   Data disk: /Users/jay/github/mybonk-wiki/workshop-10/vm-data/bitcoin-vm.qcow2
+
+# Check if VM is still running
+ps -p $(cat /var/run/bitcoin-vm.pid)
+
+# Stop the VM when done (data is preserved!)
+sudo ./stop-bitcoin-vm.sh
+
+# Restart later - data is still there!
+sudo ./run-bitcoin-vm.sh --daemon
+# Using existing persistent data disk: vm-data/bitcoin-vm.qcow2
+```
+
+**Benefits of Daemon Mode + Persistent Storage:**
+- ✅ VM survives terminal disconnect and Ctrl-C
+- ✅ Blockchain data persists across sessions
+- ✅ Can stop/start VM without losing sync progress
+- ✅ Production-ready deployment
+- ✅ Multiple restarts don't require re-downloading blockchain
+
+### Verify VM is Up and Reachable
+
+After starting the VM (foreground or daemon), verify it's accessible:
+
+```bash
+# 1. Test DNS resolution
+# The host's DNS server assigns hostname "bitcoin" to the VM
+ping -c 3 bitcoin
+
+# Should show:
+# PING bitcoin (10.233.0.X) 56(84) bytes of data.
+# 64 bytes from bitcoin (10.233.0.X): icmp_seq=1 ttl=64 time=0.123 ms
+
+# 2. Test Bitcoin RPC accessibility
+curl -s --user bitcoin:bitcoin \
+  --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' \
+  -H 'content-type: text/plain;' \
+  http://bitcoin:38332/ | jq .result.chain
+
+# Should output: "signet"
+
+# 3. Check Bitcoin sync status
+curl -s --user bitcoin:bitcoin \
+  --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' \
+  -H 'content-type: text/plain;' \
+  http://bitcoin:38332/ | jq '.result | {chain, blocks, initialblockdownload}'
+
+# Should show:
+# {
+#   "chain": "signet",
+#   "blocks": 12345,
+#   "initialblockdownload": true  # false when fully synced
+# }
+```
+
+**Get VM IP Address (if needed):**
+
+The VM gets an IP from the host's DHCP server (10.233.0.x range) and is assigned hostname "bitcoin".
+
+```bash
+# Usually you can just use the hostname "bitcoin"
+ping bitcoin
+
+# To get the actual IP address (from host):
+cat /var/lib/dnsmasq/dnsmasq.leases | grep bitcoin
+# Shows: 1234567890 52:54:00:12:34:56 10.233.0.2 bitcoin *
+
+# Or from inside the VM console:
+ip addr show eth0 | grep "inet "
+# Shows: inet 10.233.0.2/16 brd 10.233.255.255 scope global dynamic eth0
+```
+
+**Verify Bitcoin (Mutinynet) is running in VM:**
+
+```bash
+# Inside the VM (login as root):
+bitcoin-cli -signet -rpcuser=bitcoin -rpcpassword=bitcoin getblockchaininfo
+
+{
+  "chain": "signet",
+  "blocks": 62408,
+  "headers": 2010000,
+  "bestblockhash": "000003170c16276d49f6eb48b3fbaeda4038ee16134fc14608462b561a0e1580",
+  "bits": "1e0377ae",
+  "target": "00000377ae000000000000000000000000000000000000000000000000000000",
+  "difficulty": 0.001126515290698186,
+  "time": 1683618592,
+  "mediantime": 1683618410,
+  "verificationprogress": 1,
+  "initialblockdownload": true,
+  "chainwork": "000000000000000000000000000000000000000000000000000000464e467fb4",
+  "size_on_disk": 46711607,
+  "pruned": false,
+  "signet_challenge": "512102f7561d208dd9ae99bf497273e16f389bdbd6c4742ddb8e6b216e64fa2928ad8f51ae",
+  "warnings": [
+  ]
+}
+```
+
+You can see that the Mutinynet fork of bitcoin is running because "chain" is "signet" and there is a "signet_challenge" defined ("512102f7561d208dd9ae99bf497273e16f389bdbd6c4742ddb8e6b216e64fa2928ad8f51ae" which is the [challenge of Mutininet](https://faucet.mutinynet.com/)).
+
+# Check if RPC port is listening:
+ss -tlnp | grep 38332
+
+# Verify persistent disk is mounted:
+lsblk
+# Should show /dev/vdb mounted at /var/lib/bitcoind
+
+df -h /var/lib/bitcoind
+# Shows disk usage of persistent storage
+```
+
+### Managing Persistent Storage
+
+The VM uses a persistent disk image for blockchain data at `vm-data/bitcoin-vm.qcow2`.
+
+#### Check Disk Status
+
+```bash
+# From host, check disk image info (requires qemu-img)
+qemu-img info vm-data/bitcoin-vm.qcow2
+
+# Output shows:
+# file format: qcow2
+# virtual size: 50 GiB (53687091200 bytes)
+# disk size: 12.3 GiB  # Actual space used (grows dynamically)
+
+# Inside VM, check disk usage
+ssh root@bitcoin df -h /var/lib/bitcoind
+# Or from VM console:
+df -h /var/lib/bitcoind
+```
+
+#### Backup Blockchain Data
+
+```bash
+# Stop VM first to ensure data consistency
+sudo ./stop-bitcoin-vm.sh
+
+# Option 1: Simple copy
+cp vm-data/bitcoin-vm.qcow2 vm-data/backup-$(date +%Y%m%d).qcow2
+
+# Option 2: Compressed backup (saves space)
+qemu-img convert -c -O qcow2 \
+  vm-data/bitcoin-vm.qcow2 \
+  vm-data/backup-compressed-$(date +%Y%m%d).qcow2
+
+# Restart VM
+sudo ./run-bitcoin-vm.sh --daemon
+```
+
+#### Restore from Backup
+
+```bash
+# Stop VM
+sudo ./stop-bitcoin-vm.sh
+
+# Restore backup
+cp vm-data/backup-YYYYMMDD.qcow2 vm-data/bitcoin-vm.qcow2
+
+# Start VM
+sudo ./run-bitcoin-vm.sh --daemon
+```
+
+#### Resize Disk (If You Need More Space)
+
+```bash
+# Stop VM first
+sudo ./stop-bitcoin-vm.sh
+
+# Resize disk image to 100GB
+qemu-img resize vm-data/bitcoin-vm.qcow2 100G
+
+# Start VM
+sudo ./run-bitcoin-vm.sh --daemon
+
+# Inside VM, resize the filesystem
+ssh root@bitcoin resize2fs /dev/vdb
+# Or from VM console:
+resize2fs /dev/vdb
+```
+
+#### Change Disk Size for New VMs
+
+Edit `run-bitcoin-vm.sh` and change:
+```bash
+DATA_DISK_SIZE="50G"  # Change to desired size, e.g., "100G"
+```
+
+Then start the VM - it will create a new disk with the specified size.
+
+#### Clean Start (Delete All Blockchain Data)
+
+```bash
+# Stop VM
+sudo ./stop-bitcoin-vm.sh
+
+# Delete persistent disk
+rm -f vm-data/bitcoin-vm.qcow2
+
+# Next start creates fresh disk
+sudo ./run-bitcoin-vm.sh --daemon
+# Creating persistent data disk: vm-data/bitcoin-vm.qcow2 (50G)
+
+# Bitcoin will sync from scratch
+```
+
+#### Move Data Disk to Different Location
+
+```bash
+# Stop VM
+sudo ./stop-bitcoin-vm.sh
+
+# Move disk
+mkdir /mnt/large-disk/bitcoin-data
+mv vm-data/bitcoin-vm.qcow2 /mnt/large-disk/bitcoin-data/
+
+# Update run-bitcoin-vm.sh:
+# Change: DATA_DISK="vm-data/bitcoin-vm.qcow2"
+# To:     DATA_DISK="/mnt/large-disk/bitcoin-data/bitcoin-vm.qcow2"
+
+# Start VM
+sudo ./run-bitcoin-vm.sh --daemon
+```
+
+### Step 2: Create Lightning Container
+
+The Lightning container is pre-configured to connect to the Bitcoin VM using hostname "bitcoin" (DNS resolution provided by host).
+
+**No manual configuration needed!** The container will automatically find the Bitcoin VM via DNS.
+
+```bash
+# Create lightning container
+sudo nixos-container create lightning --flake .#lightning
+
+# Start lightning container
+sudo nixos-container start lightning
+
+# Wait for lightning to start
+sleep 10
+
+# Check lightning status
+sudo nixos-container run lightning -- lightning-cli --network=signet getinfo
+```
+
+### Step 3: Verify VM-to-Container Connectivity
+
+Before running tests, verify that the Lightning container can reach the Bitcoin VM via DNS:
+
+```bash
+# Get container IP
+LIGHTNING_IP=$(sudo nixos-container show-ip lightning)
+echo "Lightning container IP: $LIGHTNING_IP"
+
+# From Lightning container, ping Bitcoin VM using hostname
+sudo nixos-container run lightning -- ping -c 3 bitcoin
+
+# Should show:
+# PING bitcoin (10.233.0.X) 56(84) bytes of data.
+# 64 bytes from bitcoin (10.233.0.X): icmp_seq=1 ttl=64 time=0.456 ms
+
+# Test RPC connection from Lightning to Bitcoin (using hostname)
+sudo nixos-container run lightning -- curl -s \
+  --user bitcoin:bitcoin \
+  --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' \
+  -H 'content-type: text/plain;' \
+  http://bitcoin:38332/ | jq .result.chain
+
+# Should output: "signet"
+
+# From Bitcoin VM, ping Lightning container (if running foreground mode)
+# Login to VM console, then:
+ping -c 3 $LIGHTNING_IP
+```
+
+### Step 4: Run Integration Tests
+
+**Note:** The test script creates a temporary container named `tlightning` to avoid conflicts with your deployment `lightning` container.
+
+```bash
+# Run comprehensive container tests
+# Creates temporary "tlightning" container
+sudo ./test-container.sh
+
+# Or keep test container for manual inspection
+sudo ./test-container.sh --keep
+```
+
+### Test Output
+
+```
+========================================
+Core Lightning Container Test Suite
+Network: Mutinynet Signet
+========================================
+
+✅ Test 1: Verify workshop files
+✅ Test 2: Check for existing test container
+✅ Test 3: Verify bitcoind accessibility
+✅ Test 4: Wait for Bitcoin IBD to complete
+✅ Test 5: Create Core Lightning container
+✅ Test 6: Start container
+✅ Test 7: Verify network connectivity
+✅ Test 8: Verify clightning service
+✅ Test 9: Verify Lightning RPC socket
+✅ Test 10: Test Lightning RPC commands
+✅ Test 11: Verify Bitcoin backend connection
+✅ Test 12: Generate Lightning address
+✅ Test 13: List Lightning funds
+✅ Test 14: Check service logs
+
+========================================
+Test Summary
+========================================
+Passed: 14
+Failed: 0
+========================================
+✅ All tests passed!
+
+Core Lightning container validated:
+  ✓ Container created and started
+  ✓ Network connectivity (DHCP from host)
+  ✓ clightning service running
+  ✓ Connected to external bitcoind (10.233.0.2)
+  ✓ Lightning RPC working
+  ✓ Synced to blockchain (block 12345)
+```
 
 ---
 
-## Key Takeaways
+## Network Details
 
-✅ VM-based testing provides complete isolation
-✅ NixOS test framework offers declarative test definitions
-✅ Mutinynet fork override requires `fetchFromGitHub` and hash verification
-✅ Same configuration works for both containers and VMs
-✅ `boot.isContainer` determines container vs VM behavior
-✅ Signet configuration requires specific parameters
-✅ 30-second blocks make Mutinynet practical for testing
+### Bitcoin Container
+
+- **RPC Port:** 38332
+- **P2P Port:** 38333
+- **RPC Credentials:**
+  - Username: `bitcoin`
+  - Password: `bitcoin`
+- **Network:** Mutinynet signet
+- **Signet Challenge:** `512102f7561d208dd9ae99bf497273e16f389bdbd6c4742ddb8e6b216e64fa2928ad8f51ae`
+- **Mutinynet Node:** `45.79.52.207:38333`
+
+### Lightning Container
+
+- **P2P Port:** 9735
+- **Network:** Bridge (10.233.0.0/16)
+- **DHCP Server:** 10.233.0.1 (host)
+- **DNS:** Host-provided
+- **Bitcoind Connection:** Via RPC to bitcoin container
+
+### Host Configuration
+
+The host provides networking infrastructure for containers:
+- **Bridge Network:** `br-containers` (10.233.0.0/16)
+- **DHCP Range:** 10.233.0.2 - 10.233.255.254
+- **DNS Server:** 10.233.0.1
+- **NAT:** Enabled for internet access
 
 ---
 
-## Resources
+## Manual Testing
 
-- [workshop-9](../workshop-9/) - Container-based testing
-- [workshop-3](../workshop-3/) - Bitcoin fork override details
-- [Mutinynet](https://blog.mutinywallet.com/mutinynet/) - About Mutinynet
-- [Mutinynet Faucet](https://faucet.mutinynet.com/) - Free testnet coins
-- [Mutinynet Explorer](https://mutinynet.com/) - Block explorer
-- [NixOS Test Framework](https://nixos.org/manual/nixos/stable/index.html#sec-nixos-tests) - Official documentation
-- [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin) - Bitcoin services for NixOS
+### Bitcoin VM Commands
+
+```bash
+# Access the Bitcoin VM console (if running in foreground mode)
+# Auto-login as root (no password needed)
+
+# Inside the VM, check blockchain status
+bitcoin-cli -signet -rpcuser=bitcoin -rpcpassword=bitcoin getblockchaininfo
+
+# Generate address
+bitcoin-cli -signet -rpcuser=bitcoin -rpcpassword=bitcoin getnewaddress
+
+# Get balance
+bitcoin-cli -signet -rpcuser=bitcoin -rpcpassword=bitcoin getbalance
+
+# From host machine, test RPC access to VM using hostname
+curl -s --user bitcoin:bitcoin \
+  --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' \
+  -H 'content-type: text/plain;' \
+  http://bitcoin:38332/ | jq .result.chain
+# Should output: "signet"
+```
+
+### Lightning Commands
+
+```bash
+# Inside lightning container
+sudo nixos-container root-login lightning
+
+# Check Lightning status
+lightning-cli --network=signet getinfo
+
+# Generate Lightning address
+lightning-cli --network=signet newaddr
+
+# List funds
+lightning-cli --network=signet listfunds
+
+# From host (one-liner)
+sudo nixos-container run lightning -- lightning-cli --network=signet getinfo
+```
+
+### Check IPs
+
+```bash
+# Bitcoin VM IP (from within VM console or SSH)
+ip addr show eth0
+
+# Or from host, check DHCP leases using hostname
+cat /var/lib/dnsmasq/dnsmasq.leases | grep bitcoin
+# Shows: 1234567890 52:54:00:12:34:56 10.233.0.2 bitcoin *
+
+# Or simply use the hostname from host
+ping bitcoin
+
+# Lightning container IP
+sudo nixos-container show-ip lightning
+
+# List all containers
+sudo nixos-container list
+```
 
 ---
 
-**Workshop Duration:** 30-45 minutes (including build time)
-**Difficulty:** Intermediate
-**Prerequisites:** workshop-9, workshop-3
+## Key Differences from Workshop-9
+
+| Aspect | Workshop-9 | Workshop-10 |
+|--------|------------|-------------|
+| **Bitcoin** | Regtest (private network) | Mutinynet signet (public testnet) |
+| **Block Time** | Manual generation (`generatetoaddress`) | Automatic 30-second blocks |
+| **Bitcoin Source** | Standard Bitcoin Core | Bitcoin Inquisition (Mutinynet fork) |
+| **Lightning** | Integrated in same container | Separate container |
+| **Testing** | Single test.sh for everything | test.nix (VM) + test-container.sh (containers) |
+| **Network** | Isolated local network | Connected to live Mutinynet |
+| **Coins** | Generated locally | From faucet (https://faucet.mutinynet.com/) |
+
+---
+
+## Bitcoin Network Comparison
+
+Comprehensive comparison of Bitcoin networks and their storage requirements:
+
+| Network | Type | Blockchain Size | Block Time | Age/History | Use Case | Storage Needs |
+|---------|------|----------------|------------|-------------|----------|---------------|
+| **Bitcoin Mainnet** | Production | ~550-600 GB | 10 minutes | 15+ years (since 2009) | Real value, production apps | 1 TB+ recommended |
+| **Bitcoin Testnet3** | Public Testnet | ~30-40 GB | 10 minutes | ~10 years (since 2012) | Public testing, no value | 100 GB recommended |
+| **Mutinynet Signet** | Custom Signet | ~3-8 GB | 30 seconds | ~1.5 years (since mid-2023) | Fast testing, soft fork features | 50 GB (this workshop) |
+| **Default Signet** | Public Signet | ~5-10 GB | 10 minutes | ~3 years (since 2020) | Centrally signed, predictable | 50 GB recommended |
+| **Regtest** | Local Private | <100 MB | On-demand | Ephemeral (workshop-9) | Isolated testing, instant blocks | 1-5 GB sufficient |
+
+### Network Details
+
+#### Bitcoin Mainnet
+- **Real Bitcoin** with actual monetary value
+- Full node requires ~550-600 GB and growing (~50-80 GB/year)
+- Recommended: 1 TB disk with pruning disabled
+- Use for: Production applications, real transactions
+- **Workshop coverage:** Not covered (production use only)
+
+#### Bitcoin Testnet3
+- Public testnet with no monetary value
+- Free coins from faucets
+- Occasionally reset when too large
+- Behavior identical to mainnet (10-minute blocks)
+- **Workshop coverage:** Not covered
+
+#### Mutinynet Signet (This Workshop)
+- **Custom signet** with Bitcoin Inquisition features
+- 30-second blocks = 20x faster than mainnet
+- Active soft forks: Anyprevout, CTV, OP_CAT, etc.
+- Live infrastructure: faucet, explorer, Lightning nodes
+- Current size: ~3-8 GB (efficient for testing)
+- **Workshop coverage:** ✅ **Workshop-10** (VM + Lightning)
+
+#### Default Signet
+- Centrally signed by Bitcoin Core developers
+- Predictable block production (10 minutes)
+- More stable than testnet3
+- Smaller and more manageable than testnet3
+- **Workshop coverage:** Could be configured in workshop-10
+
+#### Regtest (Workshop-9)
+- Private local network, no external peers
+- Blocks generated instantly on-demand with `generatetoaddress`
+- Blockchain resets on every restart (ephemeral)
+- Perfect for: unit tests, CI/CD, isolated development
+- Size: typically <100 MB (only blocks you generate)
+- **Workshop coverage:** ✅ **Workshop-9** (containers)
+
+### Storage Recommendations by Use Case
+
+| Use Case | Recommended Network | Storage | Workshop |
+|----------|-------------------|---------|----------|
+| Learning & Tutorials | Regtest | 1-5 GB | Workshop-9 |
+| Fast Testing | Mutinynet Signet | 50 GB | Workshop-10 |
+| Realistic Testing | Testnet3 or Signet | 100 GB | - |
+| Soft Fork Testing | Mutinynet Signet | 50 GB | Workshop-10 |
+| Production | Mainnet | 1 TB+ | - |
+
+### Quick Comparison: Mutinynet vs Regtest
+
+**Use Mutinynet (Workshop-10) when:**
+- ✅ You need a live network with other peers
+- ✅ Testing Lightning channels with real nodes
+- ✅ Trying soft fork features (Anyprevout, CTV, etc.)
+- ✅ Want realistic block timing (30 seconds)
+- ✅ Need persistent blockchain state
+
+**Use Regtest (Workshop-9) when:**
+- ✅ You need isolated testing environment
+- ✅ Want instant block generation
+- ✅ Testing Bitcoin Core functionality
+- ✅ Running automated tests/CI
+- ✅ Don't need external connectivity
+
+---
+
+## Troubleshooting
+
+### Bitcoin VM Issues
+
+**VM won't start or network issues:**
+```bash
+# Check if br-containers bridge exists on host
+ip addr show br-containers
+
+# Verify host has DHCP server running
+systemctl status dnsmasq
+
+# Run VM with wrapper script
+sudo ./run-bitcoin-vm.sh
+
+# Common issues:
+# - br-containers bridge not configured on host (run workshop-9 host setup)
+# - Permission denied for bridge access (must run with sudo)
+# - MAC address conflict (edit flake.nix to change MAC)
+```
+
+**bitcoind not starting in VM:**
+```bash
+# Login to VM console (root/nixos)
+# Check logs
+journalctl -u bitcoind.service -n 50
+
+# Check if service is running
+systemctl status bitcoind.service
+
+# Common issues:
+# - Data directory permissions
+# - Port conflicts (38332, 38333)
+# - Invalid bitcoin.conf syntax
+```
+
+**Can't connect to Mutinynet:**
+```bash
+# Inside VM, check network connectivity
+ping -c 3 45.79.52.207
+
+# Check VM has internet access via NAT
+ping -c 3 8.8.8.8
+
+# Check peers
+bitcoin-cli -signet -rpcuser=bitcoin -rpcpassword=bitcoin getpeerinfo
+
+# Verify signet configuration
+bitcoin-cli -signet -rpcuser=bitcoin -rpcpassword=bitcoin getblockchaininfo | grep chain
+```
+
+**Lightning can't reach Bitcoin VM:**
+```bash
+# From Lightning container, ping VM using hostname
+sudo nixos-container run lightning -- ping -c 3 bitcoin
+
+# Test RPC from Lightning to Bitcoin using hostname
+sudo nixos-container run lightning -- curl -s \
+  --user bitcoin:bitcoin \
+  --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' \
+  http://bitcoin:38332/
+
+# Verify Bitcoin RPC is bound to 0.0.0.0 (not just 127.0.0.1)
+# Inside VM (if running foreground mode, or ssh into VM):
+ss -tlnp | grep 38332
+# Should show: 0.0.0.0:38332
+
+# Verify firewall is disabled in VM
+systemctl status firewalld  # Should be inactive
+
+# Check DNS resolution from Lightning container
+sudo nixos-container run lightning -- nslookup bitcoin
+# Should resolve to 10.233.0.X
+```
+
+### Lightning Container Issues
+
+**Can't connect to bitcoind:**
+```bash
+# Verify bitcoind hostname in config (should be "bitcoin")
+grep "bitcoin-rpcconnect=" container-lightning.nix
+# Should show: bitcoin-rpcconnect=bitcoin
+
+# Test RPC connection from lightning container using hostname
+sudo nixos-container run lightning -- curl -s \
+  --user bitcoin:bitcoin \
+  --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' \
+  -H 'content-type: text/plain;' \
+  http://bitcoin:38332/
+
+# Check clightning logs
+sudo nixos-container run lightning -- journalctl -u clightning.service -n 50
+```
+
+**Network routing issues:**
+```bash
+# Check container can reach bitcoin VM using hostname
+sudo nixos-container run lightning -- ping -c 3 bitcoin
+
+# Test DNS resolution
+sudo nixos-container run lightning -- nslookup bitcoin
+# Should resolve to 10.233.0.X
+
+# Check Bitcoin VM firewall (should be disabled)
+# From host, using hostname:
+ping bitcoin
+ssh root@bitcoin  # Then check: systemctl status firewalld
+```
+
+---
+
+## Cleanup
+
+### Stop VM (Preserves Blockchain Data)
+
+```bash
+# Stop Bitcoin VM (if running in daemon mode)
+sudo ./stop-bitcoin-vm.sh
+
+# Or manually:
+# sudo kill $(cat /var/run/bitcoin-vm.pid)
+# sudo ip link delete vmtap0
+
+# NOTE: Blockchain data is PRESERVED in vm-data/bitcoin-vm.qcow2
+# Restarting the VM will resume with existing blockchain state
+```
+
+### Destroy Containers (Preserves Blockchain Data)
+
+```bash
+# Destroy specific containers
+sudo nixos-container destroy lightning
+sudo nixos-container destroy tlightning  # If kept from test runs
+
+# List remaining containers
+sudo nixos-container list
+
+# Destroy all containers
+for c in $(sudo nixos-container list); do sudo nixos-container destroy $c; done
+
+# NOTE: VM persistent disk is NOT affected by container operations
+```
+
+### Complete Cleanup (Deletes Everything)
+
+```bash
+# Stop VM
+sudo ./stop-bitcoin-vm.sh
+
+# Destroy containers
+for c in $(sudo nixos-container list); do sudo nixos-container destroy $c; done
+
+# Delete persistent blockchain data (WARNING: Cannot be undone!)
+rm -rf vm-data/
+
+# This removes:
+# - vm-data/bitcoin-vm.qcow2 (blockchain data)
+# - All backups in vm-data/
+```
+
+### What Gets Preserved vs Deleted
+
+| Action | System Disk | Blockchain Data | Containers |
+|--------|-------------|-----------------|------------|
+| `./stop-bitcoin-vm.sh` | ❌ Deleted | ✅ Preserved | ✅ Preserved |
+| `nixos-container destroy` | N/A | ✅ Preserved | ❌ Deleted |
+| `rm -rf vm-data/` | N/A | ❌ Deleted | ✅ Preserved |
+| Restart VM | ✅ Recreated | ✅ Preserved | ✅ Preserved |
+
+---
+
+## Next Steps
+
+1. **Get Mutinynet coins:** Visit https://faucet.mutinynet.com/
+2. **Open Lightning channels:** Connect to other Mutinynet Lightning nodes
+3. **Test Lightning payments:** Send/receive payments on Mutinynet
+4. **Explore nix-bitcoin:** Add more services (LND, electrs, BTCPay Server)
+5. **Production deployment:** Adapt configuration for mainnet
+
+---
+
+## References
+
+- [Bitcoin Inquisition](https://github.com/bitcoin-inquisition/bitcoin)
+- [Mutinynet](https://blog.mutinywallet.com/mutinynet/)
+- [nix-bitcoin Documentation](https://github.com/fort-nix/nix-bitcoin)
+- [Core Lightning Documentation](https://docs.corelightning.org/)
+- [NixOS Container Documentation](https://nixos.org/manual/nixos/stable/#ch-containers)
+- [NixOS Test Framework](https://nixos.org/manual/nixos/stable/#sec-nixos-tests)
