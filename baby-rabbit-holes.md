@@ -414,7 +414,7 @@ Great tutorial on how to use cURL: [https://curl.se/docs/httpscripting.html](htt
 
 Spare yourself the pain, learn good habits, save tones time and avoid getting locked out of your system by really understanding how SSH (a.k.a Secure Shell or *Secure Socket Shell*) works, how it allows you to connect a remote machine, execute commands, upload and download files. 
 
-- For history, what is the [difference between Telnet and ssh](https://www.geeksforgeeks.org/difference-ssh-telnet/)
+- What is the [difference between Telnet and ssh](https://www.geeksforgeeks.org/difference-ssh-telnet/)? A good [VIDEO](https://www.youtube.com/watch?v=dkXZYinZQg0) explaining this very well.
 - OpenSSH
 - .ssh client configuration (`~/.ssh/config`)
 - How to setup and manage ssh keys: https://goteleport.com/blog/how-to-set-up-ssh-keys/
@@ -422,6 +422,8 @@ Spare yourself the pain, learn good habits, save tones time and avoid getting lo
   - `ssh-keygen -R 5.73.114.57`: Removes all keys belonging to host 5.73.114.57 from a known_hosts file. This is convenient when you rebuild a machine causing its fingerprint to change making ssh complain about "REMOTE HOST IDENTIFICATION HAS CHANGED!".
   - `passphrase`
   - `ssh-copy-id`: Copy your public key on the server machine's `~/.ssh/authorized_keys` 
+  - `~/.ssh/known_hosts`: SSH security file that stores the public keys of all
+  remote hosts you've connected to via SSH. On subsequent connections, SSH checks if the server's key matches what's stored in this file. This protects against "man-in-the-middle attacks" (SSH will warn you if someone intercepts your connection and presents a different key) and if the server's host key changes unexpectedly. Each time you connect to a remote server via SSH for the first time it is added in this file. Entries can be removed in this file using `ssh-keygen -R ` (with the option `-R` option) or manually (open with an editor and remove entries manually).
   - `ssh-agent`: Will save you a LOT of time (key management, auto re-connect e.g. when your laptop goes to sleep or reboots ...).
   - `ssh-add -l`: Displays the fingerprint of all identities currently represented by the agent.
   - `ssh-add`: Add your rsa keys to the ssh-agent.
