@@ -975,6 +975,12 @@ Similarly to the bitcoin JSON-RPC, the clightning JSON-RPC API allows to interac
 ## Books
 - **Déclaration des Droits de l'Homme et du Citoyen de 1789** [https://www.conseil-constitutionnel.fr](https://www.conseil-constitutionnel.fr/node/3850/pdf) 
   - Document (site of Conseil Constitutionnel of France): [https://www.conseil-constitutionnel.fr/node/3850/pdf](https://www.conseil-constitutionnel.fr/node/3850/pdf)
+- **Discours de la servitude volontaire (Étienne de La Boétie)**
+  - Explains that servitude isn't imposed but chosen, fostered by habit, custom, and training where people forget freedom and grow to adore rulers, becoming conditioned to obedience, with only a few resisting, but tyranny falls when the masses simply stop consenting. 
+  - [Version Française](https://www.singulier.eu/textes/reference/texte/pdf/servitude.pdf)
+  - [English Version](https://ia801906.us.archive.org/25/items/etienne-de-la-boetie-discours-de-la-servitude-volontaire/Etienne%20de%20La%20Boetie%20-%20Discours%20de%20la%20servitude%20volontaire.pdf)
+
+
 - **The Declaration of Independence of Cyberspace (John Perry Barlow)**
   - Document: [https://cryptoanarchy.wiki/people/john-perry-barlow](https://cryptoanarchy.wiki/people/john-perry-barlow)
   - Audio, red by the author: [https://www.youtube.com/watch?v=3WS9DhSIWR0](https://www.youtube.com/watch?v=3WS9DhSIWR0)
