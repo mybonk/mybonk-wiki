@@ -1,2 +1,12 @@
 *.code-workspace
+Gemfile*
 
+# Jekyll/GitHub Pages
+_site/
+.jekyll-cache/
+.jekyll-metadata
+
+# Workshop VM data
+workshop-*/vm-data/
+workshop-*/result
+workshop-*/flake.lock
