@@ -5,6 +5,11 @@
 { config, pkgs, lib, ... }:
 
 {
+  # Import modules
+  imports = [
+    ./modules/tmux.nix
+  ];
+
   # ============================================================================
   # CONTAINER CONFIGURATION
   # ============================================================================
@@ -19,10 +24,14 @@
   # Use systemd-networkd for container networking (workshop-9 pattern)
   systemd.network = {
     enable = true;
+    wait-online.enable = false;  # Don't block boot waiting for network
 
     networks."10-container-dhcp" = {
       matchConfig.Name = "eth0*";
-      networkConfig.DHCP = "yes";
+      networkConfig = {
+        DHCP = "yes";
+        IPv6AcceptRA = false;  # Disable IPv6 to speed up
+      };
       dhcpV4Config = {
         UseDNS = false;
         UseRoutes = true;
@@ -89,6 +98,7 @@
     htop
     git
     jq
+    asciinema # Used to record videos of workshops' terminals
   ];
 
   # ============================================================================
@@ -98,65 +108,93 @@
   # Enable nix-bitcoin for Core Lightning management
   nix-bitcoin.generateSecrets = true;
 
-  services.bitcoin = {
-    enable = false;
-  }
-
-  # Configure Core Lightning to connect to external bitcoind
-  services.clightning = {
+  # Enable bitcoind with Mutinynet fork (Bitcoin Inquisition) from overlay
+  # Local bitcoind runs, but iptables redirects RPC to external VM for testing
+  services.bitcoind = {
     enable = true;
 
-    # Network: signet (Mutinynet)
-    # NOTE: nix-bitcoin's clightning module doesn't directly support signet
-    # We need to configure it via extraConfig
+    # Disable nix-bitcoin's default RPC settings (we'll set them in extraConfig)
+    rpc.address = lib.mkForce "";
+    listen = lib.mkForce false;
 
+    # Put all configuration in extraConfig to avoid nix-bitcoin conflicts
     extraConfig = ''
-      # Network configuration
+      # Mutinynet signet configuration
+      signet=1
+
+      [signet]
+      # Mutinynet-specific signet challenge
+      signetchallenge=512102f7561d208dd9ae99bf497273e16f389bdbd6c4742ddb8e6b216e64fa2928ad8f51ae
+
+      # Connect to Mutinynet infrastructure
+      addnode=45.79.52.207:38333
+      dnsseed=0
+
+      # Mutinynet fork features (30-second blocks)
+      signetblocktime=30
+
+      # RPC settings (must be in [signet] section when signet=1)
+      rpcbind=127.0.0.1
+      rpcport=38332
+      rpcallowip=127.0.0.1
+
+      # Enable debug logging
+      debug=rpc
+    '';
+  };
+  # Fix nix-bitcoin's post-start script for signet mode
+  # The cookie file is at /var/lib/bitcoind/signet/.cookie, not /var/lib/bitcoind/.cookie
+  systemd.services.bitcoind.postStart = lib.mkForce ''
+    # Wait for cookie file (in signet subdirectory for signet mode)
+    while [ ! -f /var/lib/bitcoind/signet/.cookie ]; do
+      sleep 1
+    done
+    # Set permissions on signet cookie
+    chmod o+r /var/lib/bitcoind/signet/.cookie
+  '';
+
+  # Configure clightning to connect to external Bitcoin VM (not local bitcoind)
+  services.clightning = {
+    enable = true;
+    extraConfig = ''
+      # Network: signet (Mutinynet)
       network=signet
 
-      # External bitcoind connection via hostname (DNS from host)
+      # Connect to external Bitcoin VM
       bitcoin-rpcconnect=bitcoin
       bitcoin-rpcport=38332
       bitcoin-rpcuser=bitcoin
       bitcoin-rpcpassword=bitcoin
 
-      # Bind to all interfaces so we can connect from outside
+      # Lightning P2P settings
       bind-addr=0.0.0.0:9735
-
-      # Announce our address for peer connections
       announce-addr=0.0.0.0:9735
     '';
   };
 
+  # NOTE: No iptables redirect needed - clightning connects directly to bitcoin:38332
+
   # ============================================================================
-  # IMPORTANT NOTES
+  # HOW IT WORKS
   # ============================================================================
-
-  # BITCOIND CONNECTION:
-  #   - Core Lightning connects to external bitcoind via RPC
-  #   - Uses hostname "bitcoin" (DNS resolution provided by host)
-  #   - No manual IP configuration needed - host DNS resolves "bitcoin" to VM IP
-  #   - bitcoind must be accessible on port 38332 (Mutinynet signet RPC)
-  #   - Connection: bitcoin-rpcconnect=bitcoin (hostname, not IP)
-
-  # RPC CREDENTIALS:
-  #   - Must match bitcoind's bitcoin.conf:
-  #     rpcuser=bitcoin
-  #     rpcpassword=bitcoin
-
-  # ACCESSING LIGHTNING CLI:
-  #   - Inside container: lightning-cli --network=signet <command>
-  #   - From host: sudo nixos-container run lightning -- lightning-cli --network=signet <command>
-  #   - Examples:
-  #     lightning-cli --network=signet getinfo
-  #     lightning-cli --network=signet listfunds
-  #     lightning-cli --network=signet newaddr
-
-  # NETWORKING:
-  #   - Container uses host's DHCP (10.233.x.x network)
-  #   - DNS provided by host (10.233.0.1)
-  #   - Lightning port: 9735 (P2P)
-  #   - Can connect to other Lightning nodes
+  #
+  # Local bitcoind:
+  #   - Runs Mutinynet signet (Bitcoin Inquisition fork)
+  #   - Mostly unused - here to satisfy nix-bitcoin dependencies
+  #
+  # Core Lightning:
+  #   - Connects directly to external Bitcoin VM (bitcoin:38332)
+  #   - Configured via extraConfig to use external VM
+  #
+  # External Bitcoin VM:
+  #   - Hostname: bitcoin (resolved via DNS to 10.233.0.x)
+  #   - RPC Port: 38332 (Mutinynet signet)
+  #   - Credentials: bitcoin/bitcoin
+  #
+  # Container Network:
+  #   - Gets IP via DHCP from host (10.233.0.x range)
+  #   - DNS: 10.233.0.1 (host)
+  #   - Lightning P2P: 9735
 
   system.stateVersion = "24.11";
 }

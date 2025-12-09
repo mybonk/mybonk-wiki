@@ -101,6 +101,9 @@
         modules = [
           nix-bitcoin.nixosModules.default
           ./container-lightning.nix
+
+          # Apply Mutinynet overlay - use Bitcoin Inquisition instead of Bitcoin Core
+          { nixpkgs.overlays = [ (final: prev: { inherit (pkgs) bitcoin; }) ]; }
         ];
       };
 
@@ -178,7 +181,7 @@
               virtualisation.qemu.consoles = [ "ttyS0" ];
 
               # Auto-login as root on serial console
-              services.getty.autologinUser = "root";
+              #services.getty.autologinUser = "root";
 
               # Allocate more memory for Bitcoin
               virtualisation.memorySize = 4096;
