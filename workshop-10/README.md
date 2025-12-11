@@ -1,4 +1,4 @@
-# Workshop 10: Bitcoin VM + Lightning Container with Mutinynet
+# Workshop 10: Run Mutinynet on a VM and other nix-bitcoin on a Container
 
 ## Overview
 
@@ -62,9 +62,9 @@ Blockchain data automatically saved to disk. No need to re-sync after restarts!
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                         HOST MACHINE                         │
-│                          (NixOS)                             │
-│                                                              │
+│                         HOST MACHINE                        │
+│                          (NixOS)                            │
+│                                                             │
 │  ┌────────────────────────────┐                             │
 │  │   BITCOIN VM               │                             │
 │  │   (hostname: bitcoin)      │                             │
@@ -73,19 +73,19 @@ Blockchain data automatically saved to disk. No need to re-sync after restarts!
 │  │  Mutinynet Signet          │                             │
 │  │                            │                             │
 │  │  Ports:                    │                             │
-│  │   - 38332 (RPC) ───────────┼─────────────┐              │
-│  │   - 38333 (P2P)            │             │              │
-│  │                            │             │              │
-│  │  Network: Isolated         │             │              │
-│  │  (NixOS test framework)    │             │              │
-│  │                            │             │              │
-│  │  For: Automated testing    │             │              │
-│  └────────────────────────────┘             │              │
+│  │   - 38332 (RPC)            ┼──────────────┐              │
+│  │   - 38333 (P2P)            │              │              │
+│  │                            │              │              │
+│  │  Network: Isolated         │              │              │
+│  │  (NixOS test framework)    │              │              │
+│  │                            │              │              │
+│  │  For: Automated testing    │              │              │
+│  └────────────────────────────┘              │              │
 │                                              │              │
-│                                              │              │
-│                     ┌────────────────────────┼───────────┐  │
-│                     │ LIGHTNING CONTAINER    │           │  │
-│                     │ (hostname: lightning)  ▼           │  │
+│                                              ▼              │
+│                     ┌────────────────────────────────────┐  │
+│                     │ LIGHTNING CONTAINER                │  │
+│                     │ (hostname: lightning)              │  │
 │                     │                                    │  │
 │                     │  Core Lightning                    │  │
 │                     │  (nix-bitcoin)                     │  │
@@ -98,11 +98,11 @@ Blockchain data automatically saved to disk. No need to re-sync after restarts!
 │                     │  DHCP/DNS from host                │  │
 │                     │                                    │  │
 │                     │  Connects to:                      │  │
-│                     │  Bitcoin VM RPC ───────────────────┘  │
-│                     │  (bitcoin:38332)                      │
+│                     │  Bitcoin VM RPC                    │  │
+│                     │  (bitcoin:38332)                   │  │
 │                     └────────────────────────────────────┘  │
-│                                                              │
-│  Host provides:                                              │
+│                                                             │
+│  Host provides:                                             │
 │   - DHCP server (10.233.0.1)                                │
 │   - DNS resolution (containers can resolve each other)      │
 │   - NAT for internet access                                 │
@@ -319,7 +319,7 @@ curl -s --user bitcoin:bitcoin \
 # Should show:
 # {
 #   "chain": "signet",
-#   "blocks": 12345,
+#   "blocks": 2682292,
 #   "initialblockdownload": true  # false when fully synced
 # }
 ```
@@ -345,6 +345,7 @@ ip addr show eth0 | grep "inet "
 
 ```bash
 # Inside the VM (login as root):
+# Run the same getblockchaininfo command as earlier with RPC but this time using bitcoin-cli on bitcoin VM
 bitcoin-cli -signet -rpcuser=bitcoin -rpcpassword=bitcoin getblockchaininfo
 
 {
@@ -402,103 +403,64 @@ ssh root@bitcoin df -h /var/lib/bitcoind
 df -h /var/lib/bitcoind
 ```
 
-#### Backup Blockchain Data
+### Step 1.5: Test Bitcoin VM RPC Connection (IMPORTANT!)
+
+**Before creating the Lightning container**, verify the Bitcoin VM's RPC is accessible. The Lightning container will use these EXACT same connection details.
+
+**RPC Connection Details:**
+- **Hostname:** `bitcoin` (resolved via DNS)
+- **RPC Port:** `38332`
+- **RPC Username:** `bitcoin`
+- **RPC Password:** `bitcoin`
+
+**Test from Host Machine:**
 
 ```bash
-# Stop VM first to ensure data consistency
-sudo ./stop-bitcoin-vm.sh
+# Test 1: Verify DNS resolves "bitcoin" hostname
+ping -c 3 bitcoin
+# Expected: replies from 10.233.0.X
 
-# Option 1: Simple copy
-cp vm-data/bitcoin-vm.qcow2 vm-data/backup-$(date +%Y%m%d).qcow2
+# Test 2: Test RPC connection with curl
+curl -s --user bitcoin:bitcoin \
+  --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": []}' \
+  -H 'content-type: text/plain;' \
+  http://bitcoin:38332/ | jq .
 
-# Option 2: Compressed backup (saves space)
-qemu-img convert -c -O qcow2 \
-  vm-data/bitcoin-vm.qcow2 \
-  vm-data/backup-compressed-$(date +%Y%m%d).qcow2
-
-# Restart VM
-sudo ./run-bitcoin-vm.sh --daemon
+# Expected output: "signet"
 ```
 
-#### Restore from Backup
+**If RPC tests fail:**
+- Check Bitcoin VM is running: `ps aux | grep qemu` or `cat /var/run/bitcoin-vm.pid`
+- Check DNS resolution: `nslookup bitcoin` should return 10.233.0.X
+- Check VM IP: `cat /var/lib/dnsmasq/dnsmasq.leases | grep bitcoin`
+- Check Bitcoin RPC is listening inside VM: SSH to VM and run `ss -tlnp | grep 38332`
 
-```bash
-# Stop VM
-sudo ./stop-bitcoin-vm.sh
+**Only proceed to Step 2 if RPC tests succeed!**
 
-# Restore backup
-cp vm-data/backup-YYYYMMDD.qcow2 vm-data/bitcoin-vm.qcow2
-
-# Start VM
-sudo ./run-bitcoin-vm.sh --daemon
-```
-
-#### Resize Disk (If You Need More Space)
-
-```bash
-# Stop VM first
-sudo ./stop-bitcoin-vm.sh
-
-# Resize disk image to 100GB
-qemu-img resize vm-data/bitcoin-vm.qcow2 100G
-
-# Start VM
-sudo ./run-bitcoin-vm.sh --daemon
-
-# Inside VM, resize the filesystem
-ssh root@bitcoin resize2fs /dev/vdb
-# Or from VM console:
-resize2fs /dev/vdb
-```
-
-#### Change Disk Size for New VMs
-
-Edit `run-bitcoin-vm.sh` and change:
-```bash
-DATA_DISK_SIZE="50G"  # Change to desired size, e.g., "100G"
-```
-
-Then start the VM - it will create a new disk with the specified size.
-
-#### Clean Start (Delete All Blockchain Data)
-
-```bash
-# Stop VM
-sudo ./stop-bitcoin-vm.sh
-
-# Delete persistent disk
-rm -f vm-data/bitcoin-vm.qcow2
-
-# Next start creates fresh disk
-sudo ./run-bitcoin-vm.sh --daemon
-# Creating persistent data disk: vm-data/bitcoin-vm.qcow2 (50G)
-
-# Bitcoin will sync from scratch
-```
-
-#### Move Data Disk to Different Location
-
-```bash
-# Stop VM
-sudo ./stop-bitcoin-vm.sh
-
-# Move disk
-mkdir /mnt/large-disk/bitcoin-data
-mv vm-data/bitcoin-vm.qcow2 /mnt/large-disk/bitcoin-data/
-
-# Update run-bitcoin-vm.sh:
-# Change: DATA_DISK="vm-data/bitcoin-vm.qcow2"
-# To:     DATA_DISK="/mnt/large-disk/bitcoin-data/bitcoin-vm.qcow2"
-
-# Start VM
-sudo ./run-bitcoin-vm.sh --daemon
-```
+---
 
 ### Step 2: Create Lightning Container
 
-The Lightning container is pre-configured to connect to the Bitcoin VM using hostname "bitcoin" (DNS resolution provided by host).
+The Lightning container uses the SAME RPC connection details tested above:
+- Hostname: `bitcoin`
+- Port: `38332`
+- Username: `bitcoin`
+- Password: `bitcoin`
 
-**No manual configuration needed!** The container will automatically find the Bitcoin VM via DNS.
+These are configured in `container-lightning.nix` via:
+```nix
+services.bitcoind = {
+  address = "bitcoin";     # Hostname from DNS
+  rpc.port = 38332;       # Mutinynet signet RPC port
+}
+
+services.clightning.extraConfig = ''
+  bitcoin-rpcconnect=bitcoin
+  bitcoin-rpcport=38332
+  bitcoin-rpcuser=bitcoin
+  bitcoin-rpcpassword=bitcoin
+'';
+```
 
 ```bash
 # Create lightning container

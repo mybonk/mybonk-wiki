@@ -68,6 +68,7 @@
     password = "nixos";
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILmCXubTHcQrMO+LFTmWq6sN8L7gJEmyu+mL8DR0NvBf root@nixos"
+
     ];
   };
 
@@ -77,8 +78,10 @@
     extraGroups = [ "wheel" ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILmCXubTHcQrMO+LFTmWq6sN8L7gJEmyu+mL8DR0NvBf operator@nixos"
+      "ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAHHDGRW40CXAlSbZ7G3zYO0CucwfsDUFnD+bI1+KbUFsDyBwHDhbpNZ1S12cDhcF6inszd8bkxKs0giyfr3cHtrrgEZqf9Ec8UXTMsnq12bbKT9zr0S8MPDzrIWdrpi2IpAaJ+qaXqT0lF+pp24ZtYBKbvBBScoGxx7tYA8QYe+MZ/7rg== operator@nixostestsbckitchen"
     ];
   };
+
 
   # ============================================================================
   # SSH SERVICE CONFIGURATION
@@ -91,6 +94,16 @@
       PasswordAuthentication = true;
     };
   };
+
+  security.sudo.extraRules= [
+  {  users = [ "operator" ];
+    commands = [
+       { command = "ALL" ;
+         options= [ "NOPASSWD" ]; # "SETENV" # Adding the following could be a good idea
+      }
+    ];
+  }
+  ];
 
   # ============================================================================
   # SYSTEM PACKAGES
@@ -140,7 +153,7 @@
     # Mutinynet-specific signet challenge
     signetchallenge=512102f7561d208dd9ae99bf497273e16f389bdbd6c4742ddb8e6b216e64fa2928ad8f51ae
 
-    # Connect to Mutinynet infrastructure
+    # Connect to Mutinynet
     addnode=45.79.52.207:38333
     dnsseed=0
 
@@ -160,6 +173,10 @@
     rpcallowip=10.233.0.0/16
     rpcuser=bitcoin
     rpcpassword=bitcoin
+
+    # Enable debug logging
+    debug=rpc
+
   '';
 
   # Create custom bitcoind systemd service

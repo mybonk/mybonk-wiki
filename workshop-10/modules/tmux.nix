@@ -6,22 +6,35 @@
 {
   # Install tmux and tmuxinator packages
   environment.systemPackages = with pkgs; [
+    btop
     tmux
     tmuxinator
   ];
 
-  # Deploy dotfiles to operator's home directory
-  systemd.tmpfiles.rules = [
-    # Deploy .tmux.conf
-    "f /home/operator/.tmux.conf 0644 operator operator - ${../dotfiles/.tmux.conf}"
+  # Deploy dotfiles using a systemd service that runs after user creation
+  systemd.services.deploy-operator-dotfiles = {
+    description = "Deploy tmux/tmuxinator dotfiles to operator home";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "users.target" ];
 
-    # Create .tmuxinator directory
-    "d /home/operator/.tmuxinator 0755 operator operator -"
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
 
-    # Deploy .tmuxinator.yml (default config)
-    "f /home/operator/.tmuxinator.yml 0644 operator operator - ${../dotfiles/.tmuxinator.yml}"
+    script = ''
+      # Copy dotfiles
+      cp ${../dotfiles/.bash_history} /home/operator/.bash_history
+      cp ${../dotfiles/.tmux.conf} /home/operator/.tmux.conf
+      cp ${../dotfiles/.tmuxinator.yml} /home/operator/.tmuxinator.yml
 
-    # Deploy tmuxinator.yml (workshop layout)
-    "f /home/operator/.tmuxinator/tmuxinator.yml 0644 operator operator - ${../dotfiles/tmuxinator.yml}"
-  ];
+      # Set correct ownership and permissions
+      chown -R operator:users /home/operator/.bash_history
+      chown -R operator:users /home/operator/.tmux.conf
+      chown -R operator:users /home/operator/.tmuxinator.yml
+      chmod 644 /home/operator/.bash_history
+      chmod 644 /home/operator/.tmux.conf
+      chmod 644 /home/operator/.tmuxinator.yml
+    '';
+  };
 }

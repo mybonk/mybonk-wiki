@@ -105,7 +105,7 @@ The most important command is `man` which stands for "manual". It explains what 
   - `apropos`: Search all the man pages using keywords to find commands and their functions (read [this](https://www.geeksforgeeks.org/apropos-command-in-linux-with-examples/)).
   - `whatis`: Display manual documentation pages in various ways.
   - `pwd` (print working directory), `ls` (list), `cd` (change directory), `type` (determine the type of a command), `mkdir` (make directory), `mv` (move), `rm` (remove), `ln` (and know the difference between a "soft" and a "hard" link), `which` (identifies "which" executable will be run when a command is issued), `stat` (provides detailed status information or metadata about a file or directory), `whereis` (used to locate the binary, source, and manual files associated with a command), `cat` (concatenate files and display their combined content), `head`, `tail`, `more`, `tee` …
-  - `uname -a`, `hostname`, `whoami`, `passwd`, `chown`, `chgrp`, `chmod`, `adduser`, `userdel`, `usermod`, …
+  - `uname -a`, `hostname`, `whoami`, `id`, `passwd`, `chown`, `chgrp`, `chmod`, `adduser`, `userdel`, `usermod`, …
   - `uptime`:  Tell how long the system has been running.
   - `ip a`: Tells you the IP address of your system.
   - `su`/`sudo`, `doas`: Used to assume the identity of another user on the system (they are both similar tools, `doas` has been ported from the OpenBSD project and could be assumed "safer" than `sudo` as it is less error-prone e.g. when setting up somewhat complicated patterns in `/etc/sudoers`).
@@ -701,6 +701,26 @@ In NixOS the following commands are replaced by parameters in the configuration 
 - `$ sudo ufw enable`: In case `ufw` is not running (check with sudo `ufw` status).
 - `$ netstat -ano`: See what ports are open and what processes uses to them.
 
+## Network / ports
+
+Check all listening ports with process info:
+  ss -tlnp
+  - -t = TCP ports
+  - -l = listening ports only
+  - -n = show port numbers (not service names)
+  - -p = show process using the port
+
+  Or the older netstat command:
+  netstat -tlnp
+
+  Check a specific port:
+  ss -tlnp | grep :9735
+
+  Check what ports a specific process is using:
+  lsof -i -P -n | grep bitcoind
+
+  The ss command is the modern replacement for netstat and is generally faster.
+
 ## partitions / filesystems
 
 ![alt text](docs/img/various/linux-filesystem-hierarchy.png)
@@ -1124,7 +1144,7 @@ Of course you also use the traditional Linux commands to know more:
   - `nix-env --delete-generations 14d`: Delete all generations older than 14 days.
   - `nix-store --gc --print-dead`: Display what files would be deleted.
   - `nix-store --gc --print-live`: Display what files would not be deleted. 
-  - After removing appropriate old generations (after having used `nix-env` with an argument `--delete-generations`) - you can run the garbage collector as follows: `nix-store --gc`
+  - After removing appropriate old generations (after having used `nix-env` with an argument `--delete-generations` or `--delete-old`) - you can run the garbage collector as follows: `nix-store --gc`
 
 ### Nix debugging
   - `lib.debug.traceSeq <arg1> <arg2>`: Print a fully evaluated value.

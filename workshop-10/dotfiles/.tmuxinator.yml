@@ -26,8 +26,11 @@ name: console
 # Project hooks
 
 # Runs on project start, always
-# on_project_start: command
-
+on_project_start: 
+  |
+  -
+  # Set badge to show the session name.
+  printf "\e]1337;SetBadgeFormat=%s\a" $(echo -n "$(hostname)" | base64)
 # Run on project start, the first time
 # on_project_first_start: command
 
@@ -35,10 +38,19 @@ name: console
 # on_project_restart: command
 
 # Run on project exit ( detaching from tmux session )
-# on_project_exit: command
+on_project_exit:
+  |
+  -
+  # Set badge to show the current session name and git branch, if any is set.
+  printf "\e]1337;SetBadgeFormat=%s\a" $(echo -n " " | base64)
+  
 
 # Run on project stop
-# on_project_stop: command
+on_project_stop:
+  |
+  -
+  # Set badge to show the current session name and git branch, if any is set.
+  printf "\e]1337;SetBadgeFormat=%s\a" $(echo -n " " | base64)
 
 # Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
 # pre_window: rbenv shell 2.0.0-p247
@@ -50,7 +62,7 @@ tmux_options: -f ./.tmux.conf
 # tmux_command: byobu
 
 # Specifies (by name or index) which window will be selected on project startup. If not set, the first window is used.
-startup_window: CMD
+startup_window: RUNNING
 
 # Specifies (by index) which pane of the specified window will be selected on project startup. If not set, the first pane is used.
 # startup_pane: 1
@@ -80,7 +92,7 @@ windows:
         - logs_service_1:
           - journalctl --no-full -f -n 30 -u tailscale
         - logs_service_2:
-          - journalctl --no-full -f -n 30 -u ssh
+          - journalctl --no-full -f -n 30 -u sshd
         - logs_service_3:
           - journalctl --no-full -f -n 30 -u ssh-agent
         - logs_service_4:
