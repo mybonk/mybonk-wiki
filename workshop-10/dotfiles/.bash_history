@@ -9,6 +9,7 @@ systemctl --type=service --state=failed
 systemctl --type=service --state=inactive
 ssh -o "StrictHostKeyChecking no" operator@host
 ssh-keygen -R host
+journalctl -xeu container@lightning.service
 systemctl cat sshd
 tmuxinator
 tmux list-sessions
@@ -50,6 +51,7 @@ lightning-cli --network=signet listfunds
 sudo nixos-container run lightning -- lightning-cli --network=signet getinfo
 ip addr show eth0
 cat /var/lib/dnsmasq/dnsmasq.leases | grep bitcoin
+sudo systemctl reset-failed container@lightning.service
 sudo nixos-container show-ip lightning
 sudo nixos-container list
 sudo nixos-container run lightning -- ping -c 3 bitcoin
@@ -71,3 +73,6 @@ sudo machinectl terminate lightning
 sudo nixos-container destroy lightning
 sudo nixos-container root-login lightning
 ls -la /home/operator/
+sudo systemctl stop container@lightning.service
+sudo systemctl reset-failed container@lightning.service
+sudo ip link delete vb-lightning

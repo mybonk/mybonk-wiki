@@ -27,14 +27,17 @@
       cp ${../dotfiles/.bash_history} /home/operator/.bash_history
       cp ${../dotfiles/.tmux.conf} /home/operator/.tmux.conf
       cp ${../dotfiles/.tmuxinator.yml} /home/operator/.tmuxinator.yml
+      cp ${../dotfiles/.bash_aliases} /home/operator/.bash_aliases
 
       # Set correct ownership and permissions
       chown -R operator:users /home/operator/.bash_history
       chown -R operator:users /home/operator/.tmux.conf
       chown -R operator:users /home/operator/.tmuxinator.yml
+      chown -R operator:users /home/operator/.bash_aliases
       chmod 644 /home/operator/.bash_history
       chmod 644 /home/operator/.tmux.conf
       chmod 644 /home/operator/.tmuxinator.yml
+      chmod 644 /home/operator/.bash_aliases
     '';
   };
 }
