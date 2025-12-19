@@ -2,11 +2,11 @@
   description = "NixOS VM configuration with nix-bitcoin for Bitcoin and Lightning nodes using Mutinynet fork";
 
   inputs = {
-    # Use NixOS 24.11 stable channel
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
-
     # nix-bitcoin: Bitcoin and Lightning node configurations
     nix-bitcoin.url = "github:fort-nix/nix-bitcoin/master";
+
+    # Use nixpkgs from nix-bitcoin for consistency
+    nixpkgs.follows = "nix-bitcoin/nixpkgs";
   };
 
   outputs = { self, nixpkgs, nix-bitcoin }:
@@ -98,12 +98,14 @@
       # Usage: sudo nixos-container create lightning --flake .#lightning
       lightning = nixpkgs.lib.nixosSystem {
         inherit system;
+        specialArgs = { inherit nix-bitcoin; };  # Pass nix-bitcoin input to modules
         modules = [
+          # CRITICAL: Apply Mutinynet overlay FIRST so nix-bitcoin sees Bitcoin Inquisition
+          # This ensures the container runs the correct Bitcoin fork optimized for Mutinynet
+          { nixpkgs.overlays = [ (final: prev: { inherit (pkgs) bitcoin; }) ]; }
+
           nix-bitcoin.nixosModules.default
           ./container-lightning.nix
-
-          # Apply Mutinynet overlay - use Bitcoin Inquisition instead of Bitcoin Core
-          { nixpkgs.overlays = [ (final: prev: { inherit (pkgs) bitcoin; }) ]; }
         ];
       };
 

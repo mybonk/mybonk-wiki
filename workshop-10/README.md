@@ -476,6 +476,50 @@ sleep 10
 sudo nixos-container run lightning -- lightning-cli --network=signet getinfo
 ```
 
+#### Container Management Script (Recommended)
+
+The `manage-containers.sh` script provides easier container management with automatic bridge configuration:
+
+```bash
+# Create container (auto-configures bridge)
+sudo ./manage-containers.sh create lightning
+
+# Update container configuration (preserves all data!)
+# This is the RECOMMENDED way to apply config changes
+sudo ./manage-containers.sh update lightning
+
+# Other commands
+sudo ./manage-containers.sh list              # Show all containers with IPs
+sudo ./manage-containers.sh ip lightning      # Get container IP
+sudo ./manage-containers.sh shell lightning   # Open shell in container
+sudo ./manage-containers.sh stop lightning    # Stop container
+sudo ./manage-containers.sh start lightning   # Start container
+```
+
+**Why use the update command?**
+- ✅ Preserves all container data (blockchain, secrets, etc.)
+- ✅ Automatically fixes bridge configuration if needed
+- ✅ No need to destroy and recreate container
+- ✅ Safe to run multiple times
+
+**When to use update:**
+- After editing `container-lightning.nix`
+- After enabling/disabling services (electrs, mempool, clightning)
+- When container gets wrong IP (10.233.1.x instead of 10.233.0.x)
+
+**Common workflow:**
+```bash
+# 1. Edit configuration
+vim container-lightning.nix
+
+# 2. Update container (preserves data)
+sudo ./manage-containers.sh update lightning
+
+# 3. Verify it's working
+sudo ./manage-containers.sh ip lightning
+sudo nixos-container run lightning -- systemctl status bitcoind
+```
+
 ### Step 3: Verify VM-to-Container Connectivity
 
 Before running tests, verify that the Lightning container can reach the Bitcoin VM via DNS:
@@ -580,7 +624,13 @@ Core Lightning container validated:
 - **Network:** Bridge (10.233.0.0/16)
 - **DHCP Server:** 10.233.0.1 (host)
 - **DNS:** Host-provided
-- **Bitcoind Connection:** Via RPC to bitcoin container
+- **Bitcoind Connection:** Local (127.0.0.1:38332)
+- **nix-bitcoin:** Enabled with secret management
+- **Secrets Location:** `/etc/nix-bitcoin-secrets/` (inside container)
+  - Auto-generated on first boot
+  - Persistent across container restarts
+  - Deleted if container is destroyed
+  - On host: `/var/lib/nixos-containers/lightning/etc/nix-bitcoin-secrets/`
 
 ### Host Configuration
 
@@ -617,24 +667,46 @@ curl -s --user bitcoin:bitcoin \
 # Should output: "signet"
 ```
 
-### Lightning Commands
+### Lightning Container Commands
 
+**Inside lightning container:**
 ```bash
-# Inside lightning container
+# Login to container
 sudo nixos-container root-login lightning
 
-# Check Lightning status
-lightning-cli --network=signet getinfo
+# Check local bitcoind status (uses nix-bitcoin auto-generated credentials)
+bitcoin-cli -signet getblockchaininfo
+
+# Get peer info
+bitcoin-cli -signet getpeerinfo
+
+# Using curl with nix-bitcoin credentials:
+RPC_PASS=$(cat /etc/nix-bitcoin-secrets/bitcoin-rpcpassword-privileged)
+curl -u privileged:$RPC_PASS \
+  -d '{"jsonrpc":"1.0","id":"curl","method":"getblockchaininfo","params":[]}' \
+  -H 'content-type: text/plain;' \
+  http://127.0.0.1:38332/ | jq .result
+
+# Check Lightning status (currently disabled)
+# lightning-cli --network=signet getinfo
 
 # Generate Lightning address
-lightning-cli --network=signet newaddr
+# lightning-cli --network=signet newaddr
 
 # List funds
-lightning-cli --network=signet listfunds
-
-# From host (one-liner)
-sudo nixos-container run lightning -- lightning-cli --network=signet getinfo
+# lightning-cli --network=signet listfunds
 ```
+
+**From host:**
+```bash
+# Query local bitcoind in container
+sudo nixos-container run lightning -- bitcoin-cli -signet getblockchaininfo
+
+# One-liner with jq
+sudo nixos-container run lightning -- bitcoin-cli -signet getblockchaininfo | jq
+```
+
+**Note:** The Lightning container runs its own local bitcoind with nix-bitcoin. RPC credentials are auto-generated and stored in `/etc/nix-bitcoin-secrets/`.
 
 ### Check IPs
 
@@ -802,47 +874,71 @@ bitcoin-cli -signet -rpcuser=bitcoin -rpcpassword=bitcoin getpeerinfo
 bitcoin-cli -signet -rpcuser=bitcoin -rpcpassword=bitcoin getblockchaininfo | grep chain
 ```
 
-**Lightning can't reach Bitcoin VM:**
+**Container has wrong IP (10.233.1.x instead of 10.233.0.x):**
+
+This happens when the container configuration doesn't include proper bridge settings. The manage-containers.sh update command automatically fixes this:
+
 ```bash
-# From Lightning container, ping VM using hostname
+# Quick fix - update command auto-fixes bridge configuration
+sudo ./manage-containers.sh update lightning
+
+# The update command will:
+# 1. Check bridge configuration in /etc/nixos-containers/lightning.conf
+# 2. Fix it if needed (sets HOST_BRIDGE=br-containers)
+# 3. Update the container from flake
+# 4. Restart with correct IP (10.233.0.x)
+# 5. Preserve all data (blockchain, secrets, etc.)
+
+# Verify fix worked
+sudo ./manage-containers.sh ip lightning
+# Should now show 10.233.0.x
+```
+
+**Lightning container networking issues:**
+```bash
+# From Lightning container, ping host gateway
+sudo nixos-container run lightning -- ping -c 3 10.233.0.1
+
+# From Lightning container, ping Bitcoin VM (for comparison)
 sudo nixos-container run lightning -- ping -c 3 bitcoin
-
-# Test RPC from Lightning to Bitcoin using hostname
-sudo nixos-container run lightning -- curl -s \
-  --user bitcoin:bitcoin \
-  --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' \
-  http://bitcoin:38332/
-
-# Verify Bitcoin RPC is bound to 0.0.0.0 (not just 127.0.0.1)
-# Inside VM (if running foreground mode, or ssh into VM):
-ss -tlnp | grep 38332
-# Should show: 0.0.0.0:38332
-
-# Verify firewall is disabled in VM
-systemctl status firewalld  # Should be inactive
 
 # Check DNS resolution from Lightning container
 sudo nixos-container run lightning -- nslookup bitcoin
 # Should resolve to 10.233.0.X
+
+# Check if container got IP via DHCP
+sudo nixos-container show-ip lightning
+# Should show 10.233.0.x (not 10.233.1.x)
+# If showing 10.233.1.x, see "Container has wrong IP" above
 ```
 
 ### Lightning Container Issues
 
-**Can't connect to bitcoind:**
+**Local bitcoind not responding:**
 ```bash
-# Verify bitcoind hostname in config (should be "bitcoin")
-grep "bitcoin-rpcconnect=" container-lightning.nix
-# Should show: bitcoin-rpcconnect=bitcoin
+# Check if local bitcoind is running inside container
+sudo nixos-container run lightning -- systemctl status bitcoind
 
-# Test RPC connection from lightning container using hostname
-sudo nixos-container run lightning -- curl -s \
-  --user bitcoin:bitcoin \
-  --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' \
+# Check bitcoind logs
+sudo nixos-container run lightning -- journalctl -u bitcoind -n 50
+
+# Test RPC connection to local bitcoind
+sudo nixos-container run lightning -- bitcoin-cli -signet getblockchaininfo
+
+# Using curl with nix-bitcoin credentials (inside container):
+sudo nixos-container root-login lightning
+RPC_PASS=$(cat /etc/nix-bitcoin-secrets/bitcoin-rpcpassword-privileged)
+curl -u privileged:$RPC_PASS \
+  -d '{"jsonrpc":"1.0","id":"test","method":"getblockchaininfo","params":[]}' \
   -H 'content-type: text/plain;' \
-  http://bitcoin:38332/
+  http://127.0.0.1:38332/ | jq .result
 
-# Check clightning logs
-sudo nixos-container run lightning -- journalctl -u clightning.service -n 50
+# Check if RPC port is listening
+ss -tlnp | grep 38332
+# Should show: 127.0.0.1:38332
+
+# Check clightning logs (if enabled)
+# sudo nixos-container run lightning -- journalctl -u clightning.service -n 50
 ```
 
 **Network routing issues:**
@@ -878,20 +974,48 @@ sudo ./stop-bitcoin-vm.sh
 # Restarting the VM will resume with existing blockchain state
 ```
 
-### Destroy Containers (Preserves Blockchain Data)
+### Destroy Containers
+
+⚠️ **WARNING: Container destruction permanently deletes ALL container data, including blockchain state!**
+
+**Before destroying a container, consider using the update command instead:**
 
 ```bash
-# Destroy specific containers
+# RECOMMENDED: Update container to apply config changes (preserves all data)
+sudo ./manage-containers.sh update lightning
+
+# This fixes most issues without losing blockchain data:
+# - Applies configuration changes
+# - Fixes bridge networking issues
+# - Updates service configurations
+# - Preserves blockchain state and secrets
+```
+
+**Only destroy containers when:**
+- You genuinely want to delete all data and start fresh
+- The container is a test container you no longer need
+- You're cleaning up after workshop completion
+
+```bash
+# Destroy specific containers (⚠️ DELETES all container data)
 sudo nixos-container destroy lightning
 sudo nixos-container destroy tlightning  # If kept from test runs
+
+# Or using the management script
+sudo ./manage-containers.sh destroy lightning
 
 # List remaining containers
 sudo nixos-container list
 
-# Destroy all containers
+# Destroy all containers (⚠️ DELETES all container data)
 for c in $(sudo nixos-container list); do sudo nixos-container destroy $c; done
 
-# NOTE: VM persistent disk is NOT affected by container operations
+# NOTES:
+# - Container blockchain data is stored in /var/lib/nixos-containers/<name>/var/lib/bitcoind/
+# - Destroying a container PERMANENTLY DELETES this data
+# - VM persistent disk (vm-data/) is NOT affected by container operations
+# - To preserve container data, stop the container instead: nixos-container stop <name>
+# - Or use update command to apply changes: sudo ./manage-containers.sh update <name>
 ```
 
 ### Complete Cleanup (Deletes Everything)
@@ -913,12 +1037,19 @@ rm -rf vm-data/
 
 ### What Gets Preserved vs Deleted
 
-| Action | System Disk | Blockchain Data | Containers |
-|--------|-------------|-----------------|------------|
+| Action | VM System | VM Blockchain Data | Container Data |
+|--------|-----------|-------------------|----------------|
 | `./stop-bitcoin-vm.sh` | ❌ Deleted | ✅ Preserved | ✅ Preserved |
-| `nixos-container destroy` | N/A | ✅ Preserved | ❌ Deleted |
-| `rm -rf vm-data/` | N/A | ❌ Deleted | ✅ Preserved |
+| `nixos-container stop` | N/A | N/A | ✅ Preserved |
+| `nixos-container destroy` | N/A | ✅ Preserved (VM) | ❌ **DELETED** |
+| `rm -rf vm-data/` | ❌ Deleted | ❌ **DELETED** | ✅ Preserved |
 | Restart VM | ✅ Recreated | ✅ Preserved | ✅ Preserved |
+
+**Key Points:**
+- **Stopping containers** (`nixos-container stop`) preserves all data
+- **Destroying containers** (`nixos-container destroy`) **permanently deletes** container blockchain data
+- VM blockchain data (vm-data/) is separate and unaffected by container operations
+- Container data location: `/var/lib/nixos-containers/<name>/var/lib/bitcoind/signet/`
 
 ---
 

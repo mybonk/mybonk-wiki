@@ -84,6 +84,11 @@
 
 
   # ============================================================================
+  # Enable Tailscale for remote access from anywhere
+  # ============================================================================
+  services.tailscale.enable = true;
+
+  # ============================================================================
   # SSH SERVICE CONFIGURATION
   # ============================================================================
 
@@ -117,10 +122,13 @@
     curl
     wget
     vim
-    htop
-    btop
     git
     jq
+    ripgrep
+    htop
+    btop
+    dool
+    neofetch
     bitcoin  # Add bitcoin-cli and other bitcoin utilities to PATH
     asciinema # Used to record videos of workshops' terminals
   ];
@@ -145,6 +153,11 @@
 
   # Create bitcoin.conf manually with proper signet configuration
   environment.etc."bitcoin/bitcoin.conf".text = ''
+    
+    # Enable debug logging
+    debug=rpc
+
+    
     # Signet mode MUST be declared first
     signet=1
 
@@ -153,8 +166,15 @@
     # Mutinynet-specific signet challenge
     signetchallenge=512102f7561d208dd9ae99bf497273e16f389bdbd6c4742ddb8e6b216e64fa2928ad8f51ae
 
-    # Connect to Mutinynet
-    addnode=45.79.52.207:38333
+    # Connect to a Mutinynet node
+      addnode=45.79.52.207:38333
+      # Connect to our local container called "lightning"on our private network
+      addnode=lightning:38333
+      # And more
+      addnode=mutinynet.com:38333
+      addnode=faucet.mutinynet.com:38333
+
+
     dnsseed=0
 
     # Mutinynet fork features (30-second blocks)
@@ -174,8 +194,6 @@
     rpcuser=bitcoin
     rpcpassword=bitcoin
 
-    # Enable debug logging
-    debug=rpc
 
   '';
 

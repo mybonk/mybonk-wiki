@@ -2,7 +2,7 @@
 usage() {
   echo "Usage: $0 [username@hostname] [--remote-dir <remote_directory>] [--help]"
   echo "This script is a wrapper for the following command:"
-  echo "ssh -o TCPKeepAlive=no -t username@hostname \"cd '$remote_directory' ; tmuxinator -p tmuxinator.yml\""
+  echo "ssh -o TCPKeepAlive=no -t username@hostname \"cd '$remote_directory' ; tmuxinator\""
   echo "Options:"
   echo " username@hostname Specifies the remote host to connect to. If not provided, the command will be executed locally."
   echo " --remote-dir <remote_directory> Specifies the remote directory to use. If not provided, the current directory (.) is used."
@@ -40,6 +40,16 @@ if [ -z "$user_host" ]; then
   hostname="localhost"
 else
   hostname=$(echo "$user_host" | cut -d'@' -f2)
+
+  # Check if remote host is reachable before attempting SSH
+  echo "Checking if $hostname is reachable..."
+  if ! ping -c 1 -W 2 "$hostname" &> /dev/null; then
+    echo "❌ Error: Cannot reach $hostname"
+    echo "The host '$hostname' does not appear to be online or reachable."
+    exit 1
+  fi
+  echo "✓ Host $hostname is reachable"
+  echo ""
 fi
 
 check_tmuxinator
@@ -48,7 +58,7 @@ echo "Constructed the following command that will be run on $hostname:"
 session_name=${hostname//./''} # Remove the potential dots in the hostname as they are a problem in tmux for session names.
 session_name=${session_name: -8} # Shorten the session name to the last 8 characters.
 
-command="cd '$remote_directory' && tmuxinator local && sh --login"
+command="cd '$remote_directory' && tmuxinator local"
 echo $command
 
 if [ -n "$user_host" ]; then

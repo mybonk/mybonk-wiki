@@ -90,13 +90,13 @@ windows:
       layout: 1851,204x53,0,0[204x12,0,0,2,204x13,0,13,5,204x12,0,27,6,204x13,0,40{51x13,0,40,7,50x13,52,40,9,101x13,103,40,8}]
       panes:
         - logs_service_1:
-          - journalctl --no-full -f -n 30 -u tailscale
+          - journalctl --no-full -f -n 30 -u clightning
         - logs_service_2:
-          - journalctl --no-full -f -n 30 -u sshd
+          - journalctl --no-full -f -n 30 -u mempool.service
         - logs_service_3:
-          - journalctl --no-full -f -n 30 -u ssh-agent
+          - journalctl --no-full -f -n 30 -u electrs.service
         - logs_service_4:
-          - journalctl --no-full -f -n 30 -u CHANGE_ME
+          - journalctl --no-full -f -n 30 -u bitcoind
   - TOP:
       - btop
 
