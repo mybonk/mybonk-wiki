@@ -4,7 +4,7 @@ title: Workshop 9
 nav_order: 9
 ---
 
-# Bitcoin Regtest Containers in NixOS (nix-bitcoin)
+# Containers Management in NixOS (nix-bitcoin, REGTEST)
 
 ## Introduction
 
@@ -243,7 +243,7 @@ You don't need to commit, just stage the files with `git add`.
 
 ```bash
 # Make sure you're in workshop-9 directory
-cd /path/to/mybonk-wiki/workshop-9
+cd ./workshop-9
 
 # Create a Bitcoin node container
 # The script uses the flake.nix from current directory (workshop-9)
