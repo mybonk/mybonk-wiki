@@ -4,7 +4,7 @@ title: Workshop 2
 nav_order: 3
 ---
 
-# Run Bitcoin as a service on NixOS in 2 Minutes
+# Install new services on NixOS in 2 Minutes
 
 ## Overview
 
@@ -273,6 +273,31 @@ Even testnet will grow to **~30GB for the blockchain** and **~50GB+ with indexes
 4. **RPC access:** Allows `bitcoin-cli` to communicate with `bitcoind`
 5. **Container isolation:** Bitcoin runs isolated but shares host kernel
 6. **Quick sync:** Testnet syncs in hours instead of days/weeks
+
+### Container Scalability
+
+**How many containers can you run?**
+
+- ✅ **No hard NixOS limit** on container count
+- 📊 **Typical limit**: Network configuration (DHCP IP range)
+- 🚀 **Easy to expand**: Configure DHCP range for thousands of containers
+- 💻 **Real limit**: Your RAM and disk space, not software
+- 🎯 **Practical sweet spot**: 50-500 containers depending on workload
+
+**Resource impact per container:**
+
+| Resource | Per Container | 100 Containers | 1000 Containers |
+|----------|--------------|----------------|-----------------|
+| **RAM** | 100-500 MB | 10-50 GB | 100-500 GB |
+| **Disk** | 500 MB - 5 GB | 50-500 GB | 500 GB - 5 TB |
+| **CPU** | Minimal (idle) | Low | Medium |
+
+**Limits you can configure:**
+- **DHCP IP range**: Determines available container IPs (easily expanded in network config)
+- **Kernel namespaces**: `user.max_user_namespaces` sysctl (default: ~30,000+)
+- **File descriptors**: System ulimits (adjustable for high container counts)
+
+For most learning/development scenarios, you'll hit hardware limits (RAM/disk) long before hitting any NixOS configuration limits.
 
 ---
 
