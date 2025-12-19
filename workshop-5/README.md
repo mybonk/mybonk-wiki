@@ -4,7 +4,7 @@ title: Workshop 5
 nav_order: 6
 ---
 
-# Build Your NixOS Installer ISO in 5 Minutes
+# Build You Custom Installation Media
 
 ## Overview
 
