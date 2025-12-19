@@ -4,7 +4,7 @@ title: Workshop 8
 nav_order: 8
 ---
 
-# NixOS Container Management from the Command Line
+# Proposed Lab Setup (DHCP, DNS, NAT ...)
 
 ## Introduction
 
