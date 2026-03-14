@@ -104,13 +104,14 @@ The most important command is `man` which stands for "manual". It explains what 
   - `man`: User manual of given command. 
   - `apropos`: Search all the man pages using keywords to find commands and their functions (read [this](https://www.geeksforgeeks.org/apropos-command-in-linux-with-examples/)).
   - `whatis`: Display manual documentation pages in various ways.
-  - `pwd` (print working directory), `ls` (list), `cd` (change directory), `type` (determine the type of a command), `mkdir` (make directory), `mv` (move), `rm` (remove), `ln` (and know the difference between a "soft" and a "hard" link), `which` (identifies "which" executable will be run when a command is issued), `stat` (provides detailed status information or metadata about a file or directory), `whereis` (used to locate the binary, source, and manual files associated with a command), `cat` (concatenate files and display their combined content), `head`, `tail`, `more`, `tee` …
+  - `pwd` (print working directory), `ls` (list, `ls -t`, `ls -s` to sort by last modified date), `cd` (change directory), `type` (determine the type of a command), `mkdir` (make directory), `mv` (move), `rm` (remove), `ln` (and know the difference between a "soft" and a "hard" link), `which` (identifies "which" executable will be run when a command is issued), `stat` (provides detailed status information or metadata about a file or directory), `whereis` (used to locate the binary, source, and manual files associated with a command), `cat` (concatenate files and display their combined content), `head`, `tail`, `more`, `tee` …
   - `uname -a`, `hostname`, `whoami`, `id`, `passwd`, `chown`, `chgrp`, `chmod`, `adduser`, `userdel`, `usermod`, …
   - `uptime`:  Tell how long the system has been running.
   - `ip a`: Tells you the IP address of your system.
   - `su`/`sudo`, `doas`: Used to assume the identity of another user on the system (they are both similar tools, `doas` has been ported from the OpenBSD project and could be assumed "safer" than `sudo` as it is less error-prone e.g. when setting up somewhat complicated patterns in `/etc/sudoers`).
   - `history` 
     - `echo "$HISTFILE"`: Points to the file where your shell history is stored.
+    - `set +o history` and `set -o history`: Temporarily disable and enable logging history, respectively.
     - `history | grep [string]`: Find any record in history.
     - `history -c`: Remove all records.
     - `history -d 1234`: Remove record number 1234.
@@ -538,7 +539,8 @@ scp somefile user@machine_A:~/
 
   ### Common tools
   - ping: send ICMP ECHO_REQUEST to network hosts
-  - ss: Display various sockets information. Similar to netstat. e.x. `$ ss -tlnp | grep 8080`
+  - `lnstats`:  Commonly used to periodically print a selection of statistical values exported by the kernel.
+  - `ss`: Display various sockets information. Similar to netstat. e.x. `$ ss -tlnp | grep 8080`
   ### Speed test
   
   - [https://www.speedtest.net](https://www.speedtest.net)
