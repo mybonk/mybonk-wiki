@@ -149,6 +149,104 @@ workshop-10/
 
 ---
 
+## The RPC Redirect Trick: Transparent Remote Bitcoind
+
+### The Problem
+
+Services like Core Lightning and electrs are designed to talk to a **local** bitcoind. They default to connecting to `127.0.0.1` (localhost) and their nix-bitcoin module configuration hardwires this assumption. In our architecture, bitcoind lives on the **bitcoin VM** (a separate machine), not inside the lightning container.
+
+The naive solution - reconfiguring every single service to point to `bitcoin:38332` instead of `127.0.0.1:38332` - is fragile: every new service added to the container needs the same treatment, and nix-bitcoin's auto-generated configurations may reset these settings.
+
+### The Solution: iptables DNAT
+
+The `bitcoin-rpc-redirect` systemd service uses a single **kernel-level NAT rule** to transparently intercept any outbound TCP connection to `127.0.0.1:38332` from inside the container and silently rewrite its destination to `bitcoin:38332`:
+
+```bash
+iptables -t nat -A OUTPUT -p tcp -d 127.0.0.1 --dport 38332 -j DNAT --to-destination bitcoin:38332
+```
+
+From the point of view of CLightning, electrs, mempool, or any other service: **they think they are talking to localhost**. They are not. The kernel intercepts the packet before it even leaves the network stack and redirects it to the remote VM. Zero configuration changes needed per service.
+
+```
+┌─────────────────── lightning container ──────────────────┐
+│                                                           │
+│  CLightning ──► 127.0.0.1:38332                          │
+│                      │                                    │
+│               iptables OUTPUT chain                       │
+│               DNAT rule intercepts                        │
+│                      │                                    │
+│                      ▼                                    │
+│               bitcoin:38332 ──────────────────────────► bitcoin VM
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+```
+
+### Is iptables DNAT the Best Approach?
+
+It is elegant and zero-overhead (kernel-level, no extra process), but it is not the only option. Here is a comparison:
+
+| Approach | How | Pros | Cons |
+|----------|-----|------|------|
+| **iptables DNAT** (current) | Kernel rewrites packet destination | Zero overhead, fully transparent, no extra process, one rule covers all services | Requires `NET_ADMIN` capability, harder to debug, confusing if local bitcoind also runs |
+| **socat** | Userspace proxy listening on `127.0.0.1:38332`, forwarding to `bitcoin:38332` | Simple, easy to debug, no special capabilities | Extra process running, small latency overhead |
+| **Configure each service** | Point CLightning, electrs, etc. each to `bitcoin:38332` | Explicit and clear | Tedious, breaks nix-bitcoin defaults, must repeat for every new service |
+| **SSH tunnel** | `ssh -L 38332:bitcoin:38332 user@host` | Encrypted | Requires SSH, not suitable for boot-time service wiring |
+
+**socat** is the most common alternative in practice. As a systemd service it would look like:
+
+```nix
+systemd.services.bitcoin-rpc-proxy = {
+  description = "Forward local RPC port to Bitcoin VM";
+  after = [ "network-online.target" ];
+  wantedBy = [ "multi-user.target" ];
+  serviceConfig = {
+    ExecStart = "${pkgs.socat}/bin/socat TCP-LISTEN:38332,bind=127.0.0.1,reuseaddr,fork TCP:bitcoin:38332";
+    Restart = "always";
+  };
+};
+```
+
+**Does iptables DNAT actually work inside a NixOS container?**
+
+Yes - but only because our container uses **private bridge networking** (`br-containers`). Here is why it matters:
+
+- `systemd-nspawn` containers (which NixOS containers use) **do NOT have `CAP_NET_ADMIN` by default**
+- However, when private networking is enabled (e.g. `--network-bridge`, `--network-veth`), `CAP_NET_ADMIN` **is automatically granted** so the container can manage its own isolated network namespace
+- Our lightning container uses bridge networking → gets `CAP_NET_ADMIN` → iptables works inside it
+
+If the container used host networking (no isolation), `CAP_NET_ADMIN` would be stripped and the iptables rule would silently fail with a permission error.
+
+**On a VM it is simpler:** VMs (QEMU/KVM) run a full Linux kernel without any capability restrictions. iptables works exactly as on bare metal - no special configuration needed. The same rule would work on a VM without any preconditions.
+
+| Environment | iptables DNAT works? | Why |
+|-------------|---------------------|-----|
+| NixOS container (bridge network) | ✅ Yes | `CAP_NET_ADMIN` auto-granted with private networking |
+| NixOS container (host network) | ❌ No | `CAP_NET_ADMIN` stripped without private networking |
+| VM (QEMU/KVM) | ✅ Yes | Full kernel access, no capability restrictions |
+| Bare metal | ✅ Yes | Full kernel access |
+
+**iptables DNAT wins** in this specific context because:
+- The container has `CAP_NET_ADMIN` via bridge networking (confirmed)
+- No persistent process consuming memory
+- All services - present and future - are covered by one rule
+- No port conflict: the rule only applies when no local process is listening on that port
+
+### Important Caveat
+
+The redirect is **globally active** inside the container. If you later run a **local bitcoind inside the same container** (as in the self-contained stack variant of this workshop), the iptables rule must be **disabled**, otherwise RPC calls meant for the local bitcoind will be silently forwarded to the remote VM instead.
+
+In `container-lightning.nix`, the service is toggled with the `enable` flag:
+
+```nix
+systemd.services.bitcoin-rpc-redirect = {
+  enable = true;   # true = use remote bitcoin VM
+                   # false = use local bitcoind inside container
+  ...
+};
+```
+
+---
+
 ## Part 1: Bitcoin VM Testing
 
 The Bitcoin VM runs automated tests using NixOS's test framework. This validates the Bitcoin configuration without requiring live network access.

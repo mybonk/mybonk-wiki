@@ -129,9 +129,12 @@ cmd_create_single() {
     # Ensure flake has a configuration for this container name with proper hostname
     echo "[1/3] Ensuring flake configuration exists for '$container_name'..."
 
-    # Check if a configuration with the correct hostname already exists
+    # Check if a configuration with the correct hostname already exists.
+    # We check both conditions independently across the whole file: the nixosSystem
+    # entry exists AND the hostName is declared. Using -A 5 was fragile - it would
+    # miss the hostName if more than 5 lines separated it from the nixosSystem line.
     if grep -q "$container_name = nixpkgs.lib.nixosSystem" flake.nix && \
-       grep -A 5 "^      $container_name = nixpkgs.lib.nixosSystem" flake.nix | grep -q "networking.hostName = \"$container_name\""; then
+       grep -q "networking.hostName = \"$container_name\"" flake.nix; then
         echo "✓ Configuration already exists with correct hostname"
     else
         # Check if config exists but without hostname

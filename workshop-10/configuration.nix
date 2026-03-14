@@ -155,7 +155,7 @@
   environment.etc."bitcoin/bitcoin.conf".text = ''
     
     # Enable debug logging
-    debug=rpc
+    #debug=rpc
 
     
     # Signet mode MUST be declared first

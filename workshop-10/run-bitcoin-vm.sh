@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Wrapper script to run Bitcoin VM with proper bridge networking
-# This script must be run with sudo for bridge networking access
+# This script must be run with sudo (required for bridge networking access)
 
 set -e
 
@@ -33,7 +33,7 @@ done
 
 # Check if running as root
 if [ "$EUID" -ne 0 ]; then
-  echo "Error: This script must be run with sudo for bridge networking"
+  echo "Error: This script must be run with sudo (required by bridge networking)"
   echo "Usage: sudo $0 [--daemon]"
   exit 1
 fi

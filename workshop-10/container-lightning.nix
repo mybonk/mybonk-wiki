@@ -15,7 +15,6 @@
   # ============================================================================
 
   boot.isContainer = true;
-  networking.hostName = "lightning";
 
   # ============================================================================
   # NETWORK CONFIGURATION (DHCP from host)
@@ -45,7 +44,7 @@
     useDHCP = lib.mkForce false;
     nameservers = [ "10.233.0.1" ];  # Host DNS
     search = [ "containers.local" ];
-    firewall.enable = false;  # Lab environment
+    firewall.enable = true;  # Would leave it as false in a workshop to simplify things but in this case we'll need IPTABLES to redirect some traffic. IPTABLES is enabled when this setting is true.
   };
 
   # Disable systemd-resolved (workshop-9 pattern)
@@ -65,7 +64,7 @@
   users.users.operator = {
     isNormalUser = true;
     password = "operator";
-    extraGroups = [ "wheel" ];
+    extraGroups = [ "wheel" "clightning" "systemd-journal" "proc" ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILmCXubTHcQrMO+LFTmWq6sN8L7gJEmyu+mL8DR0NvBf operator@nixos"
       "ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAHHDGRW40CXAlSbZ7G3zYO0CucwfsDUFnD+bI1+KbUFsDyBwHDhbpNZ1S12cDhcF6inszd8bkxKs0giyfr3cHtrrgEZqf9Ec8UXTMsnq12bbKT9zr0S8MPDzrIWdrpi2IpAaJ+qaXqT0lF+pp24ZtYBKbvBBScoGxx7tYA8QYe+MZ/7rg== operator@nixostestsbckitchen"
@@ -98,6 +97,12 @@ security.sudo.extraRules= [
   # SYSTEM PACKAGES
   # ============================================================================
 
+  # lightning-cli requires --network=signet on every call because it defaults to mainnet.
+  # This alias injects the flag automatically so users can just type `lightning-cli <command>`.
+  environment.shellAliases = {
+    lightning-cli = "lightning-cli --network=signet";
+  };
+
   environment.systemPackages = with pkgs; [
     iputils
     iproute2
@@ -113,7 +118,7 @@ security.sudo.extraRules= [
   ];
 
   # ============================================================================
-  # CORE LIGHTNING CONFIGURATION
+  # BITCOIN-RELATED CONFIGURATION
   # ============================================================================
 
   # Enable secret management through nix-bitcoin
@@ -213,6 +218,46 @@ security.sudo.extraRules= [
       #};
 
   };
+  # Do not auto-start bitcoind at boot - start manually: systemctl start bitcoind
+  systemd.services.bitcoind.wantedBy = lib.mkForce [];
+
+  # Start clightning automatically, ordered after bitcoin-rpc-redirect (regardless of its status).
+  # `after`    = ordering only: clightning starts after the redirect service, whether it
+  #              succeeded or failed. Does NOT create a hard dependency.
+  # `wantedBy` = weak dependency on multi-user.target: auto-starts at boot but a failure
+  #              does NOT block the container or cause restarts.
+  systemd.services.clightning.wantedBy = lib.mkForce [ "multi-user.target" ];
+  systemd.services.clightning.after = [ "bitcoin-rpc-redirect.service" ];
+  # nix-bitcoin sets FailureAction=reboot on critical services for production hardening.
+  # Override it so clightning can fail/crash without rebooting the container.
+  systemd.services.clightning.serviceConfig.FailureAction = lib.mkForce "none";
+  systemd.services.clightning.serviceConfig.RestartSec = lib.mkForce "30s";
+
+  # Fix nix-bitcoin's clightning postStart for signet.
+  # nix-bitcoin's postStart waits for the RPC socket using a hardcoded "bitcoin" network
+  # directory (/var/lib/clightning/bitcoin/lightning-rpc) even when running on signet.
+  # The actual socket is at /var/lib/clightning/signet/lightning-rpc.
+  # Without this fix the postStart hangs the full 10-minute TimeoutStartSec, then the
+  # service fails and FailureAction=reboot restarts the container.
+  systemd.services.clightning.postStart = lib.mkForce ''
+    for i in $(seq 1 60); do
+      if [ -S "/var/lib/clightning/signet/lightning-rpc" ]; then
+        echo "CLightning RPC socket ready"
+        exit 0
+      fi
+      sleep 1
+    done
+    echo "WARNING: CLightning RPC socket not available after 60s"
+    exit 0
+  '';
+
+  # clightning connects to the external bitcoin VM (bitcoin-rpcconnect=bitcoin in extraConfig),
+  # not to local bitcoind. Remove nix-bitcoin's automatic hard dependency so that starting
+  # clightning does not pull up the local bitcoind service.
+  # Note: `after` is left alone - it only controls ordering, it never starts a service.
+  systemd.services.clightning.requires = lib.mkForce [];
+  systemd.services.clightning.bindsTo = lib.mkForce [];
+
   # Fix nix-bitcoin's post-start script for signet mode
   # The cookie file is at /var/lib/bitcoind/signet/.cookie, not /var/lib/bitcoind/.cookie
   systemd.services.bitcoind.postStart = lib.mkForce ''
@@ -312,28 +357,61 @@ security.sudo.extraRules= [
     '')
   ];
 
-  # Configure clightning to connect to local bitcoind
+  # WHY THE ExecStartPre PASSWORD PATCH IS NEEDED:
+  #
+  # nix-bitcoin's clightning preStart generates /var/lib/clightning/config as:
+  #
+  #   { cat <static-config-including-extraConfig>
+  #     echo "bitcoin-rpcpassword=$(cat /etc/nix-bitcoin-secrets/bitcoin-rpcpassword-public)"
+  #   } > /var/lib/clightning/config
+  #
+  # The generated password (for the LOCAL bitcoind) is appended AFTER our extraConfig,
+  # so bitcoin-rpcpassword=bitcoin in extraConfig is always overridden.
+  #
+  # Fix: an ExecStartPre script runs after nix-bitcoin's preStart and replaces the
+  # password line in the already-generated config file with the external VM's password.
+  systemd.services.clightning.serviceConfig.ExecStartPre = lib.mkAfter [
+    (pkgs.writeShellScript "clightning-fix-bitcoin-rpc-password" ''
+      # Fix RPC password: nix-bitcoin appends its locally-generated password last,
+      # overriding the one in extraConfig. Replace it with the external VM's password.
+      ${pkgs.gnused}/bin/sed -i \
+        's/^bitcoin-rpcpassword=.*/bitcoin-rpcpassword=bitcoin/' \
+        /var/lib/clightning/config
+    '')
+  ];
+
+  # Configure clightning to connect to external bitcoin VM
   services.clightning = {
     enable = true;
+    # Listen on all interfaces so other Lightning nodes can connect.
+    # nix-bitcoin defaults to 127.0.0.1 (loopback only).
+    address = "0.0.0.0";
     extraConfig = ''
       log-level=debug
       #log-file=lightning.log
-      
+
       # Network: signet (Mutinynet)
       network=signet
 
-      # Connect to LOCAL bitcoind (not external VM)
-      bitcoin-rpcconnect=127.0.0.1
+      # Connect to external VM bitcoind
+      bitcoin-rpcconnect=bitcoin
       bitcoin-rpcport=38332
 
-      # nix-bitcoin will automatically provide credentials via cookie/secrets
-      # Don't need to specify bitcoin-rpcuser/bitcoin-rpcpassword
+      # bitcoin-rpcuser is set here and wins (extraConfig is appended before nix-bitcoin's
+      # password injection, and rpcuser is not re-injected after extraConfig).
+      # bitcoin-rpcpassword=bitcoin would be overridden by nix-bitcoin - see ExecStartPre above.
+      bitcoin-rpcuser=bitcoin
 
-      # Lightning P2P settings
-      #bind-addr=0.0.0.0:9735
-      #announce-addr=0.0.0.0:9735
+      # Skip full blockchain scan on startup.
+      # CLightning defaults to scanning from the network genesis which takes a very long time.
+      # For a fresh node with no channels, rescan=1 is safe: it only looks back 1 block from
+      # the current tip. If you need to recover existing channels, increase this value.
+      rescan=1
+
+      # Lightning P2P listen address is set via services.clightning.address above
     '';
   };
+  networking.firewall.allowedTCPPorts = [ 9735 ];
 
   # ============================================================================
   # ELECTRS (Electrum Server)
@@ -363,7 +441,7 @@ security.sudo.extraRules= [
     # port = 8999;           # Backend API port (default, can omit)
 
     frontend = {
-      enable = true;         # Web interface (enabled by default)
+      enable = false;         # Web interface (enabled by default)
       address = "0.0.0.0";   # Frontend accessible from host
       port = 60845;          # Frontend web UI port (nix-bitcoin default)
     };
@@ -385,42 +463,128 @@ security.sudo.extraRules= [
   # IPTABLES REDIRECT - Local Bitcoin RPC to External VM
   # ============================================================================
 
+  # Required for DNAT on the OUTPUT chain to work with loopback destinations.
+  # Without this, the kernel drops packets routed to 127.0.0.1 before they hit NAT.
+  boot.kernel.sysctl."net.ipv4.conf.all.route_localnet" = 1;
+
   # Redirect local Bitcoin RPC requests (127.0.0.1:38332) to external bitcoin VM
   # This allows local services and commands to use localhost but reach the bitcoin VM
+  #
+  # Type = "oneshot" + RemainAfterExit = true:
+  #   The service runs a script and exits. systemd keeps it shown as "active" after
+  #   the script completes (not "inactive/dead") so that systemctl status is useful
+  #   and so that ExecStop runs when you call systemctl stop.
+  #
+  # systemctl start  → adds the DNAT rule  (traffic flows to remote bitcoin VM)
+  # systemctl stop   → removes the DNAT rule (traffic stays local / is dropped)
+  # systemctl status → shows active/inactive accurately
   systemd.services.bitcoin-rpc-redirect = {
-    enable = false;
-    description = "Redirect local Bitcoin signet RPC to external bitcoin VM";
-    # Wait for network-online.target so DNS is fully functional
+    enable = true;
+    description = "Redirect local Bitcoin signet RPC port to external bitcoin VM";
     after = [ "network-online.target" ];
     wants = [ "network-online.target" ];
+    # wantedBy creates a *weak* dependency on multi-user.target (Wants, not Requires):
+    # systemd starts it automatically at boot but a failure does NOT affect the container
+    # or cause restarts. If the bitcoin VM is unreachable at boot, the service fails
+    # gracefully and everything else continues normally.
     wantedBy = [ "multi-user.target" ];
+
+    # Make tools available in the script PATH - the NixOS-idiomatic alternative
+    # to hardcoding /nix/store/... paths or adding to environment.systemPackages
+    # (which only affects interactive shells, not systemd services)
+    # Note: iputils (ping) is used for hostname resolution because the system glibc
+    # resolver (used by ping) correctly handles DNS search domains, while pkgs.glibc's
+    # getent cannot find the NSS modules needed to do the same.
+    path = [ pkgs.iptables pkgs.iputils ];
 
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
-      TimeoutStartSec = "5s";  # Allow up to 4s seconds for DNS and iptables setup
+      TimeoutStartSec = "8s";
+      RuntimeDirectory = "bitcoin-rpc-redirect";
     };
 
+    # Exit codes determine systemctl status:
+    #   exit 0  → Active   (rule installed, traffic redirected to bitcoin VM)
+    #   exit 1  → Failed   (rule NOT installed, status honestly reflects reality)
     script = ''
-      # DNS takes a few seconds to become available during boot
+      set -euo pipefail
+      STATE=/run/bitcoin-rpc-redirect/bitcoin-ip
+
       TIMEOUT=5
-      ELAPSED=0
-      until ${pkgs.bind}/bin/host bitcoin > /dev/null 2>&1; do
-        if [ $ELAPSED -ge $TIMEOUT ]; then
-          echo "WARNING: Could not resolve 'bitcoin' hostname after $TIMEOUT seconds"
-          echo "Bitcoin RPC redirect NOT configured - bitcoin VM may not be running"
-          exit 0  # Exit successfully to not block boot
+      BITCOIN_IP=""
+
+      for i in $(seq 1 $TIMEOUT); do
+        # ping resolves via the system glibc (including DNS search domains like containers.local)
+        # Extract IP from ping output: "PING bitcoin (10.x.x.x) 56(84) bytes..."
+        # Pattern requires dots to avoid matching the byte-count "(84)" on the same line
+        BITCOIN_IP=$(ping -c 1 -W 1 bitcoin 2>/dev/null | head -1 | grep -oE '\([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\)' | tr -d '()')
+        if [ -n "$BITCOIN_IP" ]; then
+          echo "Resolved: bitcoin -> $BITCOIN_IP"
+          break
         fi
-        echo "Waiting for DNS resolution of 'bitcoin'... ($ELAPSED/$TIMEOUT)"
+        echo "Waiting for 'bitcoin' host... ($i/$TIMEOUT)"
         sleep 1
-        ELAPSED=$((ELAPSED + 1))
       done
 
-      # Redirect localhost:38332 to bitcoin:38332
-      # This rewrites the destination for packets going to 127.0.0.1:38332
-      ${pkgs.iptables}/bin/iptables -t nat -A OUTPUT -p tcp -d 127.0.0.1 --dport 38332 -j DNAT --to-destination bitcoin:38332
+      if [ -z "$BITCOIN_IP" ]; then
+        echo "ERROR: Could not reach 'bitcoin' after $TIMEOUT seconds - is the bitcoin VM running?"
+        exit 1
+      fi
 
-      echo "Bitcoin RPC redirect configured: 127.0.0.1:38332 -> bitcoin:38332"
+      echo "$BITCOIN_IP" > "$STATE"
+      echo "Resolved: bitcoin -> $BITCOIN_IP"
+
+      # Rule 1: DNAT - rewrite destination: 127.0.0.1:38332 → bitcoin_ip:38332
+      if iptables -t nat -C OUTPUT -p tcp -d 127.0.0.1 --dport 38332 \
+           -j DNAT --to-destination "$BITCOIN_IP:38332" 2>/dev/null; then
+        echo "DNAT rule already present"
+      else
+        iptables -t nat -A OUTPUT -p tcp -d 127.0.0.1 --dport 38332 \
+          -j DNAT --to-destination "$BITCOIN_IP:38332"
+        echo "DNAT rule added: 127.0.0.1:38332 -> $BITCOIN_IP:38332"
+      fi
+
+      # Rule 2: MASQUERADE - rewrite source: 127.0.0.1 → container eth0 IP
+      # Without this the bitcoin VM sees src=127.0.0.1 and replies to its own loopback.
+      # With this the reply comes back to the container and conntrack restores the original src.
+      if iptables -t nat -C POSTROUTING -p tcp -d "$BITCOIN_IP" --dport 38332 \
+           -j MASQUERADE 2>/dev/null; then
+        echo "MASQUERADE rule already present"
+      else
+        iptables -t nat -A POSTROUTING -p tcp -d "$BITCOIN_IP" --dport 38332 \
+          -j MASQUERADE
+        echo "MASQUERADE rule added for return traffic from $BITCOIN_IP:38332"
+      fi
+    '';
+
+    preStop = ''
+      STATE=/run/bitcoin-rpc-redirect/bitcoin-ip
+
+      if [ ! -f "$STATE" ]; then
+        echo "No state file - rules were never installed, nothing to remove"
+        exit 0
+      fi
+
+      BITCOIN_IP=$(cat "$STATE")
+
+      if iptables -t nat -C OUTPUT -p tcp -d 127.0.0.1 --dport 38332 \
+           -j DNAT --to-destination "$BITCOIN_IP:38332" 2>/dev/null; then
+        iptables -t nat -D OUTPUT -p tcp -d 127.0.0.1 --dport 38332 \
+          -j DNAT --to-destination "$BITCOIN_IP:38332"
+        echo "DNAT rule removed: 127.0.0.1:38332 -> $BITCOIN_IP:38332"
+      else
+        echo "DNAT rule not found in kernel, nothing to remove"
+      fi
+
+      if iptables -t nat -C POSTROUTING -p tcp -d "$BITCOIN_IP" --dport 38332 \
+           -j MASQUERADE 2>/dev/null; then
+        iptables -t nat -D POSTROUTING -p tcp -d "$BITCOIN_IP" --dport 38332 \
+          -j MASQUERADE
+        echo "MASQUERADE rule removed"
+      else
+        echo "MASQUERADE rule not found in kernel, nothing to remove"
+      fi
     '';
   };
 
