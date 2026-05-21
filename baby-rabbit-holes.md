@@ -101,6 +101,7 @@ The most important command is `man` which stands for "manual". It explains what 
       - .etc...                       
                                                                                 
 - Shell commands you must know *really well* :
+  - `!!` calls previous command again, `!!:0` calls previous command *without its arguments*, `!!*`: Repeats the previous command *arguments* only (skips the command name), `!?string`: Runs the most recent command containing "string", 
   - `man`: User manual of given command. 
   - `apropos`: Search all the man pages using keywords to find commands and their functions (read [this](https://www.geeksforgeeks.org/apropos-command-in-linux-with-examples/)).
   - `whatis`: Display manual documentation pages in various ways.
@@ -597,6 +598,10 @@ scp somefile user@machine_A:~/
 
 `tmux-resurrect` and `tmux-continuum`: Tmux plugins to persist sessions across restarts.
 
+`tmux attach` (or `tmux a`): attaches to **the most recently used tmux session** on the default server/socket.
+
+`tmux a -t myproject`: Attaches to the specified on the default server/socket. *project* (use `tmux list-sessions`).
+
 ### tmux shortcuts
 - Sessions
   - List sessions and switch to a different session: `Prefix + s` (or `tmux ls` followed by `tmux attach -t SESSION`).
@@ -920,9 +925,9 @@ Something fun to do is to stream stats from one node (the "source") to another (
 
 Another example is sending funds onchain using lightning-cli, which is also possible. 
 
-- Generate a new bitcoin address (`bech32` address format by default):
+- Generate a new `p2tr` format (taproot) bitcoin address (`bech32` is the default):
   ```
-  $ lightning-cli newaddr
+  $ lightning-cli newaddr p2tr
   {
     "bech32": "tb1qmws65ajdzfk3etqzumfk9ujumjhj8tgvk7rwys"
   }

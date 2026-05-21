@@ -154,7 +154,10 @@ sudo lightning-cli fundchannel 03d23af0a8a89a4243c2ad76c2561fc3d1310fd71d4cf5199
 sudo lightning-cli bkpr-listbalances
 sudo lightning-cli listfunds | jq '[.channels[].our_amount_msat] | add / 1000'
 sudo lightning-cli listfunds | jq '[.outputs[].amount_msat] | add / 1000'
+sudo lightning-cli newaddr p2tr
+sudo lightning-cli newaddr
 sudo lightning-cli getinfo | jq '.fees_collected_msat / 1000'
 sudo lightning-cli listforwards | jq '.forwards[-100000:] | map(.status) | reduce .[] as $status ({}; .[$status] = (.[$status] // 0) + 1)'
 sudo lightning-cli listforwards | jq '.forwards[-10000:] | map(.status) | reduce .[] as $status ({}; .[$status] = (.[$status] // 0) + 1)'
 
+lightning-cli listfunds | jq '.channels[] | .our_amount_msat'

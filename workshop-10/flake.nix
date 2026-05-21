@@ -107,7 +107,6 @@
           nix-bitcoin.nixosModules.default
           ./container-lightning.nix
         ];
-        
       };
 
       lightning2 = nixpkgs.lib.nixosSystem {
@@ -121,7 +120,32 @@
           nix-bitcoin.nixosModules.default
           ./container-lightning.nix
         ];
-        
+      };
+
+      lightning3 = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = { inherit nix-bitcoin; };  # Pass nix-bitcoin input to modules
+        modules = [
+          # CRITICAL: Apply Mutinynet overlay FIRST so nix-bitcoin sees Bitcoin Inquisition
+          # This ensures the container runs the correct Bitcoin fork optimized for Mutinynet
+          { nixpkgs.overlays = [ (final: prev: { inherit (pkgs) bitcoin; }) ]; }   
+          { networking.hostName = "lightning3"; }
+          nix-bitcoin.nixosModules.default
+          ./container-lightning.nix
+        ];
+      };
+
+      recovered = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = { inherit nix-bitcoin; };  # Pass nix-bitcoin input to modules
+        modules = [
+          # CRITICAL: Apply Mutinynet overlay FIRST so nix-bitcoin sees Bitcoin Inquisition
+          # This ensures the container runs the correct Bitcoin fork optimized for Mutinynet
+          { nixpkgs.overlays = [ (final: prev: { inherit (pkgs) bitcoin; }) ]; }   
+          { networking.hostName = "recovered"; }
+          nix-bitcoin.nixosModules.default
+          ./container-lightning.nix
+        ];
       };
 
       # Note: VM configuration for tests is defined directly in test.nix

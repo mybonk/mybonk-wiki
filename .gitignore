@@ -5,8 +5,9 @@ Gemfile*
 _site/
 .jekyll-cache/
 .jekyll-metadata
-.*
-
+.c*
+.v*
+vendor/
 # Workshop VM data
 workshop-*/vm-data/
 workshop-*/result

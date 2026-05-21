@@ -74,8 +74,10 @@ windows:
   - CMD:
     command:
       - cd $HOME 
-  - RUNNING:
+  - SERVICES:
       - watch -n 2 'systemctl --type=service --state=running'
+  - NODE:
+      - watch sudo ln-status
   - VARIOUS:
       layout: even-vertical
       panes:
