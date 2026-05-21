@@ -12,3 +12,5 @@ vendor/
 workshop-*/vm-data/
 workshop-*/result
 workshop-*/flake.lock
+
+_config.yml
