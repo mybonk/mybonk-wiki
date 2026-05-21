@@ -4,7 +4,7 @@ title: Workshop 3
 nav_order: 4
 ---
 
-# Customize your NixOS platform using Nix package overrides (Fast, No Compilation)
+# How to Override Package Versions in NixOS (Fast, No Compilation)
 
 ## Overview
 
