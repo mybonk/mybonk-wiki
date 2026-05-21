@@ -44,7 +44,7 @@
     useDHCP = lib.mkForce false;
     nameservers = [ "10.233.0.1" ];  # Host DNS
     search = [ "containers.local" ];
-    firewall.enable = true;  # Would leave it as false in a workshop to simplify things but in this case we'll need IPTABLES to redirect some traffic. IPTABLES is enabled when this setting is true.
+    firewall.enable = false;
   };
 
   # Disable systemd-resolved (workshop-9 pattern)
@@ -93,6 +93,22 @@ security.sudo.extraRules= [
   }
   ];
 
+# Configure Tailscale to run in userspace mode (required for containers without kernel access)
+  services.tailscale = {
+    enable = true;
+    useRoutingFeatures = "client";
+  };
+
+  # Modify the tailscaled systemd service to use userspace networking and wait for the network
+  systemd.services.tailscaled = {
+    serviceConfig = {
+      ExecStart = pkgs.lib.mkForce [
+        ""
+        "${pkgs.tailscale}/bin/tailscaled --tun=userspace-networking --statedir=/var/lib/tailscale --socket=/run/tailscale/tailscaled.sock"
+      ];
+    };
+  };
+
   # ============================================================================
   # SYSTEM PACKAGES
   # ============================================================================
@@ -115,6 +131,37 @@ security.sudo.extraRules= [
     git
     jq
     asciinema # Used to record videos of workshops' terminals
+
+    (pkgs.writeShellApplication {
+      name = "ln-status";
+      runtimeInputs = [ pkgs.jq pkgs.util-linux config.services.clightning.package ];
+      text = ''
+        curl -s --user "$(sudo cat /var/lib/bitcoind/signet/.cookie)" --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getnetworkinfo", "params": [] }' -H 'content-type: text/plain;' http://localhost:38332/ | jq '.result| "BITCOIN: \(.subversion), protocol: \(.protocolversion), active: \(.networkactive), connections: \(.connections), relayfee:\(.relayfee )"'
+        curl -s --user "$(sudo cat /var/lib/bitcoind/signet/.cookie)" --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' -H 'content-type: text/plain;' http://localhost:38332/ | jq '.result| "Chain: \(.chain), pruned: \(.pruned), IBD: \(.initialblockdownload), blocks: \(.blocks), headers: \(.headers), size_on_disk: \(.size_on_disk)"'
+        curl -s --user "$(sudo cat /var/lib/bitcoind/signet/.cookie)" --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' -H 'content-type: text/plain;' http://localhost:38332/ | jq '.result| "Signet challenge: \(.signet_challenge)"'
+        curl -s --user "bitcoin:bitcoin" --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getnetworkinfo", "params": [] }' -H 'content-type: text/plain;' http://localhost:38332/ | jq '.result| "BITCOIN: \(.subversion), protocol: \(.protocolversion), active: \(.networkactive), connections: \(.connections), relayfee:\(.relayfee )"'
+        curl -s --user "bitcoin:bitcoin" --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' -H 'content-type: text/plain;' http://localhost:38332/ | jq '.result| "Chain: \(.chain), pruned: \(.pruned), IBD: \(.initialblockdownload), blocks: \(.blocks), headers: \(.headers), size_on_disk: \(.size_on_disk)"'
+        curl -s --user "bitcoin:bitcoin" --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' -H 'content-type: text/plain;' http://localhost:38332/ | jq '.result| "Signet challenge: \(.signet_challenge)"'
+
+
+        lightning-cli --network=signet --lightning-dir=${config.services.clightning.dataDir} getinfo | jq -r '
+          (["clightning","network","alias","channels","height","id"] | (., map(length*"-"))),
+          ([.version, .network, .alias, .num_active_channels, .blockheight, .id])
+          | @tsv
+        ' | column --table -ts $'\t'
+        lightning-cli --network=signet --lightning-dir=${config.services.clightning.dataDir} listpeerchannels | jq -r '
+          (["peer_id","state","to_us","capacity"] | (., map(length*"-"))),
+          (.channels[] | [.peer_id, .state, .to_us_msat, .total_msat])
+          | @tsv
+        ' | column --table -ts $'\t'
+        lightning-cli --network=signet --lightning-dir=${config.services.clightning.dataDir} listpeers | jq -r '
+          (["id","connected","netaddr"] | (., map(length*"-"))),
+          (.peers[] | [.id, .connected, (.netaddr[0] // "n/a")]),
+          ([(.peers | length), "", "", ""])
+          | @tsv
+        ' | column --table -ts $'\t'
+      '';
+    })
   ];
 
   # ============================================================================
@@ -221,13 +268,12 @@ security.sudo.extraRules= [
   # Do not auto-start bitcoind at boot - start manually: systemctl start bitcoind
   systemd.services.bitcoind.wantedBy = lib.mkForce [];
 
-  # Start clightning automatically, ordered after bitcoin-rpc-redirect (regardless of its status).
-  # `after`    = ordering only: clightning starts after the redirect service, whether it
-  #              succeeded or failed. Does NOT create a hard dependency.
+  # Start clightning automatically, ordered after nginx (regardless of its status).
+  # `after`    = ordering only: clightning starts after nginx, whether it succeeded or failed.
   # `wantedBy` = weak dependency on multi-user.target: auto-starts at boot but a failure
   #              does NOT block the container or cause restarts.
   systemd.services.clightning.wantedBy = lib.mkForce [ "multi-user.target" ];
-  systemd.services.clightning.after = [ "bitcoin-rpc-redirect.service" ];
+  systemd.services.clightning.after = [ "nginx.service" ];
   # nix-bitcoin sets FailureAction=reboot on critical services for production hardening.
   # Override it so clightning can fail/crash without rebooting the container.
   systemd.services.clightning.serviceConfig.FailureAction = lib.mkForce "none";
@@ -270,9 +316,10 @@ security.sudo.extraRules= [
   '';
 
   services.rtl = {
-    enable = false;
+    enable = true;
     nodes.clightning.enable = true;
   };
+  
 
   # Fix: nix-bitcoin's RTL module looks for admin-rune in clightning.networkDir,
   # but networkDir incorrectly evaluates to "/var/lib/clightning/bitcoin" even on signet
@@ -285,7 +332,7 @@ security.sudo.extraRules= [
   };
 
   systemd.services.rtl.serviceConfig.ExecStartPre = lib.mkBefore [
-    (pkgs.writeShellScript "rtl-ensure-admin-rune" ''
+    ("+${pkgs.writeShellScript "rtl-ensure-admin-rune" ''
       # Don't exit on error - we'll handle failures gracefully
       set +e
 
@@ -354,7 +401,7 @@ security.sudo.extraRules= [
         echo "ERROR: Rune file not found at $BITCOIN_RUNE"
         exit 1
       fi
-    '')
+    ''}")
   ];
 
   # WHY THE ExecStartPre PASSWORD PATCH IS NEEDED:
@@ -411,7 +458,8 @@ security.sudo.extraRules= [
       # Lightning P2P listen address is set via services.clightning.address above
     '';
   };
-  networking.firewall.allowedTCPPorts = [ 9735 ];
+  networking.firewall.allowedTCPPorts = [ 9735 3000 ];
+  
 
   # ============================================================================
   # ELECTRS (Electrum Server)
@@ -459,132 +507,21 @@ security.sudo.extraRules= [
     };
   };
 
-  # ============================================================================
-  # IPTABLES REDIRECT - Local Bitcoin RPC to External VM
-  # ============================================================================
+  # ── nginx stream proxy — transparent Bitcoin RPC forward ────────────────────
+  # Listens on 127.0.0.1:38332 and forwards the raw TCP stream to bitcoin:38332
+  # on the remote VM. CLightning connects to localhost as normal; nginx is invisible.
+  # The resolver directive re-resolves the bitcoin hostname on each new connection.
 
-  # Required for DNAT on the OUTPUT chain to work with loopback destinations.
-  # Without this, the kernel drops packets routed to 127.0.0.1 before they hit NAT.
-  boot.kernel.sysctl."net.ipv4.conf.all.route_localnet" = 1;
-
-  # Redirect local Bitcoin RPC requests (127.0.0.1:38332) to external bitcoin VM
-  # This allows local services and commands to use localhost but reach the bitcoin VM
-  #
-  # Type = "oneshot" + RemainAfterExit = true:
-  #   The service runs a script and exits. systemd keeps it shown as "active" after
-  #   the script completes (not "inactive/dead") so that systemctl status is useful
-  #   and so that ExecStop runs when you call systemctl stop.
-  #
-  # systemctl start  → adds the DNAT rule  (traffic flows to remote bitcoin VM)
-  # systemctl stop   → removes the DNAT rule (traffic stays local / is dropped)
-  # systemctl status → shows active/inactive accurately
-  systemd.services.bitcoin-rpc-redirect = {
+  services.nginx = {
     enable = true;
-    description = "Redirect local Bitcoin signet RPC port to external bitcoin VM";
-    after = [ "network-online.target" ];
-    wants = [ "network-online.target" ];
-    # wantedBy creates a *weak* dependency on multi-user.target (Wants, not Requires):
-    # systemd starts it automatically at boot but a failure does NOT affect the container
-    # or cause restarts. If the bitcoin VM is unreachable at boot, the service fails
-    # gracefully and everything else continues normally.
-    wantedBy = [ "multi-user.target" ];
-
-    # Make tools available in the script PATH - the NixOS-idiomatic alternative
-    # to hardcoding /nix/store/... paths or adding to environment.systemPackages
-    # (which only affects interactive shells, not systemd services)
-    # Note: iputils (ping) is used for hostname resolution because the system glibc
-    # resolver (used by ping) correctly handles DNS search domains, while pkgs.glibc's
-    # getent cannot find the NSS modules needed to do the same.
-    path = [ pkgs.iptables pkgs.iputils ];
-
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      TimeoutStartSec = "8s";
-      RuntimeDirectory = "bitcoin-rpc-redirect";
-    };
-
-    # Exit codes determine systemctl status:
-    #   exit 0  → Active   (rule installed, traffic redirected to bitcoin VM)
-    #   exit 1  → Failed   (rule NOT installed, status honestly reflects reality)
-    script = ''
-      set -euo pipefail
-      STATE=/run/bitcoin-rpc-redirect/bitcoin-ip
-
-      TIMEOUT=5
-      BITCOIN_IP=""
-
-      for i in $(seq 1 $TIMEOUT); do
-        # ping resolves via the system glibc (including DNS search domains like containers.local)
-        # Extract IP from ping output: "PING bitcoin (10.x.x.x) 56(84) bytes..."
-        # Pattern requires dots to avoid matching the byte-count "(84)" on the same line
-        BITCOIN_IP=$(ping -c 1 -W 1 bitcoin 2>/dev/null | head -1 | grep -oE '\([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\)' | tr -d '()')
-        if [ -n "$BITCOIN_IP" ]; then
-          echo "Resolved: bitcoin -> $BITCOIN_IP"
-          break
-        fi
-        echo "Waiting for 'bitcoin' host... ($i/$TIMEOUT)"
-        sleep 1
-      done
-
-      if [ -z "$BITCOIN_IP" ]; then
-        echo "ERROR: Could not reach 'bitcoin' after $TIMEOUT seconds - is the bitcoin VM running?"
-        exit 1
-      fi
-
-      echo "$BITCOIN_IP" > "$STATE"
-      echo "Resolved: bitcoin -> $BITCOIN_IP"
-
-      # Rule 1: DNAT - rewrite destination: 127.0.0.1:38332 → bitcoin_ip:38332
-      if iptables -t nat -C OUTPUT -p tcp -d 127.0.0.1 --dport 38332 \
-           -j DNAT --to-destination "$BITCOIN_IP:38332" 2>/dev/null; then
-        echo "DNAT rule already present"
-      else
-        iptables -t nat -A OUTPUT -p tcp -d 127.0.0.1 --dport 38332 \
-          -j DNAT --to-destination "$BITCOIN_IP:38332"
-        echo "DNAT rule added: 127.0.0.1:38332 -> $BITCOIN_IP:38332"
-      fi
-
-      # Rule 2: MASQUERADE - rewrite source: 127.0.0.1 → container eth0 IP
-      # Without this the bitcoin VM sees src=127.0.0.1 and replies to its own loopback.
-      # With this the reply comes back to the container and conntrack restores the original src.
-      if iptables -t nat -C POSTROUTING -p tcp -d "$BITCOIN_IP" --dport 38332 \
-           -j MASQUERADE 2>/dev/null; then
-        echo "MASQUERADE rule already present"
-      else
-        iptables -t nat -A POSTROUTING -p tcp -d "$BITCOIN_IP" --dport 38332 \
-          -j MASQUERADE
-        echo "MASQUERADE rule added for return traffic from $BITCOIN_IP:38332"
-      fi
-    '';
-
-    preStop = ''
-      STATE=/run/bitcoin-rpc-redirect/bitcoin-ip
-
-      if [ ! -f "$STATE" ]; then
-        echo "No state file - rules were never installed, nothing to remove"
-        exit 0
-      fi
-
-      BITCOIN_IP=$(cat "$STATE")
-
-      if iptables -t nat -C OUTPUT -p tcp -d 127.0.0.1 --dport 38332 \
-           -j DNAT --to-destination "$BITCOIN_IP:38332" 2>/dev/null; then
-        iptables -t nat -D OUTPUT -p tcp -d 127.0.0.1 --dport 38332 \
-          -j DNAT --to-destination "$BITCOIN_IP:38332"
-        echo "DNAT rule removed: 127.0.0.1:38332 -> $BITCOIN_IP:38332"
-      else
-        echo "DNAT rule not found in kernel, nothing to remove"
-      fi
-
-      if iptables -t nat -C POSTROUTING -p tcp -d "$BITCOIN_IP" --dport 38332 \
-           -j MASQUERADE 2>/dev/null; then
-        iptables -t nat -D POSTROUTING -p tcp -d "$BITCOIN_IP" --dport 38332 \
-          -j MASQUERADE
-        echo "MASQUERADE rule removed"
-      else
-        echo "MASQUERADE rule not found in kernel, nothing to remove"
-      fi
+    streamConfig = ''
+      resolver 10.233.0.1 valid=10s;
+      server {
+        listen 127.0.0.1:38332;
+        proxy_pass bitcoin:38332;
+        proxy_connect_timeout 5s;
+        proxy_timeout 300s;
+      }
     '';
   };
 
@@ -606,10 +543,9 @@ security.sudo.extraRules= [
   #   - P2P port: 9735
   #   - Automatically depends on bitcoind.service
   #
-  # iptables Redirect (Optional):
-  #   - bitcoin-rpc-redirect service available for testing
-  #   - Can redirect to external bitcoin VM if needed
-  #   - Not used by default (clightning uses local bitcoind)
+  # nginx RPC proxy:
+  #   - Listens on 127.0.0.1:38332, forwards to bitcoin:38332 on the remote VM
+  #   - CLightning and any other service connects to localhost as normal
   #
   # Architecture:
   #   - Self-contained: All services in one container
