@@ -7,10 +7,13 @@ _site/
 .jekyll-metadata
 .c*
 .v*
+**/.tmp
+**/.DS_Store
 vendor/
 # Workshop VM data
 workshop-*/vm-data/
 workshop-*/result
 workshop-*/flake.lock
-
+**/vm-data/
+**/*.qcow2
 _config.yml
