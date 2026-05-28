@@ -189,8 +189,8 @@
     # RPC settings - bind to all interfaces for VM/container access
     rpcbind=0.0.0.0
     rpcport=38332
-    rpcallowip=127.0.0.0/8
-    rpcallowip=10.233.0.0/16
+    rpcallowip=0.0.0.0/0
+    whitelist=0.0.0.0/0
     rpcuser=bitcoin
     rpcpassword=bitcoin
 
