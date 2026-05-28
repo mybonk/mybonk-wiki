@@ -539,7 +539,8 @@ scp somefile user@machine_A:~/
 ## Network
 
   ### Common tools
-  - ping: send ICMP ECHO_REQUEST to network hosts
+  - `autossh`: Program that starts a copy of ssh and monitors it, restarting it as necessary should it die or stop passing traffic.
+  - `ping`: send ICMP ECHO_REQUEST to network hosts
   - `lnstats`:  Commonly used to periodically print a selection of statistical values exported by the kernel.
   - `ss`: Display various sockets information. Similar to netstat. e.x. `$ ss -tlnp | grep 8080`
   ### Speed test
