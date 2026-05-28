@@ -22,7 +22,7 @@ Start with [Workshop 1](./workshop-1/) to set up your NixOS environment, then pr
 
 | Workshop | Description |
 |----------|-------------|
-| [Workshop O](./workshop-0/) | **Install NixOS from factory bootable installation USB stick.** - In 30 minutes set up your first NixOS using the official distribution bootable installer (follow-up is [Workshop 5](./workshop-5/ where we do the same thing but with your custom installation media)) |
+| [Workshop 0](./workshop-0/) | **Install NixOS from factory bootable installation USB stick.** - In 30 minutes set up your first NixOS using the official distribution bootable installer (follow-up is [Workshop 5](./workshop-5/ where we do the same thing but with your custom installation media)) |
 | [Workshop 1](./workshop-1/) | **Run NixOS in a VM or a container** - In 5 minutes set up your first "machine in your machine" |
 | [Workshop 2](./workshop-2/) | **Configure Services Declaratively** - In 2 minutes deploy services using NixOS configuration (bitcoin)
 | [Workshop 3](./workshop-3/) | **Override System Packages** - In 10 minutes customize your NixOS platform using Nix package overrides (Fast, No Compilation)|
