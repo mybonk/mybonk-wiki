@@ -19,24 +19,30 @@
 
 ## Architecture
 
-```
-┌──────────────────────────────────┐
-│  HOST (NixOS)                    │
-│                                  │
-│  ┌────────────────────────────┐  │
-│  │  barkd container           │  │
-│  │                            │  │
-│  │  barkd daemon              │  │
-│  │  REST API → :7070          │  │
-│  │  wallet state in           │  │
-│  │  /var/lib/barkd/           │  │
-│  │                            │  │
-│  │  Network: 10.233.0.x       │  │
-│  └────────────────────────────┘  │
-│                                  │
-│  Bridge: br-containers           │
-│  DHCP/DNS: 10.233.0.1            │
-└──────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph HOST["HOST (NixOS)"]
+        subgraph BC["barkd container · 10.233.0.x"]
+            BARKD["barkd daemon<br/>REST API :7070<br/>/var/lib/barkd/"]
+        end
+        BRIDGE["br-containers · DHCP/DNS: 10.233.0.1"]
+    end
+    Client["client"] -->|"HTTP :7070"| BARKD
+    BRIDGE --- BC
+    Internet((Internet)) <-->|NAT| BRIDGE
+
+    style HOST fill:#1a1a2e,stroke:#5277C3,color:#fff
+    style BC   fill:#3D1F00,stroke:#E67E22,color:#fff
+
+    classDef barkd   fill:#E67E22,stroke:#CA6F1E,color:#fff,font-weight:bold
+    classDef bridge  fill:#1ABC9C,stroke:#16a085,color:#fff,font-weight:bold
+    classDef client  fill:#3498DB,stroke:#2980B9,color:#fff
+    classDef internet fill:#DDEEFF,stroke:#2980B9,color:#1a1a2e,font-weight:bold
+
+    class BARKD barkd
+    class BRIDGE bridge
+    class Client client
+    class Internet internet
 ```
 
 ---

@@ -733,7 +733,8 @@ Our installer already includes Tailscale (enabled in `configuration.nix`), so yo
 # Password: nixos
 
 # Connect to your Tailnet
-tailscale up
+# --accept-dns is required for MagicDNS (hostname resolution) to work
+tailscale up --accept-dns
 ```
 
 You'll see output like:

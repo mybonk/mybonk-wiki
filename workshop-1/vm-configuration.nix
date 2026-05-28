@@ -7,7 +7,12 @@
 
   # Basic system settings
   networking.hostName = "demo-vm";
-  
+
+  # Store the disk image under /data/vms/ rather than the default ./demo-vm.qcow2
+  # in whichever directory you run the VM from.
+  # See host-storage-vms.nix for how /data/vms/ is created on the host.
+  virtualisation.diskImage = "/data/vms/demo-vm.qcow2";
+
   # VM-specific settings, do not change
   boot.loader.grub.device = "/dev/vda";
   

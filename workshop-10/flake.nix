@@ -232,6 +232,13 @@
               # We'll attach a separate persistent disk via run-bitcoin-vm.sh
               virtualisation.diskSize = 8192; # 8GB for system
 
+              # Store the NixOS system disk image under /data/vms/ (host path).
+              # Default would be ./nixos.qcow2 in whichever directory you run the
+              # VM from. Pointing it to /data/vms keeps all VM images in one place
+              # on a dedicated disk alongside the Bitcoin data disk.
+              # See host-storage-vms.nix for how /data/vms is created on the host.
+              virtualisation.diskImage = "/data/vms/bitcoin-vm.qcow2";
+
               # Auto-mount persistent data disk (if present)
               # The persistent disk will be /dev/vdb (second virtio disk)
               fileSystems."/var/lib/bitcoind" = {

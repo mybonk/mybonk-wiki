@@ -50,12 +50,25 @@ This workshop demonstrates how to create and manage NixOS containers entirely vi
 ### Network Architecture
 
 **IP Address Scheme:**
-```
-Host System:        10.100.0.1/24    (bridge: br-containers)
-Container 1:        10.100.0.10/24   (hostname: container1)
-Container 2:        10.100.0.20/24   (hostname: container2)
-Gateway:            10.100.0.1
-DNS:                8.8.8.8, 8.8.4.4
+
+```mermaid
+graph TD
+    Internet((Internet))
+    Host["Host System<br/>br-containers · 10.100.0.1/24<br/>NAT · IP Forwarding<br/>DNS: 8.8.8.8, 8.8.4.4"]
+    C1["container1<br/>10.100.0.10/24"]
+    C2["container2<br/>10.100.0.20/24"]
+
+    Internet <-->|NAT| Host
+    Host --- C1
+    Host --- C2
+
+    classDef internet fill:#DDEEFF,stroke:#2980B9,color:#1a1a2e,font-weight:bold
+    classDef host    fill:#5277C3,stroke:#3a5699,color:#fff,font-weight:bold
+    classDef cont    fill:#27AE60,stroke:#1e8449,color:#fff
+
+    class Internet internet
+    class Host host
+    class C1,C2 cont
 ```
 
 **Network Components:**

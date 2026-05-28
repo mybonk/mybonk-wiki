@@ -44,23 +44,26 @@ Let's clarify how container networking works in this setup.
 
 ### Network Architecture
 
-```
-                           Internet
-                              |
-                    ┌─────────┴─────────┐
-                    │   Host System     │
-                    │   10.233.0.1/24   │
-                    │                   │
-                    │  br-containers    │ (bridge interface)
-                    │  (NAT enabled)    │
-                    └─────────┬─────────┘
-              ┌───────────────┼───────────────┐
-              │               │               │
-        ┌─────┴─────┐   ┌─────┴─────┐   ┌─────┴─────┐
-        │Container A│   │Container B│   │Container C│
-        │10.233.0.50│   │10.233.0.51│   │10.233.0.52│
-        │(DHCP)     │   │(DHCP)     │   │(DHCP)     │
-        └───────────┘   └───────────┘   └───────────┘
+```mermaid
+graph TD
+    Internet((Internet))
+    Host["Host System<br/>br-containers · 10.233.0.1/24<br/>NAT · DHCP · DNS · IP Forwarding"]
+    CA["Container A<br/>10.233.0.50 · DHCP"]
+    CB["Container B<br/>10.233.0.51 · DHCP"]
+    CC["Container C<br/>10.233.0.52 · DHCP"]
+
+    Internet <-->|NAT| Host
+    Host --- CA
+    Host --- CB
+    Host --- CC
+
+    classDef internet fill:#DDEEFF,stroke:#2980B9,color:#1a1a2e,font-weight:bold
+    classDef host    fill:#5277C3,stroke:#3a5699,color:#fff,font-weight:bold
+    classDef cont    fill:#27AE60,stroke:#1e8449,color:#fff
+
+    class Internet internet
+    class Host host
+    class CA,CB,CC cont
 ```
 
 ### Key Networking Concepts

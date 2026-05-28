@@ -124,17 +124,11 @@ sudo systemctl restart clightning
 sudo systemctl restart mempool
 sudo systemctl restart electrs
 sudo systemctl restart rtl
-systemctl status bitcoin-rpc-redirect.service
-systemctl start bitcoin-rpc-redirect.service
-systemctl stop bitcoin-rpc-redirect.service
 sudo lightning-cli getinfo | jq -r '.id'
 sudo lightning-cli connect 036ff0237dc11493cea1f5e521e62c99b80fdb088c4f4f1d69c84b1f297f055481@lightning2:9735
 sudo lightning-cli listfunds
 sudo lightning-cli listpeers
 sudo lightning-cli fundchannel 036ff0237dc11493cea1f5e521e62c99b80fdb088c4f4f1d69c84b1f297f055481 1000
-systemctl status bitcoin-rpc-redirect.service
-systemctl stop bitcoin-rpc-redirect.service
-systemctl start bitcoin-rpc-redirect.
 ss -tlnp | grep 9735
 sudo iptables -L INPUT -n
 sudo iptables -L nixos-fw -n

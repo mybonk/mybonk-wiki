@@ -136,9 +136,9 @@ security.sudo.extraRules= [
       name = "ln-status";
       runtimeInputs = [ pkgs.jq pkgs.util-linux config.services.clightning.package ];
       text = ''
-        curl -s --user "$(sudo cat /var/lib/bitcoind/signet/.cookie)" --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getnetworkinfo", "params": [] }' -H 'content-type: text/plain;' http://localhost:38332/ | jq '.result| "BITCOIN: \(.subversion), protocol: \(.protocolversion), active: \(.networkactive), connections: \(.connections), relayfee:\(.relayfee )"'
-        curl -s --user "$(sudo cat /var/lib/bitcoind/signet/.cookie)" --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' -H 'content-type: text/plain;' http://localhost:38332/ | jq '.result| "Chain: \(.chain), pruned: \(.pruned), IBD: \(.initialblockdownload), blocks: \(.blocks), headers: \(.headers), size_on_disk: \(.size_on_disk)"'
-        curl -s --user "$(sudo cat /var/lib/bitcoind/signet/.cookie)" --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' -H 'content-type: text/plain;' http://localhost:38332/ | jq '.result| "Signet challenge: \(.signet_challenge)"'
+        #curl -s --user "$(sudo cat /var/lib/bitcoind/signet/.cookie)" --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getnetworkinfo", "params": [] }' -H 'content-type: text/plain;' http://localhost:38332/ | jq '.result| "BITCOIN: \(.subversion), protocol: \(.protocolversion), active: \(.networkactive), connections: \(.connections), relayfee:\(.relayfee )"'
+        #curl -s --user "$(sudo cat /var/lib/bitcoind/signet/.cookie)" --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' -H 'content-type: text/plain;' http://localhost:38332/ | jq '.result| "Chain: \(.chain), pruned: \(.pruned), IBD: \(.initialblockdownload), blocks: \(.blocks), headers: \(.headers), size_on_disk: \(.size_on_disk)"'
+        #curl -s --user "$(sudo cat /var/lib/bitcoind/signet/.cookie)" --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' -H 'content-type: text/plain;' http://localhost:38332/ | jq '.result| "Signet challenge: \(.signet_challenge)"'
         curl -s --user "bitcoin:bitcoin" --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getnetworkinfo", "params": [] }' -H 'content-type: text/plain;' http://localhost:38332/ | jq '.result| "BITCOIN: \(.subversion), protocol: \(.protocolversion), active: \(.networkactive), connections: \(.connections), relayfee:\(.relayfee )"'
         curl -s --user "bitcoin:bitcoin" --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' -H 'content-type: text/plain;' http://localhost:38332/ | jq '.result| "Chain: \(.chain), pruned: \(.pruned), IBD: \(.initialblockdownload), blocks: \(.blocks), headers: \(.headers), size_on_disk: \(.size_on_disk)"'
         curl -s --user "bitcoin:bitcoin" --data-binary '{"jsonrpc": "1.0", "id":"test", "method": "getblockchaininfo", "params": [] }' -H 'content-type: text/plain;' http://localhost:38332/ | jq '.result| "Signet challenge: \(.signet_challenge)"'
@@ -468,7 +468,7 @@ security.sudo.extraRules= [
   # Enable electrs for Mutinynet signet
   # Must explicitly specify both RPC and P2P ports for signet
   services.electrs = {
-    enable = false;
+    enable = true;
     # Specify network mode, RPC port, and P2P port for Mutinynet signet
     # RPC: 38332, P2P: 38333 (standard signet ports)
     # Connect to LOCAL bitcoind (same container), not external "bitcoin" VM

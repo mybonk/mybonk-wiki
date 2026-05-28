@@ -22,6 +22,11 @@ This workshop uses the `lightning` container from workshop-10 as the **healthy r
 - [Workshop 10](../workshop-10/) completed — container `lightning` is created and working, `bitcoind` and `clightning` are running and synced to Mutinynet signet
 - The host bridge `br-containers` is up (set up in workshop-10)
 - `workshop-10/manage-containers.sh` is present — you will use it to create `restored`
+- `workshop-19/host-shell.nix` applied to the host — adds the `rsync` progress wrapper used throughout Part 1:
+  ```bash
+  # add to your host's /etc/nixos/configuration.nix imports, then:
+  sudo nixos-rebuild switch
+  ```
 
 ---
 
@@ -29,28 +34,37 @@ This workshop uses the `lightning` container from workshop-10 as the **healthy r
 
 The `lightning` container is your healthy reference node. `restored` is a fresh container that simulates a new or wiped machine that needs to be restored. Data flows **from `lightning` to `restored`**.
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                          HOST MACHINE (NixOS)                       │
-│                                                                     │
-│  ┌─────────────────────────────┐  ┌──────────────────────────────┐  │
-│  │  lightning (HEALTHY)        │  │  restored (RECOVERY)│  │
-│  │                             │  │                               │  │
-│  │  bitcoind (signet)          │  │  bitcoind (signet)            │  │
-│  │  /var/lib/bitcoind/signet/  │  │  /var/lib/bitcoind/signet/    │  │
-│  │                             │  │                               │  │
-│  │  clightning (signet)        │  │  clightning (signet)          │  │
-│  │  /var/lib/clightning/signet/│  │  /var/lib/clightning/signet/  │  │
-│  │                             ├─►│                               │  │
-│  │  IP: 10.233.0.X             │  │  IP: 10.233.0.Y               │  │
-│  └─────────────────────────────┘  └──────────────────────────────┘  │
-│                                                                     │
-│  Host filesystem (direct access, no SSH):                           │
-│  /var/lib/nixos-containers/lightning/          (lightning's root)   │
-│  /var/lib/nixos-containers/restored/ (recovery node root) │
-│                                                                     │
-│  Bridge: br-containers (10.233.0.0/16)  DHCP/DNS: 10.233.0.1       │
-└─────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph HOST["HOST MACHINE (NixOS)"]
+        subgraph LN["lightning  ·  HEALTHY  ·  10.233.0.X"]
+            LN_BTC["bitcoind · signet<br/>/var/lib/bitcoind/signet/"]
+            LN_CLN["clightning · signet<br/>/var/lib/clightning/signet/"]
+        end
+        subgraph RC["restored  ·  RECOVERY  ·  10.233.0.Y"]
+            RC_BTC["bitcoind · signet<br/>/var/lib/bitcoind/signet/"]
+            RC_CLN["clightning · signet<br/>/var/lib/clightning/signet/"]
+        end
+        BRIDGE["br-containers · 10.233.0.0/16  ·  DHCP/DNS: 10.233.0.1"]
+        FS["Host direct access — no SSH<br/>/var/lib/nixos-containers/lightning/<br/>/var/lib/nixos-containers/restored/"]
+    end
+    LN -->|"rsync  blocks/ chainstate/"| RC
+    BRIDGE --- LN
+    BRIDGE --- RC
+
+    style HOST fill:#1a1a2e,stroke:#5277C3,color:#fff
+    style LN   fill:#1B4332,stroke:#2ECC71,color:#fff
+    style RC   fill:#3D0C0C,stroke:#E74C3C,color:#fff
+
+    classDef bitcoin fill:#F7931A,stroke:#c87800,color:#fff,font-weight:bold
+    classDef cln     fill:#7B2D8B,stroke:#5a1f68,color:#fff,font-weight:bold
+    classDef bridge  fill:#1ABC9C,stroke:#16a085,color:#fff,font-weight:bold
+    classDef fs      fill:#2C3E50,stroke:#4A6278,color:#95A5A6
+
+    class LN_BTC,RC_BTC bitcoin
+    class LN_CLN,RC_CLN cln
+    class BRIDGE bridge
+    class FS fs
 ```
 
 **Recovery scenarios covered:**
@@ -102,6 +116,12 @@ Total blockchain data to copy: ~5–8 GB
 | Fresh IBD from Mutinynet peers | ~10–30 MB/s download + verification | **5–20 minutes** |
 
 **The key insight:** copying verified blockchain state from a healthy peer is 10–30× faster than downloading and re-verifying every block from scratch (IBD). On mainnet, this difference is the gap between 30 minutes and 6+ hours. Backups matter.
+
+**Why no SSH for same-host transfers:** NixOS containers are not separate machines. Their entire filesystem lives as a plain directory tree on the host at `/var/lib/nixos-containers/<name>/`. The host can read and write container files directly, with no network involved — it is just a local copy at disk speed. SSH would add CPU overhead for encryption with no benefit.
+
+If the source node were on a different machine — a VM, a physical server, or a remote host — you would need SSH as rsync's transport layer: `rsync user@remote:/path/to/source /local/dest`. Method B in Part 1.3 shows exactly this pattern.
+
+**rsync progress display:** the `rsync` wrapper from `host-shell.nix` replaces the standard scrolling output with a two-line live display (current file + overall progress with ETA). It is active automatically for any interactive `rsync` call on the host. Omit `-v` and `--progress` from your commands — the wrapper provides a better version of both.
 
 For comparison if this were mainnet:
 ```
@@ -274,16 +294,17 @@ Two methods. Method A is faster because it bypasses SSH encryption; method B is 
 
 #### Method A: Direct host filesystem copy (fastest)
 
-From the host, both containers' filesystems are directly accessible under `/var/lib/nixos-containers/`. No SSH, no encryption overhead — just a local copy at disk speed.
+From the host, both containers' filesystems are directly accessible under `/var/lib/nixos-containers/`. No SSH, no encryption overhead — just a local copy at disk speed. This works because NixOS containers on the same host are not separate machines: their entire filesystem tree is a plain directory on the host, so rsync treats it as any other local path.
 
 ```bash
 # HOST terminal — rsync blockchain from lightning to restored
-# This uses the rsync pattern from baby-rabbit-holes.md, adapted for containers.
+# -a: archive mode (preserve permissions, timestamps, ownership)
 # --partial --inplace --append: safe for append-only blockchain data; survives interruption
 # --exclude '*.lock': skip lock files that bitcoind holds while running
+# -v and --progress omitted — the rsync wrapper from host-shell.nix handles the display
 
-sudo rsync -av \
-  --partial --inplace --append --progress \
+sudo rsync -a \
+  --partial --inplace --append \
   --exclude '*.lock' \
   /var/lib/nixos-containers/lightning/var/lib/bitcoind/signet/blocks \
   /var/lib/nixos-containers/lightning/var/lib/bitcoind/signet/chainstate \
@@ -305,14 +326,16 @@ Compare: a fresh IBD from Mutinynet peers would take **5–20 minutes** (downloa
 
 #### Method B: rsync over SSH between containers
 
-Use this when the host filesystem is not directly accessible (remote node, different machine):
+Use this when the source node is on a different machine — a VM, a physical server, or any remote host where you cannot access its filesystem as a local path. rsync uses SSH as its transport layer: it opens an SSH connection to the remote, starts an rsync process there, and streams the data over the encrypted tunnel. The command looks identical except for the `user@host:` prefix on the source paths.
 
 ```bash
 # RESTORED terminal — pull blockchain data from lightning over SSH
+# -z: compress data in transit (worthwhile over a real network, negligible on loopback)
 # lightning is reachable by hostname on the shared bridge network
+# -v and --progress omitted — the rsync wrapper from host-shell.nix handles the display
 
-sudo rsync -avz \
-  --partial --inplace --append --progress \
+sudo rsync -az \
+  --partial --inplace --append \
   --exclude '*.lock' \
   root@lightning:/var/lib/bitcoind/signet/blocks \
   root@lightning:/var/lib/bitcoind/signet/chainstate \
@@ -361,8 +384,8 @@ Run the rsync command again immediately:
 
 ```bash
 # HOST terminal — second rsync run
-sudo rsync -av \
-  --partial --inplace --append --progress \
+sudo rsync -a \
+  --partial --inplace --append \
   --exclude '*.lock' \
   /var/lib/nixos-containers/lightning/var/lib/bitcoind/signet/blocks \
   /var/lib/nixos-containers/lightning/var/lib/bitcoind/signet/chainstate \
@@ -391,6 +414,17 @@ Lightning recovery is more nuanced than Bitcoin recovery. The wrong recovery can
 └── lightning-rpc                   ← Unix socket, not a file, ignore
 ```
 
+**Where each file can be stored:**
+
+| File | Size | Local offline backup | Remote encrypted backup |
+|------|------|---------------------|------------------------|
+| `hsm_secret` | 32 bytes | ✅ Mandatory | ❌ **Never — not even encrypted** |
+| `emergency.recover` | 57 bytes | ✅ Yes | ✅ Yes — GPG-encrypt first |
+| `lightningd.sqlite3` | 1–50 MB | ✅ Yes | ✅ Yes — GPG-encrypt first |
+| `gossip_store` | 1–5 MB | ❌ Not needed | ❌ Not needed |
+
+> **⚠️ `hsm_secret` must never be uploaded anywhere.** Even encrypted, a remote copy is a liability: if the file is stolen and your passphrase is ever compromised, an attacker owns your master key. The only safe copies are offline — USB drive, hardware wallet backup, or paper in a physically secure location.
+
 **What each backup level recovers:**
 
 | Backup available | What you get back | What you lose |
@@ -404,7 +438,11 @@ The danger of an old database is real. If your database backup is from 3 days ag
 
 ### 2.2 — Backup procedure
 
-Run this on `restored`. In production, run it on a schedule.
+> **⚠️ Destination matters:**
+> - `hsm_secret` → local offline only (USB / paper). Never upload anywhere.
+> - `emergency.recover` + `lightningd.sqlite3` → local copy first; GPG-encrypt before any remote copy.
+
+Run this on `restored`. In production, run it on a schedule (see [section 2.6](#26--automated-remote-backup)).
 
 ```bash
 # HOST terminal — back up critical Lightning files from restored
@@ -431,7 +469,33 @@ Expected output:
 
 Total backup size: **< 2 MB** per node. These fit on any medium, encrypted or not.
 
-> **Automation:** In production, use a systemd timer or cron job to copy `lightningd.sqlite3` to a remote location after every block (every 30 seconds on Mutinynet, every 10 minutes on mainnet). The database file can be safely copied while CLN is running — SQLite's WAL mode ensures you always get a consistent snapshot.
+**Encrypting for remote storage** (never send plaintext Lightning files off-machine):
+
+```bash
+# Replace with your GPG key ID or email
+GPG_KEY="your-key@example.com"
+
+# Encrypt — output files are safe to push to cloud storage, git, or email
+gpg --recipient "$GPG_KEY" --encrypt \
+    --output "$BACKUP_DIR/restored/emergency.recover.gpg" \
+    "$BACKUP_DIR/restored/emergency.recover"
+
+gpg --recipient "$GPG_KEY" --encrypt \
+    --output "$BACKUP_DIR/restored/lightningd.sqlite3.gpg" \
+    "$BACKUP_DIR/restored/lightningd.sqlite3"
+
+# Remove plaintext versions — keep only the encrypted copies for remote
+rm "$BACKUP_DIR/restored/emergency.recover" "$BACKUP_DIR/restored/lightningd.sqlite3"
+```
+
+Decrypting on recovery:
+
+```bash
+gpg --decrypt emergency.recover.gpg > emergency.recover
+gpg --decrypt lightningd.sqlite3.gpg > lightningd.sqlite3
+```
+
+> **Automation:** `lightningd.sqlite3` can be safely copied while CLN is running — SQLite's WAL mode guarantees a consistent snapshot. Automate encrypted backups with a NixOS systemd timer (see [section 2.6](#26--automated-remote-backup)) or a cron job running every 30 seconds on Mutinynet / every 10 minutes on mainnet.
 
 ### 2.3 — Scenario B: Recover on-chain funds from hsm_secret only
 
@@ -589,6 +653,72 @@ What happens next depends on the implementation. A production CLN node would det
 
 ---
 
+### 2.6 — Automated remote backup
+
+The goal is simple: after each block, GPG-encrypt the two files that can travel (`emergency.recover` and `lightningd.sqlite3`) and push them to a remote destination. `hsm_secret` never leaves the local machine.
+
+**Backup script** — save as `/etc/nixos/lightning-backup.sh` on the host (or inside the container):
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+GPG_KEY="your-key@example.com"           # Your GPG key ID or email
+REMOTE_USER="backup"
+REMOTE_HOST="backup.example.com"
+REMOTE_PATH="/backups/lightning"
+CLN_DIR="/var/lib/nixos-containers/restored/var/lib/clightning/signet"
+STAGING=$(mktemp -d)
+
+trap 'rm -rf "$STAGING"' EXIT
+
+# Encrypt — hsm_secret is intentionally excluded
+gpg --batch --yes --recipient "$GPG_KEY" --encrypt \
+    --output "$STAGING/emergency.recover.gpg" \
+    "$CLN_DIR/emergency.recover"
+
+gpg --batch --yes --recipient "$GPG_KEY" --encrypt \
+    --output "$STAGING/lightningd.sqlite3.gpg" \
+    "$CLN_DIR/lightningd.sqlite3"
+
+# Push to remote
+rsync -az "$STAGING/" "$REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH/"
+```
+
+**NixOS systemd timer** — add to your host `configuration.nix`:
+
+```nix
+systemd.services.lightning-backup = {
+  description = "Encrypted remote backup of CLN state";
+  script = builtins.readFile ./lightning-backup.sh;
+  serviceConfig = {
+    Type = "oneshot";
+    User = "root";
+  };
+};
+
+systemd.timers.lightning-backup = {
+  wantedBy = [ "timers.target" ];
+  timerConfig = {
+    OnBootSec = "5min";
+    OnUnitActiveSec = "10min";  # Every 10 min on mainnet (~1 block); every 30s on Mutinynet
+    Unit = "lightning-backup.service";
+  };
+};
+```
+
+Apply and check:
+
+```bash
+sudo nixos-rebuild switch
+systemctl status lightning-backup.timer
+journalctl -u lightning-backup.service -n 20
+```
+
+> On Mutinynet (30-second blocks) a 10-minute backup interval means you could lose at most ~20 payments in a worst-case failure. On mainnet (10-minute blocks) the same interval means you are always within one block of the latest channel state.
+
+---
+
 ## Verification checklist
 
 After each recovery scenario, run this checklist before declaring success.
@@ -652,13 +782,13 @@ watch -n 30 'lightning-cli listfunds | jq ".channels[] | {state, our_amount_msat
 
 ## Summary
 
-| Layer | Backup target | Size | Method | Recovery time (Mutinynet) |
-|-------|--------------|------|--------|--------------------------|
-| Bitcoin blockchain | `blocks/` + `chainstate/` | ~7 GB | rsync from peer | 10–50 seconds |
-| Bitcoin wallet | `bitcoin-hdmaster-seed` | < 1 KB | offline copy | immediate |
-| Lightning key | `hsm_secret` | 32 bytes | offline copy | immediate |
-| Lightning channels (minimal) | `emergency.recover` | 57 bytes | offline copy | 72 min (CSV timelock) |
-| Lightning channels (full) | `lightningd.sqlite3` | 1–50 MB | frequent automated copy | < 30 seconds |
+| Layer | Backup target | Size | Method | Remote backup | Recovery time (Mutinynet) |
+|-------|--------------|------|--------|---------------|--------------------------|
+| Bitcoin blockchain | `blocks/` + `chainstate/` | ~7 GB | rsync from peer | ❌ Too large | 10–50 seconds |
+| Bitcoin wallet | `bitcoin-hdmaster-seed` | < 1 KB | offline copy | ❌ Never | immediate |
+| Lightning key | `hsm_secret` | 32 bytes | offline copy | ❌ **Never** | immediate |
+| Lightning channels (minimal) | `emergency.recover` | 57 bytes | offline + GPG-encrypted remote | ✅ GPG only | 72 min (CSV timelock) |
+| Lightning channels (full) | `lightningd.sqlite3` | 1–50 MB | automated GPG-encrypted copy | ✅ GPG only | < 30 seconds |
 
 **The hierarchy to remember:**
 1. `hsm_secret` is your identity and your on-chain key. Lose it, lose everything. Back it up offline, once, and never touch it again.
@@ -673,4 +803,5 @@ watch -n 30 'lightning-cli listfunds | jq ".channels[] | {state, our_amount_msat
 - [nix-bitcoin secrets management](https://github.com/fort-nix/nix-bitcoin/blob/master/docs/secrets.md)
 - [Core Lightning — backup and recovery](https://docs.corelightning.org/docs/backup-and-recovery)
 - [BOLT 2: Peer Protocol — force-close and penalty transactions](https://github.com/lightning/bolts/blob/master/02-peer-protocol.md)
+- [Backup Core Lightning and LNbits](https://objsal.medium.com/backup-core-lightning-and-lnbits-77017971d60d) — GPG encryption and automated remote backup patterns
 - [baby-rabbit-holes.md](../baby-rabbit-holes.md) — rsync, scp, and SSH patterns used in this workshop

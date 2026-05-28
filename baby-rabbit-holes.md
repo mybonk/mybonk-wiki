@@ -524,17 +524,17 @@ scp somefile user@machine_A:~/
   - Example 1: From **local to local** (instead of using `scp`):
     
     ```bash
-    $ rsync -avz --partial --inplace --append --progress --exclude '*/*.lock' /unmountme/bitcoin/{blocks,chainstate,indexes} /data/bitcoin
+    $ rsync -avz --partial --inplace --omit-dir-times --append --progress --exclude '*/*.lock' /unmountme/bitcoin/{blocks,chainstate,indexes} /data/bitcoin
     ```
   
   - Example 2: Same thing (**local to local**) but also gives a visual indication of the copy progress as well as completion time estimate ('ETA'):
     ```bash
-    $ rsync -avz --partial --inplace --append --stats --exclude '*/*.lock' /unmountme/bitcoin/{blocks,chainstate,indexes} /data/bitcoin | pv -lep -s $(find /unmountme/bitcoin/{chainstate,blocks,indexes} -type f | wc -l)
+    $ rsync -avz --partial --inplace --omit-dir-times --append --stats --exclude '*/*.lock' /unmountme/bitcoin/{blocks,chainstate,indexes} /data/bitcoin | pv -lep -s $(find /unmountme/bitcoin/{chainstate,blocks,indexes} -type f | wc -l)
     ```
 
   - Example 3: Same thing but **to a remote server** (over the network as opposed to locally):
     ```bash
-    $ rsync -avz --partial --inplace --append --stats --exclude '*/*.lock' /data/bitcoin/{blocks,chainstate,indexes} bitcoin@192.168.0.127:/data/bitcoin
+    $ rsync -avz --partial --inplace --omit-dir-times --append --stats --exclude '*/*.lock' /data/bitcoin/{blocks,chainstate,indexes} bitcoin@192.168.0.127:/data/bitcoin
     ```
 ## Network
 

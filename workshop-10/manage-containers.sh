@@ -57,6 +57,13 @@ get_container_status() {
     nixos-container status "$name" 2>/dev/null || echo "unknown"
 }
 
+# Print only when -v / --verbose is active
+verbose_echo() {
+    if [ "$VERBOSE" = true ]; then
+        echo "$@"
+    fi
+}
+
 # ============================================================================
 # COMMAND: CREATE CONTAINER
 # ============================================================================
@@ -119,15 +126,17 @@ cmd_create_single() {
         echo "No name provided - auto-generating random name: $container_name"
     fi
 
-    echo "================================"
-    echo "Creating NixOS Container"
-    echo "================================"
-    echo "Container Name: $container_name"
-    echo "================================"
-    echo
+    if [ "$VERBOSE" = true ]; then
+        echo "================================"
+        echo "Creating NixOS Container"
+        echo "================================"
+        echo "Container Name: $container_name"
+        echo "================================"
+        echo
+    fi
 
     # Ensure flake has a configuration for this container name with proper hostname
-    echo "[1/3] Ensuring flake configuration exists for '$container_name'..."
+    verbose_echo "[1/3] Ensuring flake configuration exists for '$container_name'..."
 
     # Check if a configuration with the correct hostname already exists.
     # We check both conditions independently across the whole file: the nixosSystem
@@ -135,11 +144,11 @@ cmd_create_single() {
     # miss the hostName if more than 5 lines separated it from the nixosSystem line.
     if grep -q "$container_name = nixpkgs.lib.nixosSystem" flake.nix && \
        grep -q "networking.hostName = \"$container_name\"" flake.nix; then
-        echo "✓ Configuration already exists with correct hostname"
+        verbose_echo "✓ Configuration already exists with correct hostname"
     else
         # Check if config exists but without hostname
         if grep -q "^      $container_name = nixpkgs.lib.nixosSystem" flake.nix; then
-            echo "Configuration exists but missing hostname - updating..."
+            verbose_echo "Configuration exists but missing hostname - updating..."
             # Remove the old configuration first
             awk -v name="$container_name" '
             BEGIN { skip=0 }
@@ -150,7 +159,7 @@ cmd_create_single() {
         fi
 
         # Add new configuration with hostname
-        echo "Adding nixosConfiguration for '$container_name' to flake.nix..."
+        verbose_echo "Adding nixosConfiguration for '$container_name' to flake.nix..."
         awk -v name="$container_name" '
         /nixosConfigurations = \{/ { in_configs=1 }
         in_configs && /^    \};$/ && !done {
@@ -166,12 +175,12 @@ cmd_create_single() {
         }
         { print }
         ' flake.nix > flake.nix.tmp && mv flake.nix.tmp flake.nix
-        echo "✓ Configuration added with hostname"
+        verbose_echo "✓ Configuration added with hostname"
     fi
-    echo
+    verbose_echo ""
 
     # Create container from flake
-    echo "[2/3] Creating container from flake..."
+    verbose_echo "[2/3] Creating container from flake..."
     # Set --local-address and --host-address to empty strings to prevent
     # nixos-container from auto-assigning static IPs (e.g., 10.233.1.x).
     # We want the container to obtain its IP dynamically via DHCP from dnsmasq
@@ -183,39 +192,44 @@ cmd_create_single() {
         --host-address ""
 
     echo "✓ Container created"
-    echo
+    verbose_echo ""
 
     # Step 3: Start the container
-    echo "[3/3] Starting container..."
+    verbose_echo "[3/3] Starting container..."
     nixos-container start "$container_name"
 
     echo "✓ Container started"
-    echo
+    verbose_echo ""
 
     # Wait a moment for DHCP to assign IP
-    echo "Waiting for DHCP to assign IP address..."
+    verbose_echo "Waiting for DHCP to assign IP address..."
     sleep 2
 
     # Display final status
-    echo "================================"
-    echo "Container Setup Complete!"
-    echo "================================"
+    if [ "$VERBOSE" = true ]; then
+        echo "================================"
+        echo "Container Setup Complete!"
+        echo "================================"
+    fi
     echo
     echo "Container: $container_name"
     echo "Status:    $(get_container_status "$container_name")"
     echo "IP Address: $(get_container_ip "$container_name")"
     echo
-    echo "Quick Commands:"
-    echo "  Access shell:      sudo nixos-container root-login $container_name"
-    echo "  Check IP:          sudo ./manage-containers.sh ip $container_name"
-    echo "  Stop container:    sudo ./manage-containers.sh stop $container_name"
-    echo "  Destroy container: sudo ./manage-containers.sh destroy $container_name"
-    echo
-    echo "Test connectivity from inside container:"
-    echo "  sudo nixos-container root-login $container_name"
-    echo "  Then run: ping -c 4 10.233.0.1    # Ping host"
-    echo "  Then run: ping -c 4 8.8.8.8       # Ping internet"
-    echo
+
+    if [ "$VERBOSE" = true ]; then
+        echo "Quick Commands:"
+        echo "  Access shell:      sudo nixos-container root-login $container_name"
+        echo "  Check IP:          sudo ./manage-containers.sh ip $container_name"
+        echo "  Stop container:    sudo ./manage-containers.sh stop $container_name"
+        echo "  Destroy container: sudo ./manage-containers.sh destroy $container_name"
+        echo
+        echo "Test connectivity from inside container:"
+        echo "  sudo nixos-container root-login $container_name"
+        echo "  Then run: ping -c 4 10.233.0.1    # Ping host"
+        echo "  Then run: ping -c 4 8.8.8.8       # Ping internet"
+        echo
+    fi
 }
 
 # ============================================================================
@@ -237,40 +251,56 @@ cmd_update() {
         exit 1
     fi
 
-    echo "================================"
-    echo "Updating Container: $name"
-    echo "================================"
-    echo
+    if [ "$VERBOSE" = true ]; then
+        echo "================================"
+        echo "Updating Container: $name"
+        echo "================================"
+        echo
+    fi
 
     # Validate configuration before making any changes
-    echo "[1/3] Validating configuration..."
-    echo "  Building configuration to check for errors..."
+    verbose_echo "[1/3] Validating configuration..."
+    verbose_echo "  Building configuration to check for errors..."
 
-    if nix build ".#nixosConfigurations.$name.config.system.build.toplevel" --no-link 2>&1 | tee /tmp/nix-build-$name.log | grep -q "error:"; then
+    # In verbose mode run nix build with no redirection so its output goes directly
+    # to the terminal — piping kills the TTY and nix suppresses all progress output.
+    # In quiet mode capture to a log and show it only on failure.
+    local build_failed=false
+    if [ "$VERBOSE" = true ]; then
+        nix build ".#nixosConfigurations.$name.config.system.build.toplevel" \
+            --no-link --show-trace || build_failed=true
+    else
+        nix build ".#nixosConfigurations.$name.config.system.build.toplevel" \
+            --no-link > /tmp/nix-build-$name.log 2>&1 || build_failed=true
+    fi
+
+    if [ "$build_failed" = true ]; then
         echo ""
         echo "❌ Configuration validation FAILED!"
         echo ""
         echo "The configuration has errors and cannot be applied."
         echo "Container '$name' remains unchanged and running."
         echo ""
-        echo "Build errors:"
-        cat /tmp/nix-build-$name.log
-        echo ""
+        if [ "$VERBOSE" = false ]; then
+            echo "Build errors:"
+            cat /tmp/nix-build-$name.log
+            echo ""
+        fi
         echo "Fix the errors in your configuration and try again."
-        rm -f /tmp/nix-build-$name.log
+        rm -f /tmp/nix-build-$name.log 2>/dev/null
         exit 1
     fi
 
-    echo "  ✓ Configuration is valid"
-    rm -f /tmp/nix-build-$name.log
-    echo
+    verbose_echo "  ✓ Configuration is valid"
+    rm -f /tmp/nix-build-$name.log 2>/dev/null
+    verbose_echo ""
 
     # Check and fix bridge configuration
     local conf_file="/etc/nixos-containers/$name.conf"
     local needs_restart=false
 
     if [ -f "$conf_file" ]; then
-        echo "[2/3] Checking bridge configuration..."
+        verbose_echo "[2/3] Checking bridge configuration..."
 
         # Check if ALL three settings are correct:
         # - HOST_BRIDGE must be "br-containers"
@@ -295,10 +325,12 @@ cmd_update() {
             needs_restart=true
 
             # Show current values
-            echo "Current settings:"
-            grep -E "^(HOST_BRIDGE|LOCAL_ADDRESS|HOST_ADDRESS)=" "$conf_file" | sed 's/^/  /'
+            if [ "$VERBOSE" = true ]; then
+                echo "Current settings:"
+                grep -E "^(HOST_BRIDGE|LOCAL_ADDRESS|HOST_ADDRESS)=" "$conf_file" | sed 's/^/  /'
+            fi
 
-            echo "Fixing configuration file..."
+            verbose_echo "Fixing configuration file..."
 
             # Fix or add HOST_BRIDGE
             if grep -q "^HOST_BRIDGE=" "$conf_file"; then
@@ -321,30 +353,31 @@ cmd_update() {
                 echo "HOST_ADDRESS=" >> "$conf_file"
             fi
 
-            # Show new values
-            echo "Fixed settings:"
-            grep -E "^(HOST_BRIDGE|LOCAL_ADDRESS|HOST_ADDRESS)=" "$conf_file" | sed 's/^/  /'
-            echo "✓ Configuration fixed"
+            if [ "$VERBOSE" = true ]; then
+                echo "Fixed settings:"
+                grep -E "^(HOST_BRIDGE|LOCAL_ADDRESS|HOST_ADDRESS)=" "$conf_file" | sed 's/^/  /'
+            fi
+            verbose_echo "✓ Configuration fixed"
         else
-            echo "✓ Bridge configuration correct"
+            verbose_echo "✓ Bridge configuration correct"
         fi
     fi
-    echo
+    verbose_echo ""
 
     # Only stop/start if bridge config needed fixing
     if [ "$needs_restart" = true ]; then
-        echo "[3/3] Applying changes (full restart required)..."
+        verbose_echo "[3/3] Applying changes (full restart required)..."
 
         # Stop container
         local status=$(get_container_status "$name")
         if [ "$status" = "up" ]; then
             nixos-container stop "$name"
-            echo "  ✓ Container stopped"
+            verbose_echo "  ✓ Container stopped"
         fi
 
         # Update container
         if nixos-container update "$name" --flake ".#$name"; then
-            echo "  ✓ Configuration updated"
+            verbose_echo "  ✓ Configuration updated"
         else
             echo "  ✗ Update failed"
             exit 1
@@ -352,19 +385,19 @@ cmd_update() {
 
         # Start container
         nixos-container start "$name"
-        echo "  ✓ Container started"
+        verbose_echo "  ✓ Container started"
 
         # Wait for network
         sleep 2
     else
         # Container stays running, just update config and restart services
-        echo "[3/3] Applying changes (hot reload - no container restart)..."
-        echo "  Container will remain running, only affected services restart"
+        verbose_echo "[3/3] Applying changes (hot reload - no container restart)..."
+        verbose_echo "  Container will remain running, only affected services restart"
 
         # Update running container
         # nixos-container update applies changes and restarts affected services automatically
         if nixos-container update "$name" --flake ".#$name"; then
-            echo "  ✓ Configuration updated and services restarted"
+            verbose_echo "  ✓ Configuration updated and services restarted"
         else
             echo "  ✗ Update failed"
             exit 1
@@ -373,26 +406,38 @@ cmd_update() {
         # Give services a moment to restart
         sleep 2
     fi
-    echo
+    verbose_echo ""
 
     # Show final status
-    echo "================================"
-    echo "Update Complete!"
-    echo "================================"
-    echo
-    echo "Container: $name"
-    echo "Status:    $(get_container_status "$name")"
-    echo "IP Address: $(get_container_ip "$name")"
-    echo
-    if [ "$needs_restart" = true ]; then
-        echo "Note: Full container restart was performed (bridge config changed)"
-    else
-        echo "Note: Hot reload applied (only affected services restarted)"
+    local final_status=$(get_container_status "$name")
+
+    if [ "$VERBOSE" = true ]; then
+        echo "================================"
+        echo "Update Complete!"
+        echo "================================"
     fi
     echo
-    echo "Access container:"
-    echo "  sudo nixos-container root-login $name"
+    echo "Container: $name"
+    echo "Status:    $final_status"
+    echo "IP Address: $(get_container_ip "$name")"
     echo
+
+    if [ "$final_status" != "up" ]; then
+        echo "⚠ Container is not running after update."
+        echo "  Check logs: journalctl -u container@$name -n 50"
+        echo "  Start manually: sudo nixos-container start $name"
+        echo
+    elif [ "$VERBOSE" = true ]; then
+        if [ "$needs_restart" = true ]; then
+            echo "Note: Full container restart was performed (bridge config changed)"
+        else
+            echo "Note: Hot reload applied (only affected services restarted)"
+        fi
+        echo
+        echo "Access container:"
+        echo "  sudo nixos-container root-login $name"
+        echo
+    fi
 }
 
 # ============================================================================
@@ -418,7 +463,7 @@ cmd_start() {
             if [ "$status" = "up" ]; then
                 echo "✓ $container - already running"
             else
-                echo "Starting: $container"
+                verbose_echo "Starting: $container"
                 nixos-container start "$container"
                 echo "✓ $container - started"
             fi
@@ -436,7 +481,13 @@ cmd_start() {
         exit 1
     fi
 
-    echo "Starting container: $name"
+    local status=$(get_container_status "$name")
+    if [ "$status" = "up" ]; then
+        echo "Container '$name' is already running"
+        exit 0
+    fi
+
+    verbose_echo "Starting container: $name"
     nixos-container start "$name"
     echo "✓ Container started"
     echo "Status: $(get_container_status "$name")"
@@ -463,7 +514,7 @@ cmd_stop() {
         for container in $containers; do
             local status=$(get_container_status "$container")
             if [ "$status" = "up" ]; then
-                echo "Stopping: $container"
+                verbose_echo "Stopping: $container"
                 nixos-container stop "$container"
                 echo "✓ $container - stopped"
             else
@@ -482,7 +533,13 @@ cmd_stop() {
         exit 1
     fi
 
-    echo "Stopping container: $name"
+    local status=$(get_container_status "$name")
+    if [ "$status" != "up" ]; then
+        echo "Container '$name' is not running (status: $status)"
+        exit 0
+    fi
+
+    verbose_echo "Stopping container: $name"
     nixos-container stop "$name"
     echo "✓ Container stopped"
 }
@@ -535,7 +592,7 @@ cmd_destroy() {
         fi
 
         for container in $containers; do
-            echo "Destroying: $container"
+            verbose_echo "Destroying: $container"
             nixos-container destroy "$container"
             echo "✓ $container - destroyed"
         done
@@ -561,7 +618,7 @@ cmd_destroy() {
         fi
     fi
 
-    echo "Destroying container: $name"
+    verbose_echo "Destroying container: $name"
     nixos-container destroy "$name"
     echo "✓ Container destroyed"
 }
@@ -670,13 +727,13 @@ cmd_shell() {
     local status=$(get_container_status "$name")
     if [ "$status" != "up" ]; then
         echo "Warning: Container is not running (status: $status)"
-        echo "Starting container..."
+        verbose_echo "Starting container..."
         nixos-container start "$name"
         sleep 1
     fi
 
     echo "Opening root shell in container: $name"
-    echo "(Type 'exit' to return to host)"
+    verbose_echo "(Type 'exit' to return to host)"
     echo
     nixos-container root-login "$name"
 }
@@ -695,7 +752,10 @@ A convenient wrapper for managing NixOS containers with dynamic CLI tools.
 Create, manage, and destroy containers on-the-fly without editing host configs.
 
 USAGE:
-  sudo $0 COMMAND [OPTIONS] [ARGUMENTS]
+  sudo $0 [-v] COMMAND [OPTIONS] [ARGUMENTS]
+
+GLOBAL OPTIONS:
+  -v, --verbose           Show detailed step-by-step progress output
 
 COMMANDS:
   create [name]           Create and start a new container
@@ -733,9 +793,11 @@ EXAMPLES:
   sudo $0 create                    # Auto-generated name (e.g., "a3f2")
   sudo $0 create mycont             # Named "mycont"
   sudo $0 create -n 5               # Create 5 containers with random names
+  sudo $0 -v create mycont          # Create with detailed output
 
   # Update container config
   sudo $0 update lightning          # Update lightning container from flake
+  sudo $0 -v update lightning       # Update with detailed output
 
   # List and inspect
   sudo $0 list                      # Show all containers
@@ -782,6 +844,20 @@ fi
 
 # Check root privileges
 check_root
+
+# Parse global flags before the command name
+VERBOSE=false
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -v|--verbose)
+            VERBOSE=true
+            shift
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
 
 # Dispatch to appropriate command
 COMMAND=$1

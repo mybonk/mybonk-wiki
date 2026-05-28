@@ -1,5 +1,5 @@
 #!/bin/bash
-sessions=( bitcoin lightning lightning2 lightning3)
+sessions=( bitcoin lightning lightning2 lightning3 recovered)
 
 
 osascript <<EOF

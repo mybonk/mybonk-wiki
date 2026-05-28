@@ -60,77 +60,47 @@ Blockchain data automatically saved to disk. No need to re-sync after restarts!
 
 ## Architecture
 
+```mermaid
+graph TD
+    subgraph HOST["HOST MACHINE (NixOS)"]
+        subgraph BVMBOX["Bitcoin VM · hostname: bitcoin"]
+            BTC["Bitcoin Inquisition · Mutinynet Signet<br/>RPC :38332 · P2P :38333"]
+        end
+        subgraph LCBOX["Lightning Container · hostname: lightning"]
+            CLN["Core Lightning · nix-bitcoin<br/>P2P :9735"]
+        end
+        BRIDGE["br-containers · 10.233.0.0/16<br/>DHCP/DNS: 10.233.0.1 · NAT"]
+    end
+    Internet((Internet))
+
+    BTC -->|"RPC :38332"| CLN
+    BRIDGE <-->|"DHCP / DNS"| BVMBOX
+    BRIDGE <-->|"DHCP / DNS"| LCBOX
+    BRIDGE <-->|NAT| Internet
+
+    style HOST   fill:#1a1a2e,stroke:#5277C3,color:#fff
+    style BVMBOX fill:#4a2800,stroke:#F7931A,color:#fff
+    style LCBOX  fill:#2D1B69,stroke:#7B2D8B,color:#fff
+
+    classDef bitcoin  fill:#F7931A,stroke:#c87800,color:#fff,font-weight:bold
+    classDef cln      fill:#7B2D8B,stroke:#5a1f68,color:#fff,font-weight:bold
+    classDef bridge   fill:#1ABC9C,stroke:#16a085,color:#fff,font-weight:bold
+    classDef internet fill:#DDEEFF,stroke:#2980B9,color:#1a1a2e,font-weight:bold
+
+    class BTC bitcoin
+    class CLN cln
+    class BRIDGE bridge
+    class Internet internet
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                         HOST MACHINE                        │
-│                          (NixOS)                            │
-│                                                             │
-│  ┌────────────────────────────┐                             │
-│  │   BITCOIN VM               │                             │
-│  │   (hostname: bitcoin)      │                             │
-│  │                            │                             │
-│  │  Bitcoin Inquisition       │                             │
-│  │  Mutinynet Signet          │                             │
-│  │                            │                             │
-│  │  Ports:                    │                             │
-│  │   - 38332 (RPC)            ┼──────────────┐              │
-│  │   - 38333 (P2P)            │              │              │
-│  │                            │              │              │
-│  │  Network: Isolated         │              │              │
-│  │  (NixOS test framework)    │              │              │
-│  │                            │              │              │
-│  │  For: Automated testing    │              │              │
-│  └────────────────────────────┘              │              │
-│                                              │              │
-│                                              ▼              │
-│                     ┌────────────────────────────────────┐  │
-│                     │ LIGHTNING CONTAINER                │  │
-│                     │ (hostname: lightning)              │  │
-│                     │                                    │  │
-│                     │  Core Lightning                    │  │
-│                     │  (nix-bitcoin)                     │  │
-│                     │                                    │  │
-│                     │  Ports:                            │  │
-│                     │   - 9735 (P2P)                     │  │
-│                     │                                    │  │
-│                     │  Network: Bridge                   │  │
-│                     │  (10.233.0.0/16)                   │  │
-│                     │  DHCP/DNS from host                │  │
-│                     │                                    │  │
-│                     │  Connects to:                      │  │
-│                     │  Bitcoin VM RPC                    │  │
-│                     │  (bitcoin:38332)                   │  │
-│                     └────────────────────────────────────┘  │
-│                                                             │
-│  Host provides:                                             │
-│   - DHCP server (10.233.0.1)                                │
-│   - DNS resolution (containers can resolve each other)      │
-│   - NAT for internet access                                 │
-│   - Container bridge network (10.233.0.0/16)                │
-└─────────────────────────────────────────────────────────────┘
 
-Two Operating Modes:
+**Two operating modes:**
 
-  A. TESTING MODE (test.nix):
-     - Bitcoin VM runs in isolated test framework (no network access)
-     - Used for automated validation only
-     - Command: nix build .#checks.x86_64-linux.bitcoin-lightning-mutinynet
+- **Testing** (`test.nix`): Bitcoin VM runs in an isolated NixOS test framework — no network access, automated validation only.
+  `nix build .#checks.x86_64-linux.bitcoin-lightning-mutinynet`
+- **Deployment** (actual usage): Both VM and container on the bridge, accessible by hostname.
+  `sudo ./run-bitcoin-vm.sh` then `sudo ./manage-containers.sh create lightning`
 
-  B. DEPLOYMENT MODE (actual usage):
-     - Bitcoin VM: Built with bridge networking, gets IP on 10.233.0.x
-       * Command: nix build .#packages.x86_64-linux.bitcoin-vm
-       * Runs: sudo ./result/bin/run-bitcoin-vm
-       * Accessible from containers and host
-     - Lightning Container: Connects to Bitcoin VM via RPC
-       * Gets DHCP from host (10.233.0.0/16 network)
-       * Can ping Bitcoin VM, host, and internet
-
-Data Flow (Deployment Mode):
-  1. Bitcoin VM → Gets IP via DHCP from host (10.233.0.1)
-  2. Lightning Container → Gets IP via DHCP from host
-  3. Lightning → Bitcoin: RPC calls to bitcoin:38332
-  4. Both → Host Bridge (br-containers) → Internet via NAT
-```
+**Data flow (deployment):** Bitcoin VM gets IP via DHCP → Lightning container gets IP via DHCP → Lightning calls bitcoin:38332 via RPC → both reach the internet via NAT through the host bridge.
 
 ---
 
@@ -155,18 +125,25 @@ Services like Core Lightning and electrs are designed to talk to a **local** bit
 
 Instead, `container-lightning.nix` runs an **nginx TCP proxy** that listens on `127.0.0.1:38332` and silently forwards connections to `bitcoin:38332` on the remote VM. Every service in the container connects to localhost as it normally would and never needs to know about the remote VM.
 
-```
-┌─────────────────── lightning container ──────────────────┐
-│                                                           │
-│  CLightning ──► 127.0.0.1:38332                          │
-│                      │                                    │
-│                   nginx stream                            │
-│                   proxy_pass                              │
-│                      │                                    │
-│                      ▼                                    │
-│               bitcoin:38332 ──────────────────────────► bitcoin VM
-│                                                           │
-└───────────────────────────────────────────────────────────┘
+```mermaid
+graph LR
+    subgraph LC["Lightning Container"]
+        CLN["CLightning"]
+        NGINX["nginx stream proxy<br/>127.0.0.1:38332"]
+        CLN -->|"connect to localhost:38332"| NGINX
+    end
+    BVM["Bitcoin VM<br/>bitcoin:38332"]
+    NGINX -->|proxy_pass| BVM
+
+    style LC fill:#2D1B69,stroke:#7B2D8B,color:#fff
+
+    classDef cln     fill:#7B2D8B,stroke:#5a1f68,color:#fff,font-weight:bold
+    classDef nginx   fill:#27AE60,stroke:#1e8449,color:#fff,font-weight:bold
+    classDef bitcoin fill:#F7931A,stroke:#c87800,color:#fff,font-weight:bold
+
+    class CLN cln
+    class NGINX nginx
+    class BVM bitcoin
 ```
 
 The relevant config in `container-lightning.nix`:
@@ -255,14 +232,26 @@ nix build .#packages.x86_64-linux.bitcoin-vm
 
 The VM uses a **persistent qcow2 disk image** to store Bitcoin blockchain data:
 
-```
-VM Disks:
-  /dev/vda (8GB)   - System disk (ephemeral, recreated each start)
-  /dev/vdb (50GB)  - Data disk (PERSISTENT across restarts!)
-                     ↓
-                     Mounted at: /var/lib/bitcoind
-                     ↓
-                     Host location: vm-data/bitcoin-vm.qcow2
+```mermaid
+graph TD
+    subgraph VM["Bitcoin VM"]
+        VDA["/dev/vda · 8 GB<br/>System disk<br/>ephemeral — recreated on each start"]
+        VDB["/dev/vdb · 50 GB<br/>Data disk<br/>PERSISTENT — survives restarts"]
+    end
+    VDB -->|"mounted at"| MOUNT["/var/lib/bitcoind<br/>(inside VM)"]
+    MOUNT -->|"stored as"| QCOW2["/data/vms/bitcoin-vm-data.qcow2<br/>(host filesystem)"]
+
+    style VM fill:#1a1a2e,stroke:#5277C3,color:#fff
+
+    classDef ephemeral  fill:#7F8C8D,stroke:#5D6D7E,color:#fff
+    classDef persistent fill:#E74C3C,stroke:#C0392B,color:#fff,font-weight:bold
+    classDef mount      fill:#F39C12,stroke:#D68910,color:#fff
+    classDef storage    fill:#27AE60,stroke:#1e8449,color:#fff,font-weight:bold
+
+    class VDA ephemeral
+    class VDB persistent
+    class MOUNT mount
+    class QCOW2 storage
 ```
 
 **Key Benefits:**

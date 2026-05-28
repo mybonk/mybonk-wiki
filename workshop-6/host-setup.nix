@@ -5,6 +5,8 @@
 { config, pkgs, lib, ... }:
 
 {
+  imports = [ ./host-storage.nix ];
+
   # Enable container support
   boot.enableContainers = true;
 

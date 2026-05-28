@@ -10,7 +10,9 @@ BRIDGE="br-containers"  # Default bridge from workshop-9
 VM_SCRIPT="./result/bin/run-bitcoin-vm"
 PID_FILE="/var/run/bitcoin-vm.pid"
 DAEMON_MODE=false
-DATA_DISK="vm-data/bitcoin-vm.qcow2"
+# Persistent Bitcoin data disk (vdb inside the VM — stores /var/lib/bitcoind).
+# Kept under /data/vms alongside the system disk; see host-storage-vms.nix.
+DATA_DISK="/data/vms/bitcoin-vm-data.qcow2"
 DATA_DISK_SIZE="50G"  # Adjust as needed for blockchain size
 
 # Allow override via environment variable

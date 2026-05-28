@@ -256,6 +256,12 @@ cmd_start() {
         exit 1
     fi
 
+    local status=$(get_container_status "$name")
+    if [ "$status" = "up" ]; then
+        echo "Container '$name' is already running"
+        exit 0
+    fi
+
     echo "Starting container: $name"
     nixos-container start "$name"
     echo "✓ Container started"
@@ -300,6 +306,12 @@ cmd_stop() {
     if ! container_exists "$name"; then
         echo "Error: Container '$name' does not exist"
         exit 1
+    fi
+
+    local status=$(get_container_status "$name")
+    if [ "$status" != "up" ]; then
+        echo "Container '$name' is not running (status: $status)"
+        exit 0
     fi
 
     echo "Stopping container: $name"
