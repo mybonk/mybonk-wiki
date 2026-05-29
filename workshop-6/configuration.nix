@@ -62,6 +62,18 @@
     };
   };
 
+  # ── Workshop-7: Container Monitoring ──────────────────────────────────────
+  # Uncomment to expose this container's metrics for Prometheus scraping.
+  # node_exporter listens on port 9100 and reports CPU, memory, disk, and
+  # network stats. The `systemd` collector also reports per-service state.
+  #
+  # services.prometheus.exporters.node = {
+  #   enable = true;
+  #   enabledCollectors = [ "systemd" ];
+  #   port = 9100;
+  # };
+  # ──────────────────────────────────────────────────────────────────────────
+
   # System state version
   system.stateVersion = "24.11";
 }

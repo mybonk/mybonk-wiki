@@ -29,7 +29,7 @@ Start with [Workshop 1](./workshop-1/) to set up your NixOS environment, then pr
 | [Workshop 4](./workshop-4/) | **Deploy Integrated Stacks** - In 10 minutes use pre-built NixOS modules (in this example `nix-bitcoin`) to improve setup and maintainability (follow-up is [Workshop 11](./workshop-11/ where we do the same thing from source))|
 | [Workshop 5](./workshop-5/) | **Build Your Custom Installation Media** - In 5 Minutes Create pre-configured NixOS installation media with SSH configuration and other basic settings|
 | [Workshop 6](./workshop-6/) | **Manage NixOS Containers via CLI** - Create and manage containers independently imperatively (as opposed to declaratively) |
-| Workshop 7 | |
+| [Workshop 7](./workshop-7/) | **Container Monitoring with Prometheus and Grafana** - Add a real-time dashboard showing CPU, memory, disk, and network metrics for every container; no new files — uncomments the monitoring blocks already present in workshop-6 |
 | [Workshop 8](./workshop-8/) | **Proposed Lab Setup** - With focus on DHCP, DNS, and NAT for container infrastructure |
 | [Workshop 9](./workshop-9/) | **Containers Management in NixOS (nix-bitcoin, REGTEST)** - Deploy complex services across containers and demonstrate how they interact |
 | [Workshop 10](./workshop-10/) | **Mutinynet on a VM and other nix-bitcoin on a Container** - How to run Mitinynet (a fork of bitcoin to run on Muninynet's SIGNET), Deploy complex services across containers and demonstrate how they interact |
@@ -43,5 +43,6 @@ Start with [Workshop 1](./workshop-1/) to set up your NixOS environment, then pr
 | Workshop 18 | |
 | [Workshop 19](./workshop-19/) | **Bitcoin and Lightning Recovery** - Deliberately destroy and restore data at the Bitcoin and Lightning layers; learn what to back up, the hierarchy of Lightning recovery, and how to verify a recovery is genuine |
 | [Workshop 20](./workshop-20/) | **Building and Running barkd — The Nix Way** - Build the Ark protocol wallet daemon from a Rust workspace using `buildRustPackage` and run it as a NixOS container service |
+| [Workshop 21](./workshop-21/) | **Enabling Core Lightning Plugins — The NixOS Way** - Two methods: nix-bitcoin native (`monitor`) vs. direct CLN store-path loading (`bookkeeper`); understanding why the difference exists |
 
 

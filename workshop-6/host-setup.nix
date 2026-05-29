@@ -62,6 +62,64 @@
   # Enable nix flakes (required for container creation with flakes)
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  # ── Workshop-7: Container Monitoring ──────────────────────────────────────
+  # Uncomment this entire block when following workshop-7.
+  #
+  # Prometheus scrapes node_exporter metrics from each container every 15 s.
+  # Grafana serves the dashboard at http://<host-ip>:3000 (admin / admin).
+  #
+  # Before uncommenting, find your containers' DHCP-assigned IPs and replace
+  # the placeholders below:
+  #   sudo nixos-container run container1 -- ip addr show host0 | grep inet
+  #   sudo nixos-container run container2 -- ip addr show host0 | grep inet
+  #
+  # services.prometheus = {
+  #   enable = true;
+  #   port = 9090;
+  #   scrapeConfigs = [
+  #     {
+  #       job_name = "containers";
+  #       static_configs = [
+  #         {
+  #           targets = [
+  #             "10.100.0.10:9100"   # container1 — replace with actual DHCP IP
+  #             "10.100.0.20:9100"   # container2 — replace with actual DHCP IP
+  #           ];
+  #         }
+  #       ];
+  #     }
+  #   ];
+  # };
+  #
+  # services.grafana = {
+  #   enable = true;
+  #   settings = {
+  #     server = {
+  #       http_addr = "0.0.0.0";
+  #       http_port = 3000;
+  #     };
+  #     security = {
+  #       admin_user = "admin";
+  #       admin_password = "admin";  # Change after first login
+  #     };
+  #   };
+  #   provision = {
+  #     enable = true;
+  #     datasources.settings.datasources = [
+  #       {
+  #         name = "Prometheus";
+  #         type = "prometheus";
+  #         url = "http://localhost:9090";
+  #         isDefault = true;
+  #       }
+  #     ];
+  #   };
+  # };
+  #
+  # # Open ports if the host firewall is enabled
+  # networking.firewall.allowedTCPPorts = [ 3000 9090 ];
+  # ──────────────────────────────────────────────────────────────────────────
+
   # System state version
   system.stateVersion = "24.11";
 }

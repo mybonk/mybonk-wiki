@@ -657,6 +657,12 @@ sudo tcpdump -i veth-container1
 
 ---
 
+## Next Steps
+
+Once your containers are working, continue to **[Workshop 7](../workshop-7/)** to add a Prometheus + Grafana monitoring dashboard showing CPU, memory, disk, and network metrics for every container — all from one web UI.
+
+---
+
 ## References
 
 - [NixOS Containers](https://nixos.org/manual/nixos/stable/#ch-containers)

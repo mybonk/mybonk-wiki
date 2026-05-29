@@ -434,6 +434,12 @@ security.sudo.extraRules= [
     # Listen on all interfaces so other Lightning nodes can connect.
     # nix-bitcoin defaults to 127.0.0.1 (loopback only).
     address = "0.0.0.0";
+
+    # ── Workshop-21: nix-bitcoin native plugin ────────────────────────────────
+    # Uncomment to enable. nix-bitcoin manages the package and wiring automatically.
+    plugins.monitor.enable = true;
+    # ─────────────────────────────────────────────────────────────────────────
+
     extraConfig = ''
       log-level=debug
       #log-file=lightning.log
@@ -466,10 +472,12 @@ security.sudo.extraRules= [
   # ELECTRS (Electrum Server)
   # ============================================================================
 
-  # Enable electrs for Mutinynet signet
-  # Must explicitly specify both RPC and P2P ports for signet
+  # electrs disabled: this container connects CLightning to the remote bitcoin VM via
+  # nginx proxy on 127.0.0.1:38332. Electrs would pull in local bitcoind (nix-bitcoin
+  # Requires=), which conflicts with nginx on the same port. Re-enable if you switch to
+  # a fully self-contained local bitcoind setup.
   services.electrs = {
-    enable = true;
+    enable = false;
     # Specify network mode, RPC port, and P2P port for Mutinynet signet
     # RPC: 38332, P2P: 38333 (standard signet ports)
     # Connect to LOCAL bitcoind (same container), not external "bitcoin" VM
