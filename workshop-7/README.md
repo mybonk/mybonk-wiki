@@ -19,17 +19,22 @@ This workshop adds a real-time monitoring dashboard to the container infrastruct
 
 **How it works:**
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│  Host                                                        │
-│                                                              │
-│  Grafana :3000 ──── queries ──→ Prometheus :9090            │
-│                                       │                      │
-│                              scrapes every 15 s             │
-│                            ┌──────────┴──────────┐          │
-│  container1 :9100      container2 :9100            │         │
-│  node_exporter         node_exporter              │         │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    G["Grafana<br/>host · :3000<br/>dashboard UI"]
+    P["Prometheus<br/>host · :9090<br/>metrics store"]
+    N1["node_exporter<br/>container1 · :9100"]
+    N2["node_exporter<br/>container2 · :9100"]
+
+    G -->|queries| P
+    P -->|scrapes every 15 s| N1
+    P -->|scrapes every 15 s| N2
+
+    classDef host fill:#5277C3,stroke:#3a5699,color:#fff,font-weight:bold
+    classDef cont fill:#27AE60,stroke:#1e8449,color:#fff
+
+    class G,P host
+    class N1,N2 cont
 ```
 
 Each container runs **node_exporter**, which exposes hundreds of metrics on port 9100. Prometheus pulls those metrics on a schedule and stores them. Grafana reads from Prometheus and renders the dashboard.
