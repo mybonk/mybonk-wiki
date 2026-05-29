@@ -149,12 +149,12 @@ security.sudo.extraRules= [
           ([.version, .network, .alias, .num_active_channels, .blockheight, .id])
           | @tsv
         ' | column --table -ts $'\t'
+        printf "TOTAL LN ONCHAIN BALANCE: %s SATs\n", "$(lightning-cli --network=signet --lightning-dir=${config.services.clightning.dataDir} listfunds | jq '[.outputs[].amount_msat] | add / 1000')"
         lightning-cli --network=signet --lightning-dir=${config.services.clightning.dataDir} listpeerchannels | jq -r '
           (["peer_id","state","to_us","capacity"] | (., map(length*"-"))),
           (.channels[] | [.peer_id, .state, .to_us_msat, .total_msat])
           | @tsv
         ' | column --table -ts $'\t'
-        lightning-cli listfunds | jq '[.outputs[].amount_msat] | add / 1000'
         lightning-cli --network=signet --lightning-dir=${config.services.clightning.dataDir} listpeers | jq -r '
           (["id","connected","netaddr"] | (., map(length*"-"))),
           (.peers[] | [.id, .connected, (.netaddr[0] // "n/a")]),
