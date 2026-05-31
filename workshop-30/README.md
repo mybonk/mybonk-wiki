@@ -4,7 +4,7 @@ title: Workshop 30
 nav_order: 31
 ---
 
-# Workshop 30: Your Own Nostr Relay in 5 Minutes
+# Workshop 30: Own your Nostr relay in 5 minutes
 
 ## What is Nostr?
 

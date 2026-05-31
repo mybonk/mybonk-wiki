@@ -4,7 +4,7 @@ title: Workshop 6
 nav_order: 7
 ---
 
-# Manage NixOS Containers via CLI
+# Workshop 6: Own your containers: Manage NixOS containers from the CLI
 
 ## Overview
 

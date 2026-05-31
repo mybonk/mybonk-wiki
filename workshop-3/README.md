@@ -4,7 +4,7 @@ title: Workshop 3
 nav_order: 4
 ---
 
-# How to Override Package Versions in NixOS (Fast, No Compilation)
+# Workshop 3: Own your packages: Override any NixOS package — no recompile needed
 
 ## Overview
 

@@ -4,7 +4,7 @@ title: Workshop 9
 nav_order: 9
 ---
 
-# Containers Management in NixOS (nix-bitcoin, REGTEST)
+# Workshop 9: Own your regtest: nix-bitcoin services across containers
 
 ## Introduction
 

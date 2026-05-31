@@ -1,4 +1,4 @@
-# Workshop 20: Building and Running barkd — The Nix Way
+# Workshop 20: Own your Ark wallet: Build and run barkd the Nix way
 
 ## Overview
 

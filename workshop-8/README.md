@@ -4,7 +4,7 @@ title: Workshop 8
 nav_order: 8
 ---
 
-# Proposed Lab Setup (DHCP, DNS, NAT ...)
+# Workshop 8: Own your lab network: DHCP, DNS and NAT for container infrastructure
 
 ## Introduction
 

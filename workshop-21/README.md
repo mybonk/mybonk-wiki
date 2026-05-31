@@ -1,4 +1,4 @@
-# Workshop 21: Enabling Core Lightning Plugins — The NixOS Way
+# Workshop 21: Own your Lightning plugins: The NixOS way
 
 ## Overview
 

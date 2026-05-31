@@ -4,7 +4,7 @@ title: Workshop 5
 nav_order: 6
 ---
 
-# Build You Custom Installation Media
+# Workshop 5: Own your installer: Build a custom NixOS USB in 5 minutes
 
 ## Overview
 

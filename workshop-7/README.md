@@ -4,7 +4,7 @@ title: Workshop 7
 nav_order: 8
 ---
 
-# Workshop 7: Container Monitoring with Prometheus and Grafana
+# Workshop 7: Own your metrics: Container dashboards with Prometheus and Grafana
 
 ## Overview
 

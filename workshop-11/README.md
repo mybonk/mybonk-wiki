@@ -4,7 +4,7 @@ title: Workshop 11
 nav_order: 12
 ---
 
-# Compiling Packages from Source with fetchFromGitHub
+# Workshop 11: Own your builds: Compile any package from source with Nix
 
 ## Overview
 

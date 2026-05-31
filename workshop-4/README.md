@@ -4,7 +4,7 @@ title: Workshop 4
 nav_order: 5
 ---
 
-# How to Run a Bitcoin Stack on NixOS in 5 Minutes
+# Workshop 4: Own your Bitcoin stack: nix-bitcoin in 10 minutes
 
 ## Overview
 

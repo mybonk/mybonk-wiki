@@ -4,7 +4,7 @@ title: Workshop 1
 nav_order: 2
 ---
 
-# Run NixOS in a VM or a container in 5 Minutes
+# Workshop 1: Own your first machine-in-a-machine: NixOS in a VM or container in 5 minutes
 
 ## Introduction
 

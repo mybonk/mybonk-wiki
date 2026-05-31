@@ -1,4 +1,4 @@
-# Workshop 10: Run Mutinynet on a VM and other nix-bitcoin on a Container
+# Workshop 10: Own your signet: Bitcoin VM + Lightning container on Mutinynet
 
 ## Overview
 

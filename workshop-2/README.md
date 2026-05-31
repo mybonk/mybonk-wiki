@@ -4,7 +4,7 @@ title: Workshop 2
 nav_order: 3
 ---
 
-# Install new services on NixOS in 2 Minutes
+# Workshop 2: Own your services: Deploy Bitcoin declaratively in 2 minutes
 
 ## Overview
 

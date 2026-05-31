@@ -1,4 +1,4 @@
-# Workshop 19: Bitcoin and Lightning Recovery
+# Workshop 19: Own your recovery: Destroy and restore your Bitcoin and Lightning node
 
 ## Overview
 
