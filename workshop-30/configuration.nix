@@ -51,7 +51,7 @@
   systemd.network = {
     enable = true;
     networks."10-container-dhcp" = {
-      matchConfig.Name = "host0";
+      matchConfig.Name = "eth0";   # nixos-container PRIVATE_NETWORK uses eth0, not host0
       networkConfig = {
         DHCP = "yes";
       };
