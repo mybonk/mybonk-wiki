@@ -91,7 +91,7 @@ You should see `active (running)`. The relay is now listening on port 7777 insid
 Find the container's IP — you will need it for all subsequent commands:
 
 ```bash
-NOSTR_IP=$(sudo nixos-container run nostr -- ip -4 addr show host0 | awk '/inet /{print $2}' | cut -d/ -f1)
+NOSTR_IP=$(sudo nixos-container run nostr -- ip -4 addr show eth0 | awk '/inet /{print $2}' | cut -d/ -f1)
 echo "Relay: ws://$NOSTR_IP:7777"
 ```
 
