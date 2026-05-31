@@ -44,5 +44,6 @@ Start with [Workshop 1](./workshop-1/) to set up your NixOS environment, then pr
 | [Workshop 19](./workshop-19/) | **Bitcoin and Lightning Recovery** - Deliberately destroy and restore data at the Bitcoin and Lightning layers; learn what to back up, the hierarchy of Lightning recovery, and how to verify a recovery is genuine |
 | [Workshop 20](./workshop-20/) | **Building and Running barkd — The Nix Way** - Build the Ark protocol wallet daemon from a Rust workspace using `buildRustPackage` and run it as a NixOS container service |
 | [Workshop 21](./workshop-21/) | **Enabling Core Lightning Plugins — The NixOS Way** - Two methods: nix-bitcoin native (`monitor`) vs. direct CLN store-path loading (`bookkeeper`); understanding why the difference exists |
+| [Workshop 30](./workshop-30/) | **Your Own Nostr Relay in 5 Minutes** - What Nostr is and why it matters; spin up a `nostr-rs-relay` container; generate keys, publish notes, broadcast to multiple relays simultaneously, and federate with a public relay using `nak sync` (NIP-77 negentropy) |
 
 
