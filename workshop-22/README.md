@@ -4,7 +4,7 @@ title: Workshop 22
 nav_order: 23
 ---
 
-# Workshop 22: Own your multisig treasury: 3-of-5 signing on Mutinynet
+# Workshop 22: Own your multisig treasury: Bitcoin multisig
 
 ## Introduction
 
@@ -26,13 +26,15 @@ In practice, companies that implement multisig do not treat it as a technical ta
 
 This workshop uses **P2WSH** (native SegWit, 3-of-5): well-supported, standard, lower fees than legacy P2SH.
 
+> All hands-on steps run against the test network from [workshop-10](../workshop-10/) — free coins, 30-second blocks, no real funds at risk. The multisig mechanics are identical on mainnet.
+
 ---
 
 ## Prerequisites
 
-- **[Workshop 10](../workshop-10/)** fully operational: Bitcoin VM synced to Mutinynet signet, Lightning container running.
+- **[Workshop 10](../workshop-10/)** fully operational: Bitcoin VM running, Lightning container up.
 - **Sparrow Wallet** installed on your laptop and already connected to the workshop-10 Bitcoin node (RPC `http://<vm-ip>:38332`, user `bitcoin`, password `bitcoin`, network `signet`).
-- Access to the [Mutinynet faucet](https://faucet.mutinynet.com/) to get test coins.
+- Access to the test network faucet (see workshop-10) to get free test coins.
 
 > If Sparrow is not yet connected to workshop-10, open **Preferences → Server → Bitcoin Core**, enter the VM's IP and RPC credentials, and click **Test Connection** until it shows green.
 
@@ -70,7 +72,7 @@ graph TD
     S1["Alice signs → 1/3"]
     S2["Bob signs → 2/3"]
     S3["Carol signs → 3/3 ✓"]
-    BC["Broadcast to<br/>Mutinynet"]
+    BC["Broadcast to<br/>Bitcoin network"]
 
     A & B & C & D & E -->|xpub contributed| W
     W -->|spend request| TX
@@ -203,8 +205,8 @@ graph LR
 
 <!-- SCREENSHOT: ./img/04-receive-address.png — Sparrow Receive tab, multisig deposit address -->
 
-3. Open [https://faucet.mutinynet.com/](https://faucet.mutinynet.com/) and send test coins to that address
-4. Watch the **Transactions** tab — the incoming transaction appears within ~30 seconds (Mutinynet blocks every 30 s)
+3. Open the test network faucet (see workshop-10) and send test coins to that address
+4. Watch the **Transactions** tab — the incoming transaction appears within ~30 seconds (test network blocks every 30 s)
 5. Wait for **1 confirmation** before proceeding
 
 <!-- SCREENSHOT: ./img/05-incoming-confirmed.png — Transactions tab with confirmed incoming UTXO -->
@@ -219,7 +221,7 @@ The board has voted to pay a supplier. Three partners must sign.
 
 1. In `acme-treasury`, go to **Send**
 2. Fill in:
-   - **Pay to**: any Mutinynet address (use a second receive address from the same wallet if you have no other)
+   - **Pay to**: any test network address (use a second receive address from the same wallet if you have no other)
    - **Amount**: `0.0001 sBTC`
    - **Label**: `supplier-payment`
 3. Click **Create Transaction** — Sparrow builds the unsigned PSBT
@@ -232,7 +234,7 @@ sequenceDiagram
     participant A  as Alice · CEO
     participant B  as Bob · CFO
     participant C  as Carol · CTO
-    participant N  as Mutinynet
+    participant N  as Bitcoin network
 
     Co->>Co: Create PSBT (0/3 signed)
     Co->>A: Hand PSBT (USB / QR)
@@ -276,13 +278,13 @@ sequenceDiagram
 ### Broadcast
 
 14. Click **Broadcast Transaction**
-15. Sparrow submits to the workshop-10 Bitcoin node, which propagates it to Mutinynet
+15. Sparrow submits to the workshop-10 Bitcoin node, which propagates it to the network
 
 ---
 
 ## Part 4: Verify
 
-In the `acme-treasury` **Transactions** tab the outgoing transaction appears immediately. Confirm on the Mutinynet explorer:
+In the `acme-treasury` **Transactions** tab the outgoing transaction appears immediately. Confirm on the block explorer (see workshop-10 for the URL):
 
 ```
 https://mutinynet.com/tx/<txid>
@@ -293,7 +295,7 @@ The explorer shows:
 - **3 distinct signatures** in the witness stack
 - The output address and amount
 
-<!-- SCREENSHOT: ./img/09-mutinynet-explorer-tx.png — Mutinynet explorer showing the P2WSH transaction with 3 witness signatures -->
+<!-- SCREENSHOT: ./img/09-explorer-tx.png — block explorer showing the P2WSH transaction with 3 witness signatures -->
 
 ---
 
