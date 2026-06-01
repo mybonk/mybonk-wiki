@@ -44,6 +44,7 @@ Start with [Workshop 1](./workshop-1/) to set up your NixOS environment, then pr
 | [Workshop 19](./workshop-19/) | **Own your recovery: Destroy and restore your Bitcoin and Lightning node** - Deliberately destroy and restore data at the Bitcoin and Lightning layers; learn what to back up, the hierarchy of Lightning recovery, and how to verify a recovery is genuine |
 | [Workshop 20](./workshop-20/) | **Own your Ark wallet: Build and run barkd the Nix way** - Build the Ark protocol wallet daemon from a Rust workspace using `buildRustPackage` and run it as a NixOS container service |
 | [Workshop 21](./workshop-21/) | **Own your Lightning plugins: The NixOS way** - Two methods: nix-bitcoin native (`monitor`) vs. direct CLN store-path loading (`bookkeeper`); understanding why the difference exists |
+| [Workshop 22](./workshop-22/) | **Own your multisig treasury: 3-of-5 signing on Mutinynet** - The most important Bitcoin security primitive for organisations; model a 5-partner treasury company, run a signing ceremony in Sparrow Wallet, and stress-test the policy with a simultaneous resignation and death scenario |
 | [Workshop 30](./workshop-30/) | **Own your Nostr relay in 5 minutes** - What Nostr is and why it matters; spin up a `nostr-rs-relay` container; generate keys, publish notes, broadcast to multiple relays simultaneously, and federate with a public relay using `nak sync` (NIP-77 negentropy) |
 
 
