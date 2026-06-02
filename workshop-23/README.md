@@ -212,18 +212,24 @@ nix-bitcoin publishes versioned releases, each of which pins a tested Bitcoin Co
 ```nix
 inputs = {
   # Pin to a specific nix-bitcoin release tag instead of master
-  nix-bitcoin.url = "github:fort-nix/nix-bitcoin/release-0.0.101";
+  nix-bitcoin.url = "github:fort-nix/nix-bitcoin/master";
   nixpkgs.follows = "nix-bitcoin/nixpkgs";  # still follow nix-bitcoin's nixpkgs
 };
 ```
 
-Check what CLN version a given nix-bitcoin release ships before committing:
+Check what CLN version a given nix-bitcoin release ships before committing.
+nix-bitcoin does not expose CLN as a flake package output — CLN comes from its pinned nixpkgs.
+Use `--inputs-from` to borrow nix-bitcoin's own nixpkgs input:
 
 ```bash
-nix eval github:fort-nix/nix-bitcoin/release-0.0.101#packages.x86_64-linux.clightning.version
+nix eval --inputs-from github:fort-nix/nix-bitcoin/v0.0.134 nixpkgs#clightning.version
 ```
 
-Browse available releases: `https://github.com/fort-nix/nix-bitcoin/releases`
+List available release tags:
+
+```bash
+git ls-remote https://github.com/fort-nix/nix-bitcoin 'refs/tags/v*' | sort -t/ -k3 -V
+```
 
 After editing `flake.nix`:
 
@@ -281,56 +287,47 @@ sudo nixos-container run lightning -- lightningd --version
 
 **Approach C — Override the CLN package via a nixpkgs overlay**
 
-The most surgical option: keep everything else untouched, replace only the `clightning` derivation. This is the same overlay pattern workshop-10 already uses to swap in the Mutinynet Bitcoin Core binary.
+> **Use Approach B instead for CLN.** nixpkgs's `clightning` derivation manages external dependencies (libwally-core, secp256k1) as separate nixpkgs derivations placed into the source tree via `postUnpack`. A simple `overrideAttrs { version; src }` replaces the source but carries over patches and build infrastructure written for the previous version — these will break or silently misbehave for a different CLN version. The overlay pattern works well for simpler packages (as workshop-10 already demonstrates for the Mutinynet Bitcoin binary), but CLN is not a simple package.
+>
+> Approach B — finding the nixpkgs commit where CLN was bumped to the target version — gives you the entire self-consistent derivation (source, patches, libwally-core version, build flags) without having to reconstruct any of it by hand.
 
-Inside the `nixosConfigurations.lightning` module list in `flake.nix`, add an overlay module:
+For reference, the pattern looks like this and works for simpler derivations that have no external-dependency scaffolding:
 
 ```nix
-lightning = nixpkgs.lib.nixosSystem {
-  inherit system;
-  specialArgs = { inherit nix-bitcoin; };
-  modules = [
-    { nixpkgs.overlays = [ (final: prev: { inherit (pkgs) bitcoin; }) ]; }
-    { networking.hostName = "lightning"; }
-    nix-bitcoin.nixosModules.default
-    ./container-lightning.nix
-
-    # Override CLN to a specific version
-    {
-      nixpkgs.overlays = [
-        (final: prev: {
-          clightning = prev.clightning.overrideAttrs (old: rec {
-            version = "24.11.2";
-            src = prev.fetchFromGitHub {
-              owner = "ElementsProject";
-              repo  = "lightning";
-              rev   = "v${version}";
-              hash  = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";  # placeholder
-            };
-          });
-        })
-      ];
-    }
+# Example only — not recommended for CLN
+{
+  nixpkgs.overlays = [
+    (final: prev: {
+      some-simple-package = prev.some-simple-package.overrideAttrs (old: rec {
+        version = "x.y.z";
+        src = prev.fetchFromGitHub {
+          owner = "upstream";
+          repo  = "repo";
+          rev   = "v${version}";
+          hash  = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+        };
+      });
+    })
   ];
-};
+}
 ```
 
-The placeholder hash will cause the build to fail with the correct hash printed. Run once to get it:
+For CLN specifically, use Approach B: find the nixpkgs commit that introduced the target CLN version and pin your flake to it.
 
 ```bash
-nix build .#nixosConfigurations.lightning.config.system.build.toplevel 2>&1 | grep "got:"
-```
+# Check if nixpkgs-unstable already ships the version you want
+nix eval github:NixOS/nixpkgs/nixpkgs-unstable#clightning.version
 
-Replace the placeholder with the printed value, then apply:
+# Find the commit that introduced it — search nixpkgs commit history:
+# https://github.com/NixOS/nixpkgs/commits/nixpkgs-unstable
+# look for a commit titled "clightning: X.Y.Z -> X.Y.Z+1"
 
-```bash
-nix flake lock
+# Pin that SHA in flake.nix (Approach B) and verify before applying
 nix eval .#nixosConfigurations.lightning.pkgs.clightning.version
+nix flake lock
 sudo nixos-container update lightning --flake .#lightning
 sudo nixos-container run lightning -- lightningd --version
 ```
-
-> **Approach C is the most surgical but also the most fragile.** If the target CLN version has different build dependencies than what the current nixpkgs provides, the overlay build will fail. Prefer Approach A or B for cross-version jumps; use C only for patch-level bumps (e.g., 24.11.1 → 24.11.2).
 
 ---
 
@@ -368,7 +365,7 @@ sudo nixos-container run lightning -- journalctl -u cln -n 40
 
 | Scenario | Action |
 |----------|--------|
-| Security patch in CLN, nothing else changes | Approach A (pin nix-bitcoin release) or C (overlay) — surgical, low risk |
+| Security patch in CLN, nothing else changes | Approach A (pin nix-bitcoin release) or B (nixpkgs commit with that CLN version) — CLN's derivation is too complex for the overlay approach |
 | New CLN minor version, staying on same nixpkgs channel | Approach B (reverse follows, pin nixpkgs to a commit that has the target CLN version) |
 | Full channel upgrade (24.11 → 25.05) | Section 5 — back up first, read changelogs for both CLN and Bitcoin Core |
 | Reproducing a historical state exactly | Approach B with an exact 40-character nixpkgs commit SHA |

@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
-    nix-bitcoin.url = "github:fort-nix/nix-bitcoin/master";
+    nix-bitcoin.url = "github:fort-nix/nix-bitcoin/v0.0.134";
   };
 
   outputs = { self, nixpkgs, nix-bitcoin }: {

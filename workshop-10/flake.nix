@@ -3,7 +3,7 @@
 
   inputs = {
     # nix-bitcoin: Bitcoin and Lightning node configurations
-    nix-bitcoin.url = "github:fort-nix/nix-bitcoin/master";
+    nix-bitcoin.url = "github:fort-nix/nix-bitcoin/v0.0.134";
 
     # Use nixpkgs from nix-bitcoin for consistency
     nixpkgs.follows = "nix-bitcoin/nixpkgs";

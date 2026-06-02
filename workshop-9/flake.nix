@@ -7,7 +7,7 @@
 
     # nix-bitcoin: Bitcoin and Lightning node configurations
     # Provides pre-configured services for Bitcoin, Lightning and many others
-    nix-bitcoin.url = "github:fort-nix/nix-bitcoin/master";
+    nix-bitcoin.url = "github:fort-nix/nix-bitcoin/v0.0.134";
     #nix-bitcoin.follows = "nixpkgs";
   };
 
