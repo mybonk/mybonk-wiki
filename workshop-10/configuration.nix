@@ -79,6 +79,7 @@
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILmCXubTHcQrMO+LFTmWq6sN8L7gJEmyu+mL8DR0NvBf operator@nixos"
       "ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAHHDGRW40CXAlSbZ7G3zYO0CucwfsDUFnD+bI1+KbUFsDyBwHDhbpNZ1S12cDhcF6inszd8bkxKs0giyfr3cHtrrgEZqf9Ec8UXTMsnq12bbKT9zr0S8MPDzrIWdrpi2IpAaJ+qaXqT0lF+pp24ZtYBKbvBBScoGxx7tYA8QYe+MZ/7rg== operator@nixostestsbckitchen"
+      "ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAH26emFyi+s8bYytRcKgObsHMCRmtvb81pnPoQIjVspLrmlH45fQSaE3doxauE9o8gD4bzOgtPATEDEPQNxncUgpwCUr6hanu5ojFWSAYJff0k9/W4TMuEbPcqUg6I+lEzn+N/eDtESIIi5BZh5e6oaqd9I/WwjmvLOdOZFmv/dpjOXyQ== operator@mothership"
     ];
   };
 

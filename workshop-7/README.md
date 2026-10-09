@@ -192,7 +192,7 @@ The data source is provisioned automatically. Confirm it is connected:
 
 1. Click the menu (☰) → **Connections** → **Data sources**
 2. Click **Prometheus**
-3. Scroll down and click **Save & test**
+3. Scroll down and click **Test**
 
 You should see **"Successfully queried the Prometheus API"**.
 

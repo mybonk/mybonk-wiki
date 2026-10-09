@@ -1,3 +1,9 @@
+---
+layout: default
+title: Workshop 21
+nav_order: 22
+---
+
 # Workshop 21: Own your Lightning plugins: The NixOS way
 
 ## Overview

@@ -1,3 +1,9 @@
+---
+layout: default
+title: Workshop 10
+nav_order: 11
+---
+
 # Workshop 10: Own your signet: Bitcoin VM + Lightning container on Mutinynet
 
 ## Overview

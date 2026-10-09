@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Baby Rabbit Holes
-nav_order: 10
+nav_order: 100
 ---
 
 # Baby rabbit holes
@@ -539,8 +539,9 @@ scp somefile user@machine_A:~/
 ## Network
 
   ### Common tools
-  - `autossh`: Program that starts a copy of ssh and monitors it, restarting it as necessary should it die or stop passing traffic.
+  - `autossh`: command-line utility that starts a copy of ssh and monitors it, restarting it as necessary should it die or stop passing traffic.
   - `ping`: send ICMP ECHO_REQUEST to network hosts
+  - `neofetch`: command-line utility used to display your system's hardware and software specifications. Note that `neofetch` has been removed from some packahes because it was unmaintained; alternatives are `freshfetch` or `fastfetch`.
   - `lnstats`:  Commonly used to periodically print a selection of statistical values exported by the kernel.
   - `ss`: Display various sockets information. Similar to netstat. e.x. `$ ss -tlnp | grep 8080`
   ### Speed test

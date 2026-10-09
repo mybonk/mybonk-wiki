@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Workshop 8
-nav_order: 8
+nav_order: 9
 ---
 
 # Workshop 8: Own your lab network: DHCP, DNS and NAT for container infrastructure

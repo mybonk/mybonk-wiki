@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Workshop 9
-nav_order: 9
+nav_order: 10
 ---
 
 # Workshop 9: Own your regtest: nix-bitcoin services across containers

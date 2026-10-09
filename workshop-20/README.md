@@ -1,3 +1,9 @@
+---
+layout: default
+title: Workshop 20
+nav_order: 21
+---
+
 # Workshop 20: Own your Ark wallet: Build and run barkd the Nix way
 
 ## Overview

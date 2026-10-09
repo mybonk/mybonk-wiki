@@ -1,3 +1,9 @@
+---
+layout: default
+title: Workshop 19
+nav_order: 20
+---
+
 # Workshop 19: Own your recovery: Destroy and restore your Bitcoin and Lightning node
 
 ## Overview

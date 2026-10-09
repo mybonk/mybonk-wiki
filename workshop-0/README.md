@@ -1,3 +1,9 @@
+---
+layout: default
+title: Workshop 0
+nav_order: 1
+---
+
 # Workshop 0: Own your OS: Install NixOS from a bootable USB in 30 minutes
 
   Install NixOS from factory bootable installation USB stick.
